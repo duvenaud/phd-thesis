@@ -1,6 +1,8 @@
 \input{common/header.tex}
 \inbpdocument
 
+\newcommand{\additivefigsdir}{additive-figures}
+\newcommand{\additivetablesdir}{additive-tables}
 
 \chapter{Additive Gaussian Processes}
 \label{ch:additive}
@@ -28,19 +30,19 @@ Gaussian processes are a flexible and tractable prior over functions, useful for
 \begin{figure}
 \centering
 \begin{tabular}{ccccc|c}
-\includegraphics[width=0.2\textwidth]{figures/additive_kernel_sum_p2.pdf} & + & 
-\includegraphics[width=0.2\textwidth]{figures/additive_kernel_sum_p1.pdf} &=& 
-\includegraphics[width=0.2\textwidth]{figures/additive_kernel.pdf} &
-\includegraphics[width=0.2\textwidth]{figures/sqexp_kernel.pdf} \\
+\includegraphics[width=0.2\textwidth]{\additivefigsdir/additive_kernel_sum_p2.pdf} & + & 
+\includegraphics[width=0.2\textwidth]{\additivefigsdir/additive_kernel_sum_p1.pdf} &=& 
+\includegraphics[width=0.2\textwidth]{\additivefigsdir/additive_kernel.pdf} &
+\includegraphics[width=0.2\textwidth]{\additivefigsdir/sqexp_kernel.pdf} \\
 $k_1(x_1)$ & & $k_2(x_2)$ & & $k_1(x_1) + k_2(x_2)$ &$k_1(x_1)k_2(x_2)$ \\
 1D kernel & & 1D kernel & & 1st order kernel & 2nd order kernel \\ 
 %& & & & & \\
 %(Second Order) & & & & & Additive Kernel \\
 $\downarrow$ & & $\downarrow$ & & $\downarrow$ & $\downarrow$  \\
-\includegraphics[width=0.2\textwidth]{figures/additive_kernel_draw_sum_p1.pdf}&+& 
-\includegraphics[width=0.2\textwidth]{figures/additive_kernel_draw_sum_p2.pdf}&=&
-\includegraphics[width=0.2\textwidth]{figures/additive_kernel_draw_sum.pdf} &
-\includegraphics[width=0.2\textwidth]{figures/sqexp_draw.pdf} \\
+\includegraphics[width=0.2\textwidth]{\additivefigsdir/additive_kernel_draw_sum_p1.pdf}&+& 
+\includegraphics[width=0.2\textwidth]{\additivefigsdir/additive_kernel_draw_sum_p2.pdf}&=&
+\includegraphics[width=0.2\textwidth]{\additivefigsdir/additive_kernel_draw_sum.pdf} &
+\includegraphics[width=0.2\textwidth]{\additivefigsdir/sqexp_draw.pdf} \\
 $f_1(x_1)$ & & $f_2(x_2)$ & & $f_1(x_1) + f_2(x_2)$ & $f(x_1, x_2)$ \\
 draw from & & draw from & & draw from 1st & draw from 2nd\\
 1D GP prior & & 1D GP prior & & order GP prior & order GP prior\\
@@ -99,12 +101,12 @@ The only design choice necessary in specifying an additive kernel is the selecti
 
 In addition to the hyperparameters of each dimension-wise kernel, additive kernels are equipped with a set of $D$ hyperparameters $\sigma_1^2 \dots \sigma_D^2$ controlling how much variance we assign to each order of interaction.  These ``order variance'' hyperparameters have a useful interpretation:  The $d$th order variance hyperparameter controls how much of the target function's variance comes from interactions of the $d$th order.
 %
-%\input{tables/r_concrete_500_hypers_table.tex}
+%\input{\additivetablesdir/r_concrete_500_hypers_table.tex}
 %Table \ref{tbl:concrete} gives an example of hyperparameters learnt by both a SE-GP, and by those learnt by an additive GP whose base kernels are one-dimensional squared exponential kernels.  In this case, the 1st, 2nd and 3rd-order interactions contribute most to the final function.
 %
 %
 Table \ref{tbl:all_orders} shows examples of normalized order variance hyperparameters.
-\input{tables/all_orders_table.tex}
+\input{\additivetablesdir/all_orders_table.tex}
 
 On different datasets, the dominant order of interaction estimated by the additive model varies widely.An additive GP with all of its variance coming from the 1st order is equivalent to a GAM; an additive GP with all its variance coming from the $D$th order is equivalent to a SE-GP.
 %
@@ -127,9 +129,9 @@ As noted by \cite{plate1999accuracy}, one of the chief advantages of additive mo
 \begin{figure}[h]
 \centering
 \begin{tabular}{ccc}
-\includegraphics[width=0.3\textwidth]{figures/interpretable_1st_order1.pdf} &
-\includegraphics[width=0.3\textwidth]{figures/interpretable_1st_order2.pdf}& 
-\includegraphics[width=0.3\textwidth]{figures/interpretable_2nd_order1.pdf}\\
+\includegraphics[width=0.3\textwidth]{\additivefigsdir/interpretable_1st_order1.pdf} &
+\includegraphics[width=0.3\textwidth]{\additivefigsdir/interpretable_1st_order2.pdf}& 
+\includegraphics[width=0.3\textwidth]{\additivefigsdir/interpretable_2nd_order1.pdf}\\
 \end{tabular}
 \caption{Low-order functions on the concrete dataset.  Left, Centre:  By considering only first-order terms of the additive kernel, we recover a form of Generalized Additive Model, and can plot the corresponding 1-dimensional functions.  Green points indicate the original data, blue points are data after the mean contribution from the other first-order terms has been subtracted.  The black line is the posterior mean of a GP with only one term in its kernel.  Right:  The posterior mean of a GP with only one second-order term in its kernel.}
 \label{fig:interpretable functions}
@@ -197,10 +199,10 @@ However, their approach learns a mixture over a small, fixed set of kernels, whi
 \begin{figure}
 \centering
 \begin{tabular}{c|c|c|c}
-\hspace{-0.06in} \includegraphics[width=0.23\textwidth]{figures/compare_models/hkl.pdf} \hspace{-0.07in} &
-\hspace{-0.06in} \includegraphics[width=0.23\textwidth]{figures/compare_models/gam.pdf} \hspace{-0.07in} &
-\hspace{-0.06in} \includegraphics[width=0.23\textwidth]{figures/compare_models/ard.pdf} \hspace{-0.07in} &
-\hspace{-0.06in} \includegraphics[height=0.19\textwidth]{figures/compare_models/additive.pdf} \\
+\hspace{-0.06in} \includegraphics[width=0.23\textwidth]{\additivefigsdir/compare_models/hkl.pdf} \hspace{-0.07in} &
+\hspace{-0.06in} \includegraphics[width=0.23\textwidth]{\additivefigsdir/compare_models/gam.pdf} \hspace{-0.07in} &
+\hspace{-0.06in} \includegraphics[width=0.23\textwidth]{\additivefigsdir/compare_models/ard.pdf} \hspace{-0.07in} &
+\hspace{-0.06in} \includegraphics[height=0.19\textwidth]{\additivefigsdir/compare_models/additive.pdf} \\
 HKL & GP-GAM & Squared-exp GP & Additive GP
 \end{tabular}
 \caption{
@@ -254,12 +256,12 @@ By far the most popular kernels for regression and classification tasks on conti
 \begin{figure}[h]
 \centering
 \begin{tabular}{cc}
-\hspace{-0.25in} \includegraphics[width=0.3\textwidth]{figures/3d_add_kernel_1.pdf} &
-\hspace{-0.25in} \includegraphics[width=0.3\textwidth]{figures/3d_add_kernel_2.pdf} \\
+\hspace{-0.25in} \includegraphics[width=0.3\textwidth]{\additivefigsdir/3d_add_kernel_1.pdf} &
+\hspace{-0.25in} \includegraphics[width=0.3\textwidth]{\additivefigsdir/3d_add_kernel_2.pdf} \\
 1st order interactions & 2nd order interactions \\
 $k_1 + k_2 + k_3$ & $k_1k_2 + k_2k_3 + k_1k_3$ \\
-\hspace{-0.25in} \includegraphics[width=0.3\textwidth]{figures/3d_add_kernel_3.pdf} & 
-\hspace{-0.25in} \includegraphics[width=0.3\textwidth]{figures/3d_add_kernel_321.pdf}\\
+\hspace{-0.25in} \includegraphics[width=0.3\textwidth]{\additivefigsdir/3d_add_kernel_3.pdf} & 
+\hspace{-0.25in} \includegraphics[width=0.3\textwidth]{\additivefigsdir/3d_add_kernel_321.pdf}\\
 3rd order interactions & All interactions \\
  $k_1k_2k_3$ & \\
  (Squared-exp kernel) & (Additive kernel)\\
@@ -281,15 +283,15 @@ Because additive kernels can discover non-local structure in data, they are exce
 \begin{figure}[h]
 \centering
 \begin{tabular}{cccc}
-\hspace{-0.1in}\includegraphics[width=0.24\textwidth]{figures/1st_order_censored_truth.pdf} &
-\hspace{-0.1in}\includegraphics[width=0.24\textwidth]{figures/1st_order_censored_ard.pdf}&
-\hspace{-0.1in}\includegraphics[width=0.24\textwidth]{figures/1st_order_censored_add.pdf}& 
-\hspace{-0.1in}\includegraphics[width=0.24\textwidth]{figures/1st_order_censored_d1d2.pdf}\\ 
+\hspace{-0.1in}\includegraphics[width=0.24\textwidth]{\additivefigsdir/1st_order_censored_truth.pdf} &
+\hspace{-0.1in}\includegraphics[width=0.24\textwidth]{\additivefigsdir/1st_order_censored_ard.pdf}&
+\hspace{-0.1in}\includegraphics[width=0.24\textwidth]{\additivefigsdir/1st_order_censored_add.pdf}& 
+\hspace{-0.1in}\includegraphics[width=0.24\textwidth]{\additivefigsdir/1st_order_censored_d1d2.pdf}\\ 
 True Function & Squared-exp GP & Additive GP & Additive GP \\
  \& data locations & posterior mean & posterior mean & 1st-order functions\\
-%\includegraphics[width=0.3\textwidth]{figures/1st_order_censored_data.pdf} &
-%\includegraphics[width=0.3\textwidth]{figures/1st_order_censored_d1.pdf}&
-%\includegraphics[width=0.3\textwidth]{figures/1st_order_censored_d2.pdf}\\
+%\includegraphics[width=0.3\textwidth]{\additivefigsdir/1st_order_censored_data.pdf} &
+%\includegraphics[width=0.3\textwidth]{\additivefigsdir/1st_order_censored_d1.pdf}&
+%\includegraphics[width=0.3\textwidth]{\additivefigsdir/1st_order_censored_d2.pdf}\\
 %Training Data Locations & Estimated 1D $f(x_1)$ & Estimated 1D $f(x_2)$ \\
 \end{tabular}
 \caption{Long-range inference in functions with additive structure.%  The additive GP is able to discover the additive pattern, and use it to fill in a distant mode.  The ARD kernel can only interpolate, and thus predicts the mean in locations missing data.
@@ -326,10 +328,10 @@ In the classification experiments, GP inference was done using expectation propa
 
 Tables \ref{tbl:Regression Mean Squared Error}, \ref{tbl:Regression Negative Log Likelihood}, \ref{tbl:Classification Percent Error} and \ref{tbl:Classification Negative Log Likelihood} show mean performance across 10 train-test splits.  Because HKL does not specify a noise model, it could not be included in the likelihood comparisons.
 
-\input{tables/reg_table_mse2.tex}
-\input{tables/reg_table_ll2.tex}
-\input{tables/class_table2.tex}
-\input{tables/class_table_ll2.tex}
+\input{\additivetablesdir/reg_table_mse2.tex}
+\input{\additivetablesdir/reg_table_ll2.tex}
+\input{\additivetablesdir/class_table2.tex}
+\input{\additivetablesdir/class_table_ll2.tex}
 
 The model with best performance on each dataset is in bold, along with all other models that were not significantly different under a paired t-test. The additive model never performs significantly worse than any other model, and sometimes performs significantly better than all other models.  The difference between all methods is larger in the case of regression experiments. The performance of HKL is consistent with the results in \cite{DBLP:journals/corr/abs-0909-0844}, performing competitively but slightly worse than SE-GP.%  This is especially clear in the case of the regression tasks.
 

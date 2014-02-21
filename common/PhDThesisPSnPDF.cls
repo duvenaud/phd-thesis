@@ -335,7 +335,7 @@ and define the natbib package or biblatex package with required style in the Pre
 
 % Font Selection
 \ifPHD@times
-\RequirePackage{mathptmx}  % times roman, including math (where possible)
+%\RequirePackage{mathptmx}  % times roman, including math (where possible)
 \setFonttrue
 \else
      \ifPHD@fourier
