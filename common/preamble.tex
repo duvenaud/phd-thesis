@@ -1,7 +1,19 @@
 % All my custom preamble stuff.  Shouldn't overlap with anything in official-preamble
 
+\def\foo{\hspace{\fill}\mbox{}\linebreak[0]\hspace*{\fill}}
+
 \usepackage{nth}
 \usepackage{rotating}
 \usepackage{array}
 %\usepackage{gantt}
 \usepackage[hyperpageref]{backref}
+\renewcommand*{\backref}[1]{}
+\renewcommand*{\backrefalt}[4]{%
+\ifcase #1 %
+%
+\or
+\foo(page #2)%
+\else
+\foo(pages #2)%
+\fi
+}
