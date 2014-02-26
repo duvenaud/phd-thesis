@@ -1,5 +1,6 @@
 % All my custom preamble stuff.  Shouldn't overlap with anything in official-preamble
 
+\usepackage{relsize}
 \usepackage{graphicx}
 \usepackage{amsmath,amssymb,textcomp}
 \usepackage{nicefrac}
@@ -156,11 +157,6 @@
 \DeclareMathOperator{\chol}{chol}
 \DeclareMathOperator{\diag}{diag}
 
-%\newcommand{\gp}{{\acro{gp}}}
-%\newcommand{\gplvm}{{\acro{gp-lvm}}}
-%\newcommand{\bmc}{{\acro{bmc}}}
-%\newcommand{\bq}{{\acro{bq}}}
-%\newcommand{\sbq}{{\acro{sbq}}}
 
 \newenvironment{narrow}[2]{%
   \begin{list}{}{%
@@ -200,6 +196,18 @@
 \def\Bernoulli{\mbox{\rm Bernoulli}}
 \def\GP{\mathcal{GP}}
 \def\GPLVM{\mathcal{GP-LVM}}
+
+
+
+%\newcommand{\gp}{{\acro{GP}}}
+\newcommand{\gpt}{{\sc gp}}
+\newcommand{\MLP}{{\acro{MLP}}}
+
+\newcommand{\gp}{{\acro{gp}}}
+\newcommand{\bmc}{{\acro{bmc}}}
+\newcommand{\bq}{{\acro{bq}}}
+\newcommand{\sbq}{{\acro{sbq}}}
+
 
 % Kernel stuff
 

@@ -46,7 +46,7 @@ draw from & & draw from & & draw from & draw from\\
 1D GP prior & & 1D GP prior & & 1st order GP prior & 2nd order GP prior\\
 %Draw from product kernel GP prior & Draw from additive kernel GP prior\\
 \end{tabular}
-\caption{A first-order additive kernel, and a product kernel.  Left: a draw from a first-order additive kernel corresponds to a sum of draws from one-dimensional kernels.  Right: functions drawn from a product kernel prior have weaker long-range dependencies, and less long-range structure.
+\caption[Additive kernels correspond to additive functions]{A first-order additive kernel, and a product kernel.  Left: a draw from a first-order additive kernel corresponds to a sum of draws from one-dimensional kernels.  Right: functions drawn from a product kernel prior have weaker long-range dependencies, and less long-range structure.
 %In this example, both kernels are composed of one dimensional squared-exponential kernels, but this need not be the case in general.
 }
 \label{fig:kernels}
@@ -423,34 +423,6 @@ Note that we are free to choose a different covariance function along each dimen
 
 \cite{shawe2004kernel} define ANOVA kernels thusly: "The ANOVA kernel of degree d is like the all-subsets kernel except that it is restricted to subsets of the given cardinality $d$."
 
-\subsection{Graph Kernels}
 
-\cite{shawe2004kernel} introduce a very flexible way of specifying sums of products of kernels, called \textit{graph kernels}. [Should this be in future work?]
-
-\begin{figure}[h]
-\centering
-\begin{tabular}{cc}
-\includegraphics[width=0.5\textwidth]{\additivefigsdir/housing_order_mse.pdf}& 
-\includegraphics[width=0.5\textwidth]{\additivefigsdir/housing_order_ll.pdf} \\
-Mean Squared Error & Log Likelihood\\
-\end{tabular}
-\caption{ Likelihood versus order of interaction }
-\label{fig:housing}
-\end{figure}
-
-
-
-\begin{figure}[h]
-\centering
-\begin{tabular}{cc}
-\includegraphics[width=0.5\textwidth]{\additivefigsdir/synth_plot_1}\\
-\end{tabular}
-\caption{ ARD vs AS in an irrelevant variables contest. }
-\label{fig:housing}
-\end{figure}
-
-
-
-%Especially good for trying to find the effects of interventions?
 %The fact that our model is additive does not mean that it ignores multiplicative, or higher-order interactions
 
