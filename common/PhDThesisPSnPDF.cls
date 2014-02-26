@@ -17,6 +17,7 @@
 \typeout{https://github.com/kks32/phd-thesis-template/}
 
 
+
 % ******************************************************************************
 % **************************** Class Definition ********************************
 % ******************************************************************************
@@ -169,6 +170,11 @@ supported!}
 \pdfpageheight=\the\paperheight
 \fi
 
+\RequirePackage[usenames, dvipsnames]{color} 
+
+% Stuff added by David Duvenaud
+\definecolor{mydarkblue}{rgb}{0.08,0.08,0.45}
+
 \if@print
     % For Print version
     \hypersetup{
@@ -183,7 +189,7 @@ supported!}
       colorlinks=true, 
       linkcolor=black,
       urlcolor=black, 
-      citecolor=black, 
+      citecolor=mydarkblue, 
       anchorcolor=black
     }
     \ifPHD@custommargin
@@ -218,7 +224,7 @@ supported!}
       colorlinks=true, 
       linkcolor=blue, 
       urlcolor=blue,
-      citecolor=blue, 
+      citecolor=mydarkblue, 
       anchorcolor=green,
       pagebackref,
       hyperindex = true,
@@ -265,7 +271,7 @@ supported!}
 \RequirePackage[title,titletoc]{appendix}
 
 % *************************** Graphics and Figures *****************************
-\RequirePackage[usenames, dvipsnames]{color} 
+
 \ifpdf 
         % Convert eps figures to pdf
         \RequirePackage{epstopdf} 
