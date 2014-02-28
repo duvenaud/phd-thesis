@@ -1,5 +1,14 @@
 % All my custom preamble stuff.  Shouldn't overlap with anything in official-preamble
 
+
+
+
+\newcommand{\grammarfiguresdir}{grammar-figures}
+\newcommand{\grammartablesdir}{grammar-tables}
+
+\usepackage{booktabs}
+\usepackage{tabularx}
+\renewcommand{\tabularxcolumn}[1]{>{\arraybackslash}m{#1}}
 \usepackage{relsize}
 \usepackage{graphicx}
 \usepackage{amsmath,amssymb,textcomp}
@@ -135,7 +144,10 @@
 
 \newcommand{\mf}{\bar{\vf}}
 
+%\newcommand{\mf}{\mu} %{\bar{\ell}}
+\newcommand{\lf}{f} % Likelihood function
 \newcommand{\st}{_\star}
+
 
 \newcommand{\inv}{^{{\mathsmaller{-1}}}}
 \newcommand{\tohalf}{^{{\mathsmaller{\nicefrac{1}{2}}}}}
@@ -143,6 +155,7 @@
 \newcommand{\Normal}{\mathcal{N}}
 \newcommand{\N}[3]{\mathcal{N}\!\left(#1|#2,#3\right)}
 \newcommand{\Nt}[2]{\mathcal{N}\!\left(#1,#2\right)}
+\newcommand{\NT}[2]{\mathcal{N}\!\left(#1,#2\right)}
 \newcommand{\bN}[3]{\mathcal{N}\big(#1|#2,#3\big)}
 \newcommand{\boldN}[3]{\text{\textbf{\mathcal{N}}}\big(#1;#2,#3\big)}
 \newcommand{\ones}[1]{\mat{1}_{#1}}
@@ -154,9 +167,9 @@
 
 \newcommand{\GPt}[2]{\mathcal{GP}\!\left(#1,#2\right)}
 
+\DeclareMathOperator{\tr}{tr}
 \DeclareMathOperator{\chol}{chol}
 \DeclareMathOperator{\diag}{diag}
-
 
 \newenvironment{narrow}[2]{%
   \begin{list}{}{%
@@ -207,7 +220,10 @@
 \newcommand{\bmc}{{\acro{bmc}}}
 \newcommand{\bq}{{\acro{bq}}}
 \newcommand{\sbq}{{\acro{sbq}}}
-
+\newcommand{\ibp}{{\acro{ibp}}}
+\newcommand{\crp}{{\acro{crp}}}
+\newcommand{\dirpro}{{\acro{dp}}}
+\newcommand{\mcmc}{{\acro{mcmc}}}
 
 % Kernel stuff
 
@@ -243,4 +259,11 @@
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{prop}[theorem]{Proposition}
+\newtheorem{proposition}{Proposition}
 \newtheorem*{cor}{Corollary}
+
+% For infinite bq
+\newcommand{\iv}{\theta}
+\newcommand{\viv}{\vtheta}
+
+
