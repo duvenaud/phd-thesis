@@ -1,13 +1,25 @@
 \input{common/header.tex}
 \inbpdocument
 
-\newcommand{\introfigsdir}{intro-figures}
-\newcommand{\introtablesdir}{intro-tables}
+
 
 \chapter{Introduction}
 \label{ch:intro}
 
 
+\section{Regression}
+
+
+\section{Gaussian process models}
+
+
+\includegraphics[width=11cm]{\introfigsdir/post-nosamples}
+
+
+\section{Latent Variable Models}
+
+
+\includegraphics[width=11cm]{\gplvmfiguresdir/gplvm_1d_draw_9}
 
 
 \section{Derivation of Component Marginal Variance}
@@ -40,13 +52,16 @@ By the formula for Gaussian conditionals:
 \end{align}
 we get that the conditional variance of a Gaussian conditioned on its sum with another Gaussian is given by
 \begin{align}
-\vf_1^\star | \vf \sim \Nt{\vmu_1^\star + \vk_1^{\star\tra} (\vK_1 + \vK_2)\inv \left( \vf - \vmu_1 - \vmu_2 \right) }
-{\vk_1^{\star\star} - \vk_1^{\star\tra} (\vK_1 + \vK_2)\inv \vk_1^\star }.
+%\vf_1^\star | \vf \sim \Nt{\vmu_1^\star + \vk_1^{\star\tra} (\vK_1 + \vK_2)\inv \left( \vf - \vmu_1 - \vmu_2 \right) }
+\vf_1(\vx^\star) | \vf(\vx) \sim \mathcal{N}\big( & \vmu_1^\star + \vk_1^{\star\tra} (\vK_1 + \vK_2)\inv \left( \vf - \vmu_1 - \vmu_2 \right) , \\
+& \vk_1^{\star\star} - \vk_1^{\star\tra} (\vK_1 + \vK_2)\inv \vk_1^\star
+\big).
 \end{align}
 
 The covariance between the two components, conditioned on their sum is given by:
 \begin{align}
-\cov(\vf_1^\star, \vf_2^\star) | \vf = - \vk_1^{\star\tra} (\vK_1 + \vK_2)\inv \vk_2^\star
+%\cov(\vf_1^\star, \vf_2^\star) | \vf = - \vk_1^{\star\tra} (\vK_1 + \vK_2)\inv \vk_2^\star
+\covargs{\vf_1(\vx^\star)}{\vf_2(\vx^\star) | \vf(\vx) }= - \vk_1(\vx^{\star}, \vx)  \left[ \vK_1(\vx, \vx) + \vK_2(\vx, \vx) \right] \inv \vk_1(\vx, \vx^{\star}) 
 \end{align}
 
 These formulae express the posterior model uncertainty about different components of the signal, integrating over the possible configurations of the other components.

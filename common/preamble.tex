@@ -1,10 +1,13 @@
 % All my custom preamble stuff.  Shouldn't overlap with anything in official-preamble
 
 
-
-
+\newcommand{\topologyfiguresdir}{topology-figures}
+\newcommand{\infinitefiguresdir}{infinite-figures}
 \newcommand{\grammarfiguresdir}{grammar-figures}
 \newcommand{\grammartablesdir}{grammar-tables}
+\newcommand{\introfigsdir}{intro-figures}
+\newcommand{\introtablesdir}{intro-tables}
+\newcommand{\gplvmfiguresdir}{gplvm-figures}
 
 \usepackage{booktabs}
 \usepackage{tabularx}
@@ -16,6 +19,7 @@
 \usepackage{amsthm}
 \usepackage{tikz}
 \usetikzlibrary{arrows}
+\usetikzlibrary{calc}
 \usepackage{nth}
 \usepackage{rotating}
 \usepackage{array}
@@ -62,9 +66,11 @@
 \newcommand{\expectargs}[2]{\mathbb{E}_{#1} \left[ {#2} \right]}
 \newcommand{\var}{\mathbb{V}}
 \newcommand{\varianceargs}[2]{\mathbb{V}_{#1} \left[ {#2} \right]}
-\newcommand{\variance}{\mathbb{V}}
 \newcommand{\cov}{\operatorname{cov}}
 \newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\covargs}[2]{\cov \left[ {#1}, {#2} \right]}
+\newcommand{\variance}{\mathbb{V}}
+
 \newcommand{\covarianceargs}[2]{\Cov_{#1} \left[ {#2} \right]}
 \newcommand{\colvec}[2]{\left[ \begin{array}{c} {#1} \\ {#2} \end{array} \right]}
 \newcommand{\tbtmat}[4]{\left[ \begin{array}{cc} {#1} & {#2} \\ {#3} & {#4} \end{array} \right]}

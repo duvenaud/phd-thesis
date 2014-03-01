@@ -1,11 +1,290 @@
 \input{common/header.tex}
 \inbpdocument
 
-\newcommand{\infinitefiguresdir}{infinite-figures}
+
 
 
 \chapter{Expressing Structure through Kernels}
 \label{ch:kernels}
+
+
+
+
+When modeling functions, encoding known symmetries greatly aids learning and prediction.  We demonstrate that in nonparametric regression, many types of symmetry can be enforced through operations on the covariance function.  These symmetries can be composed to produce nonparametric priors on functions whose domains have interesting topological structure such as spheres, torii, and M\"{o}bius strips.  We demonstrate that marginal likeihood an be used to automatically search over such structures.
+
+Joint work with David Reshef, Roger Grosse, Joshua B. Tenenbaum
+
+\section{Introduction}
+
+%connected Riemannian manifold
+
+It is well-known that the properties of the functions we wish to model can be expressed mainly through the covariance function \cite{rasmussen38gaussian}.
+
+\section{Expressing Symmetries}
+
+In this section, we give recipes for expressing several classes of symmetries.  Later, we will show how these can be combined to produce more interesting structures.
+
+\paragraph{Periodicity}
+Given $D$ dimensions, we can enforce rotational symmetry on any subset of the dimensions:
+%
+\begin{align}
+f(x) = f( x_i + k \tau_i) \quad \forall k \in \mathbb{Z}
+\end{align}
+%
+by the applying a kernel between pairs transformed coordinates $\sin(x), \cos(x)$:
+%
+\begin{align}
+k_{\textnormal{periodic}}(x, x') = k(\sin(x), \cos(x), \sin(x'), \cos(x'))
+\end{align}
+%
+We can also apply rotational symmetry repeatedy to a single dimension.
+
+\paragraph{Reflective Symmetry along an axis}
+we can enforce the symmetry
+\begin{align}
+f(x) = f( -x)
+\end{align}
+%
+by the kernel transform
+%
+\begin{align}
+k_{\textnormal{symm arg1}}(x, x') & = k(x, x') + k(x, -x') \nonumber \\ & + k(-x, x') + k(-x, -x')
+\end{align}
+
+\paragraph{Reflective Symmetry along a diagonal}
+We can enforce symmetry between any two dimensions:
+%
+\begin{align}
+f(x, y) = f( y, x)
+\end{align}
+%
+by two methods:  In the additive method, we transform the kernel by:
+%
+\begin{align}
+k_{\textnormal{reflect add}}(x, y, x', y') 
+& = k(x, y, x', y') \nonumber \\
+& + k(x, y, y', x') \nonumber \\
+& + k(y, x, x', y') \nonumber \\
+& + k(y, x, y', x')
+\end{align}
+or by
+\begin{align}
+k_{\textnormal{reflect min}}(x, y, x', y') = k( & \min(x, y), \max(x,y), \nonumber \\ & \min(x', y'), \max(x',y') )
+\end{align}
+however, the second method will in general lead to non-differentiability along $x = y$.  Figure \ref{fig:add_vs_min} shows the difference.
+
+\begin{figure}
+\begin{tabular}{cc}
+\includegraphics[width=0.45\columnwidth,clip=true,trim=16cm 1cm 3cm 1cm]{\topologyfiguresdir/symmetric-naive} &
+\includegraphics[width=0.45\columnwidth,clip=true,trim=16cm 1cm 3cm 1cm]{\topologyfiguresdir/symmetric-projection} \\
+Additive method & min method
+\end{tabular}
+\caption{An illustration of two methods of introducing symmetry: The additive method or the min method.  The additive method has half the marginal variance away from $y = x$, but the min method introduces a non-differentiable seam along $y = x$.}
+\label{fig:add_vs_min}
+\end{figure}
+
+\paragraph{Spherical Symmetry}
+
+We can also enforce that a function expresses the symmetries obeyed by $n-spheres$ by simply transforming a set of $n - 1$ coordinates by:
+%
+\begin{align}
+x_1 & = \cos(\phi_1) \nonumber \\
+x_2 & = \sin(\phi_1) \cos(\phi_2) \nonumber \\
+x_3 & = \sin(\phi_1) \sin(\phi_2) \cos(\phi_3) \nonumber \\
+& \vdots \nonumber \\
+x_{n-1} & = \sin(\phi_1) \cdots \sin(\phi_{n-2}) \cos(\phi_{n-1}) \nonumber \\
+x_n & = \sin(\phi_1) \cdots \sin(\phi_{n-2}) \sin(\phi_{n-1})
+\end{align}
+
+\cite{flanders1989}
+
+\subsection{Parametric embeddings}
+
+In general, we can always enforce the symmetries obeyed by a given surface by finding a parametric embedding to that surface.  However, it is not clear how to do this in general without introducing unnecessary 
+
+
+%It is possible to construct
+
+%Because then one dimension would be special.
+
+
+
+
+
+\section{How to generate 3D shapes with a given topology}
+
+First create a mesh in 2d.  Then draw 3 independent functions from a GP prior with the relevant symmetries encoded in the kernel.  Then, map the 2d points making up the mesh through those 3 functions to get the 3D  coordinates of each point on the mesh.
+
+This is similar in spirit to the GP-LVM model \cite{lawrence2005probabilistic}, which learns an embedding of the data into a low-dimensional space, and constructs a fixed kernel structure over that space.
+
+\begin{figure}
+\begin{tabular}{cc}
+\includegraphics[width=0.45\columnwidth,clip=true,trim=3cm 2cm 2cm 2cm]{\topologyfiguresdir/sphere} &
+\includegraphics[width=0.45\columnwidth,clip=true,trim=2cm 2cm 2cm 1cm]{\topologyfiguresdir/donut2} \\
+Spheroid & Toroid
+\end{tabular}
+\caption{Generating 2D manifolds with different topological structures.  By enforcing that the functions mapping from $\mathbb{R}^2$ to $\mathbb{R}^3$ obey the appropriate symmetries, the surfaces created have the corresponding topologies (ignoring self-intersections).}
+\label{fig:gen_surf}
+\end{figure}
+
+\subsection{M\"{o}bius strips}
+
+A prior on functions on M\"{o}bius strips can be achieved fairly easily.  We simply need to enforce the following symmetries:
+%
+\begin{align}
+f(x, y) & = f( x, y + k_y \tau) \quad \forall k_y \in \mathbb{Z} \\
+f(x, y) & = f( x + k_x \tau, y) \quad \forall k_x \in \mathbb{Z} \\
+f(x, y) & = f( y, x )
+\end{align}
+
+If we imagine moving along a M\"{o}bius strip, that is equivalent to moving along a diagonal in the function generated.
+Figure \ref{fig:mobius} shows this.
+%
+\begin{figure}
+\begin{tabular}{cc}
+\includegraphics[width=0.45\columnwidth, height=0.45\columnwidth, clip=true,trim=3cm 2cm 2cm 2cm]{\topologyfiguresdir/mobius_field} &
+\includegraphics[width=0.45\columnwidth, height=0.45\columnwidth, clip=true,trim=2cm 2cm 2cm 1cm]{\topologyfiguresdir/mobius_regression} \\
+Funcion a M\"{o}bius strip & Zoom in along diagonal \\
+\includegraphics[width=0.45\columnwidth,clip=true,trim=3cm 2cm 2cm 2cm]{\topologyfiguresdir/mobius_strip} &
+\includegraphics[width=0.45\columnwidth,clip=true,trim=2cm 2cm 2cm 1cm]{\topologyfiguresdir/sudanese_mobius} \\
+M\"{o}bius strip & Sudanese M\"{o}bius strip
+\end{tabular}
+\caption{Generating 2D manifolds with different topological structures.  By enforcing that the functions mapping from $\mathbb{R}^2$ to $\mathbb{R}^3$ obey the appropriate symmetries, the surfaces created have the corresponding topologies (ignoring self-intersections).}\label{fig:mobius}
+\end{figure}
+%
+The second example is doesn't resemble a typical M\"{o}bius strip because the edge of the mobius strip is in a geometric circle.  This kind of embedding is resembles the Sudanese M\"{o}bius strip [cite].
+
+Another classic example of a function living on a Mobius strip is the auditory quality of 2-note intervals.  The harmony of a pair of notes is periodic (over octaves) for each note, and the 
+
+
+
+
+
+\section{Examples}
+
+\subsection{Computing molecular energies}
+
+\begin{figure}
+\begin{center}
+  \begin{tikzpicture}
+
+%\pgfmathsetmacro{\r}{3cm}
+%\pgfmathsetmacro{\ho}{70}
+%\pgfmathsetmacro{\ht}{30}
+\newcommand{\radius}{3}
+\newcommand{\hone}{120}
+\newcommand{\htwo}{70}
+\newcommand{\hthree}{30}
+
+	\coordinate (O) at (0, 0);
+	\coordinate (left) at ({\radius*cos(\hone)}, {\radius*sin(\hone)});
+	\coordinate (right) at ({\radius*cos(\htwo)}, {\radius*sin(\htwo)});
+	\coordinate (zero) at ({\radius*cos(\hthree)}, {\radius*sin(\hthree)});
+
+	\draw[fill] (left) circle (2pt);
+	\draw (left) node[below, left] {H};
+	
+	\draw[fill] (right) circle (2pt);
+	\draw (right) node[right] {H};
+
+	\draw[fill] (zero) circle (2pt);
+	\draw (zero) node[right] {H};
+
+	\draw[fill] (O) circle (3pt);
+	\draw (O) node[below] {C};
+
+	\draw (left) -- (O);
+	\draw (right) -- (O);
+	\draw (zero) -- (O);
+
+	\begin{scope}
+	\path[clip] (O) -- (right) -- (zero);
+	\fill[red, opacity=0.5, draw=black] (O) circle (2);
+	\node at ($(O)+(50:1.6)$) {$\theta_1$};	
+	\end{scope}
+	
+	\begin{scope}
+	\path[clip] (O) -- (left) -- (right);
+	\fill[green, opacity=0.5, draw=black] (O) circle (1.8);
+	\node at ($(O)+(90:1.4)$) {$\theta_2$};	
+	\end{scope}	
+	
+  \end{tikzpicture}
+\end{center}
+\caption{An example of a function expressing the same symmetries as a Mobius strip in two of its arguments.  The energy of a molecular configuration $f(\theta_1, \theta_2)$ depends only on the relative angles between atoms, and because each atom is indistiguishable, is invariant to permuting the atoms. }
+\label{fig:molecule}
+\end{figure}
+
+Figure \ref{fig:molecule} gives one example of a function which obeys the same symmetries as a M\"{o}bius strip, in some subsets of its arguments.
+
+
+\subsection{Translation invariance in images}
+
+Most models of images are invariant to spatial translations [cite convolution nets].  Similarily, most models of sounds are also invariant to translation through time.
+
+Note that this sort of translational invariance is completely distinct from the stationarity properties of kernels used in Gaussian process priors.  A stationary kernel implies that the prior is invariant to translations of the entire training and test set.
+
+We are discussing here a discretized input space (into pixels or the audio equivalent), where the input vectors have one dimension for every pixel.  We are interested in creating priors on functions that are invariant to shifting a signal along its pixels:
+%
+\begin{align}
+f \Bigg( \raisebox{-2.5ex}{ \includegraphics[width=1cm]{\topologyfiguresdir/grid2} } \Bigg) 
+= f \Bigg( \raisebox{-2.5ex}{ \includegraphics[width=1cm]{\topologyfiguresdir/grid3} } \Bigg)
+\end{align}
+
+Translational invariance in this setting is equivalent to symmetries between dimensions in the input space.
+
+This prior can be achieved in one dimension by using the following kernel transformation:
+%
+\begin{align}
+k \left( (x_1, x_2, \dots, x_D ), (x_1', x_2', \dots, x_D' ) \right) & = \nonumber \\
+\sum_{i=1}^D \prod_{j=1}^D k( x_j, x_{ i + j \textnormal{mod $D$} }' )
+\end{align}
+%
+Edge effects can be handled either by wrapping the image around, or by padding it with zeros.
+
+\paragraph{Convolution} The resulting kernel could be called a \emph{discrete convolution kernel}.  For an image with $R, C$ rows and columns, it can also be written as:
+%
+\begin{align}
+k_{\textnormal{conv}} \left( (x_{11}, x_{12}, \dots, x_{RC} ), (x_{11}', x_{12}', \dots, x_{RC}' ) \right) & = \nonumber \\
+%\sum_{i=-L}^L \sum_{j=-L}^L k\left( (x_{1+i,1+j}, x_{1+i,2+j} , \dots, x_{R+i,C+j} ), (x_{1+i,1+j}', x_{1+i,2+j}' , \dots, x_{R+i,C+j}' ) \right)
+\sum_{i=-L}^L \sum_{j=-L}^L k\left( \vx, T_{ij}(\vx') \right)
+\end{align}
+%
+where $T_{ij}(\vx)$ is the operator which replaces each $x_{mn}$ with $x_{m+i, n+j}$.  Thus we are simply defining the covariance between two images to be the sum of all covariances between all relative translations of the two images.  We can also normalize the kernel by pre-multiplying it with $\sqrt{k_{\textnormal{conv}}(\vx, \vx) k_{\textnormal{conv}}(\vx', \vx') }$.
+
+%$f \left( \begin{tikzpicture} \draw[step=0.1,black,thin] (0.3,0.3) grid (1,1); \end{tikzpicture} \right)$
+
+
+
+Is there a pathology of the additive construction that appears in the limit?
+
+\subsection{Max-pooling}
+What we'd really like to do is a max-pooling operation.  However, in general, a kernel which is the max of other kernels is not PSD [put counterexample here?].  Is the max over co-ordinate switching PSD?
+
+\section{Related Work}
+\label{sec:related_work}
+
+\paragraph{Invariances in Gaussian processes}
+\cite{Invariances13} show that, for Gaussian processes, with probability one, $f(\vx) = f(T(\vx))$ if and only if $k(x, x') = k(x, T(x'))$.
+
+
+\paragraph{Structure discovery}
+
+%There have been several attempts to uncover the structural form of a dataset by searching over a grammar of structures. For example, \cite{schmidt2009distilling}, \cite{todorovski1997declarative} and \cite{washio1999discovering} attempt to learn parametric forms of equations to describe time series, or relations between quantities. Because we learn expressions describing the covariance structure rather than the functions themselves, we are able to capture structure which does not have a simple parametric form.
+
+\citet{kemp2008discovery} learned the structural form of a graph used to model human similarity judgments.
+Examples of graphs included planes, trees, and cylinders.
+Some of their discrete graph structures have continous analogues in our own space; \eg $\SE_1 \times \SE_2$ and $\SE_1 \times \Per_2$ can be seen as mapping the data to a plane and a cylinder, respectively.
+
+%\citet{grosse2012exploiting} performed a greedy search over a compositional model class for unsupervised learning, using a grammar and a search procedure which parallel our own. This model class contained a large number of existing unsupervised models as special cases and was able to discover such structure automatically from data. Our work is tackling a similar problem, but in a supervised setting.
+
+
+
+
+
+
+
+
 
 \section{Nonparametric Inference via Bayesian Quadrature}
 
