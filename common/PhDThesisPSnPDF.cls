@@ -173,7 +173,7 @@ supported!}
 \RequirePackage[usenames, dvipsnames]{color} 
 
 % Stuff added by David Duvenaud
-\definecolor{mydarkblue}{rgb}{0.08,0.08,0.45}
+\definecolor{mydarkblue}{rgb}{0.00,0.08,0.45}
 
 \if@print
     % For Print version

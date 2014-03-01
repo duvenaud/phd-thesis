@@ -8,41 +8,6 @@
 \input{common/header.tex}
 \inbpdocument
 
-\newcommand{\deeplimitsfiguresdir}{deep-limits-figures}
-\newcommand{\deeplimitstablesdir}{deep-limits-tables}
-
-% For tikz figures
-\newcommand{\numdims}[0]{3}
-\newcommand{\numhidden}[0]{4}
-\newcommand{\upnodedist}[0]{0.6cm}
-\newcommand{\bardist}[0]{\hspace{-0.2cm}}
-
-
-
-
-
-% Unify notation between neural-net land and GP-land.
-\newcommand{\hphi}{h}
-\newcommand{\hPhi}{\vh}
-\newcommand{\walpha}{w}
-\newcommand{\wboldalpha}{\bw}
-\newcommand{\wcapalpha}{\vW}
-\newcommand{\lengthscale}{w}
-
-\newcommand{\layerindex}{\ell}
-
-
-% TODO: delete all these.
-\newcommand{\sectiondist}{}
-
-\newcommand{\gpdrawbox}[1]{
-\setlength\fboxsep{0pt}
-\hspace{-0.15in} 
-\fbox{
-\includegraphics[width=0.464\columnwidth]{\deeplimitsfiguresdir/deep_draws/deep_gp_sample_layer_#1}
-}}
-
-
 
 \chapter{Characterizing Deep Gaussian Process Models}
 \label{ch:deep-limits}
@@ -71,7 +36,6 @@ This chapter was joint work with Oren Rippel, Ryan P. Adams and Zoubin Ghahraman
 
 
 \section{Introduction}
-\sectiondist
 
 Much recent work on deep networks has focused on weight initialization \citep{martens2010deep}, regularization \citep{lee2007sparse} and network architecture \citep{gens2013learning}.
 However, the interactions between these different design decisions can be complex and difficult to characterize.
@@ -110,9 +74,7 @@ We also present two related analyses:  first, we examine the properties of a arb
 
 
 \section{Relating deep neural nets and deep Gaussian processes}
-%\section{RELATING DEEP NETS AND DEEP GAUSSIAN PROCESSES}
 \label{sec:relating}
-\sectiondist
 %There are two ways to view deep Gaussian processes as neural networks.  First, we can
 %We introduce a generative non-parametric model to address this problem.  Our approach is based on the GP-LVM ~\cite{lawrence2004gaussian,salzmann2008local,lawrence2009non}, a flexible nonparametric density model.  
 
@@ -255,7 +217,6 @@ This second view lets us compare deep \gp{} models to standard neural net archit
 
 
 \section{Characterizing deep Gaussian processes}
-\sectiondist
 \label{sec:characterizing-deep-gps}
 
 In this section, we develop several theoretical results that explore the behavior of deep \gp{}s as a function of their depth.  This will allow us in section \ref{sec:formalizing-pathology} to formally identify a pathology that emerges in very deep networks.
@@ -264,7 +225,6 @@ Specifically, we will show that the size of the derivative of a one-dimensional 
 
 
 \subsection{One-dimensional asymptotics}
-\sectiondist
 \label{sec:1d}
 
 %One way to understand the properties of functions drawn from deep \gp{}s and deep networks is by looking at the distribution of the derivative of these functions. We first focus on the one-dimensional case.
@@ -348,7 +308,6 @@ Figure \ref{fig:deep_draw_1d} shows this behavior in a draw from a 1D deep \gp{}
 
 %\section{The Jacobian of deep GP is a product of independent normal matrices}
 \subsection{Distribution of the Jacobian}
-\sectiondist
 \label{sec:theorem}
 
 We now derive the distribution on Jacobians of multivariate functions drawn from a deep \gp{} prior.
@@ -445,7 +404,6 @@ Theorem \ref{thm:prodjacob} allows us to analyze the representational properties
 
 
 \section{Formalizing a pathology}
-\sectiondist
 \label{sec:formalizing-pathology}
 %\subsection{Jacobian Singular Value Spectrum}
 
@@ -563,7 +521,6 @@ To what extent are these pathologies present in nets being used today?  In simul
 
 
 \section{Fixing the pathology}
-\sectiondist
 \label{sec:fix}
 
 \begin{figure}[h!]
@@ -703,219 +660,9 @@ Figure \ref{fig:good_spectrum} shows that with this architecture, even 50-layer 
 
 
 
-\section{Deep kernels}
-\label{sec:deep_kernels}
-\sectiondist
 
-\cite{NIPS2005_424} showed that kernel machines have limited generalization ability when they use a local kernel such as the squared-exp.
-However, many interesting non-local kernels can be constructed which allow non-trivial extrapolation.
-For example, periodic kernels can be viewed as a 2-layer-deep kernel, in which the first layer maps $x \rightarrow [\sin(x), \cos(x)]$, and the second layer maps through basis functions corresponding to the \humble{SE} kernel.
-
-%In addition to analyzing \MLP{}s with random weights, we can also analyze fixed feature mappings with different connectivity architectures.
- 
-Can we construct other useful kernels by composing fixed feature maps several times, creating deep kernels?  \citet{cho2012kernel} constructed kernels of this form, repeatedly applying multiple layers of feature mappings.
-%Given a kernel $k_1(\vx, \vx') = \hPhi(\vx) \tra \hPhi(\vx')$, 
-We can compose the feature mapping of two kernels:
-\begin{align}
-k_{1}(\vx, \vx') & = \hPhi_1(\vx) \tra \hPhi_1(\vx') \\
-k_{2}(\vx, \vx') & = \hPhi_2(\vx) \tra \hPhi_2(\vx') \\
-\left( k_1 \circ k_2 \right)(\vx, \vx') & = k_2 \left(\hPhi_1(\vx), \hPhi_1(\vx') \right) \\
-& = \left[ \hPhi_2 \left( \hPhi_1(\vx) \right)\right] \tra \hPhi_2 \left(\hPhi_1(\vx') \right) 
-\end{align}
-
-Composing the squared-exp kernel with any implicit mapping $\hPhi(\vx)$ has a simple closed form:
-%, this composition operation has a closed form for any starting kernel:% for any set of starting features $\hPhi_n(\vx)$:
-%
-\begin{align}
-%k_1(\vx, \vx') & = \exp \left( -\frac{1}{2} ||\vx - \vx'||_2^2 \right) \\
-& k_{L+1} \left( \vx, \vx' \right) = k_{SE} \left( \hPhi(\vx), \hPhi(\vx') \right) =  \\
-%& = \left( \hPhi^{SE} \left(\hPhi^{1}(\vx) \right) \right) \tra \hPhi^{SE} \left( \hPhi^{1}(\vx') \right) \\
-& = \exp \left( -\frac{1}{2} || \hPhi(\vx) - \hPhi(\vx')||_2^2 \right) \nonumber\\
-%k_{n+1}(\vx, \vx') 
-%& = \exp \left( -\frac{1}{2} \sum_i \left[ \hphi_n^{(i)}(\vx) - \hphi_n^{(i)}(\vx') \right]^2 \right) \\
-& = \exp\left ( -\frac{1}{2} \left[ \hPhi(\vx) \tra \hPhi(\vx) - 2 \hPhi(\vx) \tra \hPhi(\vx') + \hPhi(\vx') \tra \hPhi(\vx') \right] \right) \nonumber \\
-%k_2(\vx, \vx') & = \exp \left( -\frac{1}{2} \left[ \sum_i \hphi_i(\vx)^2 - 2 \sum_i \hphi_i(\vx) \hphi_i(\vx') + \sum_i \hphi_i(\vx')^2 \right] \right) \\
-%k_{n+1}(\vx, \vx') 
-& = \exp \left( -\frac{1}{2} \left[ k_{L}(\vx, \vx) - 2 k_{L}(\vx, \vx') + k_{L}(\vx', \vx') \right] \right) \nonumber
-%k_{n+1}(\vx, \vx') 
-%& = \exp \left( k_1(\vx, \vx') - 1 \right) \qquad \textnormal{(if $k_1(\vx, \vx) = 1$)} \nonumber
-\end{align}
-%
-%\begin{figure}
-%\centering
-%\begin{tabular}{ccc}
-%\includegraphics[width=0.5\columnwidth, clip, trim = 0cm 0cm 0cm 0.61cm]{\deeplimitsfiguresdir/deep_kernel} &
-%\includegraphics[width=0.5\columnwidth, clip, trim = 0cm 0cm 0cm 0.61cm]{\deeplimitsfiguresdir/deep_kernel_draws} \\
-%Kernel derived from iterated feature transforms & Draws from the corresponding kernel
-%\end{tabular}
-%\caption{A degenerate kernel produced by repeatedly applying a feature transform.}
-%\label{fig:deep_kernel}
-%\end{figure}
-%
-%Thus, if $k_1(x,y) = e^{-||x - y||2}$, then the two-layer kernel is simply $k_2(x,y) = e^{k_1(x, y) - 1}$.  This formula is true for every layer: $k_{n+1}(x,y) = e^{k_n(x, y) - 1}$.
-%
-%Note that nothing in this derivation depends on details of $k_n$, except that $k_n( \vx, \vx) = 1$.
-%Note that this result holds for any base kernel $k_n$, as long as $k_n( \vx, \vx) = 1$.
-%  Because this is true for $k_2$ as well, this recursion holds in general, and we have that $k_{n+1}(x,y) = e^{k_n(x, y) - 1}$.  
-Thus, we can express $k_{L+1}$ exactly in terms of $k_L$.
-
-\paragraph{Infinitely deep kernels}
-What happens when we repeat this composition of feature maps many times, starting with the squared-exp kernel?  In the infinite limit, this recursion converges to $k(\vx,\vx') = 1$ for all pairs of inputs, which corresponds to a prior on constant functions $f(\vx) = c$.
-
-%Figure \ref{fig:deep_kernel_connected} shows this kernel at different depths, including the degenerate limit.  
-%
-%One interpretation of why repeated feature transforms lead to this degenerate prior is that each layer can only lose information about the previous set of features.  
-%In the limit, the transformed features contain no information about the original input $\vx$.  Since the function doesn't depend on its input, it must be the same everywhere.
-
-\paragraph{A non-degenerate construction}
-
-As before, we can overcome this degeneracy by % following a suggestion from \cite{neal1995bayesian}, we 
-connecting the inputs $\vx$ to each layer.  To do so, we simply augment the feature vector $\hPhi_{L}(\vx)$ with $\vx$ at each layer: 
-%
-\begin{align}
-%k_1(\vx, \vx') & = \exp \left( -\frac{1}{2} ||\vx - \vx'||_2^2 \right) \\
- k_{L+1}(\vx, \vx') % = \nonumber\\
-& = \exp \left( -\frac{1}{2} \left|\left| \left[ \! \begin{array}{c} \hPhi_{L}(\vx) \\ {\color{blue} \vx} \end{array} \! \right]  - \left[ \! \begin{array}{c} \hPhi_{L}(\vx') \\ {\color{blue} \vx'} \end{array} \! \right] \right| \right|_2^2 \right) \nonumber \\
-%k_{n+1}(\vx, \vx') 
-%& = \exp \left( -\frac{1}{2} \sum_i \left[ \hphi_i(\vx) - \hphi_i(\vx') \right]^2 -\frac{1}{2} || \vx - \vx' ||_2^2 \right) \\
-%k_{n+1}(\vx, \vx') & = \exp\left ( -\frac{1}{2} \sum_i \left[ \hphi_i(\vx)^2 - 2 \hphi_i(\vx) \hphi_i(\vx') + \hphi_i(\vx')^2 \right]  -\frac{1}{2} || \vx - \vx' ||_2^2 \right) \\
-%k_2(\vx, \vx') & = \exp \left( -\frac{1}{2} \left[ \sum_i \hphi_i(\vx)^2 - 2 \sum_i \hphi_i(\vx) \hphi_i(\vx') + \sum_i \hphi_i(\vx')^2 \right] \right) \\
-%k_2(\vx, \vx') & = \exp \left( -\frac{1}{2} \left[ k_1(\vx, \vx) - 2 k_1(\vx, \vx') + k_1(\vx', \vx') \right] \right) \\
-%k_{n+1}(\vx, \vx') 
-%& = \exp \left( k_n(\vx, \vx') - 1 -\frac{1}{2} || \vx - \vx' ||_2^2 \right)
-& = \exp \Big( -\frac{1}{2} \big[ k_{L}(\vx, \vx) - 2 k_{L}(\vx, \vx') \nonumber \\ 
-& \qquad \qquad + k_{L}(\vx', \vx') {\color{blue} - || \vx - \vx' ||_2^2} \big] \Big)
-\end{align}
-%
-For the \humble{SE} kernel, this repeated mapping satisfies
-\begin{align}
-k_\infty(\vx, \vx') - \log \left( k_\infty(\vx, \vx') \right) = 1 + \frac{1}{2} || \vx - \vx' ||_2^2
-\end{align}
-%
-The solution to this recurrence has no closed form, but has a similar shape to the Ornstein-Uhlenbeck covariance ${k_{\textnormal{OU}}(x,x') = \exp( -|x - x'| )}$ with lighter tails.
-%
-Samples from a \gp{} prior with this kernel are not differentiable, and are locally fractal.
-%\item This kernel has smaller correlation than the squared-exp everywhere except at $\vx = \vx'$.  
-%\item The tails have the same form as the squared-exp.
-
-\begin{figure}
-\centering
-\begin{tabular}{c}
-\hspace{-0.3cm}\includegraphics[width=\columnwidth, clip, trim = 0.17cm 0.1cm 0.9cm 0.3cm]{\deeplimitsfiguresdir/deep_kernel_connected}
-%input-connected deep kernels
-\end{tabular}
-\caption{
-Input-connected deep kernels.  By connecting the inputs $\vx$ to each layer, the kernel can still depend on its input even after arbitrarily many layers of computation.}
-\label{fig:deep_kernel_connected}
-\end{figure}
-
-
-\begin{figure}
-\centering
-\begin{tabular}{c}
-%\hspace{-0.5cm}\includegraphics[width=0.35\columnwidth, clip, trim = 0cm 0cm 0cm 0.61cm]{\deeplimitsfiguresdir/deep_kernel} &
-\hspace{-0.5cm}\includegraphics[width=\columnwidth, clip, trim = 0cm 0.1cm 0.9cm 0.3cm]{\deeplimitsfiguresdir/deep_kernel_connected_draws} \\
-\end{tabular}
-\caption{GP draws using deep input-connected kernels.  
-}
-\label{fig:deep_kernel_connected_draws}
-\end{figure}
-
-
-
-%\subsection{A fully-connected kernel}
-%However, connecting every layer to every subsequent layer leades to a pathology:
-%\begin{align}
-%k_1(\vx, \vx') & = \exp \left( -\frac{1}{2} ||\vx - \vx'||_2^2 \right) \\
-%k_{n+1}(\vx, \vx') & = \exp \left( -\frac{1}{2} \left|\left| \left[ \! \begin{array}{c} \hPhi_n(\vx) \\ \hPhi_{n-1}(\vx') \end{array} \! \right]  - \left[ \! \begin{array}{c} \hPhi_n(\vx') \\ \hPhi_{n-1}(\vx') \end{array} \! \right] \right| \right|_2^2 \right) \\
-%k_{n+1}(\vx, \vx') & = \exp \left( -\frac{1}{2} \sum_i \left[ \hphi^{(i)}_n(\vx) - \hphi^{(i)}_n(\vx') \right]^2 -\frac{1}{2} \sum_i \left[ \hphi^{(i)}_{n-1}(\vx) - \hphi^{(i)}_{n-1}(\vx') \right]^2 \right)\\
-%k_{n+1}(\vx, \vx') & = \exp\left ( -\frac{1}{2} \sum_i \left[ \hphi_i(\vx)^2 - 2 \hphi_i(\vx) \hphi_i(\vx') + \hphi_i(\vx')^2 \right]  -\frac{1}{2} || \vx - \vx' ||_2^2 \right) \\
-%k_2(\vx, \vx') & = \exp \left( -\frac{1}{2} \left[ \sum_i \hphi_i(\vx)^2 - 2 \sum_i \hphi_i(\vx) \hphi_i(\vx') + \sum_i \hphi_i(\vx')^2 \right] \right) \\
-%k_2(\vx, \vx') & = \exp \left( -\frac{1}{2} \left[ k_1(\vx, \vx) - 2 k_1(\vx, \vx') + k_1(\vx', \vx') \right] \right) \\
-%k_{n+1}(\vx, \vx') & = \exp \left( k_n(\vx, \vx') - 1 \right) \exp \left( k_{n-1}(\vx, \vx') - 1 \right)
-%k_{n+1}(\vx, \vx') & = \prod_{i=1}^n \prod_{j=1}^i \exp \left( k_i(\vx, \vx') - 1 \right)
-%\end{align}
-%Which has the solution $k_\infty = \delta( \vx = \vx' )$, a white noise kernel.
-
-
-%\subsection{Connecting every layer to the end}
-%There is a fourth possibilty (suggested by Carl), of connecting every layer to the output:
-%\begin{align}
-%k_n(\vx, \vx') & = \exp \left( -\frac{1}{2} || \hPhi_n(\vx) - \hPhi_n(\vx')||_2^2 \right) \\
-%k_{n+1}(\vx, \vx') & = \exp \left( k_n(\vx, \vx') - 1 \right) \\
-%k_{L}(\vx, \vx') & = \prod_{i=1}^L \exp \left( k_i(\vx, \vx') - 1 \right)
-%\end{align}
-%Which also has the solution $k_\infty = \delta( \vx = \vx' )$, a white noise kernel.
-
-
-\subsection{When are deep kernels useful models?}
-\sectiondist
-Kernels correspond to fixed feature maps, and so kernel learning is an example of implicit representation learning. %can compute %useful representations.
-Such feature maps can capture rich structure \citep{DuvLloGroetal13}, and can enable many types of generalization, such as translation and rotation invariance in images \citep{kondor2008group}.
-\cite{SalHin08} used a deep neural network to learn feature transforms for kernels, which learn invariances in an unsupervised manner.
-%However, any fixed representation is unlikely to be useful for a given problem unless it has been optimized specifically for that problem.
-The relatively uninteresting properties of the kernels derived in this section simply reflect the fact that an arbitrary deep computation is not usually a useful representation, unless combined with learning.
-
-
-
-\section{Dropout in Gaussian processes}
-\sectiondist
-
-
-Dropout is a method for regularizing neural networks \citep{hinton2012improving, srivastava2013improving}.
-Training with dropout entails randomly and independently ``dropping'' (setting to zero) some proportion $p$ of features or inputs, in order to improve the robustness of the resulting network by reducing co-dependence between neurons.
-To maintain similar overall activation levels, weights are multiplied by $\nicefrac{1}{p}$ at test time. Alternatively, feature activations are multiplied by $\nicefrac{1}{p}$ during training.
-At test time, the set of models defined by all possible ways of dropping-out neurons is averaged over, usually in an approximate way.
-
-\citet{baldi2013understanding} and \citet{wang2013fast} analyzed dropout in terms of the effective prior induced by this procedure in several models, such as linear and logistic regression.
-In this section, we examine the priors on functions that result from performing dropout in the one-hidden-layer neural network implicitly defined by a \gp{} (equation \eqref{eq:one-layer-nn}).
-
-
-\subsection{Dropout on feature activations}
-
-First, we examine the prior that results from randomly dropping features from $\hPhi(\vx)$ with probability $p$.
-If these features have a weight distribution with finite moments
-$\expectargs{}{ \alpha_i} = \mu, \varianceargs{}{\alpha_i} = \sigma^2$,
-then the distribution of weights after each one has been dropped out with probability $p$ is:
-\begin{align}
-r_i \simiid \textnormal{Ber}(p)
-\qquad
-\expectargs{}{ r_i \alpha_i} = p\mu, \varianceargs{}{r_i \alpha_i} = p^2 \sigma^2 \;.
-\end{align}
-However, after we increase the remaining activations to maintain the same expected activation by multiplying them by $\nicefrac{1}{p}$, the resulting moments are again:
-\begin{align}
-\expectargs{}{ \frac{1}{p} r_i \alpha_i } = \frac{p}{p}\mu = \mu, \quad \varianceargs{}{ \frac{1}{p} r_i \alpha_i} = \frac{p^2}{p^2} \sigma^2 = \sigma^2 \;.
-\end{align}
-%Since only the first two moments of the weight variance matter, the resulting \gp{} remain
-Thus, dropping out features of an infinitely-wide MLP does not change the model at all, since no individual feature can have more than infinitesimal contribution to the network output.
-%Is there a better way to drop out features that would lead to robustness?
-
-\subsection{Dropping out inputs}
-
-In a \gp{} with kernel ${k(\vx, \vx') = \prod_{d=1}^D k_d(\vx_d, \vx_d')}$, exact averaging over all possible ways of dropping out inputs with probability $\nicefrac{1}{2}$ results in a mixture of \gp{}s, each depending on only a subset of the inputs:
-\begin{align}
-p \left( f(\vx) \right)= \frac{1}{2^D} \sum_{\vr \in \{0,1\}^D}  \textnormal{\gp} \left(0, \prod_{d=1}^D k_d(\vx_d, \vx_d')^{r_d} \right)
-\label{eq:dropout-mixture}
-\end{align}
-We present two results ways to gain intuition about this model.
-
-First, if the kernel on each dimension has the form ${k_d(\vx_d, \vx_d') = g \left( \frac{\vx_d - \vx_d'}{\lengthscale_d} \right)}$, as does the \humble{SE} kernel \eqref{eq:se_kernel}, then any input dimension can be dropped out by setting its lengthscale $\lengthscale_d$ to $\infty$.
-Thus, dropout on the inputs of a \gp{} corresponds to a spike-and-slab prior on lengthscales, with each dimension independently having $w_d = \infty$ with probability $\nicefrac{1}{2}$.
-
-
-
-Another way to understand the resulting prior is to note that the dropout mixture \eqref{eq:dropout-mixture} has the same covariance as
-\begin{align}
-f(\vx) \sim \textnormal{\gp} \left(0, \frac{1}{2^{-2D}} \sum_{\vr \in \{0,1\}^D}  \prod_{d=1}^D k_d(\vx_d, \vx_d')^{r_d} \right)
-\label{eq:additive-gps}
-\end{align}
-
-A \gp{} whose covariance is a sum of kernels corresponds to a sum of functions, each distributed according to a \gp{}.  Therefore, \eqref{eq:additive-gps} describes a sum of $2^D$ functions, each depending on a different subset of the inputs.
-This model class was studied by \citet{duvenaud2011additive11}, who showed that exact inference in these models can be performed in $\mathcal{O}(N^2 D^2 + N^3)$.
-%Thus, the dropout prior is closely related to a model which learns many functions, each of which only depends on a subset of the inputs.
 
 \section{Related work}
-\sectiondist
 
 Deep \gp{}s were first proposed by \cite{lawrence2007hierarchical}. Variational inference in deep \gp{}s was developed by \cite{damianou2012deep}, who also analyzed the effect of automatic relevance determination in that model.
 
@@ -947,7 +694,6 @@ The importance of network architectures relative to learning has been examined b
 
 
 \section{Conclusions}
-\sectiondist
 
 %In this work, we established a number of propositions which help us gain insight into the properties of very deep models, and allow making informed choices regarding their architecture.
 

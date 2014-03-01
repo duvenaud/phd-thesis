@@ -4,8 +4,70 @@
 \newcommand{\additivefigsdir}{additive-figures}
 \newcommand{\additivetablesdir}{additive-tables}
 
-\chapter{Additive Gaussian Processes}
+\chapter{Dropout in Gaussian processes}
 \label{ch:additive}
+
+
+
+
+
+\section{Dropout in Gaussian processes}
+
+
+
+Dropout is a method for regularizing neural networks \citep{hinton2012improving, srivastava2013improving}.
+Training with dropout entails randomly and independently ``dropping'' (setting to zero) some proportion $p$ of features or inputs, in order to improve the robustness of the resulting network by reducing co-dependence between neurons.
+To maintain similar overall activation levels, weights are multiplied by $\nicefrac{1}{p}$ at test time. Alternatively, feature activations are multiplied by $\nicefrac{1}{p}$ during training.
+At test time, the set of models defined by all possible ways of dropping-out neurons is averaged over, usually in an approximate way.
+
+\citet{baldi2013understanding} and \citet{wang2013fast} analyzed dropout in terms of the effective prior induced by this procedure in several models, such as linear and logistic regression.
+In this section, we examine the priors on functions that result from performing dropout in the one-hidden-layer neural network implicitly defined by a \gp{} (equation \eqref{eq:one-layer-nn}).
+
+
+\subsection{Dropout on feature activations}
+
+First, we examine the prior that results from randomly dropping features from $\hPhi(\vx)$ with probability $p$.
+If these features have a weight distribution with finite moments
+$\expectargs{}{ \alpha_i} = \mu, \varianceargs{}{\alpha_i} = \sigma^2$,
+then the distribution of weights after each one has been dropped out with probability $p$ is:
+\begin{align}
+r_i \simiid \textnormal{Ber}(p)
+\qquad
+\expectargs{}{ r_i \alpha_i} = p\mu, \varianceargs{}{r_i \alpha_i} = p^2 \sigma^2 \;.
+\end{align}
+However, after we increase the remaining activations to maintain the same expected activation by multiplying them by $\nicefrac{1}{p}$, the resulting moments are again:
+\begin{align}
+\expectargs{}{ \frac{1}{p} r_i \alpha_i } = \frac{p}{p}\mu = \mu, \quad \varianceargs{}{ \frac{1}{p} r_i \alpha_i} = \frac{p^2}{p^2} \sigma^2 = \sigma^2 \;.
+\end{align}
+%Since only the first two moments of the weight variance matter, the resulting \gp{} remain
+Thus, dropping out features of an infinitely-wide MLP does not change the model at all, since no individual feature can have more than infinitesimal contribution to the network output.
+%Is there a better way to drop out features that would lead to robustness?
+
+\subsection{Dropping out inputs}
+
+In a \gp{} with kernel ${k(\vx, \vx') = \prod_{d=1}^D k_d(\vx_d, \vx_d')}$, exact averaging over all possible ways of dropping out inputs with probability $\nicefrac{1}{2}$ results in a mixture of \gp{}s, each depending on only a subset of the inputs:
+\begin{align}
+p \left( f(\vx) \right)= \frac{1}{2^D} \sum_{\vr \in \{0,1\}^D}  \textnormal{\gp} \left(0, \prod_{d=1}^D k_d(\vx_d, \vx_d')^{r_d} \right)
+\label{eq:dropout-mixture}
+\end{align}
+We present two results ways to gain intuition about this model.
+
+First, if the kernel on each dimension has the form ${k_d(\vx_d, \vx_d') = g \left( \frac{\vx_d - \vx_d'}{\lengthscale_d} \right)}$, as does the \humble{SE} kernel \eqref{eq:se_kernel}, then any input dimension can be dropped out by setting its lengthscale $\lengthscale_d$ to $\infty$.
+Thus, dropout on the inputs of a \gp{} corresponds to a spike-and-slab prior on lengthscales, with each dimension independently having $w_d = \infty$ with probability $\nicefrac{1}{2}$.
+
+
+
+Another way to understand the resulting prior is to note that the dropout mixture \eqref{eq:dropout-mixture} has the same covariance as
+\begin{align}
+f(\vx) \sim \textnormal{\gp} \left(0, \frac{1}{2^{-2D}} \sum_{\vr \in \{0,1\}^D}  \prod_{d=1}^D k_d(\vx_d, \vx_d')^{r_d} \right)
+\label{eq:additive-gps}
+\end{align}
+
+A \gp{} whose covariance is a sum of kernels corresponds to a sum of functions, each distributed according to a \gp{}.  Therefore, \eqref{eq:additive-gps} describes a sum of $2^D$ functions, each depending on a different subset of the inputs.
+This model class was studied by \citet{duvenaud2011additive11}, who showed that exact inference in these models can be performed in $\mathcal{O}(N^2 D^2 + N^3)$.
+%Thus, the dropout prior is closely related to a model which learns many functions, each of which only depends on a subset of the inputs.
+
+
 
 In this chapter, we introduce a Gaussian process model of functions which are $\textit additive$.  An additive function is one which decomposes into a sum of low-dimensional functions, each depending on only a subset of the input variables. Additive GPs generalize both Generalized Additive Models, and the standard GP models which use squared-exponential kernels.  Hyperparameter learning in this model can be seen as Bayesian Hierarchical Kernel Learning (HKL).  We introduce an expressive but tractable parameterization of the kernel function, which allows efficient evaluation of all input interaction terms, whose number is exponential in the input dimension.  The additional structure discoverable by this model results in increased interpretability, as well as state-of-the-art predictive power in regression tasks.
 

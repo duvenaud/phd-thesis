@@ -9,6 +9,11 @@
 \newcommand{\introtablesdir}{intro-tables}
 \newcommand{\gplvmfiguresdir}{gplvm-figures}
 
+\newcommand{\deeplimitsfiguresdir}{deep-limits-figures}
+\newcommand{\deeplimitstablesdir}{deep-limits-tables}
+
+
+
 \usepackage{booktabs}
 \usepackage{tabularx}
 \renewcommand{\tabularxcolumn}[1]{>{\arraybackslash}m{#1}}
@@ -55,6 +60,34 @@
 \def\@humbleformat#1{{\settoheight{\nonHumbleHeight}{#1}\resizebox{!}{0.94\nonHumbleHeight}{#1}}}%
 \newcommand\humble[1]{{\@humbleformat{#1}}}%
 \makeatother%
+
+
+% For tikz figures in deep limits
+\newcommand{\numdims}[0]{3}
+\newcommand{\numhidden}[0]{4}
+\newcommand{\upnodedist}[0]{0.6cm}
+\newcommand{\bardist}[0]{\hspace{-0.2cm}}
+
+% Unify notation between neural-net land and GP-land.
+\newcommand{\hphi}{h}
+\newcommand{\hPhi}{\vh}
+\newcommand{\walpha}{w}
+\newcommand{\wboldalpha}{\bw}
+\newcommand{\wcapalpha}{\vW}
+\newcommand{\lengthscale}{w}
+
+\newcommand{\layerindex}{\ell}
+
+
+
+\newcommand{\gpdrawbox}[1]{
+\setlength\fboxsep{0pt}
+\hspace{-0.15in} 
+\fbox{
+\includegraphics[width=0.464\columnwidth]{\deeplimitsfiguresdir/deep_draws/deep_gp_sample_layer_#1}
+}}
+
+
 
 
 
