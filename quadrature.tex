@@ -9,6 +9,211 @@
 
 
 
+\section{Log-Gaussian Process Models}
+
+When integrating
+%
+\begin{align}
+Z & = \int f(\vx) p(\vx) d\vx \\
+  & = \expect_{p(\vx)}\left[ f(\vx) \right]
+\end{align}
+We typically model the function $f(\vx)$ with a Gaussian process prior.  However, for many problems in Bayesian inference, $f(\vx)$ is a likelihood function, typically of the form $f(\vx) = \exp( \lftwo(\vx))$.  This implies that $f(\vx)$ is both positive and that it has a high dynamic range, making a stationary \gp{} a poor model for this function.
+
+A much more believable model would be a \gp{} prior on $\lftwo(\vx)$.  A \gp{} prior on $\lftwo$ induces a $\loggp$ prior on $\ell(\vx)$.  However, this model makes the expectation of the integral over $f$ seemingly intractable:
+%
+\begin{align}
+\expect[ Z] & = \expect_\loggpdist \left[ \int \exp( \lftwo(\vx)) p(\vx) d\vx \right]\\
+& = \int \int \exp( \lftwo(\vx)) p(\vx) p(\lftwo) d\vx d\lftwo \\
+& = \int \int \exp( \lftwo(\vx)) p(\lftwo(\vx)) d\lftwo(\vx) p(\vx) d\vx  \\
+& = \int \expect_\loggpdist \left[ \exp(\lftwo(\vx)) \right] p(\vx) d\vx
+\end{align}
+%
+Where the posterior mean function of $\exp(\log \ell))$ is:
+\begin{align}
+\expect_\loggpdist \left[ \exp(\log \ell(\vx)) \right] & = \exp \left[ \expect_\loggpdist \left[ \lftwo(\vx) \right] + \frac{1}{2} \variance_\loggpdist \left[ \lftwo(\vx) \right]\right] \\
+& = \exp \left[ k(\vx, \vX) K^{-1} \vy + \frac{1}{2} \left( k(x,x) - k(\vx, \vX) K^{-1} k(\vX, \vx) \right) \right] \\
+%& = \exp \left( \overline{\lftwo}(\vx) \right) \exp\left( \frac{1}{2} (k(x,x) - k(\vx, \vX) K^{-1} k(\vX, \vx) )\right) \\
+& = m_{\exp}(\vx)
+\end{align} 
+%
+Which is not known to have a tractable form for common choices of covariance functions.
+
+However, we can approximate this integral by fitting a \gp{} to points $\vx_c$ along the function $m_{\exp}(\vx)$, and exactly integrating under that integral.  We will call the mean of this \gp{} $\mftwo(\vx)$.  We can then compute a mean estimate, $Z_0$, by exactly integrating under this \gp{}:
+%
+\begin{align}
+Z_0 & = \int \mftwo(\vx) p(\vx) d\vx \\
+ & = z^TK\inv \left[ \exp \left(m_{\lftwo}(\vx_c) + \frac{1}{2}V_{\lftwo}(\vx_c \right) \right]
+\end{align}
+%
+Where $z$ is defined below.
+
+The approximation $Z_0$ exactly approaches $\expect_\loggpdist[Z]$ in the limit of infinite candidate points $\vx_c$.  This is important, since we believe that a \gp{} is a much better model of $\lftwo(\vx)$ than of $\ell(\vx)$.
+
+The mean function $\mftwo$ will be inflated in regions of high marginal variance in $\log \ell$.  If we were simply to fit a \gp{} to $\exp(m_\lftwo(\vx_c))$, we would underestimate $\expect_\loggpdist[Z]$ even in the limit of infinite samples.
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{\quadraturefigsdir/loggp.pdf}
+\caption{A GP versus a log-GP}
+\label{fig:loggp}
+\end{figure}
+
+
+\section{Linearization}
+
+Note that $Z_0$ is a functional of $\lftwo$:
+%
+\begin{align}
+Z[\lftwo] = \int \mftwo(\vx) p(\vx) d\vx
+\end{align}
+%
+Here we approximately compute $\expect[Z]$ when we have only a sparse set of samples.  We will first linearize $Z$ as a functional of $\lftwo$ around the posterior mean, ${\lftwo_0}$.
+%
+\begin{align}
+Z[\lftwo] = \int \mftwo(\vx) p(\vx) d\vx
+\end{align}
+%
+\begin{align}
+\lftwo_0(\vx) = \expect_\loggpdist\left[ \lftwo(\vx) \right]
+\end{align}
+%
+\begin{align}
+\hat Z[\log \ell] \deq Z_0 + \varepsilon[\log \ell ]
+\end{align}
+%
+\begin{align}
+Z_0 = \int \mftwo(\vx) p(\vx) d\vx
+\end{align}
+%
+\begin{align}
+\varepsilon[\log \ell ] & = \int \left( \pderiv{\hat Z}{\lftwo(\vx)} \bigg|_{ \lftwo_0(\vx)} \right) \left[\lftwo(\vx) - \lftwo_0(\vx)\right] d\vx %\\
+%\varepsilon[\log \ell ] & = \int \pderiv{Z_0}{\lftwo(\vx)} \left[\lftwo(\vx) - \lftwo_0(\vx)\right] d\vx \\
+\end{align}
+We do not have a closed-form expression for $\pderiv{\hat Z}{\lftwo(\vx)} \bigg|_{ \lftwo_0(\vx)}$ everywhere, but at the points $\vx_c$, it will be
+%
+\begin{align}
+\pderiv{\hat Z}{\lftwo(\vx_c)} \bigg|_{ \lftwo_0(\vx_c)} & = \pderiv{\hat Z}{\lftwo(\vx_c)} \bigg|_{ \lftwo_0(\vx_c)} \\
+ & = \mftwo(\vx)p(\vx)
+\end{align}
+%
+We hope that $\mftwo(\vx)$ is a good approximation everywhere else, and make the approximation:
+\begin{align}
+\pderiv{Z}{\lftwo(\vx)} \bigg|_{ \lftwo_0(\vx)} \approxeq \mftwo(\vx)p(\vx)
+\end{align}
+%
+so
+%
+\begin{align}
+\varepsilon[\log \ell ] & \approxeq \int \mftwo(\vx) p(\vx)\left[\lftwo(x) - \lftwo_0(\vx)\right] d\vx
+\label{eq:eps}
+\end{align}
+
+Which is the same as in the SBQ paper, except that $Z_0$ will be higher than it would be in the SBQ setup, because $\mftwo$ will be inflated due to uncertainty in $\lftwo$.
+
+%At this point it's unclear to me whether the $\mftwo$ used in \eqref{eq:eps} should include the inflation due to marginal uncertainty in $\lftwo$, or be the same as $m(\ell(\vx)| \ell_s)$ from the SBQ paper.  If it's the same 
+
+
+\subsection{Mean of $\hat Z$}
+
+Under this linearization, the mean of $\hat Z$ is simply
+\begin{align}
+\expect_\loggpdist [\hat Z] & = \expect_\loggpdist \left[Z_0 + \varepsilon[\lftwo ]\right] \\
+& = Z_0
+\end{align}
+
+Again, $Z_0$ will be higher than it would be in the SBQ setup, because $\mftwo$ will be inflated due to uncertainty in $\lftwo$.
+
+Now we derive a closed-form expression for the case where the prior is $p(\vx) = \N{\vx}{b}{B}$, the kernel function $k_\ell(x\st, \vx') = h_\ell\N{\vx}{\vx'}{A_\ell}$, and the mean function $\mu_\ell(\vx) = \mu_\ell$.
+%
+\begin{align}
+Z_0 & = \int \mftwo(\vx) p(\vx) d\vx \\
+& = \expect_{\mathcal{GP}(\ell(\vx))} \left[ \int \ell(\vx) p(\vx) d\vx \right]\\
+& = \int \mftwo(\vx) p(\vx) d\vx
+\end{align}
+where
+\begin{align}
+\mftwo(\vx\st) & = \mu(\vx\st) + k_\ell(\vx\st, \vx_c) K_\ell(\vx_c, \vx_c)\inv \left( m_{\exp}(\vx_c) - \mu(\vx_c) \right) \\
+& = \mu(\vx\st) + \sum_{i \in c} k_\ell(\vx\st, \vx_i) \beta_i \\
+& = \mu(\vx\st) + \sum_{i \in c} h_\ell\N{\vx\st}{\vx_i}{A_\ell} \beta_i
+\end{align}
+where
+\begin{align}
+\beta_i & = K_\ell(\vx_c, \vx_c)\inv \left( m_{\exp}(\vx_i) - \mu(\vx_i) \right) \\
+\end{align}
+are simply constants.  So
+\begin{align}
+Z_0 & = \int \mftwo(\vx) p(\vx) d\vx\\
+Z_0 & = \int \left[ \mu_\ell + \sum_{i \in c} h_\ell\N{\vx}{\vx_i}{\vA_\ell} \beta_i \right] \N{\vx}{\vb}{\vB} d\vx\\
+Z_0 & = \mu_\ell + h_\ell \int \left[ \sum_{i \in c} \N{\vx}{\vx_i}{\vA_\ell} \beta_i \right] \N{\vx}{\vb}{\vB} d\vx\\
+Z_0 & = \mu_\ell + h_\ell \sum_{i \in c} \beta_i \int \N{\vx}{\vx_i}{\vA_\ell} \N{\vx}{\vb}{\vB} d\vx
+\end{align}
+and the integral
+\begin{align}
+z_i & = \int \N{\vx}{\vx_i}{\vA_\ell} \N{\vx}{\vb}{\vB} d\vx \\
+& = \textrm{ProdNormZ}(\vx_i, \vA_\ell, \vb, \vB) \\
+\end{align}
+where
+\begin{align}
+\textrm{ProdNormZ}(a, A, b, B) & = \N{\vx}{B( A + B)\inv a + A(A + B)\inv b}{A(A + B)\inv B} \N{a}{b}{A+B}
+\end{align}
+
+
+\subsection{Variance of $\hat Z$}
+
+\begin{align}
+\var[Z\hat ] & = \expect[\hat Z^2] - \left(\expect[\hat Z]\right)^2 \\
+\var[\hat Z] & = \expect[\hat Z^2] - Z_0^2 \\
+ & = \int\! \left( \hat Z[\lftwo]\right)^2 p(\lftwo) d\lftwo - Z_0^2 \\
+ & = \int\! \left[ Z_0 + \varepsilon(\lftwo)\right]^2 p(\lftwo) d\lftwo - Z_0^2 \\
+ & = \int\! \left[ Z_0^2 + 2 Z_0\varepsilon(\lftwo) + \left(\varepsilon(\lftwo)\right)^2\right] p(\lftwo) d\lftwo - Z_0^2\\
+& = \int\! \left[ 2 Z_0\varepsilon(\lftwo) + \left(\varepsilon(\lftwo)\right)^2\right] p(\lftwo) d\lftwo\\ 
+& = \int\!  2 Z_0\varepsilon(\lftwo)p(\lftwo) d\lftwo + \int  \left(\varepsilon(\lftwo)\right)^2 p(\lftwo) d\lftwo\\ 
+& = 0 + \int\! \left(\varepsilon(\lftwo)\right)^2 p(\lftwo) d\lftwo\\ 
+& = \int\! \left(\int \mftwo(\vx) p(\vx)\left[\lftwo(\vx) - \lftwo_0(\vx)\right] d\vx\right)^2 p(\lftwo) d\lftwo\\ 
+& = \int\! \left[\int \mftwo(\vx) p(\vx)\left[\lftwo(\vx) - \lftwo_0(\vx)\right] d\vx\right] \left[\int \mftwo(\vx') p(\vx')\left[\lftwo(\vx') - \lftwo_0(\vx')\right] d\vx'\right] p(\lftwo) d\lftwo \nonumber\\
+& = \int\!\!\! \int\!\!\! \int\! \Big( \left[\lftwo(\vx) - \lftwo_0(\vx)\right] \left[\lftwo(\vx') - \lftwo_0(\vx')\right] p(\lftwo) d\lftwo \Big) \mftwo(\vx) \mftwo(\vx') p(\vx) p(\vx') d\vx d\vx' \nonumber\\
+& = \int\!\!\! \int\! \expect_{p(\lftwo)} \Big[ \lftwo(\vx) - \expect \left[ \lftwo(\vx ) \right] \Big] \Big[ \lftwo(\vx') - \expect \left[ \lftwo(\vx' ) \right] \Big] \mftwo(\vx) \mftwo(\vx') p(\vx) p(\vx') d\vx d\vx' \nonumber\\
+& = \int\!\!\! \int\! \rm{Cov}_{\lftwo}(\vx, \vx') \mftwo(\vx) \mftwo(\vx') p(\vx) p(\vx') d\vx d\vx'
+\label{eq:vz}
+\end{align}
+Which has a nice form:  It is simply the standard BMC variance estimate, but scaled to be proportional to the height of $\mftwo(\vx)$.
+
+If we assume that $k_\lftwo(x\st, \vx') = h_\lftwo\N{\vx\st}{\vx'}{A_\lftwo}$, we can continue the derivation to get a closed-form solution:
+\begin{align}
+\textrm{Cov}_{\lftwo}(\vx\st, \vx\st') & = k( \vx\st, \vx' ) - k( \vx\st, \vx_s ) K(\vx_s, \vx_s)^{-1} k( \vx_s, \vx_\star' ) \\
+& = k( \vx\st, \vx' ) - k( \vx\st, \vx_s ) K_{\lftwo}^{-1} k( \vx_s, \vx\st' )
+\end{align}
+so
+\begin{align}
+\var[\hat Z] = {} & \int\!\!\! \int\! \textrm{Cov}_{\lftwo}(\vx, \vx') \mftwo(\vx) \mftwo(\vx') p(\vx) p(\vx') d\vx d\vx' \\
+= {} & \int\!\!\! \int\! \left[k( \vx, \vx' ) - k( \vx, \vx_s ) K_{\lftwo}^{-1} k( \vx_s, \vx' ) \right] \\ 
+& \times \left[\mu(\vx) + \sum_{i \in c} k_\ell(\vx, \vx_i) \beta_i \right] \left[\mu(\vx') + \sum_{i' \in c} k_\ell(\vx', \vx_{i'}) \beta_{i'} \right] p(\vx) p(\vx') d\vx d\vx' \\
+= {} & \int\!\!\! \int\! \left[ h_\lftwo \N{\vx}{\vx'}{A_\lftwo} - h_\lftwo^2 \N{\vx}{\vx_s}{A_\lftwo} K_{\lftwo}^{-1} \N{\vx'}{\vx_s}{A_\lftwo} \right] \\ 
+& \times \left[\mu_\ell + h_\ell \sum_{i \in c} \N{\vx}{\vx_i}{A_\ell} \beta_i \right] \left[\mu_\ell + h_\ell \sum_{i' \in c} \N{\vx'}{\vx_{i'}}{A_\ell} \beta_{i'} \right] \\
+& \times \N{\vx}{\vb}{\vB} \N{\vx'}{\vb}{\vB} d\vx d\vx'
+\end{align}
+
+
+\subsection{Marginal Variance}
+
+The marginal variance of $\mftwo(\vx)$ when integrating over $\lftwo(\vx)$ can be found by evaluating \eqref{eq:vz} at a single point:
+%
+\begin{align}
+\var[\mftwo(\vx)] & = \var_\lftwo(\vx) \mftwo(\vx)^2
+\label{eq:vz}
+\end{align}
+%
+which is again proportional to the height of $\mftwo(\vx)$, a desirable property that can now by handled in closed form.
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{\quadraturefigsdir/loggp_var.pdf}
+\caption{A GP versus a log-GP}
+\label{fig:loggp}
+\end{figure}
+
+
+
 
 \section{Nonparametric Inference via Bayesian Quadrature}
 
@@ -539,6 +744,169 @@ We have extended Bayesian quadrature to infinite, structured domains, and demons
 %We expect that non-parametric \bq{} will find use in any setting where evaluating the likelihood function is expensive.  One promising application would be in reinforcement learning, where one could place a kernel between policies, or between agent trajectories when attempting to estimate expected reward.  Another application may be defining kernels between programs or functions when attempting sequence induction.
 
 %Practical use of \bq{} still faces many issues regarding sampling, model choice, sparsifying approximations and hyperparameter integration.  The situation may be analogous to the usefulness of MCMC around the time when the Metropolis-Hastings sampler was invented.  However, because of its potential to provide an alternative to the \mcmc{} family of inference methods which have been the focus of intense research, we believe that \bq{} is worthy of further development.
+
+
+
+
+\section{Gaussian Process Posteriors}
+
+Imagine we have a \gp{} posterior distribution over functions, after having conditioned on data points ${\vX, \vf(\vX)}$.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{\quadraturefigsdir/2d_marginals.pdf}
+\caption{A 2D GP posterior, and its 1D marginals.}
+\label{fig:marginals}
+\end{figure}
+
+Our posterior distribution is given by:
+
+\begin{align}
+p(\vf(\vx\st)|\vX, \vf(\vX)) = \N{\vf(\vx\st)}{\mf(\vx\st)}{\cov(\vx\st,\vx\st')}
+\end{align} 
+where
+\begin{align}
+\mf(\vx\st) = & \expect_\gp \left[ f(\vx\st))\right] = k(\vx\st, \vX) K^{-1} \vf(\vX) \\
+\cov(\vx\st, \vx\st') = & \variance_\gp \left[ f(\vx\st))\right] = k(\vx\st,\vx\st) - k(\vx\st, \vX) K^{-1} k(\vX, \vx\st)
+\end{align} 
+
+Often, we are interested in the posterior distribution over this function, integrating over several input dimensions.  Let us redefine our function to be over a set of variables $\vx$, which we are interested in, and nuisance variables $\vy$, which we wish to integrate out.
+
+
+\begin{align}
+p(\vf(\vx\st, \vy\st)|\vX, \vY, \vf(\vX, \vY)) = \N{\vf(\vx\st, \vy\st)}{\mf(\vx\st, \vy\st)}{\cov(\vx\st, \vy\st,\vx\st', \vy\st')}
+\end{align} 
+where
+\begin{align}
+\mf(\vx\st, \vy\st) = & \expect_\gp \left[ f(\vx\st, \vy\st))\right] = k(\vx\st, \vy\st, \vX, \vY) K^{-1} \vf(\vX, \vY) \\
+\cov(\vx\st, \vx\st) = & \variance_\gp \left[ f(\vx\st, \vy\st))\right] = k(\vx\st, \vy\st, \vx\st, \vy\st) - k(\vx\st, \vy\st, \vX, \vY) K^{-1} k(\vX, \vY, \vx\st, \vy\st)
+\end{align} 
+We are interested in the marginal
+\begin{align}
+p(\vf(\vx\st)|\vX, \vY, \vf(\vX, \vY)) & = \int\! p(\vf(\vx\st, \vy)|\vX, \vY, \vf(\vX, \vY)) d\vy \\
+& = \int\! \N{\vf(\vx\st, \vy\st)}{\mf(\vx\st, \vy\st)}{\cov(\vx\st, \vy\st,\vx\st', \vy\st')} d\vy
+\end{align} 
+
+\subsection{Marginal Mean Function}
+Here we work out the posterior marginal mean function $\expectargs{}{\vf(\vx\st)}$:
+\begin{align}
+\expectargs{ p(f(\vx\st)|\vX, \vY, \vf(\vX, \vY))}{\vf(\vx\st)} & = \int\!\!\! \int\!\! f(\vx\st, \vy) p(f(\vx\st, \vy)|\vX, \vY, \vf(\vX, \vY)) p(\vy | \vx\st) d\vy df\\
+& = \int\!\! \expectargs {p(f(\vx\st, \vy)|\vX, \vY, \vf(\vX, \vY))}{ f(\vx\st, \vy)} p(\vy | \vx\st) d\vy \\
+& = \int\!\! \mf(\vx\st, \vy) p(\vy) d\vy \\
+& = \int\!\! k(\vx\st, \vy, \vX, \vY) \underbrace{K^{-1} \vf(\vX, \vY)}_{\beta} p(\vy | \vx\st) d\vy \\
+& = \sum_i \beta_i \int\!\! k(\vx\st, \vy, \vX_i, \vY_i) p(\vy | \vx\st) d\vy
+\label{eq:marg_mean_symbolic}
+\end{align} 
+
+If we choose the kernel function and prior such that
+\begin{align}
+k(\vx, \vy, \vx', \vy') & = h \N{ \colvec{\vx}{\vy} }{ \colvec{\vx'}{\vy'} }{  \tbtmat{ {\text I} \vell_\vx }{ 0 }{ 0 }{ {\text I} \vell_\vy} }\\
+ p(\vx, \vy) & = \N{ \colvec{\vx}{\vy} }{ \colvec{\mu_\vx}{\mu_\vy} }{ \tbtmat{ \Sigma_{\vx \vx} }{ \Sigma_{\vx \vy} }{ \Sigma_{\vy \vx} }{ \Sigma_{\vy \vy} }}
+\end{align}
+then the conditional prior on $p(\vy | \vx\st)$ is:
+\begin{align}
+ p(\vy | \vx\st) & = \N{ \vy }{ \mu_{\vy | \vx\st} }{ \Sigma_{\vy | \vx\st} } \\
+ \mu_{\vy | \vx\st} & = \mu_\vy + \Sigma_{\vx \vy} \Sigma_{\vx \vx}\inv ( \vx\st - \mu_\vx)\\
+ \Sigma_{\vy | \vx\st} & = \mu_\vy + \Sigma_{\vy \vx} \Sigma_{\vx \vx}\inv \Sigma_{\vx \vy}\
+\end{align}
+then we can obtain a closed-form solution for Equation \eqref{eq:marg_mean_symbolic}:
+\begin{align}
+\int\! k(\vx\st, \vy, \vX_i, \vY_i) p(\vy) d\vy & = \int h \N{ \colvec{\vx}{\vy} }{ \colvec{\vx'}{\vy'} }{  \tbtmat{ {\text I} \vell_\vx }{ 0 }{ 0 }{ {\text I} \vell_\vy} } \N{\vy}{\mu_\vy}{\Sigma_\vy} d\vy \\
+ & = \int h \N{ \vx } {\vX_i}{ {\text I} \vell_\vx } \N{ \vy } {\vY_i}{ {\text I} \vell_\vy } \N{\vy}{\mu_\vy}{\Sigma_\vy} d\vy \\
+ & = h \N{ \vx } {\vX_i}{ {\text I} \vell_\vx } \int \N{ \vy } {\vY_i}{ {\text I} \vell_\vy } \N{\vy}{\mu_\vy}{\Sigma_\vy} d\vy \\
+ & = h \N{ \vx } {\vX_i}{ {\text I} \vell_\vx } \N{\vY_i}{\mu_\vy}{{\text I} \vell_\vy + \Sigma_\vy}
+\label{eq:mean_double_integral}
+\end{align} 
+
+Thus our final form for $\expectargs{}{\vf(\vx\st)}$ is:
+\begin{align}
+\expectargs{ p(\vf(\vx\st)|\vX, \vY, \vf(\vX, \vY))}{\vf(\vx\st)} & = \sum_i \beta_i \int k(\vx\st, \vy, \vX_i, \vY_i) p(\vy) d\vy \\
+ & = \sum_i \beta_i h \N{ \vx\st } {\vX_i}{ {\text I} \vell_\vx } \N{\vY_i}{\mu_\vy}{{\text I} \vell_\vy + \Sigma_\vy}
+\label{eq:marg_mean_closed_form}
+\end{align} 
+
+
+
+\subsection{Marginal Variance Function}
+
+One major advantage of model-based approaches to integration is that they provide a value for the uncertainty in the given estimate.  Here, we derive the marginal covariance function $\varianceargs{}{f(\vx\st), f(\vx\st')}$:
+
+\begin{align}
+\covarianceargs{}{f(\vx\st), f(\vx\st')} & = \expectargs{p(f)}{ \left( f(\vx\st) - \mf(\vx\st) \right)\left( f(\vx\st') - \mf(\vx\st') \right)}\\
+ & = \expect_{p(f)} \Big[ \left( \int f(\vx\st, \vy) p(\vy) d\vy - \int \mf(\vx\st, \vy') p(\vy') d\vy' \right) \\
+   & \qquad \quad \times \left( \int f(\vx\st', \vy) p(\vy) d\vy - \int \mf(\vx\st', \vy') p(\vy') d\vy' \right) \Big]\\
+ & = \int \left( \int f(\vx\st, \vy) p(\vy) d\vy - \int \mf(\vx\st, \vy') p(\vy') d\vy' \right) \\
+   & \quad \times \left( \int f(\vx\st', \vy) p(\vy) d\vy - \int \mf(\vx\st', \vy') p(\vy') d\vy' \right) p(f) \\
+%& = \expectargs{p(f)}{ \left( f((\vx\st, \vy) - \mf(\vx\st, \vy) \right)\left( f((\vx\st', \vy) - \mf(\vx\st', \vy) \right)}\\
+%& = \expectargs{p(f)}{ \left( \int\!\! \left[ f((\vx\st, \vy) - \mf(\vx\st, \vy) \right] p(\vy) \right) ^2}\\
+%& = \expectargs{p(f)}{ \left( \int\!\! \left[ f((\vx\st, \vy) - \mf(\vx\st, \vy) \right] p(\vy) d\vy \right) \left( \int\!\! \left[ f((\vx\st, \vy') - \mf(\vx\st, \vy') \right] p(\vy') d\vy' \right)}\\
+%& = \int\!\!\! \int\!\! \int\!\! \left[ f((\vx\st, \vy) - \mf(\vx\st, \vy) \right] p(\vy) d\vy \left[ f((\vx\st, \vy') - \mf(\vx\st, \vy') \right] p(\vy') d\vy' p(f) df\\
+& = \int\!\!\! \int\!\! \int\!\! \left[ f((\vx\st, \vy) - \mf(\vx\st, \vy') \right]  \left[ f((\vx\st', \vy) - \mf(\vx\st', \vy') \right] p(\vy) p(\vy') d\vy d\vy' p(f) df \\
+& = \int\!\!\! \int\!\! \int\!\! \left[ f((\vx\st, \vy) - \mf(\vx\st, \vy) \right]  \left[ f((\vx\st', \vy') - \mf(\vx\st', \vy') \right] p(f) df p(\vy) p(\vy') d\vy d\vy' \\
+& = \int\!\! \!\int\!\! \Cov \left[ f((\vx\st, \vy), f((\vx\st', \vy') \right] p(\vy) p(\vy') d\vy d\vy' \\
+& = \int\!\!\! \int\!\! \left[ k(\vx\st, \vy, \vx\st, \vy') - k(\vx\st, \vy, \vX, \vY) K^{-1} k(\vX, \vY, \vx\st, \vy') \right] p(\vy) p(\vy') d\vy d\vy' \\
+& = \int\!\!\! \int\!\! k(\vx\st, \vy, \vx\st, \vy') p(\vy) p(\vy') d\vy d\vy' - \int\!\!\! \int\!\! k(\vx\st, \vy, \vX, \vY) K^{-1} k(\vX, \vY, \vx\st, \vy') p(\vy) p(\vy') d\vy d\vy' \\
+& = t_1(\vx\st, \vx\st') - t_2(\vx\st, \vx\st')
+%& = \int k(\vx\st, \vy, \vX, \vY) \underbrace{K^{-1} \vf(\vX, \vY)}_{\beta} p(\vy) d\vy \\
+%& = \sum_i \beta_i \int k(\vx\st, \vy, \vX_i, \vY_i) p(\vy) d\vy
+\label{eq:marg_var_symbolic}
+\end{align} 
+%
+Again, if we choose the kernel function and prior that consist of scaled Normal distributions, then we can obtain a closed-form solution for Equation \eqref{eq:marg_var_symbolic}.  Here we consider the first term, $t_1$:
+%
+\begin{align}
+t_1(\vx\st, \vx\st') & = \int\!\!\! \int\!\! k(\vx\st, \vy, \vx\st, \vy') p(\vy) p(\vy') d\vy d\vy' \\
+ & = \int\!\!\! \int\!\! h \N{ \colvec{\vx}{\vy} }{ \colvec{\vx'}{\vy'} }{  \tbtmat{ {\text I} \vell_\vx }{ 0 }{ 0 }{ {\text I} \vell_\vy} } \N{\vy}{\mu_\vy}{\Sigma_\vy} \N{\vy'}{\mu_\vy}{\Sigma_\vy} d\vy  d\vy'\\
+& = \int\!\!\! \int\!\! h \N{\vx\st}{\vx\st'}{ {\text I} \vell_\vx } \N{ \vy } {\vy'}{ {\text I} \vell_\vy } \N{\vy}{\mu_\vy}{\Sigma_\vy} \N{\vy'}{\mu_\vy}{\Sigma_\vy} d\vy  d\vy'\\
+& = h \N{ \vx\st } {\vx\st'}{ {\text I} \vell_\vx } \int\!\!\! \int\! \N{ \vy } {\vy'}{ {\text I} \vell_\vy } \N{\vy}{\mu_\vy}{\Sigma_\vy} \N{\vy'}{\mu_\vy}{\Sigma_\vy} d\vy  d\vy'\\
+& = h \N{\vx\st}{\vx\st'}{ {\text I} \vell_\vx } \int\! \N{\vy'}{\mu_\vy}{\Sigma_\vy} \int\! \N{ \vy } {\vy'}{ {\text I} \vell_\vy } \N{\vy}{\mu_\vy}{\Sigma_\vy} d\vy  d\vy'\\
+& = h \N{\vx\st}{\vx\st'}{ {\text I} \vell_\vx } \int\! \N{\vy'}{\mu_\vy}{\Sigma_\vy} \N{ \vy' } {\mu_\vy}{ {\text I} \vell_\vy + \Sigma_\vy}  d\vy'\\
+& = h \N{\vx\st}{\vx\st'}{ {\text I} \vell_\vx } \N{\mu_\vy}{\mu_\vy}{ {\text I} \vell_\vy + 2\Sigma_\vy} \\
+& = h \N{\vx\st}{\vx\st'}{ {\text I} \vell_\vx } \N{0}{0}{ {\text I} \vell_\vy + 2\Sigma_\vy}
+\label{eq:var_double_integral_t1}
+\end{align}
+$t_1(\vx\st, \vx\st')$ is called the \textit{prior covariance}, and does not depend on the observed function values.
+
+
+Next, we consider the second term, $t_2$:
+%
+\begin{align}
+ & t_2(\vx\st, \vx\st') = \\
+  & =\int\!\!\! \int\!\! k(\vx\st, \vy, \vX, \vY) K^{-1} k(\vX, \vY, \vx\st', \vy') p(\vy) p(\vy') d\vy d\vy' \\
+  & = \sum_i \sum_j K^{-1}_{ij} \int\!\!\! \int\!\! k(\vx\st, \vy, \vX_i, \vY_i) k(\vX_j, \vY_j, \vx\st', \vy') p(\vy) p(\vy') d\vy d\vy'\\
+  & = \sum_i \sum_j K^{-1}_{ij} \int\!\!\! \int\!\! h \N{ \vx\st } {\vX_i}{ {\text I} \vell_\vx } \N{ \vy } {\vY_i}{ {\text I} \vell_\vy } h \N{ \vx\st' } {\vX_j}{ {\text I} \vell_\vx } \N{ \vy' } {\vY_j}{ {\text I} \vell_\vy } \N{\vy}{\mu_\vy}{\Sigma_\vy} \N{\vy'}{\mu_\vy}{\Sigma_\vy} d\vy d\vy'\\
+  & = \sum_i \sum_j K^{-1}_{ij} h \N{ \vx\st } {\vX_i}{ {\text I} \vell_\vx } h \N{ \vx\st' } {\vX_j}{ {\text I} \vell_\vx } \int\!\!\! \int\!\!  \N{ \vy } {\vY_i}{ {\text I} \vell_\vy }  \N{ \vy' } {\vY_j}{ {\text I} \vell_\vy } \N{\vy}{\mu_\vy}{\Sigma_\vy} \N{\vy'}{\mu_\vy}{\Sigma_\vy} d\vy d\vy'\\
+  & = \sum_i \sum_j K^{-1}_{ij} h \N{ \vx\st } {\vX_i}{ {\text I} \vell_\vx } h \N{ \vx\st' } {\vX_j}{ {\text I} \vell_\vx } \int\!\! \N{ \vy } {\vY_i}{ {\text I} \vell_\vy } \N{\vy}{\mu_\vy}{\Sigma_\vy} d\vy \int\!\! \N{\vy'}{\mu_\vy}{\Sigma_\vy} \N{ \vy } {\vY_j}{ {\text I} \vell_\vy } d\vy'\\
+  & = \sum_i \sum_j K^{-1}_{ij} h \N{ \vx\st } {\vX_i}{ {\text I} \vell_\vx } h \N{ \vx\st' } {\vX_j}{ {\text I} \vell_\vx } \N{\vY_i}{\mu_\vy}{ {\text I} \vell_\vy + \Sigma_\vy} \N{\vY_j}{\mu_\vy}{ {\text I} \vell_\vy + \Sigma_\vy} \\
+  & = \sum_i \sum_j K^{-1}_{ij} h \N{ \vx\st } {\vX_i}{ {\text I} \vell_\vx } \N{\vY_i}{\mu_\vy}{ {\text I} \vell_\vy + \Sigma_\vy} h \N{ \vx\st' } {\vX_j}{ {\text I} \vell_\vx } \N{\vY_j}{\mu_\vy}{ {\text I} \vell_\vy + \Sigma_\vy} \\
+  & = h \N{ \vx\st } {\vX}{ {\text I} \vell_\vx } \N{\vY}{\mu_\vy}{ {\text I} \vell_\vy + \Sigma_\vy} K^{-1} h \N{ \vx\st' } {\vX}{ {\text I} \vell_\vx } \N{\vY}{\mu_\vy}{ {\text I} \vell_\vy + \Sigma_\vy} \\
+  & = \vz(\vx\st) K^{-1} \vz(\vx\st')
+\label{eq:var_double_integral_t2}
+\end{align}
+where
+\begin{align}
+z_i(\vx) = h \N{ \vx } {\vX_i}{ {\text I} \vell_\vx } \N{\vY_i}{\mu_\vy}{ {\text I} \vell_\vy + \Sigma_\vy}
+\end{align}
+
+Thus our final form for $\covarianceargs{}{f(\vx\st), f(\vx\st')}$ is:
+\begin{align}
+\covarianceargs{ p(\vf(\vx\st)|\vX, \vY, \vf(\vX, \vY))}{f(\vx\st), f(\vx\st')} & = t_1(\vx\st, \vx\st') - t_2(\vx\st, \vx\st') \\
+ & = h \N{ \vx\st } {\vx\st'}{ {\text I} \vell_\vx } \N{0}{0}{ {\text I} \vell_\vy + 2\Sigma_\vy} - \vz(\vx\st) K^{-1} \vz(\vx\st')
+\label{eq:marg_var_closed_form}
+\end{align} 
+
+
+\section{Objective Function}
+
+When choosing points at which to evaluate $\vf(\vx)$ in order to learn more about the integrand, there is a question about which objective function to minimize.  Standard sampling for BQ attempts to minimize the expected variance in our integral, $Z$.  However, if we are only interested in the marginal distribution over some variable, then we might be afraid that minimizing the variance in $Z$ is only tangentially related to what we care about.
+
+Here, we show that minimizing the variance in $Z$ is equivalent to minimizing the variance of the marginal function, weighted by the prior $p(\vx)$.
+
+.
+.
+.
+
+Note that since our posterior over $Z$ is a Gaussian, minimizing the variance in $Z$ is equivalent to minimizing the entropy of our distribution over $Z$.
 
 
 \outbpdocument{
