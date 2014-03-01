@@ -69,7 +69,7 @@ This model class was studied by \citet{duvenaud2011additive11}, who showed that 
 
 
 
-In this chapter, we introduce a Gaussian process model of functions which are $\textit additive$.  An additive function is one which decomposes into a sum of low-dimensional functions, each depending on only a subset of the input variables. Additive GPs generalize both Generalized Additive Models, and the standard GP models which use squared-exponential kernels.  Hyperparameter learning in this model can be seen as Bayesian Hierarchical Kernel Learning (HKL).  We introduce an expressive but tractable parameterization of the kernel function, which allows efficient evaluation of all input interaction terms, whose number is exponential in the input dimension.  The additional structure discoverable by this model results in increased interpretability, as well as state-of-the-art predictive power in regression tasks.
+In this chapter, we introduce a Gaussian process model of functions which are $\textit additive$.  An additive function is one which decomposes into a sum of low-dimensional functions, each depending on only a subset of the input variables. Additive GPs generalize both Generalized Additive Models, and the standard GP models which use squared-exponential kernels.  Hyperparameter learning in this model can be seen as Bayesian Hierarchical Kernel Learning (HKL).  We introduce an expressive but tractable parameterization of the kernel function, which allows efficient evaluation of all input interaction terms, whose number is exponential in the input dimension.  The additional structure discoverable by this model results in state-of-the-art predictive power in regression tasks, as well as increased interpretability.
 
 \section{Introduction}
 %$f: {\bf x} \mapsto y$
@@ -186,7 +186,7 @@ Because the hyperparameters can specify which degrees of interaction are importa
 %To push the analogy, using a product kernel is analogous to performing polynomial regression when we are forced to use a high-degree polynomial, even when the data do not support it.  One could also view the Gaussian kernel as one which makes the pessimistic assumption that the function we are model can vary independently for each new combination of variables observed.
 \subsection{Interpretability}
 
-As noted by Plate\cite{plate1999accuracy}, one of the chief advantages of additive models such as GAM is their interpretability.
+As noted by \citet{plate1999accuracy}, one of the chief advantages of additive models such as GAM is their interpretability.
 % since a high-dimensional function is decomposed into a series of one- or two-dimensional functions.  
 Plate also notes that by allowing high-order interactions as well as low-order interactions, one can trade off interpretability with predictive accuracy.  In the case where the hyperparameters indicate that most of the variance in a function can be explained by low-order interactions, it is useful and easy to plot the corresponding low-order functions, as in Figure \ref{fig:interpretable functions}. 
 
