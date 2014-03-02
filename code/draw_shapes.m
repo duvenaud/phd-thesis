@@ -161,3 +161,18 @@ function sigma = mobius_kernel(x, y, period, lengthscale)
 end
 
 
+function sigma = cone_kernel(x, y)
+    if nargin == 0
+        sigma = 'Toroidal covariance.'; return;
+    end
+
+    nx = size(x, 1);
+    ny = size(y, 1);
+    
+    xmat = repmat(x(:,2), 1, ny);
+    ymat = repmat(y(:,2), 1, nx);
+    period = 1;
+    lengthscale = 10;
+    sigma = exp( -2.*sin(pi*(sqrt(sq_dist(x(:,1)', y(:,1)')))./period).^2 ./ lengthscale)  ...
+          .*xmat.*ymat';
+end
