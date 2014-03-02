@@ -1,4 +1,4 @@
-function draw_donut(seed)
+function draw_shapes()
 %
 % Show latent surfaces warped into observed spaces using composite kernels.
 %
@@ -15,8 +15,6 @@ torus.seed = 4;
 torus.color_scale = 8.*pi;
 torus.camera = [0.25 0.4 0.5];
 torus.view = [-100,9];
-torus.zoom = 1.5;
-
 
 manifold.name = 'manifold';
 manifold.kernel = @se_kernel;
@@ -24,7 +22,6 @@ manifold.seed = 0;
 manifold.color_scale = 8.*pi;
 manifold.camera = [-6.2031  -13.0451    1.7971];
 manifold.view = [-57,-5];
-manifold.zoom = 1.5;
 
 cylinder.name = 'cylinder';
 cylinder.kernel = @(x,y)(se_kernel(x(1,:), y(1,:)).*per_kernel(x(2,:),y(2,:)));
@@ -32,8 +29,6 @@ cylinder.seed = 0;
 cylinder.color_scale = 8.*pi;
 cylinder.camera = [-8.4894    8.3373   12.5418];
 cylinder.view = [-134,31];
-cylinder.zoom = 2;
-
 
 mobius.name = 'mobius';
 mobius.kernel = @mobius_kernel;
@@ -41,8 +36,6 @@ mobius.seed = 0;
 mobius.color_scale = 8.*pi;
 mobius.camera = [-0.0533    0.0835    0.0333];
 mobius.view = [75,-9];
-mobius.zoom = 0.3;
-
 
 
 draw_shape(cylinder);
@@ -52,6 +45,8 @@ draw_shape(mobius);
 
 end
 
+
+
 function draw_shape(shape)
 
 % Fix the seed of the random generators.
@@ -60,16 +55,13 @@ rand('state', shape.seed);
 
 topologyfigsdir = '../figures/topology';
 
-
 output_dim = 3;
-
 exact_grid_resolution = 20;
 aux_grid_resulution = 100;
 xrange = linspace( 0, 1, exact_grid_resolution);
 
 [x1, x2] = ndgrid( xrange, xrange );   % Make a grid
 exactpoints = [ x1(:), x2(:) ];
-
 N = size(exactpoints, 1);
 
 xrange_aux = linspace( 0, 1, aux_grid_resulution );
@@ -79,22 +71,15 @@ x0aux = [ x1(:), x2(:) ];
 % Specify color pattern for traingles.
 circle_colors = coord_to_color([sin(x0aux(:,1).*shape.color_scale), ...
                                 cos(x0aux(:,2).*shape.color_scale)]);
-%figure; clf;
-%imshow(reshape(circle_colors, [aux_grid_resulution, aux_grid_resulution, 3]))
-
-
 
 mu = zeros(output_dim, N);
 sigma = shape.kernel(exactpoints', exactpoints') + eye(N) * 1e-4;
 k_x_xaux = shape.kernel(exactpoints', x0aux');
 
 
-Y = mvnrnd( mu, sigma)';   % Now sample the observed space.
+Y = mvnrnd( mu, sigma)';   % Sample the observed space.
 % Work out warping distribution, conditional on the already sampled points.
-mucond = k_x_xaux' / sigma * Y;
-
-xaux = mucond;
-
+xaux = k_x_xaux' / sigma * Y;
 
 % Plot the observed space.
 figure; clf;
@@ -109,14 +94,13 @@ set_fig_units_cm(10,10);
 %set(gca, 'projection', 'perspective');
 view(shape.view);
 set(gca, 'CameraPosition', shape.camera );
-%zoom(shape.zoom);
 xlim([min(xaux(:,1)), max(xaux(:,1))]);
 ylim([min(xaux(:,2)), max(xaux(:,2))]);
 zlim([min(xaux(:,3)), max(xaux(:,3))]);
 %pos = get(gca, 'CameraPosition')
 
+% Render to image file.
 filename = sprintf('%s/%s', topologyfigsdir, shape.name );
-
 myaa('publish');
 savepng(gcf, filename);
 end
