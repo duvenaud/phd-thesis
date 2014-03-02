@@ -1,5 +1,11 @@
-function colors = coord_to_color(x)
+function colors = coord_to_color(x, scale)
 % Takes a set of 2d points and turns them into colors
+%
+% David Duvenaud
+% March 2014
+
+
+if nargin < 2; scale = 5; end
 
 corner_colors = colorbrew([5 2 3 4 1]);
 [n,d] = size(x);
@@ -25,7 +31,6 @@ theta = (0:(2*pi/4):2*pi) + pi/4;
 theta = theta(1:end-1);
 coords = [[sin(theta) 0]; [cos(theta) 0]];
 
-scale = 5;
 %coords = [[xmin ymin]; [xmin ymax]; [xmax ymin]; [xmax ymax]];
 weights = se_kernel( x' .*scale, coords.*scale);
 
