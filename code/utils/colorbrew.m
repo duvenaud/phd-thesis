@@ -22,7 +22,7 @@ switch flag
         c_array(10, :) = [ 0, 0, 0];  % black
         
         % Wrap around to the end.
-        c = c_array( mod(i - 1, 11) + 1, : ) ./ 255;
+        c = c_array( mod(i - 1, 10) + 1, : ) ./ 255;
         
     case 'seq'
         

@@ -12,11 +12,18 @@
 
 
 
-\begin{figure}
+\begin{figure}[t]
 \begin{centering}
-\includegraphics[width=\textwidth]{\introfigsdir/post-nosamples}
+\begin{tabular}{cc}
+\includegraphics[width=0.48\textwidth]{\introfigsdir/fuzzy-0} & 
+\includegraphics[width=0.48\textwidth]{\introfigsdir/fuzzy-1} \\
+\includegraphics[width=0.48\textwidth]{\introfigsdir/fuzzy-2} & 
+\includegraphics[width=0.48\textwidth]{\introfigsdir/fuzzy-3}
+\end{tabular}
 \end{centering}
-\caption[One-dimensional Gaussian process posterior]{A visual representation of a Gaussian process posterior. }
+\caption[One-dimensional Gaussian process posterior]{A visual representation of a one-dimensional Gaussian process posterior.
+Red isocountours show the marginal density at each input location.
+Coloured lines are samples from the posterior.}
 \label{fig:gp-post}
 \end{figure}
 
@@ -27,7 +34,7 @@ Figure \ref{fig:gp-post} shows a Gaussian process posterior.  Typically, it's re
 
 
 
-\begin{figure}
+\begin{figure}[t]
 \begin{centering}
 \includegraphics[width=\textwidth]{\gplvmfiguresdir/gplvm_1d_draw_9}
 \end{centering}
@@ -81,22 +88,23 @@ where $\vk_1 = k_1( \vX, \vX )$ and $\vk_1^\star = k_1( \vX^\star, \vX )$.
 
 By the formula for Gaussian conditionals:
 \begin{align}
-\vx_A | \vx B \sim \Nt{\vmu_A + \vSigma_{AB} \vSigma_{BB}\inv \left( \vx_B - \vmu_B \right) }
+\vx_A | \vx_B \sim \Nt{\vmu_A + \vSigma_{AB} \vSigma_{BB}\inv \left( \vx_B - \vmu_B \right) }
 {\vSigma_{AA} - \vSigma_{AB} \vSigma_{BB}\inv \vSigma_{BA} },
 \end{align}
 we get that the conditional variance of a Gaussian conditioned on its sum with another Gaussian is given by
 \begin{align}
 %\vf_1^\star | \vf \sim \Nt{\vmu_1^\star + \vk_1^{\star\tra} (\vK_1 + \vK_2)\inv \left( \vf - \vmu_1 - \vmu_2 \right) }
-\vf_1(\vx^\star) | \vf(\vx) \sim \mathcal{N}\big( & \vmu_1^\star + \vk_1^{\star\tra} (\vK_1 + \vK_2)\inv \left( \vf - \vmu_1 - \vmu_2 \right) , \\
-& \vk_1^{\star\star} - \vk_1^{\star\tra} (\vK_1 + \vK_2)\inv \vk_1^\star
+\vf_1(\vx^\star) | \vf(\vx) \sim \mathcal{N}\big( 
+& \vmu_1(\vx^\star) + \vk_1(\vx^{\star}, \vx)  \left[ \vK_1(\vx, \vx) + \vK_2(\vx, \vx) \right]\inv \left( \vf(\vx) - \vmu_1(\vx) - \vmu_2(\vx) \right) , \nonumber \\
+& \vk_1(\vx^{\star}, \vx^{\star}) - \vk_1(\vx^{\star}, \vx)  \left[ \vK_1(\vx, \vx) + \vK_2(\vx, \vx) \right] \inv \vk_1(\vx, \vx^{\star}) 
 \big).
 \end{align}
 
-The covariance between the two components, conditioned on their sum is given by:
-\begin{align}
+%The covariance between the two components, conditioned on their sum is given by:
+%\begin{align}
 %\cov(\vf_1^\star, \vf_2^\star) | \vf = - \vk_1^{\star\tra} (\vK_1 + \vK_2)\inv \vk_2^\star
-\covargs{\vf_1(\vx^\star)}{\vf_2(\vx^\star) | \vf(\vx) }= - \vk_1(\vx^{\star}, \vx)  \left[ \vK_1(\vx, \vx) + \vK_2(\vx, \vx) \right] \inv \vk_1(\vx, \vx^{\star}) 
-\end{align}
+%\covargs{\vf_1(\vx^\star)}{\vf_2(\vx^\star) | \vf(\vx) }= - \vk_1(\vx^{\star}, \vx)  \left[ \vK_1(\vx, \vx) + \vK_2(\vx, \vx) \right] \inv \vk_1(\vx, \vx^{\star}) 
+%\end{align}
 
 These formulae express the posterior model uncertainty about different components of the signal, integrating over the possible configurations of the other components.
 
