@@ -1,10 +1,3 @@
-
-
-
-
-
-
-
 \input{common/header.tex}
 \inbpdocument
 
@@ -24,12 +17,6 @@
 Choosing appropriate architectures and regularization strategies of deep networks is crucial to good predictive performance.  To shed light on this problem, we analyze the analogous problem of constructing useful priors on compositions of functions.  Specifically, we study the deep Gaussian process, a type of infinitely-wide, deep neural network.  We show that in standard architectures, the representational capacity of the network tends to capture fewer degrees of freedom as the number of layers increases, retaining only a single degree of freedom in the limit.  We propose an alternate network architecture which does not suffer from this pathology.  We also examine deep covariance functions, obtained by composing infinitely many feature transforms.  Lastly, we characterize the class of models obtained by performing dropout on Gaussian processes.
 
 This chapter was joint work with Oren Rippel, Ryan P. Adams and Zoubin Ghahramani.
-
-
-
-
-
-
 
 
 
@@ -84,16 +71,16 @@ We also present two related analyses:  first, we examine the properties of a arb
 %\vspace{-0.05in}
 \subsection{Single-layer models}
 
-\begin{figure*}
+\begin{figure}
 \input{\deeplimitstablesdir/architecture-comparison-aistats}
-\caption{%Comparison of architectures.
+\caption[Comparison of neural network architectures]{
 GPs can be understood as one-hidden-layer MLP with infinitely many hidden units (a).
 There are two possible interpretations of deep GPs:
 We can consider the deep \gpt{} to be a neural network with a finite number of hidden units, each with a different non-parametric activation function (b).
 Alternatively, we can consider every second layer to be a random linear combination of an infinite number of fixed parametric hidden units (c).
 }
 \label{fig:architectures}
-\end{figure*}
+\end{figure}
 
 In the typical definition of an \MLP{}, the hidden units of the first layer are defined as:
 %
@@ -249,7 +236,10 @@ In this section, we derive the limiting distribution of the derivative of an arb
 \onedsamplepic{10}
 %& 6 layers \\ & largest , for unconnected layers & largest, for connected layers
 \end{tabular}
-\caption{One-dimensional draws from a deep \gpt{} prior.  After a few layers, the functions begin to be either nearly flat, or highly varying, everywhere.  This is a consequence of the distribution on derivatives becoming heavy-tailed.}
+\caption[One-dimensional draws from a deep \gpt{} prior]
+{One-dimensional draws from a deep \gpt{} prior.
+After a few layers, the functions begin to be either nearly flat, or highly varying, everywhere.
+This is a consequence of the distribution on derivatives becoming heavy-tailed.}
 \label{fig:deep_draw_1d}
 \end{figure}
 %
@@ -429,10 +419,12 @@ Theorem \ref{thm:prodjacob} allows us to analyze the representational properties
 %\includegraphics[clip, trim = 0cm 12cm 0cm 0.0cm, width=0.9\columnwidth]{\deeplimitsfiguresdir/hidden_bad} \\
 %b) A na\"{i}ve representation (colors) \\ of a one-dimensional manifold (white)
 %\end{tabular}
-\caption{Representing a 1-D manifold.
+\caption[Desirable properties of representations of manifolds]
+{Representing a 1-D manifold.
 %A representation is a function mapping the input space to some set of outputs.
 Colors show the output of the computed representation as a function of the input space.
-The representation (blue \& green) is invariant in directions orthogonal to the data manifold (white), making it robust to noise in those directions, and reducing the number of parameters needed to represent a datapoint.  The representation also changes in directions tangent to the manifold, preserving information for later layers. 
+The representation (blue \& green) is invariant in directions orthogonal to the data manifold (white), making it robust to noise in those directions, and reducing the number of parameters needed to represent a datapoint.
+The representation also changes in directions tangent to the manifold, preserving information for later layers. 
 %Representation b) changes in all directions, preserving potentially useless information.}% The representation on the right might be useful if the data were spread out in over plane.
 }
 \label{fig:hidden}
@@ -450,7 +442,8 @@ We follow \cite{rifai2011contractive} in characterizing the representational pro
 \hspace{-0.3cm} \begin{sideways} {\scriptsize \quad Normalized singular value} \end{sideways} & \hspace{-0.2in} \spectrumpic{2} & \hspace{-0.2in} \spectrumpic{6} \\
  & {\footnotesize Singular value index} & {\footnotesize Singular value}
 \end{tabular}
-\caption{The normalized singular value spectrum of the Jacobian of a deep GP.  As the net gets deeper, the largest singular value dominates.
+\caption[Singular value spectrum of the Jacobian of a deep GP]
+{The normalized singular value spectrum of the Jacobian of a deep GP.  As the net gets deeper, the largest singular value dominates.
 This implies that with high probability, there is only one effective degree of freedom in the representation being computed.
 %As depth increases, the distribution on singular values also becomes heavy-tailed.
 }
@@ -474,7 +467,10 @@ $p(\vf^{(1:4)}(\vx))$ &  $p(\vf^{(1:6)}(\vx))$ \\
 %$p(f_3(f_2(f_1(\vx))))$ & $p(f_4(f_3(f_2(f_1(\vx)))))$ & $p(f_5(f_4(f_3(f_2(f_1(\vx)))))$
 %density of $\vf^{(1:4)}(\vX))$ & density of $\vf^{(1:6)}(\vX))$
 \end{tabular}
-\caption{Visualization of draws from a deep \gpt{}.  A 2-dimensional Gaussian distribution (top left) is warped by successive functions drawn from a \gpt{} prior.  As the number of layers increases, the density concentrates along one-dimensional filaments.}
+\caption[Visualization of draws from a deep \gpt{}]
+{Visualization of draws from a deep \gpt{}.
+A 2-dimensional Gaussian distribution (top left) is warped by successive functions drawn from a \gpt{} prior.
+As the number of layers increases, the density concentrates along one-dimensional filaments.}
 \label{fig:filamentation}
 \end{figure}
 %
@@ -502,7 +498,10 @@ Identity Map: $\vy = \vx$ & 1 Layer: $\vy = f^{(1)}(\vx)$ \\
 %    \draw[pile, white] (D) -- (Dt) node[right, text width=5em] {};
 %\end{tikzpicture}
 \end{tabular}
-\caption{Feature mapping of a deep \gpt{}. Colors correspond to the location $\vy = \vf(\vx)$ that each point is mapped to after being warped by a deep \gpt{}.  %This figure can be seen as the inverse of figure \ref{fig:filamentation}.  
+\caption[Feature mapping of a deep \gpt{}]
+{Feature mapping of a deep \gpt{}.
+Colors correspond to the location $\vy = \vf(\vx)$ that each point is mapped to after being warped by a deep \gpt{}.
+%This figure can be seen as the inverse of figure \ref{fig:filamentation}.  
 The number of directions in which the color changes rapidly corresponds to the number of large singular values in the Jacobian.
 Just as the densities in figure \ref{fig:filamentation} became locally one-dimensional, there is usually only one direction that one can move $\vx$ in locally to change $\vy$.
 This means that $\vf$ is unlikely to be a suitable representation for decision tasks that depend on more than one aspect of $\vx$.}
@@ -525,7 +524,10 @@ To what extent are these pathologies present in nets being used today?  In simul
 
 \begin{figure}[h!]
 \input{\deeplimitstablesdir/input-connected}
-\caption{Two different architectures for deep neural networks.  The standard architecture connects each layer's outputs to the next layer's inputs.  The input-connected architecture also connects the original input $\vx$ to each layer.}
+\caption[Two different architectures for deep neural networks]
+{Two different architectures for deep neural networks.
+The standard architecture connects each layer's outputs to the next layer's inputs.
+The input-connected architecture also connects the original input $\vx$ to each layer.}
 \label{fig:input-connected}
 \end{figure}
 
@@ -553,7 +555,8 @@ Draws from the resulting prior are shown in figures \ref{fig:deep_draw_1d_connec
 \onedsamplepiccon{10}
 %& 6 layers \\ & largest , for unconnected layers & largest, for connected layers
 \end{tabular}
-\caption{Draws from a 1D deep GP prior with each layer connected to the input.
+\caption[Draws from a 1D deep GP prior with each layer connected to the input]
+{Draws from a 1D deep GP prior with each layer connected to the input.
 Even after many layers, the functions remain smooth in some regions, while varying rapidly in other regions.
 Compare to standard-connectivity deep GP draws shown in figure \ref{fig:deep_draw_1d}.}
 \label{fig:deep_draw_1d_connected}
@@ -593,9 +596,10 @@ Compare to standard-connectivity deep GP draws shown in figure \ref{fig:deep_dra
 3 Layers & 6 Layers \\
 \gpdrawboxcon{3} &
 \gpdrawboxcon{6}
-
 \end{tabular}
-\caption{Left: Densities defined by a draw from a deep GP, with each layer connected to the input $\vx$.  As depth increases, the density becomes more complex without concentrating along filaments.}
+\caption[Densities defined by a draw from a deep GP]
+{Left: Densities defined by a draw from a deep GP, with each layer connected to the input $\vx$.
+As depth increases, the density becomes more complex without concentrating along filaments.}
 \label{fig:no_filamentation}
 \end{figure}
 %
@@ -612,7 +616,9 @@ Compare to standard-connectivity deep GP draws shown in figure \ref{fig:deep_dra
 \hspace{-0.5cm} \begin{sideways} {\scriptsize \quad Normalized singular value} \end{sideways} & \hspace{-0.2in} \spectrumpiccon{25} & \hspace{-0.16in} \spectrumpiccon{50} \\
  & {\scriptsize Singular value number} & {\scriptsize Singular value number}
 \end{tabular}
-\caption{The distribution of singular values drawn from 5-dimensional input-connected deep \gpt{} priors 25 and 50 layers deep.  The singular values remain roughly the same scale as one another.}
+\caption[Distribution of singular values of an input-connected deep \gpt{}]
+{The distribution of singular values drawn from 5-dimensional input-connected deep \gpt{} priors 25 and 50 layers deep.
+The singular values remain roughly the same scale as one another.}
 \label{fig:good_spectrum}
 \end{figure}
 %
@@ -625,7 +631,8 @@ Identity map: $\vy = \vx$ & 2 Connected layers \\
  10 Connected layers & 20 Connected layers \\
 \hspace{-0.07in} \mappiccon{10} & \mappiccon{20}
 \end{tabular}
-\caption{Feature mapping of a deep \gpt{} with each layer connected to the input $\vx$.
+\caption[Feature mapping of an input-connected deep \gpt{}]
+{Feature mapping of a deep \gpt{} with each layer connected to the input $\vx$.
 Just as the densities in figure \ref{fig:no_filamentation} remained locally two-dimensional even after many transformations, in this mapping there are often two directions that one can move locally in $\vx$ to in order to change the values of $\vf(\vx)$.
 This means that the prior puts mass on representations which sometimes depend on all aspects of the input.
 Compare to figure \ref{fig:deep_map}.
@@ -711,10 +718,6 @@ Finally, we showed that this problem could be alleviated by connecting the input
 
 We also examined properties of deep kernels, corresponding to arbitrarily many compositions of fixed features.
 Finally, we derived models obtained by performing dropout on Gaussian processes, finding a tractable approximation to exact dropout in \gp{}s.
-
-
-
-
 
 
 

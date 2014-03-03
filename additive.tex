@@ -294,6 +294,8 @@ Vapnik \cite{vapnik1998statistical} introduces the support vector ANOVA decompos
 
 %\subsection{Smoothing Splines ANOVA}
 A closely related procedure from the statistics literature is smoothing-splines ANOVA (SS-ANOVA)\cite{wahba1990spline}. An SS-ANOVA model is estimated as a weighted sum of splines along each dimension, plus a sum of splines over all pairs of dimensions, all triplets, etc, with each individual interaction term having a separate weighting parameter.  Because the number of terms to consider grows exponentially in the order, in practice, only terms of first and second order are usually considered.  Learning in SS-ANOVA is usually done via penalized-maximum likelihood with a fixed sparsity hyperparameter.
+%\cite{shawe2004kernel} define ANOVA kernels thusly: "The ANOVA kernel of degree d is like the all-subsets kernel except that it is restricted to subsets of the given cardinality $d$."
+
 % estimated by generalized cross-validation\cite{craven1978smoothing}. 
 %MARS\cite{friedman1991multivariate} is another spline-based regression method.
 
@@ -383,6 +385,17 @@ On a diverse collection of datasets, we compared five different models.  In the 
 For all GP models, we fit hyperparameters by the standard method of maximizing training-set marginal likelihood, using L-BFGS \cite{nocedal1980updating} for 500 iterations, allowing five random restarts.  In addition to learning kernel hyperparameters, we fit a constant mean function to the data.
 %
 In the classification experiments, GP inference was done using Expectation Propagation \cite{minka2001expectation}.
+
+\subsection{Bach Synthetic Dataset}
+In addition to standard UCI repository datasets, we generated a synthetic dataset following the same recipe as \cite{DBLP:journals/corr/abs-0909-0844}: From a covariance matrix drawn from a Wishart distribution with 1024 degrees of freedom, we select 8 variables.  We then construct the non-linear function $f(X) = \sum_{i=1}^4 \sum_{j=1+1}^4 X_i X_j + \epsilon$, which sums all 2-way products of the first 4 variables, and adds Gaussian noise $\epsilon$.  This dataset is one which can be predicted well by a kernel which is a sum of two-way interactions over the first 4 variables, ignoring the extra 4 noisy copies.
+
+This dataset was designed by \cite{DBLP:journals/corr/abs-0909-0844} to demonstrate the advantages of HKL over GP-ARD. 
+
+ If the dataset is large enough, HKL can construct a hull around only those subsets of cross terms that are optimal for predicting the output.  GP-ARD, in contrast, can only learn to ignore the noisy copy variables, but cannot learn to ignore the higher-term interactions between the predictive variables.  However, a GP with an additive kernel can learn both to ignore irrelevant variables, and to ignore certain orders of interaction.  In this example, the additive GP is able to recover the relevant structure.
+
+%\input{\additivetablesdir/synth_c_hypers_table.tex}
+
+%Table \ref{tbl:bach synth c 200} shows the hyperparameters learnt.  Note that while GP-ARD increases the lengthscale of the irrelevant variables, GP-AS reduces the signal variance.
  
 \subsection{Results}
 
@@ -399,6 +412,12 @@ The additive GP performed best on datasets well-explained by low orders of inter
 Because the additive GP is a superset of both the GP-GAM model and the SE-GP model, instances where the additive GP performs slightly worse are presumably due to over-fitting, or due to the hyperparameter optimization becoming stuck in a local maximum. % Absence of over-fitting may explain the relatively strong performance of GP-GAM on classification tasks.  
 Additive GP performance can be expected to benefit from integrating out the kernel hyperparameters.
 
+
+
+\subsection{Future Work}
+Since the non-local structure capturable by additive kernels is necessarily axis-aligned, we can naturally consider that combining the hyperparameter optimization with an initial rotation of the input space might allow us to recover non-axis aligned additivity in functions.
+
+Note that we are free to choose a different covariance function along each dimension.
 
 
 \section{Conclusion}
@@ -421,16 +440,16 @@ Compared to HKL, which is the only other tractable procedure able to capture the
 
 
 
-\begin{figure}
-\centering
-\begin{tabular}{cc}
-\hspace{-0.1in}\includegraphics[width=0.475\textwidth]{\additivefigsdir/class_graph.pdf} &
-\hspace{-0.1in}\includegraphics[width=0.475\textwidth]{\additivefigsdir/class_graph_ll.pdf}\\
-\hspace{-0.1in}\includegraphics[width=0.475\textwidth]{\additivefigsdir/reg_graph.pdf}& 
-\hspace{-0.1in}\includegraphics[width=0.475\textwidth]{\additivefigsdir/reg_graph_ll.pdf}\\ 
-\end{tabular}
-\label{fig:results}
-\end{figure}
+%\begin{figure}
+%\centering
+%\begin{tabular}{cc}
+%\hspace{-0.1in}\includegraphics[width=0.475\textwidth]{\additivefigsdir/class_graph.pdf} &
+%\hspace{-0.1in}\includegraphics[width=0.475\textwidth]{\additivefigsdir/class_graph_ll.pdf}\\
+%\hspace{-0.1in}\includegraphics[width=0.475\textwidth]{\additivefigsdir/reg_graph.pdf}& 
+%\hspace{-0.1in}\includegraphics[width=0.475\textwidth]{\additivefigsdir/reg_graph_ll.pdf}\\ 
+%\end{tabular}
+%\label{fig:results}
+%\end{figure}
 
 
 %\section{Discussion}
@@ -442,47 +461,24 @@ Compared to HKL, which is the only other tractable procedure able to capture the
  % E = elsympol(Kd(:,:,[1:j-1,j+1:D]),max(R)-1);
 
 
-\subsection{Bach Synthetic Dataset}
-In addition to standard UCI repository datasets, we generated a synthetic dataset following the same recipe as \cite{DBLP:journals/corr/abs-0909-0844}: From a covariance matrix drawn from a Wishart distribution with 1024 degrees of freedom, we select 8 variables.  We then construct the non-linear function $f(X) = \sum_{i=1}^4 \sum_{j=1+1}^4 X_i X_j + \epsilon$, which sums all 2-way products of the first 4 variables, and adds Gaussian noise $\epsilon$.  This dataset is one which can be predicted well by a kernel which is a sum of two-way interactions over the first 4 variables, ignoring the extra 4 noisy copies.
 
-This dataset was designed by \cite{DBLP:journals/corr/abs-0909-0844} to demonstrate the advantages of HKL over GP-ARD. 
-
- If the dataset is large enough, HKL can construct a hull around only those subsets of cross terms that are optimal for predicting the output.  GP-ARD, in contrast, can only learn to ignore the noisy copy variables, but cannot learn to ignore the higher-term interactions between the predictive variables.  However, a GP with an additive kernel can learn both to ignore irrelevant variables, and to ignore certain orders of interaction.  In this example, the additive GP is able to recover the relevant structure.
-
-\input{\additivetablesdir/synth_c_hypers_table.tex}
-
-Table \ref{tbl:bach synth c 200} shows the hyperparameters learnt.  Note that while GP-ARD increases the lengthscale of the irrelevant variables, GP-AS reduces the signal variance.
  
  
-\subsection{Polynomial Kernels}
+%\subsection{Polynomial Kernels}
 
-A simple variation on the all-subsets kernel would be one which includes repeated terms, of the form
-\begin{equation}
-k_{h_n}({\bf x, x'}) = v_n^2 \sum_{i_1, \dots, i_n} \prod_{d=1}^n k_{i_d}(x_{i_d}, x_{i_d}') = v_n^2 \prod_{d=1}^n \sum_{i_1, \dots, i_n}^n k_{i_d}(x_{i_d}, x_{i_d}')
-\end{equation}
-This formulation allows repeated terms, such as $x_i^2$ and is equivalent to the polynomial kernel\cite{shawe2004kernel}.  However, this formulation cases the length scale of each dimension to vary with the order of interaction considered.
-
-
-\subsection{Future Work}
-Since the non-local structure capturable by additive kernels is necessarily axis-aligned, we can naturally consider that combining the hyperparameter optimization with an initial rotation of the input space might allow us to recover non-axis aligned additivity in functions.
+%A simple variation on the all-subsets kernel would be one which includes repeated terms, of the form
+%\begin{equation}
+%k_{h_n}({\bf x, x'}) = v_n^2 \sum_{i_1, \dots, i_n} \prod_{d=1}^n k_{i_d}(x_{i_d}, x_{i_d}') = v_n^2 \prod_{d=1}^n \sum_{i_1, \dots, i_n}^n k_{i_d}(x_{i_d}, x_{i_d}')
+%\end{equation}
+%This formulation allows repeated terms, such as $x_i^2$ and is equivalent to the polynomial kernel\cite{shawe2004kernel}.  However, this formulation cases the length scale of each dimension to vary with the order of interaction considered.
 
 
-A Gaussian process with an additive kernel corresponds to a prior over functions which are additive.
-If a function $\bf{f} = \bf{a} + \bf{b}$ is a sum of two functions $\bf a$ and $\bf b$ drawn from a Gaussian process prior with covariances $\bf K_a$ and $\bf K_b$, then equivalently, f is drawn from a Gaussian process prior with covariance $\bf K_f = \bf K_a + \bf K_b$.  The converse also holds.  If $\bf K_a$ and $\bf K_b$ are positive definite, then so is $\bf K_f$.
+
 
 %[Equation for derivatives]
 
-Note that we are free to choose a different covariance function along each dimension.
 
-[ Explain how squared exp somehow puts too much mass on complicated hypotheses, or is unable to represent simple hypotheses ].
 
-[ Show differences in marginal likelihoods]
-
-[Should we try learning a convex hull of features as well?]
-
-[ To discuss: Shawe-Taylor says in Remark 9.3 that we can control the relative weights of the degree monomials by just computing $\prod(k(x,x') + R)$.  If $R$ is high then the high-degree monomials don't matter as much.  Seems like we end up with a huge constant at the end, though...]
-
-\cite{shawe2004kernel} define ANOVA kernels thusly: "The ANOVA kernel of degree d is like the all-subsets kernel except that it is restricted to subsets of the given cardinality $d$."
 
 
 %The fact that our model is additive does not mean that it ignores multiplicative, or higher-order interactions

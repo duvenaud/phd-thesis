@@ -78,24 +78,25 @@ however, the second method will in general lead to non-differentiability along $
 \includegraphics[width=0.45\columnwidth,clip=true,trim=16cm 1cm 3cm 1cm]{\topologyfiguresdir/symmetric-projection} \\
 Additive method & min method
 \end{tabular}
-\caption{An illustration of two methods of introducing symmetry: The additive method or the min method.  The additive method has half the marginal variance away from $y = x$, but the min method introduces a non-differentiable seam along $y = x$.}
+\caption[Two ways to introduce symmetry]{An illustration of two methods of introducing symmetry: The additive method or the min method.  The additive method has half the marginal variance away from $y = x$, but the min method introduces a non-differentiable seam along $y = x$.}
 \label{fig:add_vs_min}
 \end{figure}
 
-\paragraph{Spherical Symmetry}
 
-We can also enforce that a function expresses the symmetries obeyed by $n-spheres$ by simply transforming a set of $n - 1$ coordinates by:
+%\paragraph{Spherical Symmetry}
+
+%We can also enforce that a function expresses the symmetries obeyed by $n-spheres$ by simply transforming a set of $n - 1$ coordinates by:
 %
-\begin{align}
-x_1 & = \cos(\phi_1) \nonumber \\
-x_2 & = \sin(\phi_1) \cos(\phi_2) \nonumber \\
-x_3 & = \sin(\phi_1) \sin(\phi_2) \cos(\phi_3) \nonumber \\
-& \vdots \nonumber \\
-x_{n-1} & = \sin(\phi_1) \cdots \sin(\phi_{n-2}) \cos(\phi_{n-1}) \nonumber \\
-x_n & = \sin(\phi_1) \cdots \sin(\phi_{n-2}) \sin(\phi_{n-1})
-\end{align}
+%\begin{align}
+%x_1 & = \cos(\phi_1) \nonumber \\
+%x_2 & = \sin(\phi_1) \cos(\phi_2) \nonumber \\
+%x_3 & = \sin(\phi_1) \sin(\phi_2) \cos(\phi_3) \nonumber \\
+%& \vdots \nonumber \\
+%x_{n-1} & = \sin(\phi_1) \cdots \sin(\phi_{n-2}) \cos(\phi_{n-1}) \nonumber \\
+%x_n & = \sin(\phi_1) \cdots \sin(\phi_{n-2}) \sin(\phi_{n-1})
+%\end{align}
 
-\cite{flanders1989}
+%\cite{flanders1989}
 
 \subsection{Parametric embeddings}
 
@@ -123,7 +124,7 @@ Manifold $( \SE_1 \times \SE_2 )$  & Cylinder $( \SE_1 \times \Per_2 )$ & Toroid
 \includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/cylinder} &
 \includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/torus} \\
 \end{tabular}
-\caption{Generating 2D manifolds with different topological structures.  By enforcing that the functions mapping from $\mathbb{R}^2$ to $\mathbb{R}^3$ obey the appropriate symmetries, the surfaces created have the corresponding topologies, ignoring self-intersections.}
+\caption[Generating 2D manifolds with different topological structures]{Generating 2D manifolds with different topological structures.  By enforcing that the functions mapping from $\mathbb{R}^2$ to $\mathbb{R}^3$ obey the appropriate symmetries, the surfaces created have the corresponding topologies, ignoring self-intersections.}
 \label{fig:gen_surf}
 \end{figure}
 
@@ -160,7 +161,8 @@ Sudanese M\"{o}bius strip \\
 \end{tabular}}
 %\end{minipage}
 \end{tabular}
-\caption{Generating 2D manifolds with different topological structures.  By enforcing that the functions mapping from $\mathbb{R}^2$ to $\mathbb{R}^3$ obey the appropriate symmetries, the surfaces created have the corresponding topologies (ignoring self-intersections).}\label{fig:mobius}
+\caption[Generating M\"{o}bius strips]{Generating M\"{o}bius strips.  By enforcing that the functions mapping from $\mathbb{R}^2$ to $\mathbb{R}^3$ obey the appropriate symmetries, the surfaces created have topology corresponding to a M\"{o}bius strip. TODO: Talk about Sudanese representation.}
+\label{fig:mobius}
 \end{figure}
 %
 The second example is doesn't resemble a typical M\"{o}bius strip because the edge of the mobius strip is in a geometric circle.  This kind of embedding is resembles the Sudanese M\"{o}bius strip [cite].
@@ -222,7 +224,7 @@ Another classic example of a function living on a Mobius strip is the auditory q
 	
   \end{tikzpicture}
 \end{center}
-\caption{An example of a function expressing the same symmetries as a Mobius strip in two of its arguments.  The energy of a molecular configuration $f(\theta_1, \theta_2)$ depends only on the relative angles between atoms, and because each atom is indistiguishable, is invariant to permuting the atoms. }
+\caption[The energy of a molecular configuration obeys the same symmetries as a M\"{o}bius strip]{An example of a function expressing the same symmetries as a M\"{o}bius strip in two of its arguments.  The energy of a molecular configuration $f(\theta_1, \theta_2)$ depends only on the relative angles between atoms, and because each atom is indistiguishable, is invariant to permuting the atoms. }
 \label{fig:molecule}
 \end{figure}
 
@@ -391,26 +393,15 @@ Samples from a \gp{} prior with this kernel are not differentiable, and are loca
 
 \begin{figure}
 \centering
-\begin{tabular}{c}
-\hspace{-0.3cm}\includegraphics[width=\columnwidth, clip, trim = 0.17cm 0.1cm 0.9cm 0.3cm]{\deeplimitsfiguresdir/deep_kernel_connected}
-%input-connected deep kernels
+\begin{tabular}{cc}
+\hspace{-0.3cm}\includegraphics[width=0.5\columnwidth, clip, trim = 0.17cm 0.1cm 0.9cm 0.3cm]{\deeplimitsfiguresdir/deep_kernel_connected} &
+\hspace{-0.5cm}\includegraphics[width=0.5\columnwidth, clip, trim = 0cm 0.1cm 0.9cm 0.3cm]{\deeplimitsfiguresdir/deep_kernel_connected_draws} 
 \end{tabular}
-\caption{
-Input-connected deep kernels.  By connecting the inputs $\vx$ to each layer, the kernel can still depend on its input even after arbitrarily many layers of computation.}
+\caption[Infinitely deep kernels]{Left:  Input-connected deep kernels.  By connecting the inputs $\vx$ to each layer, the kernel can still depend on its input even after arbitrarily many layers of computation.  Right: GP draws using deep input-connected kernels.  }
 \label{fig:deep_kernel_connected}
 \end{figure}
 
 
-\begin{figure}
-\centering
-\begin{tabular}{c}
-%\hspace{-0.5cm}\includegraphics[width=0.35\columnwidth, clip, trim = 0cm 0cm 0cm 0.61cm]{\deeplimitsfiguresdir/deep_kernel} &
-\hspace{-0.5cm}\includegraphics[width=\columnwidth, clip, trim = 0cm 0.1cm 0.9cm 0.3cm]{\deeplimitsfiguresdir/deep_kernel_connected_draws} \\
-\end{tabular}
-\caption{GP draws using deep input-connected kernels.  
-}
-\label{fig:deep_kernel_connected_draws}
-\end{figure}
 
 
 

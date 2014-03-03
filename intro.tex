@@ -1,8 +1,6 @@
 \input{common/header.tex}
 \inbpdocument
 
-
-
 \chapter{Introduction}
 \label{ch:intro}
 
@@ -13,27 +11,50 @@
 \section{Gaussian process models}
 
 
-\includegraphics[width=11cm]{\introfigsdir/post-nosamples}
 
-Nothing special about mean
+\begin{figure}
+\begin{centering}
+\includegraphics[width=\textwidth]{\introfigsdir/post-nosamples}
+\end{centering}
+\caption[One-dimensional Gaussian process posterior]{A visual representation of a Gaussian process posterior. }
+\label{fig:gp-post}
+\end{figure}
+
+Figure \ref{fig:gp-post} shows a Gaussian process posterior.  Typically, it's rendered with the mean and +- 2SD, but there's nothing special about mean.
 
 
 \section{Latent Variable Models}
 
 
-\includegraphics[width=11cm]{\gplvmfiguresdir/gplvm_1d_draw_9}
+
+\begin{figure}
+\begin{centering}
+\includegraphics[width=\textwidth]{\gplvmfiguresdir/gplvm_1d_draw_9}
+\end{centering}
+\caption[One-dimensional Gaussian process latent variable model]{A visual representation of the Gaussian process latent variable model.  Bottom: density and samples from a 1D Gaussian, specifying the distribution $p(\vX)$ in the latent space.  Top Right: A function drawn from a GP prior.  Left: A nonparametric density defined by warping the latent density through the function drawn from a GP prior.}  
+\label{fig:oned-gplvm}
+\end{figure}
+
+
 
 \begin{figure}
 \begin{centering}
 {\begin{tabular}{cccc}
+\phantom{h} & Latent space $p(\vX)$ & & Observed space $p(\vY)$ \\
 & \fbox{\includegraphics[height=15em,width=15em]{\gplvmfiguresdir/gplvm-latent-crop}} &
 \raisebox{7em}{$\overset{\mathlarger{f(x)}}{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\rightarrow}}}}}}}}$} &
 %\raisebox{7em}{\Huge $\overset{\textnormal{\Large{GP}}}\rightarrow$} &
-\fbox{\includegraphics[height=15em,width=15em]{\gplvmfiguresdir/gplvm-draw-crop}}\\
-\phantom{h} & Latent space $p(\vX)$ & & Observed space $p(\vY)$ \\
+\fbox{\includegraphics[height=15em,width=15em]{\gplvmfiguresdir/gplvm-draw-crop}}
 \end{tabular}}
 \end{centering}
+\caption[Two-dimensional Gaussian process latent variable model]{A visual representation of the Gaussian process latent variable model.  Left:  Isocontours and samples from a 2D Gaussian, specifying the distribution $p(\vX)$ in the latent space.  Right: Density and samples from a nonparametric density defined by warping the latent density through a function drawn from a GP prior.}  
+\label{fig:twod-gplvm}
 \end{figure}
+
+
+
+
+
 
 \section{Derivation of Component Marginal Variance}
 
