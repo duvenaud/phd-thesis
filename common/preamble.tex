@@ -57,11 +57,62 @@
 
 % HUMBLE WORDS: shown slightly smaller when in normal text
 % Thanks to Christian Steinruecken!
+%\makeatletter%
+%\newlength{\nonHumbleHeight}
+%\def\@humbleformat#1{{\settoheight{\nonHumbleHeight}{#1}\resizebox{!}{0.94\nonHumbleHeight}{#1}}}%
+%\newcommand\humble[1]{{\@humbleformat{#1}}}%
+%\makeatother%
+
+
+% HUMBLE WORDS: shown slightly smaller when in normal text
+%
 \makeatletter%
+%\def\@humbleformat#1{{\fontsize{}{1em}\selectfont #1}}
+%\def\@humbleformat#1{\textsmaller{#1}}%
 \newlength{\nonHumbleHeight}
 \def\@humbleformat#1{{\settoheight{\nonHumbleHeight}{#1}\resizebox{!}{0.94\nonHumbleHeight}{#1}}}%
-\newcommand\humble[1]{{\@humbleformat{#1}}}%
+\def\@idxhumbleformat#1{{\relscale{0.95}{#1}}}%
+%\def\@humbleformat#1{{#1}}%
+\def\declareHumble#1#2{%
+  \expandafter\def\csname #1\endcsname{\@humbleformat{#2}}%
+  \expandafter\def\csname s#1\endcsname{{#2}}%
+  \expandafter\def\csname idx#1\endcsname{{\@idxhumbleformat{#2}}}%
+}%
+\def\humble#1{\@humbleformat{#1}}%
+\def\idxhumble#1{\@idxhumbleformat{#1}}%
 \makeatother%
+
+% Convenient indexing for humble abbreviations
+\def\humbleindex#1#2{\index{#1@\idxhumble{#1}}}
+
+
+% TODO: Clean up duplicates.
+
+\declareHumble{gp}{GP}
+\declareHumble{gpt}{GP}
+\declareHumble{MLP}{MLP}
+\declareHumble{BMC}{BMC}
+\declareHumble{bq}{BQ}
+\declareHumble{SBQ}{SBQ}
+\declareHumble{ibp}{IBP}
+\declareHumble{CRP}{CRP}
+\declareHumble{dirpro}{DP}
+\declareHumble{mcmc}{MCMC}
+\declareHumble{SE}{SE}
+\declareHumble{Per}{Per}
+\declareHumble{RQ}{RQ}
+\declareHumble{Lin}{Lin}
+\declareHumble{kSE}{SE}
+\declareHumble{kPer}{Per}
+\declareHumble{kRQ}{RQ}
+\declareHumble{kLin}{Lin}
+
+
+\def\subexpr{{\cal S}}
+\def\baseker{{\cal B}}
+\def\numWinners{k}
+
+
 
 
 % For tikz figures in deep limits
@@ -259,18 +310,6 @@
 
 
 
-%\newcommand{\gp}{{\acro{GP}}}
-\newcommand{\gpt}{{\sc gp}}
-\newcommand{\MLP}{{\acro{MLP}}}
-
-\newcommand{\gp}{{\acro{gp}}}
-\newcommand{\bmc}{{\acro{bmc}}}
-\newcommand{\bq}{{\acro{bq}}}
-\newcommand{\sbq}{{\acro{sbq}}}
-\newcommand{\ibp}{{\acro{ibp}}}
-\newcommand{\crp}{{\acro{crp}}}
-\newcommand{\dirpro}{{\acro{dp}}}
-\newcommand{\mcmc}{{\acro{mcmc}}}
 
 % Kernel stuff
 
@@ -286,19 +325,7 @@
 \def\ProductKernel{\prod}
 \def\expression{e}
 
-\def\SE{\acro{SE}}
-\def\Per{\acro{Per}}
-\def\RQ{\acro{RQ}}
-\def\Lin{\acro{Lin}}
 
-\def\subexpr{{\cal S}}
-\def\baseker{{\cal B}}
-\def\numWinners{k}
-
-\newcommand{\kSE}{{\acro{SE}}}
-\newcommand{\kPer}{{\acro{Per}}}
-\newcommand{\kLin}{{\acro{Lin}}}
-\newcommand{\kRQ}{{\acro{RQ}}}
 
 
 % Proof stuff
