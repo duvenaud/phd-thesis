@@ -86,7 +86,6 @@
 % Convenient indexing for humble abbreviations
 \def\humbleindex#1#2{\index{#1@\idxhumble{#1}}}
 
-
 % TODO: Clean up duplicates.
 
 \declareHumble{gp}{GP}
@@ -107,13 +106,21 @@
 \declareHumble{kPer}{Per}
 \declareHumble{kRQ}{RQ}
 \declareHumble{kLin}{Lin}
+\declareHumble{kWN}{WN}
+\declareHumble{kC}{C}
+\declareHumble{kCP}{CP}
+\declareHumble{kCW}{CW}
 
 
 \def\subexpr{{\cal S}}
 \def\baseker{{\cal B}}
 \def\numWinners{k}
 
-
+\def\ie{i.e.\ }
+\def\eg{e.g.\ }
+\def\etc{etc.\ }
+\let\oldemptyset\emptyset
+\let\emptyset 0
 
 
 % For tikz figures in deep limits
@@ -143,6 +150,8 @@
 
 
 
+\newcommand{\procedurename}{ABCD}
+\newcommand{\genText}[1]{{\sf #1}}
 
 
 
