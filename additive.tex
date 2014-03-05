@@ -338,30 +338,7 @@ Figure \ref{fig:kernels3d} provides a geometric comparison between squared-expon
 
 \section{Experiments}
 
-\subsection{Synthetic Data}
 
-Because additive kernels can discover non-local structure in data, they are exceptionally well-suited to problems where local interpolation fails.  
-%[Would this make them good for nonstationary noise?]
-\begin{figure}[h]
-\centering
-\begin{tabular}{cccc}
-\hspace{-0.1in}\includegraphics[width=0.24\textwidth]{\additivefigsdir/1st_order_censored_truth.pdf} &
-\hspace{-0.1in}\includegraphics[width=0.24\textwidth]{\additivefigsdir/1st_order_censored_ard.pdf}&
-\hspace{-0.1in}\includegraphics[width=0.24\textwidth]{\additivefigsdir/1st_order_censored_add.pdf}& 
-\hspace{-0.1in}\includegraphics[width=0.24\textwidth]{\additivefigsdir/1st_order_censored_d1d2.pdf}\\ 
-True Function & Squared-exp GP & Additive GP & Additive GP \\
- \& data locations & posterior mean & posterior mean & 1st-order functions\\
-%\includegraphics[width=0.3\textwidth]{\additivefigsdir/1st_order_censored_data.pdf} &
-%\includegraphics[width=0.3\textwidth]{\additivefigsdir/1st_order_censored_d1.pdf}&
-%\includegraphics[width=0.3\textwidth]{\additivefigsdir/1st_order_censored_d2.pdf}\\
-%Training Data Locations & Estimated 1D $f(x_1)$ & Estimated 1D $f(x_2)$ \\
-\end{tabular}
-\caption{Long-range inference in functions with additive structure.%  The additive GP is able to discover the additive pattern, and use it to fill in a distant mode.  The ARD kernel can only interpolate, and thus predicts the mean in locations missing data.
-}
-\label{fig:synth2d}
-\end{figure}
-%Figure \ref{fig:synth2d} shows a simple experiment demonstrating the ability of additive kernels to discover low-order structure, and to exploit that structure to make predictions about unseen combinations of inputs.
-Figure \ref{fig:synth2d} shows a dataset which demonstrates this feature of additive GPs, consisting of data drawn from a sum of two axis-aligned sine functions.  The training set is restricted to a small, L-shaped area; the test set contains a peak far from the training set locations.  The additive GP recovered both of the original sine functions (shown in green), and inferred correctly that most of the variance in the function comes from first-order interactions.  The ability of additive GPs to discover long-range structure suggests that this model may be well-suited to deal with covariate-shift problems.
 
 \subsection{Experimental Setup}
 %\subsubsection{Learning}

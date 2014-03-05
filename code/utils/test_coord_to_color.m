@@ -2,7 +2,7 @@
 
 n = 1000;
 x = randn( n, 2);
-colors = coord_to_color2(x);
+colors = coord_to_color(x);
 
 %close all;
 figure;

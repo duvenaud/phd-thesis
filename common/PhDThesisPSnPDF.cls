@@ -189,7 +189,7 @@ supported!}
       colorlinks=true, 
       linkcolor=black,
       urlcolor=black, 
-      citecolor=mydarkblue, 
+      citecolor=black, 
       anchorcolor=black
     }
     \ifPHD@custommargin
@@ -222,8 +222,8 @@ supported!}
       breaklinks=true,
       linktocpage, 
       colorlinks=true, 
-      linkcolor=blue, 
-      urlcolor=blue,
+      linkcolor=mydarkblue, 
+      urlcolor=mydarkblue,
       citecolor=mydarkblue, 
       anchorcolor=green,
       pagebackref,
