@@ -349,8 +349,39 @@ Since this dataset was analyzed in detail by \citet{rasmussen38gaussian}, we can
 %First, we revisit a dataset explored in \mbox{\cite{rasmussen38gaussian}}%, pages 120-126
 %, where a kernel was hand-tailored to fit a \gp{} model to the dataset.
 
-\input{\grammartablesdir/mauna_growth.tex}
-\input{\grammartablesdir/mauna_decomp.tex}
+\begin{figure}
+\centering
+\newcommand{\wmg}{0.34\columnwidth}  % width maunu growth
+\newcommand{\hmg}{3.2cm}  % height maunu growth
+\begin{tabular}{c}
+\hspace{-0.3cm} \includegraphics[width=\wmg,height=\hmg]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_0/03-mauna2003-s_all_small} 
+\hspace{-0.3cm} \includegraphics[width=\wmg,height=\hmg]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_1/03-mauna2003-s_all_small}
+\hspace{-0.3cm} \includegraphics[width=\wmg,height=\hmg]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_2/03-mauna2003-s_all_small}
+\end{tabular}
+\caption{Posterior mean and variance for different depths of kernel search.  The dashed line marks the extent of the dataset.  In the first column, the function is only modeled as a locally smooth function, and the extrapolation is poor.  Next, a periodic component is added, and the extrapolation improves.  At depth 3, the kernel can capture most of the relevant structure, and is able to extrapolate reasonably. %\TBD{RBG: (1) I think we somehow need to visualize the lengthscales, to make it obvious that the SE kernels really mean different things. (2) Why isn't SE + PE the correct answer?}
+}
+\label{fig:mauna_grow}
+\end{figure}
+
+
+
+\begin{figure}
+\newcommand{\wmgd}{1.02\columnwidth}  % width mauna decomp
+\newcommand{\hmgd}{3.51cm}  % height mauna decomp
+\newcommand{\mdrd}{\grammarfiguresdir/decomposition/11-Feb-03-mauna2003-s}  % mauna decomp results dir
+\newcommand{\mbm}{\hspace{-0.2cm}}  % move back
+\begin{tabular}{c}
+\mbm \includegraphics[width=\wmgd,height=\hmgd]{\mdrd/03-mauna2003-s_all} \\ = \\
+\mbm \includegraphics[width=\wmgd,height=\hmgd]{\mdrd/03-mauna2003-s_1} \\ + \\
+\mbm \includegraphics[width=\wmgd,height=\hmgd]{\mdrd/03-mauna2003-s_2_zoom} \\ + \\
+\mbm \includegraphics[width=\wmgd,height=\hmgd]{\mdrd/03-mauna2003-s_3} \\ + \\
+\mbm \includegraphics[width=\wmgd,height=\hmgd]{\mdrd/03-mauna2003-s_resid}
+\end{tabular}
+\caption{First row: The posterior on the Mauna Loa dataset, after a search of depth 10.  Subsequent rows show the automatic decomposition of the time series.  The decompositions shows long-term, yearly periodic, medium-term anomaly components, and residuals, respectively.  In the third row, the scale has been changed in order to clearly show the yearly periodic structure.}
+\label{fig:mauna_decomp}
+\end{figure}
+
+
 
 Figure \ref{fig:mauna_grow} shows the posterior mean and variance on this dataset as the search depth increases.
 While the data can be smoothly interpolated by a single base kernel model, the extrapolations improve dramatically as the increased search depth allows more structure to be included.
@@ -368,6 +399,76 @@ We also plot the residuals, observing that there is little obvious structure lef
 %The decomposition is qualitatively identical to that constructed in \citet{rasmussen38gaussian}.
 %On this example, our search procedure is able to automate this construction where previously two \gp{} experts devoted 4 pages of text and analysis to the development of a composite kernel.
 %}
+
+
+
+
+
+
+
+\begin{figure}
+\centering
+\newcommand{\wmg}{0.34\columnwidth}  % width maunu growth
+\newcommand{\hmg}{3.2cm}  % height maunu growth
+\begin{tabular}{c}
+\hspace{-0.3cm} \includegraphics[width=\wmg,height=\hmg]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_0/03-mauna2003-s_all_small} 
+\hspace{-0.3cm} \includegraphics[width=\wmg,height=\hmg]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_1/03-mauna2003-s_all_small}
+\hspace{-0.3cm} \includegraphics[width=\wmg,height=\hmg]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_2/03-mauna2003-s_all_small}
+\end{tabular}
+\caption{Posterior mean and variance for different depths of kernel search.  The dashed line marks the extent of the dataset.  In the first column, the function is only modeled as a locally smooth function, and the extrapolation is poor.  Next, a periodic component is added, and the extrapolation improves.  At depth 3, the kernel can capture most of the relevant structure, and is able to extrapolate reasonably. %\TBD{RBG: (1) I think we somehow need to visualize the lengthscales, to make it obvious that the SE kernels really mean different things. (2) Why isn't SE + PE the correct answer?}
+}
+\label{fig:mauna_grow}
+\end{figure}
+\begin{figure}
+\centering
+\begin{tabular}{cc}
+\begin{minipage}[t][14cm][t]{0.7\columnwidth}
+\newcommand{\treescale}{*1.5\columnwidth}
+\begin{tikzpicture}
+[sibling distance=0.15\treescale,-,thick, level distance=0.2\treescale]
+%\footnotesize
+\node[shape=rectangle,draw,thick,fill=blue!30] {No structure}
+  child {node[shape=rectangle,draw,thick] {$\SE$}
+  }
+  child {node[shape=rectangle,draw,thick,fill=blue!30] {$\RQ$}
+    [sibling distance=0.1\treescale]
+    child {node[shape=rectangle,draw,thick] {$\SE$ + \RQ}}
+    child {node {\ldots}}
+    child {node[shape=rectangle,draw,thick,fill=blue!30] {$\Per + \RQ$}
+      [sibling distance=0.15\treescale]
+      child {node[shape=rectangle,draw,thick] {$\SE + \Per + \RQ$}}
+      child {node {\ldots}}
+      child {node[shape=rectangle,draw,thick,fill=blue!30] {$\SE \times (\Per + \RQ)$}
+        [sibling distance=0.14\treescale]
+        child {node {\ldots}}
+        child {node {\ldots}}
+        child {node {\ldots}}
+      }
+      child {node {\ldots}}
+    }
+    %child {node {$\RQ \times \SE$}}
+    child {node {\ldots}}
+    child {node[shape=rectangle,draw,thick] {$\Per \times \RQ$}}
+  }
+  child {node[shape=rectangle,draw,thick] {$\Lin$}
+  }
+  child {node[shape=rectangle,draw,thick] {$\Per$}
+  };
+\end{tikzpicture}
+\end{minipage} &
+\newcommand{\wmgt}{0.34\columnwidth}  % width maunu growth tree
+\newcommand{\hmgt}{3.2cm}  % height maunu growth tree
+\begin{tabular}{c}
+\hspace{-0.3cm} \includegraphics[width=\wmgt,height=\hmgt]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_0/03-mauna2003-s_all_small} \\
+\hspace{-0.3cm} \includegraphics[width=\wmgt,height=\hmgt]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_1/03-mauna2003-s_all_small} \\
+\hspace{-0.3cm} \includegraphics[width=\wmgt,height=\hmgt]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_2/03-mauna2003-s_all_small}
+\end{tabular}
+\end{tabular}
+\caption{Posterior mean and variance for different depths of kernel search.  The dashed line marks the extent of the dataset.  In the first column, the function is only modeled as a locally smooth function, and the extrapolation is poor.  Next, a periodic component is added, and the extrapolation improves.  At depth 3, the kernel can capture most of the relevant structure, and is able to extrapolate reasonably.
+}
+\label{fig:mauna_search_tree}
+\end{figure}
+
 
 \paragraph{Airline passenger data}
 
@@ -791,7 +892,7 @@ Heteroscedasticity & \eg $\kSE + \kLin \times \kWN$
 \end{tabular}
 \caption{
 Common regression models expressible in our language.
-$\cos$ is a special case of our reparametrised {\sc Per}.%$\kPer$.
+$\cos$ is a special case of our reparametrised \skPer.
 }
 \label{table:motifs}
 \end{table}
