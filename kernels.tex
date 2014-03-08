@@ -26,7 +26,8 @@ True Function & Squared-exp GP & Additive GP & Additive GP \\
 %\includegraphics[width=0.3\textwidth]{\additivefigsdir/1st_order_censored_d2.pdf}\\
 %Training Data Locations & Estimated 1D $f(x_1)$ & Estimated 1D $f(x_2)$ \\
 \end{tabular}
-\caption{Long-range inference in functions with additive structure.%  The additive GP is able to discover the additive pattern, and use it to fill in a distant mode.  The ARD kernel can only interpolate, and thus predicts the mean in locations missing data.
+\caption[Long-range inference in functions with additive structure]
+{Long-range inference in functions with additive structure.%  The additive GP is able to discover the additive pattern, and use it to fill in a distant mode.  The ARD kernel can only interpolate, and thus predicts the mean in locations missing data.
 }
 \label{fig:synth2d}
 \end{figure}
@@ -94,10 +95,10 @@ Commonly used kernels families include the squared exponential (\kSE), periodic 
   {\small Linear (\kLin)} & {\small linear \newline functions} 
 & {\small Rational- \newline quadratic(\kRQ)} & {\small multi-scale \newline \phantom{iii}variation}
 \end{tabularx}
-\caption[Examples of structures expressible by composite kernels]{ 
-Examples of structures expressible by composite kernels.
+\caption[Examples of structures expressible by base kernels]
+{Examples of structures expressible by base kernels.
 Left and third columns: base kernels $k(\cdot,0)$.
-Second and fourth columns: draws from a \gpt{} with each repective kernel.
+Second and fourth columns: draws from a \sgp{} with each repective kernel.
 The x-axis has the same range on all plots.}
 \label{fig:basic_kernels}
 \end{figure}
@@ -114,7 +115,54 @@ This allows one to create richly structured and interpretable kernels from well 
 All of the base kernels we use are one-dimensional; kernels over multidimensional inputs are constructed by adding and multiplying kernels over individual dimensions.
 These dimensions are represented using subscripts, e.g. $\SE_2$ represents an \kSE{} kernel over the second dimension of $\inputVar$.
 %
-\input{\grammartablesdir/example_structures_table_v4.tex}
+%\newcommand{\fhbig}{1.6cm}
+%\newcommand{\fwbig}{1.8cm}
+%\newcommand{\kernpic}[1]{\includegraphics[height=\fhbig,width=\fwbig]{../figures/structure_examples/#1}}
+%\newcommand{\kernpicr}[1]{\rotatebox{90}{\includegraphics[height=\fwbig,width=\fhbig]{../figures/structure_examples/#1}}}
+%\newcommand{\addkernpic}[1]{{\includegraphics[height=\fhbig,width=\fwbig]{../figures/additive_multi_d/#1}}}
+%\newcommand{\largeplus}{\tabbox{{\Large+}}}
+%\newcommand{\largeeq}{\tabbox{{\Large=}}}
+%\newcommand{\largetimes}{\tabbox{{\Large$\times$}}}
+\begin{figure}[ht]
+\centering
+\renewcommand{\tabularxcolumn}[1]{>{\arraybackslash}m{#1}}
+%\begin{tabular}{m{\fwbig}m{0.01\textwidth}m{\fwbig}m{0.01\textwidth}m{\fwbig}m{\fwbig}m{\fwbig}}
+%\begin{tabular}{C{\fwbig}C{\fwbig}C{\fwbig}C{\fwbig}}%{m{\fwbig}m{\fwbig}m{\fwbig}}
+\begin{tabularx}{\columnwidth}{XXXX}
+  \kernpic{lin_times_lin} & \kernpic{lin_times_lin_draws} 
+& \kernpic{se_times_per} & \kernpic{se_times_per_draws_s7}
+\\
+  {\small $\kLin \times \kLin$} & {\small quadratic functions}
+& {\small $\kSE \times \kPer$} & {\small locally \newline periodic}
+\\
+\midrule 
+  \kernpic{lin_plus_per} & \kernpic{lin_plus_per_draws}
+& \kernpic{se_plus_per} & \kernpic{se_plus_per_draws_s7}
+\\
+  {\small $\kLin + \kPer$} & {\small periodic with trend}
+& {\small $\kSE + \kPer$ } & {\small periodic with noise}
+\\
+\midrule
+  \kernpic{se_times_lin} & \kernpic{se_times_lin_draws_s2}
+& \kernpic{lin_times_per} & \kernpic{lin_times_per_draws_s2}
+\\
+  {\small $\kLin \times \kSE$} & {\small increasing variation}
+& {\small $\kLin \times \kPer$} & {\small growing amplitude}
+\\
+\midrule
+  \addkernpic{additive_kernel} & \addkernpic{additive_kernel_draw_sum}
+& \addkernpic{sqexp_kernel}  & \addkernpic{sqexp_draw}
+\\
+  {\small $\kSE_1 + \kSE_2$} & {\small $f_1(x_1)$ $+ f_2(x_2)$}
+& {\small $\kSE_1 \times \kSE_2$} & {\small $f(x_1, x_2)$}
+\end{tabularx}
+\caption[Examples of structures expressible by composite kernels]
+{ Examples of structures expressible by composite kernels.  
+%The x-axis has the same scale for all plots.
+Left column and third columns: composite kernels $k(\cdot,0)$.
+Plots have same meaning as in figure \ref{fig:basic_kernels}.}
+\label{fig:kernels}
+\end{figure}
 
 \paragraph{Summation}
 

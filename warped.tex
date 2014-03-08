@@ -34,7 +34,7 @@ Dirichlet process mixture models can alleviate the problem of an unknown number 
 \fbox{\includegraphics[trim=8em 6em 6em 2em, clip, height=10.5em,width=10.5em]{\warpedfiguresdir/iwmm_N200_seed2155_points1000000}}\\
 Latent space & & Observed space \\
 \end{tabular}}
-\caption{
+\caption[A draw from the infinite warped mixture model prior]{
 A sample from the iWMM prior.  Left: In the latent space, a mixture distribution is sampled from a Dirichlet process mixture of Gaussians.  Right:  The latent mixture is smoothly warped to produce non-Gaussian manifolds in the observed space.}
 \label{fig:generative}
 \end{figure}
@@ -222,7 +222,7 @@ and $\vx,\vx'\in{\mathbb R}^{Q}$.
 \begin{figure}[t!]
 \centering
 \includegraphics[height=12em]{\warpedfiguresdir/iWMM}
-\caption{A graphical model representation of the infinite warped mixture model, where the shaded and unshaded nodes indicate observed and latent variables, respectively, and plates indicate repetition.}
+\caption[Graphical model of the infinite warped mixture model]{A graphical model representation of the infinite warped mixture model, where the shaded and unshaded nodes indicate observed and latent variables, respectively, and plates indicate repetition.}
 \label{fig:graphical}
 \end{figure}
 %
@@ -426,7 +426,7 @@ In contrast, the iWMM infers the mapping function such that the latent co-ordina
 \begin{figure}[t!]
 \centering
 \includegraphics[width=\columnwidth]{\warpedfiguresdir/faces2}
-\caption{A sample from the 2-dimensional latent space when modeling a series of 32x32 face images.  Our model correctly discovers that the data consists of two seperate manifolds, both approximately one-dimensional, which share the same head-turning structure.}
+\caption[Latent clusters of face images]{A sample from the 2-dimensional latent space when modeling a series of 32x32 face images.  Our model correctly discovers that the data consists of two seperate manifolds, both approximately one-dimensional, which share the same head-turning structure.}
 \label{fig:faces}
 \end{figure}
 
@@ -459,7 +459,7 @@ $\uparrow$ & $\uparrow$ & $\uparrow$ & $\uparrow$ \\
 \multicolumn{4}{c}{Latent space} \\
 (a) 2-curve & (b) 3-semi & (c) 2-circle & (d) Pinwheel \\
 \end{tabular}}
-\caption{
+\caption[Recovering clusters on synthetic data]{
 Top row: The observed, unlabeled data points, and the clusters inferred by the iWMM.
 Bottom row: Latent coordinates and Gaussian components, shown for a single sample from the posterior.
 Each point in the latent space corresponds to a point in the observed space. This figure is best viewed in color.}
@@ -490,7 +490,7 @@ Figure \ref{fig:warping} (c) shows an interesting manifold learning challenge: a
 \fbox{\includegraphics[height=11em,width=11em]{\warpedfiguresdir/spiral2all_o_latent_coordinates_epoch3000}}\\
 (a) 1 & (b) 500 & (c) 1800 & (d) 3000 \\
 \end{tabular}}
-\caption{The inferred infinite GMMs over iterations in the two-dimensional latent space with the iWMM using the 2-curve data. Labels indicate the number of iterations of the sampler, and the color of each point represents its ordering in the observed coordinates.}
+\caption[A visualization of a sampler for the iWMM]{The inferred infinite GMMs over iterations in the two-dimensional latent space with the iWMM using the 2-curve data. Labels indicate the number of iterations of the sampler, and the color of each point represents its ordering in the observed coordinates.}
 \label{fig:infer}
 \end{figure*}
 
@@ -515,7 +515,7 @@ This configuration was relatively stable, and a similar state was found at the 5
 \\
 (a) iWMM & (b) iWMM ($C=1$) \\
 \end{tabular}
-\caption{The posterior density in the observed space with the 2-curve data inferred by the iWMM (a), and that inferred by the iWMM with one component (b).}
+\caption[Comparing density estimates of between the GP-LVM and the iWMM]{The posterior density in the observed space with the 2-curve data inferred by the iWMM (a), and that inferred by the iWMM with one component (b).}
 \label{fig:posterior}
 \end{figure}
 
@@ -545,7 +545,7 @@ Figure~\ref{fig:posterior} (b) shows that the single-cluster variant of the iWMM
 (a) iWMM & (b) iWMM ($C=1$) &
 (c) GPLVM & (d) BGPLVM \\
 \end{tabular}}
-\caption{The estimated latent coordinates of the 2-curve data by
+\caption[Copmarison of latent coordinate estimates]{The estimated latent coordinates of the 2-curve data by
 (a) iWMM, (b) iWMM ($C=1$), (c) GPLVM, and (d) Bayesian GPLVM.}
 \label{fig:latent}
 \end{figure*}
@@ -571,7 +571,8 @@ This is because, if the data in a cluster can be made to lie in a low-dimensiona
 
 \begin{table*}[ht!]
 \centering
-\caption{The statistics of datasets used for evaluation.}
+\caption[Datasets used for evaluation of the iWMM]
+{The statistics of datasets used for evaluation.}
 \label{tab:statistics}
 \begin{tabular}{rrrrrrrrr}
 \hline
@@ -600,7 +601,8 @@ Results in bold are not significantly different from the best performing method 
 
 \begin{table*}[ht!]
 \centering
-\caption{Average Rand index for evaluating clustering performance.}
+\caption[Clustering performance comparison]
+{Average Rand index for evaluating clustering performance.}
 \label{tab:rand}
 \begin{tabular}{lrrrrrrrr}
 \hline
@@ -640,7 +642,8 @@ The proposed models achieved high test log likelihoods compared with the KDE and
 
 \begin{table*}[ht!]
 \centering
-\caption{Average test log likelihood for evaluating density estimation performance.}
+\caption[Predictive log-likelihood comparison]
+{Average test log likelihood for evaluating density estimation performance.}
 \label{tab:likelihood}
 \begin{tabular}{lrrrrrrrr}
 \hline

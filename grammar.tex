@@ -358,7 +358,8 @@ Since this dataset was analyzed in detail by \citet{rasmussen38gaussian}, we can
 \hspace{-0.3cm} \includegraphics[width=\wmg,height=\hmg]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_1/03-mauna2003-s_all_small}
 \hspace{-0.3cm} \includegraphics[width=\wmg,height=\hmg]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_2/03-mauna2003-s_all_small}
 \end{tabular}
-\caption{Posterior mean and variance for different depths of kernel search.  The dashed line marks the extent of the dataset.  In the first column, the function is only modeled as a locally smooth function, and the extrapolation is poor.  Next, a periodic component is added, and the extrapolation improves.  At depth 3, the kernel can capture most of the relevant structure, and is able to extrapolate reasonably. %\TBD{RBG: (1) I think we somehow need to visualize the lengthscales, to make it obvious that the SE kernels really mean different things. (2) Why isn't SE + PE the correct answer?}
+\caption[Comparison of models found at different deptsh of the kernel search]
+{Posterior mean and variance for different depths of kernel search.  The dashed line marks the extent of the dataset.  In the first column, the function is only modeled as a locally smooth function, and the extrapolation is poor.  Next, a periodic component is added, and the extrapolation improves.  At depth 3, the kernel can capture most of the relevant structure, and is able to extrapolate reasonably. %\TBD{RBG: (1) I think we somehow need to visualize the lengthscales, to make it obvious that the SE kernels really mean different things. (2) Why isn't SE + PE the correct answer?}
 }
 \label{fig:mauna_grow}
 \end{figure}
@@ -377,7 +378,8 @@ Since this dataset was analyzed in detail by \citet{rasmussen38gaussian}, we can
 \mbm \includegraphics[width=\wmgd,height=\hmgd]{\mdrd/03-mauna2003-s_3} \\ + \\
 \mbm \includegraphics[width=\wmgd,height=\hmgd]{\mdrd/03-mauna2003-s_resid}
 \end{tabular}
-\caption{First row: The posterior on the Mauna Loa dataset, after a search of depth 10.  Subsequent rows show the automatic decomposition of the time series.  The decompositions shows long-term, yearly periodic, medium-term anomaly components, and residuals, respectively.  In the third row, the scale has been changed in order to clearly show the yearly periodic structure.}
+\caption[Model decomposition of the Mauna-Loa time-series]
+{First row: The posterior on the Mauna Loa dataset, after a search of depth 10.  Subsequent rows show the automatic decomposition of the time series.  The decompositions shows long-term, yearly periodic, medium-term anomaly components, and residuals, respectively.  In the third row, the scale has been changed in order to clearly show the yearly periodic structure.}
 \label{fig:mauna_decomp}
 \end{figure}
 
@@ -406,26 +408,14 @@ We also plot the residuals, observing that there is little obvious structure lef
 
 
 
-\begin{figure}
+
+\begin{figure}[ht]
 \centering
-\newcommand{\wmg}{0.34\columnwidth}  % width maunu growth
-\newcommand{\hmg}{3.2cm}  % height maunu growth
-\begin{tabular}{c}
-\hspace{-0.3cm} \includegraphics[width=\wmg,height=\hmg]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_0/03-mauna2003-s_all_small} 
-\hspace{-0.3cm} \includegraphics[width=\wmg,height=\hmg]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_1/03-mauna2003-s_all_small}
-\hspace{-0.3cm} \includegraphics[width=\wmg,height=\hmg]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_2/03-mauna2003-s_all_small}
-\end{tabular}
-\caption{Posterior mean and variance for different depths of kernel search.  The dashed line marks the extent of the dataset.  In the first column, the function is only modeled as a locally smooth function, and the extrapolation is poor.  Next, a periodic component is added, and the extrapolation improves.  At depth 3, the kernel can capture most of the relevant structure, and is able to extrapolate reasonably. %\TBD{RBG: (1) I think we somehow need to visualize the lengthscales, to make it obvious that the SE kernels really mean different things. (2) Why isn't SE + PE the correct answer?}
-}
-\label{fig:mauna_grow}
-\end{figure}
-\begin{figure}
-\centering
-\begin{tabular}{cc}
-\begin{minipage}[t][14cm][t]{0.7\columnwidth}
+%\begin{tabular}{cc}
+%\begin{minipage}[t][14cm][t]{0.65\columnwidth}
 \newcommand{\treescale}{*1.5\columnwidth}
 \begin{tikzpicture}
-[sibling distance=0.15\treescale,-,thick, level distance=0.2\treescale]
+[sibling distance=0.15\treescale,-,thick, level distance=2cm]
 %\footnotesize
 \node[shape=rectangle,draw,thick,fill=blue!30] {No structure}
   child {node[shape=rectangle,draw,thick] {$\SE$}
@@ -455,18 +445,38 @@ We also plot the residuals, observing that there is little obvious structure lef
   child {node[shape=rectangle,draw,thick] {$\Per$}
   };
 \end{tikzpicture}
-\end{minipage} &
-\newcommand{\wmgt}{0.34\columnwidth}  % width maunu growth tree
-\newcommand{\hmgt}{3.2cm}  % height maunu growth tree
-\begin{tabular}{c}
-\hspace{-0.3cm} \includegraphics[width=\wmgt,height=\hmgt]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_0/03-mauna2003-s_all_small} \\
-\hspace{-0.3cm} \includegraphics[width=\wmgt,height=\hmgt]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_1/03-mauna2003-s_all_small} \\
-\hspace{-0.3cm} \includegraphics[width=\wmgt,height=\hmgt]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_2/03-mauna2003-s_all_small}
-\end{tabular}
-\end{tabular}
-\caption{Posterior mean and variance for different depths of kernel search.  The dashed line marks the extent of the dataset.  In the first column, the function is only modeled as a locally smooth function, and the extrapolation is poor.  Next, a periodic component is added, and the extrapolation improves.  At depth 3, the kernel can capture most of the relevant structure, and is able to extrapolate reasonably.
-}
+%\end{minipage} & 
+%\newcommand{\wmgt}{3.4cm}  % width maunu growth tree
+%\newcommand{\hmgt}{3.2cm}  % height maunu growth tree
+%\begin{minipage}[t][14cm][t]{0.3\columnwidth}
+%\raisebox{6cm}{
+%\begin{tabular}{c}
+%\hspace{-0.3cm} \includegraphics[width=\wmgt,height=\hmgt]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_0/03-mauna2003-s_all_small} \\
+%\hspace{-0.3cm} \includegraphics[width=\wmgt,height=\hmgt]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_1/03-mauna2003-s_all_small} \\
+%\hspace{-0.3cm} \includegraphics[width=\wmgt,height=\hmgt]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_2/03-mauna2003-s_all_small}
+%\end{tabular}
+%}
+%\end{minipage}
+%\end{tabular}
+\caption[Search tree over kernels]{An example of a search tree over kernel expressions.  Figure \ref{fig:mauna_grow} shows the model increasing in sophistication as the kernel expression grows.}
 \label{fig:mauna_search_tree}
+\end{figure}
+
+
+
+\begin{figure}[h]
+\centering
+\newcommand{\wmg}{0.34\columnwidth}  % width maunu growth
+\newcommand{\hmg}{3.2cm}  % height maunu growth
+\begin{tabular}{c}
+\hspace{-0.3cm} \includegraphics[width=\wmg,height=\hmg]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_0/03-mauna2003-s_all_small} 
+\hspace{-0.3cm} \includegraphics[width=\wmg,height=\hmg]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_1/03-mauna2003-s_all_small}
+\hspace{-0.3cm} \includegraphics[width=\wmg,height=\hmg]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_2/03-mauna2003-s_all_small}
+\end{tabular}
+\caption[Progression of models as the search depth increases]
+{Posterior mean and variance for different depths of kernel search.  The dashed line marks the extent of the dataset.  In the first column, the function is only modeled as a locally smooth function, and the extrapolation is poor.  Next, a periodic component is added, and the extrapolation improves.  At depth 3, the kernel can capture most of the relevant structure, and is able to extrapolate reasonably. %\TBD{RBG: (1) I think we somehow need to visualize the lengthscales, to make it obvious that the SE kernels really mean different things. (2) Why isn't SE + PE the correct answer?}
+}
+\label{fig:mauna_grow}
 \end{figure}
 
 
@@ -514,13 +524,48 @@ In addition, the composite kernel captures the near-linearity of the long-term t
 \paragraph{Solar irradiance Data} 
 Finally, we analyzed annual solar irradiation data from 1610 to 2011 \citep{lean1995reconstruction}.
 %
-\input{\grammartablesdir/solar_decomp.tex}
+\begin{figure}
+\newcommand{\wsd}{1.02\columnwidth}  % width solar decomp
+\newcommand{\hsd}{4cm}  % height solar decomp
+\newcommand{\srd}{\grammarfiguresdir/decomposition/11-Feb-02-solar-s}  % solar decomp results dir
+\newcommand{\mbs}{\hspace{-0.3cm}}  % move back
+\begin{tabular}{c}
+\mbs \includegraphics[width=\wsd,height=\hsd]{\srd/02-solar-s_all} \\
+\mbs \includegraphics[width=\wsd,height=\hsd]{\srd/02-solar-s_resid}
+\end{tabular}
+\caption[Decomposition of model discovered on solar irradiance dataset]
+{Full posterior and residuals on the solar irradiance dataset.}
+\label{fig:solar_decomp}
+\end{figure}
 %
 The posterior and residuals of the learned kernel are shown in figure \ref{fig:solar_decomp}.
 %The composite kernel captures the periodic structure in the data, but does not capture the flat structure from 1645 to 1715 during which sunspots were extremely rare.
 %but it misses out on another aspect of the data: the flat period from 1645 to 1715 which contains no periodicity and has much smaller variance than the rest of the dataset.
 %This corresponds to the Maunder minimum, a period in which sunspots were extremely rare.
-\input{\grammartablesdir/airline_decomp.tex}
+\begin{figure}[H]
+\centering
+\newcommand{\wagd}{1.02\columnwidth}  % width airline decomp
+\newcommand{\hagd}{3.6cm}  % height airline decomp
+\newcommand{\mb}{\hspace{-0.2cm}}  % move back
+%\newcommand{\ard}{../figures/decomposition/11-Feb-01-airline-s}  % airline results dir
+\newcommand{\ard}{\grammarfiguresdir/decomposition/31-Jan-v301-airline-months}  % airline results dir
+\begin{tabular}{c}
+\mb \includegraphics[width=\wagd,height=\hagd]{\ard/01-airline-months_all} \\
+ = \\ 
+\mb \includegraphics[width=\wagd,height=\hagd]{\ard/01-airline-months_1} \\
+ + \\
+\mb \includegraphics[width=\wagd,height=\hagd]{\ard/01-airline-months_2} \\
+ + \\
+\mb \includegraphics[width=\wagd,height=\hagd]{\ard/01-airline-months_3} \\
+ + \\
+\mb \includegraphics[width=\wagd,height=\hagd]{\ard/01-airline-months_resid}
+\end{tabular}
+\caption[Decomposition of model discovered on airline dataset]
+{First row:  The airline dataset and posterior after a search of depth 10.  Subsequent rows: Additive decomposition of posterior into long-term smooth trend, yearly variation, and short-term deviations.  Due to the linear kernel, the marginal variance grows over time, making this a heteroskedastic model. 
+%\TBD{RBG: We allow heteroskedastic noise in our models?}
+}
+\label{fig:airline_decomp}
+\end{figure}
 %
 None of the models in our search space are capable of parsimoniously representing the lack of variation from 1645 to 1715. %, since all of the base kernels apart from \kLin{} are stationary.
 %, and it is hard to see how Lin would help in modeling this structure.
@@ -797,7 +842,8 @@ In this paper we conjecture that the following ingredients may be useful for bui
 \begin{figure}[t]
 \centering
 \fbox{\includegraphics[trim=0cm 4.75cm 0cm 1.0cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/solarpages/pg_0007-crop}}
-\caption{Extract from an automatically-generated report describing the model components discovered by automatic model search.  This part of the report isolates and describes the approximately 11-year sunspot cycle, also noting its disappearance during the 16th century, a time known as the Maunder minimum \citep{lean1995reconstruction}.}
+\caption[Extract from an automatically-generated report]
+{Extract from an automatically-generated report describing the model components discovered by automatic model search.  This part of the report isolates and describes the approximately 11-year sunspot cycle, also noting its disappearance during the 16th century, a time known as the Maunder minimum \citep{lean1995reconstruction}.}
 \label{fig:periodic}
 \end{figure}
 
@@ -890,8 +936,8 @@ Spectral mixture & $\sum \SE \times \cos$ + \kWN\\
 Changepoints & \eg $\kCP(\kSE, \kSE) + \kWN$ \\
 Heteroscedasticity & \eg $\kSE + \kLin \times \kWN$
 \end{tabular}
-\caption{
-Common regression models expressible in our language.
+\caption[Common regression models expressible in the kernel language]
+{Common regression models expressible in our language.
 $\cos$ is a special case of our reparametrised \skPer.
 }
 \label{table:motifs}
@@ -1032,8 +1078,8 @@ Full automatically-generated reports for 13 data sets are provided as supplement
 \begin{figure}[h]
 \centering
 \includegraphics[trim=0.2cm 18.0cm 8cm 2cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/solarpages/pg_0002-crop}
-\caption{
-Solar irradiance data.}
+\caption[Solar irradiance dataset]
+{Solar irradiance data.}
 \label{fig:solar}
 \end{figure}
 
@@ -1045,8 +1091,8 @@ This flat region corresponds to the Maunder minimum, a period in which sunspots 
 \begin{figure}[h]
 \centering
 \fbox{\includegraphics[trim=0cm 10.8cm 0cm 6.3cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/solarpages/pg_0002-crop}}
-\caption{
-Automatically generated descriptions of the components discovered by \procedurename{} on the solar irradiance data set.
+\caption[Automatically-generated descriptions of the solar irradiance data set]
+{Automatically generated descriptions of the components discovered by \procedurename{} on the solar irradiance data set.
 The dataset has been decomposed into diverse structures with simple descriptions.}
 \label{fig:exec}
 \end{figure}
@@ -1058,14 +1104,16 @@ The third component corresponds to long-term trends, as visualized in figure~\re
 \begin{figure}[ht]
 \centering
 \fbox{\includegraphics[trim=0cm 4.75cm 0cm 0.7cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/solarpages/pg_0005-crop}}
-\caption{One of the learned components corresponds to the Maunder minimum.}
+\caption[A learned component corresponding to the Maunder minimum]
+{One of the learned components corresponds to the Maunder minimum.}
 \label{fig:maunder}
 \end{figure}
 
 \begin{figure}[h!]
 \centering
 \fbox{\includegraphics[trim=0cm 4.75cm 0cm 1cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/solarpages/pg_0006-crop}}
-\caption{Characterizing the medium-term smoothness of solar activity levels.  By allowing other components to explain the periodicity, noise, and the Maunder minimum, \procedurename{} can isolate the part of the signal best explained by a slowly-varying trend.}
+\caption[\procedurename{} isolating the part of the signal explained by a slowly-varying trend]
+{Characterizing the medium-term smoothness of solar activity levels.  By allowing other components to explain the periodicity, noise, and the Maunder minimum, \procedurename{} can isolate the part of the signal best explained by a slowly-varying trend.}
 \label{fig:smooth}
 \end{figure}
 
@@ -1075,8 +1123,8 @@ The third component corresponds to long-term trends, as visualized in figure~\re
 \begin{figure}[h]
 \centering
 \includegraphics[trim=0.4cm 16.8cm 8cm 2cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/airlinepages/pg_0002-crop}
-\caption{
-International airline passenger monthly volume \citep[e.g.][]{box2013time}.}
+\caption[International airline passenger monthly volume dataset]
+{International airline passenger monthly volume \citep[e.g.][]{box2013time}.}
 \label{fig:airline}
 \end{figure}
 
@@ -1086,8 +1134,8 @@ The model constructed by \procedurename{} has four components: $\kLin + \kSE \ti
 \begin{figure}[h]
 \centering
 \fbox{\includegraphics[trim=0cm 6.8cm 0cm 6cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/airlinepages/pg_0002-crop}}
-\caption{
-Short descriptions and summary statistics for the four components of the airline model.}
+\caption[Short descriptions of the four components of the airline model]
+{Short descriptions and summary statistics for the four components of the airline model.}
 \label{fig:exec-airline}
 \end{figure}
 
@@ -1096,7 +1144,8 @@ The second component (figure~\ref{fig:lin_periodic}) is accurately described as 
 \begin{figure}[h]
 \centering
 \fbox{\includegraphics[trim=0cm 4.75cm 0cm 0cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/airlinepages/pg_0004-crop}}
-\caption{Capturing non-stationary periodicity in the airline data}
+\caption[Capturing non-stationary periodicity in the airline data]
+{Capturing non-stationary periodicity in the airline data}
 \label{fig:lin_periodic}
 \end{figure}
 %
@@ -1105,7 +1154,8 @@ By multiplying a white noise kernel by a linear kernel, the model is able to exp
 \begin{figure}[h]
 \centering
 \fbox{\includegraphics[trim=0cm 0cm 0cm 0cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/airlinepages/pg_0006-crop}}
-\caption{Modeling heteroscedasticity}
+\caption[Modeling heteroscedasticity in the airline dataset]
+{Modeling heteroscedasticity in the airline dataset.}
 \label{fig:heteroscedastic}
 \end{figure}
 
@@ -1172,8 +1222,8 @@ However, systems with natural language output have been built in the areas of vi
 \centering
 \includegraphics[width=\textwidth]{\grammarfiguresdir/comparison/box_extrap_wide}
 \vspace{-0.8cm}
-\caption{
-Raw data, and box plot (showing median and quartiles) of standardised extrapolation RMSE (best performance = 1) on 13 time-series.
+\caption[Comparision of extrapolation error of all methods on 13 time-series datasets.]
+{Raw data, and box plot (showing median and quartiles) of standardised extrapolation RMSE (best performance = 1) on 13 time-series.
 The methods are ordered by median.
 }
 \label{fig:box_extrap_dist}
@@ -1347,9 +1397,8 @@ The largest outliers of \procedurename{} and spectral kernels are similar in val
 \begin{figure*}[ht]
 \centering
 \includegraphics[width=\textwidth]{\grammarfiguresdir/comparison/box_interp}
-\caption{
-Box plot of standardised RMSE (best performance = 1) on 13 interpolation tasks.
-}
+\caption[Comparision of extrapolation error of all methods on 13 time-series datasets.]
+{Box plot of standardised RMSE (best performance = 1) on 13 interpolation tasks.}
 \label{fig:box_interp}
 \end{figure*}
 
@@ -1387,7 +1436,7 @@ The following abbreviations are used: \procedurename{}-accuracy (\procedurename{
 1.00 & 1.10 & 1.03 & 1.03 & 1.03 & 2.24 & 1.02 & 1.77 & 9.97\\
 \hline
 \end{tabular}
-\caption{Interpolation standardised RMSEs}
+\caption[Interpolation error]{Interpolation standardised RMSEs}
 \label{table:interp}
 \end{table*}
 
@@ -1412,7 +1461,7 @@ The following abbreviations are used: \procedurename{}-accuracy (\procedurename{
 3.03 & 4.00 & 3.63 & 3.12 & 3.16 & 1.00 & 5.83 & 5.35 & 4.25\\
 \hline
 \end{tabular}
-\caption{Extrapolation standardised RMSEs}
+\caption[Extrapolation error]{Extrapolation standardised RMSEs}
 \label{table:extrap}
 \end{table*}
 

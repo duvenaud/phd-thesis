@@ -196,7 +196,8 @@ Plate also notes that by allowing high-order interactions as well as low-order i
 \includegraphics[width=0.3\textwidth]{\additivefigsdir/interpretable_1st_order2.pdf}& 
 \includegraphics[width=0.3\textwidth]{\additivefigsdir/interpretable_2nd_order1.pdf}\\
 \end{tabular}
-\caption{Low-order functions on the concrete dataset.  Left, Centre:  By considering only first-order terms of the additive kernel, we recover a form of Generalized Additive Model, and can plot the corresponding 1-dimensional functions.  Green points indicate the original data, blue points are data after the mean contribution from the other dimensions' first-order terms has been subtracted.  The black line is the posterior mean of a GP with only one term in its kernel.  Right:  The posterior mean of a GP with only one second-order term in its kernel.}
+\caption[Low-order functions describing the concrete dataset]
+{Low-order functions on the concrete dataset.  Left, Centre:  By considering only first-order terms of the additive kernel, we recover a form of Generalized Additive Model, and can plot the corresponding 1-dimensional functions.  Green points indicate the original data, blue points are data after the mean contribution from the other dimensions' first-order terms has been subtracted.  The black line is the posterior mean of a GP with only one term in its kernel.  Right:  The posterior mean of a GP with only one second-order term in its kernel.}
 \label{fig:interpretable functions}
 \end{figure}
 
@@ -267,9 +268,10 @@ However, their approach learns a mixture over a small, fixed set of kernels, whi
 HKL kernel & GP-GAM kernel & Squared-exp GP & Additive GP kernel\\
  & & kernel & \\
 \end{tabular}
-\caption{
+\caption[A comparison of different additive model classes]
+{
 %A comparison of model flexibility between HKL, additive GPs, the GP-Generalized Additive Model, and the squared-exponential GP model.  
-A comparison of different models.  Nodes represent different interaction terms, ranging from first-order to fourth-order interactions.  Far left:  HKL can select a hull of interaction terms, but must use a pre-determined weighting over those terms.  Far right: the additive GP model can weight each order of interaction seperately.  Neither the HKL nor the additive model dominate one another in terms of flexibility, however the GP-GAM and the SE-GP are special cases of additive GPs. }
+A comparison of different additive model classes.  Nodes represent different interaction terms, ranging from first-order to fourth-order interactions.  Far left:  HKL can select a hull of interaction terms, but must use a pre-determined weighting over those terms.  Far right: the additive GP model can weight each order of interaction seperately.  Neither the HKL nor the additive model dominate one another in terms of flexibility, however the GP-GAM and the SE-GP are special cases of additive GPs. }
 \label{hulls-figure}
 \end{figure}
 
@@ -328,7 +330,8 @@ Bengio et al.\cite{bengio2006curse} argue that models based on squared-exponenti
 $k_1 + k_2 + k_3$ & $k_1k_2 + k_2k_3 + k_1k_3$ & $k_1k_2k_3$ & \\
 & & (Squared-exp kernel) & (Additive kernel)\\
 \end{tabular}
-\caption{Isocontours of additive kernels in 3 dimensions.  The third-order kernel only considers nearby points relevant, while the lower-order kernels allow the output to depend on distant points, as long as they share one or more input value.}
+\caption[Isocontours of additive kernels in 3 dimensions]
+{Isocontours of additive kernels in 3 dimensions.  The third-order kernel only considers nearby points relevant, while the lower-order kernels allow the output to depend on distant points, as long as they share one or more input value.}
 \label{fig:kernels3d}
 \end{figure}
 

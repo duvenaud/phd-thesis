@@ -56,7 +56,8 @@ The mean function $\mftwo$ will be inflated in regions of high marginal variance
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{\quadraturefigsdir/loggp.pdf}
-\caption{A GP versus a log-GP}
+\caption[Comparing the differing characteristics of \sgp{} ans log-\sgp{} models]
+{A GP versus a log-GP}
 \label{fig:loggp}
 \end{figure}
 
@@ -210,7 +211,8 @@ which is again proportional to the height of $\mftwo(\vx)$, a desirable property
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{\quadraturefigsdir/loggp_var.pdf}
-\caption{A GP versus a log-GP}
+\caption[Comparing the differing characteristics of \sgp{} ans log-\sgp{} models]
+{A GP versus a log-GP}
 \label{fig:loggp}
 \end{figure}
 
@@ -254,7 +256,8 @@ In contrast to \mcmc{}, a procedure which computes \eqref{eqn:integral} in the l
 \begin{figure}
 \centering
 \includegraphics[width=0.8\linewidth]{\infinitefiguresdir/bq_intro5}
-\caption{An illustration of Bayesian Quadrature.  The function $f(x)$ is sampled at a set of input locations.  This induces a Gaussian process posterior distribution on $f$, which is integrated in closed form against the target density, $p(\vx)$.  Since the amount of volume under $f$ is uncertain, this gives rise to a (Gaussian) posterior distribution over $Z_{f,p}$.}
+\caption[An illustration of Bayesian quadrature]
+{An illustration of Bayesian quadrature.  The function $f(x)$ is sampled at a set of input locations.  This induces a Gaussian process posterior distribution on $f$, which is integrated in closed form against the target density, $p(\vx)$.  Since the amount of volume under $f$ is uncertain, this gives rise to a (Gaussian) posterior distribution over $Z_{f,p}$.}
 \label{fig:bq_intro}
 \end{figure}
 
@@ -693,7 +696,8 @@ Figure \ref{fig:ibp_exps} demonstrates the use of \bq{}, showing that a set of s
 %\includegraphics[width=0.4\textwidth]{\infinitefiguresdir/ibp_hist_200.pdf} &
 \includegraphics[width=0.3\textwidth]{\infinitefiguresdir/samples_vs_Z.pdf}
 \end{tabular}
-\caption{Computing marginal likelihoods with BQ.  Left: The marginal likelihood as a function of two nuisance parameters.  Center:  A slice of the 2-D marginal likelihood function, at $\sigma_A = 0.4$.  The true value of $\sigma_X$ lies roughly in the center of the likelihood function.  Right: The marginal likelihood as a function of the number of evaluations of the likelihood function.  The shaded error represents uncertainty about the value of the marginal likelihood. }
+\caption[Computing marginal likelihoods with BQ]
+{Computing marginal likelihoods with BQ.  Left: The marginal likelihood as a function of two nuisance parameters.  Center:  A slice of the 2-D marginal likelihood function, at $\sigma_A = 0.4$.  The true value of $\sigma_X$ lies roughly in the center of the likelihood function.  Right: The marginal likelihood as a function of the number of evaluations of the likelihood function.  The shaded error represents uncertainty about the value of the marginal likelihood. }
 \label{fig:ibp_exps}
 \end{figure}
 
@@ -708,7 +712,8 @@ Figure \ref{fig:ibp_exps} demonstrates the use of \bq{} to examine sensitivity t
 \includegraphics[width=0.33\textwidth]{\infinitefiguresdir/gmm_z_vs_lambda.pdf} & 
 \includegraphics[width=0.33\textwidth]{\infinitefiguresdir/gmm_z_vs_dof.pdf}
 \end{tabular}
-\caption{A demonstration of computing marginal likelihoods.  Left: The marginal likelihood versus the prior mean.  Right:  Marginal likelihood versus the degrees of freedom of the mixture components.  dof = 1 is Cauchy, dof = 2 is Student's t, dof = $\infty$ is Gaussian.  The shaded error represents uncertainty about the value of the marginal likelihood. }
+\caption[Computing marginal likelihoods with BQ]
+{A demonstration of computing marginal likelihoods.  Left: The marginal likelihood versus the prior mean.  Right:  Marginal likelihood versus the degrees of freedom of the mixture components.  dof = 1 is Cauchy, dof = 2 is Student's t, dof = $\infty$ is Gaussian.  The shaded error represents uncertainty about the value of the marginal likelihood. }
 \label{fig:gmm_exps}
 \end{figure}
 
@@ -757,7 +762,8 @@ Imagine we have a \gp{} posterior distribution over functions, after having cond
 \begin{figure}[h!]
 \centering
 \includegraphics[width=\textwidth]{\quadraturefigsdir/2d_marginals.pdf}
-\caption{A 2D GP posterior, and its 1D marginals.}
+\caption[A 2D \sgp{} posterior, and its 1D marginals]
+{A 2D GP posterior, and its 1D marginals.}
 \label{fig:marginals}
 \end{figure}
 
