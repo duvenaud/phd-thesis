@@ -458,10 +458,13 @@ font in the preamble.tex file by specifying `customfont' in the class options}
 
 % **************** Clear Header Style on the Last Empty Odd pages **************
 \renewcommand{\cleardoublepage}{\clearpage\if@twoside \ifodd\c@page\else%
+\if@print
 	\hbox{}%
 	\thispagestyle{empty}  % Empty header styles
 	\newpage%
-	\if@twocolumn\hbox{}\newpage\fi\fi\fi}
+	\if@twocolumn\hbox{}\newpage\fi
+\fi
+\fi\fi}
 
 
 % ******************************** Roman Pages *********************************
