@@ -38,6 +38,8 @@ Figure \ref{fig:synth2d} shows a dataset which demonstrates this feature of addi
 
 \subsection{Kernels specify similarity between function values of two objects, not between similarity of objects.}
 
+\subsection{Signal versus noise}
+
 
 
 \section{Expressing structure through kernels} 
@@ -236,7 +238,7 @@ f(x) = f( -x)
 by the kernel transform
 %
 \begin{align}
-k_{\textnormal{symm arg1}}(x, x') & = k(x, x') + k(x, -x') \nonumber \\ & + k(-x, x') + k(-x, -x')
+k_{\textnormal{symm arg1}}(x, x') & = k(x, x') + k(x, -x') + k(-x, x') + k(-x, -x')
 \end{align}
 
 \paragraph{Reflective Symmetry along a diagonal}
@@ -250,14 +252,13 @@ by two methods:  In the additive method, we transform the kernel by:
 %
 \begin{align}
 k_{\textnormal{reflect add}}(x, y, x', y') 
-& = k(x, y, x', y') \nonumber \\
-& + k(x, y, y', x') \nonumber \\
-& + k(y, x, x', y') \nonumber \\
-& + k(y, x, y', x')
+ = k(x, y, x', y') + k(x, y, y', x')
+ + k(y, x, x', y') + k(y, x, y', x')
 \end{align}
 or by
 \begin{align}
-k_{\textnormal{reflect min}}(x, y, x', y') = k( & \min(x, y), \max(x,y), \nonumber \\ & \min(x', y'), \max(x',y') )
+k_{\textnormal{reflect min}}(x, y, x', y') = k( & \min(x, y), \max(x,y), % \nonumber \\ & 
+\min(x', y'), \max(x',y') )
 \end{align}
 however, the second method will in general lead to non-differentiability along $x = y$.  Figure \ref{fig:add_vs_min} shows the difference.
 
@@ -438,7 +439,7 @@ Translational invariance in this setting is equivalent to symmetries between dim
 This prior can be achieved in one dimension by using the following kernel transformation:
 %
 \begin{align}
-k \left( (x_1, x_2, \dots, x_D ), (x_1', x_2', \dots, x_D' ) \right) & = \nonumber \\
+k \left( (x_1, x_2, \dots, x_D ), (x_1', x_2', \dots, x_D' ) \right) & = %\nonumber \\
 \sum_{i=1}^D \prod_{j=1}^D k( x_j, x_{ i + j \textnormal{mod $D$} }' )
 \end{align}
 %
@@ -447,7 +448,7 @@ Edge effects can be handled either by wrapping the image around, or by padding i
 \paragraph{Convolution} The resulting kernel could be called a \emph{discrete convolution kernel}.  For an image with $R, C$ rows and columns, it can also be written as:
 %
 \begin{align}
-k_{\textnormal{conv}} \left( (x_{11}, x_{12}, \dots, x_{RC} ), (x_{11}', x_{12}', \dots, x_{RC}' ) \right) & = \nonumber \\
+k_{\textnormal{conv}} \left( (x_{11}, x_{12}, \dots, x_{RC} ), (x_{11}', x_{12}', \dots, x_{RC}' ) \right) = % \nonumber \\
 %\sum_{i=-L}^L \sum_{j=-L}^L k\left( (x_{1+i,1+j}, x_{1+i,2+j} , \dots, x_{R+i,C+j} ), (x_{1+i,1+j}', x_{1+i,2+j}' , \dots, x_{R+i,C+j}' ) \right)
 \sum_{i=-L}^L \sum_{j=-L}^L k\left( \vx, T_{ij}(\vx') \right)
 \end{align}
@@ -510,7 +511,7 @@ Composing the squared-exp kernel with any implicit mapping $\hPhi(\vx)$ has a si
 %
 \begin{align}
 %k_1(\vx, \vx') & = \exp \left( -\frac{1}{2} ||\vx - \vx'||_2^2 \right) \\
-& k_{L+1} \left( \vx, \vx' \right) = k_{SE} \left( \hPhi(\vx), \hPhi(\vx') \right) =  \\
+k_{L+1} \left( \vx, \vx' \right) & = k_{SE} \left( \hPhi(\vx), \hPhi(\vx') \right) =  \\
 %& = \left( \hPhi^{SE} \left(\hPhi^{1}(\vx) \right) \right) \tra \hPhi^{SE} \left( \hPhi^{1}(\vx') \right) \\
 & = \exp \left( -\frac{1}{2} || \hPhi(\vx) - \hPhi(\vx')||_2^2 \right) \nonumber\\
 %k_{n+1}(\vx, \vx') 
@@ -565,8 +566,8 @@ connecting the inputs $\vx$ to each layer.  To do so, we simply augment the feat
 %k_2(\vx, \vx') & = \exp \left( -\frac{1}{2} \left[ k_1(\vx, \vx) - 2 k_1(\vx, \vx') + k_1(\vx', \vx') \right] \right) \\
 %k_{n+1}(\vx, \vx') 
 %& = \exp \left( k_n(\vx, \vx') - 1 -\frac{1}{2} || \vx - \vx' ||_2^2 \right)
-& = \exp \Big( -\frac{1}{2} \big[ k_{L}(\vx, \vx) - 2 k_{L}(\vx, \vx') \nonumber \\ 
-& \qquad \qquad + k_{L}(\vx', \vx') {\color{blue} - || \vx - \vx' ||_2^2} \big] \Big)
+& = \exp \Big( -\frac{1}{2} \big[ k_{L}(\vx, \vx) - 2 k_{L}(\vx, \vx') % \nonumber \\ 
+ + k_{L}(\vx', \vx') {\color{blue} - || \vx - \vx' ||_2^2} \big] \Big)
 \end{align}
 %
 For the \humble{SE} kernel, this repeated mapping satisfies
