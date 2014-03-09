@@ -1590,6 +1590,49 @@ We recommend that you read the report for `01-airline' first and review the repo
 
 
 
+\section{Ingredients of an automatic statistician}
+\label{sec:ingredients}
+%\fTBD{JL: Has RG written anything on this?}
+\citet{gelman2013philblogpost} asks ``How can an artificial intelligence do statistics? ... It needs not just an inference engine, but also a way to construct new models and a way to check models. Currently, those steps are performed by humans, but the AI would have to do it itself.''
+
+%In this section, we discuss in more detail the elements required to build a system that can automatically construct and then describe complex nonparametric models.
+
+In this section, we discuss in more detail the elements we believe are required to build an artificial intelligence that can do statistics.
+
+\paragraph{1. An open-ended language of models}
+Many statistical procedures consider all models in a class of fixed size - for example, graphical model construction algorithms\fTBD{Cite} search over connectivity graphs for a given set of nodes.
+While these methods can be powerful, human statisticians are capable of deriving novel model classes when required by the modelling task.
+%An open ended language can 
+An automatic search through an open-ended class of models can achieve some of this flexibility, growing the complexity of the model to fit the task at hand, and possibly combining existing structures in novel ways.
+%However, in order for a procedure to be as powerful as a human statistician, it must be able to add to a model in a wide variety of ways, building arbitrarily complex models if the data demands it.
+
+\paragraph{2. Searching through model space}
+An open-ended space of models cannot be searched exhaustively.
+Just as human researchers iteratively refine their models, search procedures can propose new search directions based on the results of previous model fits.
+Because any search in an open-ended space must start with relatively simple models before moving on to more complex ones, any model search in an open-ended space will likely resemble a model-building procedure.% based 
+
+\paragraph{3. Model comparison and checking model fit}
+\fTBD{JL: Two sections perhaps - or are they completely intertwined?}
+An automatic statistician should be able to question the models it has constructed, and formal procedures from model checking provide a way for it to do this.
+%A practically and philsophically interesting question is how to compare models, and how to check whether there is statistical structure not being captured by a given model. 
+%\fTBD{Struggling with this section - do we need to defend marginal likelihood or discuss the options}
+\citet{gelman2012philosophy} review the literature on model checking.
+\TBD{In this work, we use approximate marginal likelihood to compare models, penalizing complexity using the Bayesian Information Criterion as a heuristic.}
+
+\paragraph{4. Describing models}
+
+%Capturing statistical structure helps to provide good predictions. 
+Part of the value of statistical models comes from enabling humans to understand a dataset or a phenomenon.
+Furthermore, a clear description of the statistical structure found in a dataset helps a user to notice when the dataset has errors, the wrong question was asked, the model-building procedure failed to capture known structure, a relevant piece of data or constraint is missing, or when a novel statistical structure has been found.
+
+%It is not clear\fTBD{JL: Weak} what obstacles there are to building a system capable of explaining novel statistical structures.
+In this work, we 
+%attempted to build such an automatic summarization procedure, and 
+demonstrate that the properties of Gaussian processes allow for a modular description generation procedure.
+%This modularity means that a large class of statistical structures can explained, without resorting to writing a special case for every possible structure in our open-ended set of models.
+Whether or not such modularity and interpretability is present in other open-ended model classes is an open question.
+
+
 
 \outbpdocument{
 \bibliographystyle{plainnat}
