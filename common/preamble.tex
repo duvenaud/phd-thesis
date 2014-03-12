@@ -67,32 +67,13 @@
 %\makeatother%
 
 
-
-% HUMBLE WORDS: shown slightly smaller when in normal text
-%
-\makeatletter%
-%\def\@humbleformat#1{{\fontsize{}{1em}\selectfont #1}}
-%\def\@humbleformat#1{\textsmaller{#1}}%
-\newlength{\nonHumbleHeight}
-\def\@humbleformat#1{{\settoheight{\nonHumbleHeight}{#1}\resizebox{!}{0.94\nonHumbleHeight}{#1}}}%
-\def\@idxhumbleformat#1{{\relscale{0.95}{#1}}}%
-%\def\@humbleformat#1{{#1}}%
-\def\declareHumble#1#2{%
-  \expandafter\def\csname #1\endcsname{\@humbleformat{#2}}%
-  \expandafter\def\csname s#1\endcsname{{#2}}%
-  \expandafter\def\csname idx#1\endcsname{{\@idxhumbleformat{#2}}}%
-}%
-\def\humble#1{\@humbleformat{#1}}%
-\def\idxhumble#1{\@idxhumbleformat{#1}}%
-\makeatother%
-
-% Convenient indexing for humble abbreviations
-\def\humbleindex#1#2{\index{#1@\idxhumble{#1}}}
+\input{common/humble.tex}
 
 % TODO: Clean up duplicates.
 
 \declareHumble{gp}{GP}
 \declareHumble{gpt}{GP}
+\declareHumble{gplvm}{GP-LVM}
 \declareHumble{MLP}{MLP}
 \declareHumble{BMC}{BMC}
 \declareHumble{bq}{BQ}

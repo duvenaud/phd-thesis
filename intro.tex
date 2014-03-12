@@ -58,35 +58,6 @@ Figure \ref{fig:gp-post} shows a Gaussian process posterior.  Typically, it's re
 
 
 
-\section{Latent Variable Models}
-
-Besides being useful for modeling functions, a simple extension allows \gp{}s to be useful for general density modeling.  Unfortunately, this extension causes many of the useful properties of the \gp{} not to hold.
-
-
-\begin{figure}[t]
-\begin{centering}
-\includegraphics[width=\textwidth]{\gplvmfiguresdir/gplvm_1d_draw_9}
-\end{centering}
-\caption[One-dimensional Gaussian process latent variable model]{A visual representation of the Gaussian process latent variable model.  Bottom: density and samples from a 1D Gaussian, specifying the distribution $p(\vX)$ in the latent space.  Top Right: A function drawn from a \gp{} prior.  Left: A nonparametric density defined by warping the latent density through the function drawn from a \gp{} prior.}  
-\label{fig:oned-gplvm}
-\end{figure}
-
-
-
-\begin{figure}
-\begin{centering}
-{\begin{tabular}{cccc}
-\phantom{h} & Latent space $p(\vX)$ & & Observed space $p(\vY)$ \\
-& \fbox{\includegraphics[height=15em,width=15em]{\gplvmfiguresdir/gplvm-latent-crop}} &
-\raisebox{7em}{$\overset{\mathlarger{f(x)}}{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\rightarrow}}}}}}}}$} &
-%\raisebox{7em}{\Huge $\overset{\textnormal{\Large{GP}}}\rightarrow$} &
-\fbox{\includegraphics[height=15em,width=15em]{\gplvmfiguresdir/gplvm-draw-crop}}
-\end{tabular}}
-\end{centering}
-\caption[Two-dimensional Gaussian process latent variable model]{A visual representation of the Gaussian process latent variable model.  Left:  Isocontours and samples from a 2D Gaussian, specifying the distribution $p(\vX)$ in the latent space.  Right: Density and samples from a nonparametric density defined by warping the latent density through a function drawn from a GP prior.}  
-\label{fig:twod-gplvm}
-\end{figure}
-
 
 
 
@@ -148,6 +119,44 @@ we get that the conditional variance of a Gaussian conditioned on its sum with a
 
 These formulae express the posterior model uncertainty about different components of the signal, integrating over the possible configurations of the other components.
 
+
+
+
+
+\section{Latent Variable Models}
+
+Besides being useful for modeling functions, a simple extension allows \gp{}s to be useful for general density modeling.  
+
+
+
+Unfortunately, this extension causes many of the useful properties of the \gp{} not to hold.
+
+The \gplvm{} can also be thought of as a method for modeling the covariance matrix between all rows of $Y$ using a number of parameters which grows linearly with $N$.
+
+
+\begin{figure}[t]
+\begin{centering}
+\includegraphics[width=\textwidth]{\gplvmfiguresdir/gplvm_1d_draw_9}
+\end{centering}
+\caption[One-dimensional Gaussian process latent variable model]{A visual representation of the Gaussian process latent variable model.  Bottom: density and samples from a 1D Gaussian, specifying the distribution $p(\vX)$ in the latent space.  Top Right: A function drawn from a \gp{} prior.  Left: A nonparametric density defined by warping the latent density through the function drawn from a \gp{} prior.}  
+\label{fig:oned-gplvm}
+\end{figure}
+
+
+
+\begin{figure}
+\begin{centering}
+{\begin{tabular}{cccc}
+\phantom{h} & Latent space $p(\vX)$ & & Observed space $p(\vY)$ \\
+& \fbox{\includegraphics[height=15em,width=15em]{\gplvmfiguresdir/gplvm-latent-crop}} &
+\raisebox{7em}{$\overset{\mathlarger{f(x)}}{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\rightarrow}}}}}}}}$} &
+%\raisebox{7em}{\Huge $\overset{\textnormal{\Large{GP}}}\rightarrow$} &
+\fbox{\includegraphics[height=15em,width=15em]{\gplvmfiguresdir/gplvm-draw-crop}}
+\end{tabular}}
+\end{centering}
+\caption[Two-dimensional Gaussian process latent variable model]{A visual representation of the Gaussian process latent variable model.  Left:  Isocontours and samples from a 2D Gaussian, specifying the distribution $p(\vX)$ in the latent space.  Right: Density and samples from a nonparametric density defined by warping the latent density through a function drawn from a GP prior.}  
+\label{fig:twod-gplvm}
+\end{figure}
 
 
 

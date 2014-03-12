@@ -128,11 +128,42 @@ Plots have same meaning as in figure \ref{fig:basic_kernels}.}
 \label{fig:kernels}
 \end{figure}
 
+
+\paragraph{Kernel definitions}
+For scalar-valued inputs, the squared exponential (\kSE), periodic (\kPer), linear (\kLin), and rational quadratic (\kRQ) kernels are defined as follows:
+%
+\begin{eqnarray*}
+\kernel_{\SE}(\inputVar, \inputVar') =& \sigma^2\exp\left(-\frac{(\inputVar - \inputVar')^2}{2\ell^2}\right) \\
+\kernel_{\Per}(\inputVar, \inputVar') =& \sigma^2\exp\left(-\frac{2\sin^2 (\pi(\inputVar - \inputVar')/p)}{\ell^2}\right) \\
+\kernel_{\Lin}(\inputVar, \inputVar') =& \sigma_b^2 + \sigma_v^2(\inputVar - \ell)(\inputVar' - \ell) \\
+\kernel_{\RQ}(\inputVar, \inputVar') =& \sigma^2\left( 1 + \frac{(\inputVar - \inputVar')^2}{2 \alpha \ell^2} \right)^{-\alpha}
+\end{eqnarray*}
+
+
+
+
+
 \subsection{Summation}
 
 By summing kernels, we can model the data as a superposition of independent functions, possibly representing different structures.
 Suppose functions ${\function_1, \function_2}$ are draw from independent \gp{} priors, ${\function_1 \dist \GP(\mu_1, \kernel_1)}$, ${\function_2 \dist \GP(\mu_2, \kernel_2)}$.
-Then ${\function := \function_1 + \function_2 \dist \GP(\mu_1 + \mu_2, \kernel_1 + \kernel_2)}$.
+Then 
+%
+\begin{align}
+\function := \function_1 + \function_2 \dist \GP(\mu_1 + \mu_2, \kernel_1 + \kernel_2).
+\end{align}
+
+From a kernel point of view,
+
+if $k_1(\vx, \vx') = \phi_1(\vx)\tra \phi_1(\vx')$ and $k_2 = \phi_2(\vx)\tra \phi_2(\vx')$
+then
+%
+\begin{align}
+k_1(\vx, \vx') + k_2(\vx, \vx') = \phi_1(\vx)\tra \phi_1(\vx') + \phi_2(\vx)\tra \phi_2(\vx')
+\end{align}
+
+In other words, the features of $k_1 + k_2$ are the concatenation of the two sets of features.
+
 
 In time series models, sums of kernels can express superposition of different processes, possibly operating at different scales.
 In multiple dimensions, summing kernels gives additive structure over different dimensions, similar to generalized additive models~\citep{hastie1990generalized}.
@@ -181,6 +212,16 @@ Composite kernels can be viewed in this way too. A sum of kernels can be underst
 Similarly, multiplying kernels is an AND-like operation, since two points are considered similar only if both kernels have high values.
 Since we are applying these operations to the similarity functions rather than the regression functions themselves, compositions of even a few base kernels are able to capture complex relationships in data which do not have a simple parametric form.
 
+From a kernel point of view,
+
+if $k_1(\vx, \vx') = \phi_1(\vx)\tra \phi_1(\vx')$ and $k_2 = \phi_2(\vx)\tra \phi_2(\vx')$
+then
+%
+\begin{align}
+k_1(\vx, \vx') \times k_2(\vx, \vx') = \left[\phi_1(\vx) + \phi_2(\vx)\right]\tra \left[ \phi_1(\vx') + \phi_2(\vx') \right]
+\end{align}
+
+In other words, the features of $k_1 \times k_2$ are the cartesian product (all possible combinations) of the original sets of features.
 
 
 
