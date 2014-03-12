@@ -1,0 +1,469 @@
+\input{common/header.tex}
+\inbpdocument
+
+
+\chapter{Automatically Describing Structured Covariance Functions}
+\label{ch:description}
+
+
+
+
+
+This paper presents the beginnings of an automatic statistician, focusing on regression problems.
+Our system explores an open-ended space of possible statistical models to discover a good explanation of the data, and then produces a detailed report with figures and natural-language text.
+
+Our approach treats unknown functions nonparametrically using Gaussian processes, which has two important consequences.
+First, Gaussian processes model functions in terms of high-level properties (e.g.\ smoothness, trends, periodicity,
+changepoints).
+Taken together with the compositional structure of our language of models, this allows us to automatically describe functions through a decomposition into additive parts.
+Second, the use of flexible nonparametric models and a rich
+language for composing them in an open-ended manner also results
+in state-of-the-art extrapolation performance evaluated over 13 real time
+series data sets from various domains.
+
+
+\subsection{Attribution}
+Joint work with James Robert Lloyd, Roger Grosse, Joshua B. Tenenbaum and Zoubin Ghahramani.
+
+
+
+
+
+
+
+
+\section{Automatic description of regression models}
+\label{sec:description}
+
+\paragraph{Overview}
+
+In this section, we describe how \procedurename{} generates natural-language descriptions of the models found by the search procedure.
+There are two main features of our language of \gp{} models that allow description to be performed automatically.
+
+First, the sometimes complicated kernel expressions found can be simplified into a sum of products.
+A sum of kernels corresponds to a sum of functions so each product can be described separately.
+Second, each kernel in a product modifies the resulting model in a consistent way.
+Therefore, we can choose one kernel to be described as a noun, with all others described using adjectives.
+
+\paragraph{Sum of products normal form} 
+
+We convert each kernel expression into a standard, simplified form.
+We do this by first distributing all products of sums into a sum of products.
+Next, we apply several simplifications to the kernel expression:
+The product of two $\kSE$ kernels is another $\kSE$ with different parameters. Multiplying $\kWN$ by any stationary kernel ($\kC$, $\kWN$, $\kSE$, or $\kPer$) gives another $\kWN$ kernel. Multiplying any kernel by $\kC$ only changes the parameters of the original kernel.
+
+After applying these rules, the kernel can as be written as a sum of terms of the form:
+\begin{align}
+K \prod_m \kLin^{(m)} \prod_n \boldsymbol\sigma^{(n)},
+\label{eq:sop}
+\end{align}
+where $K$ is one of \kWN, \kC, \kSE, $\prod_k \kPer^{(k)}$ or $\kSE \prod_k \kPer^{(k)}$
+and $\prod_i\kernel^{(i)}$ denotes a product of kernels, each with different parameters.
+
+
+\paragraph{Sums of kernels are sums of functions}
+Formally, if $f_1(x) \dist \gp{}(0, \kernel_1)$ and independently $f_2(x) \dist \gp{}(0, \kernel_2)$ then ${f_1(x) + f_2(x) \dist \gp{}(0, \kernel_1 + \kernel_2)}$.
+This lets us describe each product of kernels separately.
+
+
+\paragraph{Each kernel in a product modifies a model in a consistent way}
+This allows us to describe the contribution of each kernel in a product as an adjective, or more generally as a modifier of a noun.
+We now describe how each kernel modifies a model and how this can be described in natural language:
+
+\begin{itemize}
+\item {\bf Multiplication by $\kSE$} removes long range correlations from a model since $\kSE(x,x')$ decreases monotonically to 0 as $|x - x'|$ increases.
+This can be described as making an existing model's correlation structure `local' or `approximate'.
+\item {\bf Multiplication by $\kLin$} is equivalent to multiplying the function being modeled by a linear function.
+If $f(x) \dist \gp{}(0, \kernel)$, then $xf(x) \dist \gp{}\left(0, k \times \kLin \right)$.
+This causes the standard deviation of the model to vary linearly without affecting the correlation and can be described as \eg `with linearly increasing standard deviation'.
+\item {\bf Multiplication by $\boldsymbol\sigma$} is equivalent to multiplying the function being modeled by a sigmoid which means that the function goes to zero before or after some point.
+This can be described as \eg `from [time]' or `until [time]'.
+\item {\bf Multiplication by $\kPer$}
+modifies the correlation structure in the same way as multiplying the function by an independent periodic function.
+Formally, if ${f_1(x) \dist \gp{}(0, \kernel_1)}$ and ${f_2(x) \dist \gp{}(0, \kernel_2)}$ then
+\begin{align}
+{\textrm{Cov} \left[f_1(x)f_2(x), f_1(x')f_2(x') \right] = k_1(x,x')k_2(x,x')}.\nonumber
+\end{align}
+This can be loosely described as \eg `modulated by a periodic function with a period of [period] [units]'.
+\end{itemize}
+
+\paragraph{Constructing a complete description of a product of kernels}
+We choose one kernel to act as a noun which is then described by the functions it encodes for when unmodified \eg `smooth function' for $\kSE$.
+Modifiers corresponding to the other kernels in the product are then appended to this description, forming a noun phrase of the form:
+\begin{align*}
+\textnormal{Determiner}	+	\textnormal{Premodifiers} +	\textnormal{Noun}	+	\textnormal{Postmodifiers}
+\end{align*}
+
+As an example, a kernel of the form $\kSE \times \kPer \times  \kLin \times \boldsymbol{\sigma}$ could be described as an
+\begin{align*}
+\underbrace{\kSE}_{\textnormal{\scriptsize approximately}} \times 
+\underbrace{\kPer}_{\textnormal{\scriptsize periodic function}} \times 
+\underbrace{\kLin}_{\textnormal{\scriptsize with linearly growing amplitude}} \times 
+\underbrace{\boldsymbol{\sigma}}_{\textnormal{\scriptsize until 1700.}}
+\end{align*}
+where $\kPer$ has been selected as the head noun.
+
+In principle, any assignment of kernels in a product to these different phrasal roles is possible, but in practice we found certain assignments to produce more interpretable phrases than others.
+The head noun is chosen according to the following ordering:
+\begin{align*}
+\kPer > \kWN, \kSE, \kC > \prod_m \kLin^{(m)} > \prod_n \boldsymbol\sigma^{(n)}
+\end{align*}
+\ie $\kPer$ is always chosen as the head noun when present.
+
+\paragraph{Ordering additive components}
+
+The reports generated by \procedurename{} attempt to present the most interesting or important features of a data set first.
+As a heuristic, we order components by always adding next the component which most reduces the 10-fold cross-validated mean absolute error.
+
+\subsection{Worked example}
+
+Suppose we start with a kernel of the form
+\begin{align*}
+\kSE \times (\kWN \times \kLin + \kCP(\kC, \kPer)).
+\end{align*}
+This is converted to a sum of products:
+\begin{align*}
+\kSE \times \kWN \times \kLin + \kSE \times \kC \times \boldsymbol{\sigma} + \kSE \times \kPer \times \boldsymbol{\bar\sigma}.
+\end{align*}
+which is simplified to
+\begin{align*}
+\kWN \times \kLin + \kSE \times \boldsymbol{\sigma} + \kSE \times \kPer \times \boldsymbol{\bar\sigma}.
+\end{align*}
+
+To describe the first component, the head noun description for $\kWN$, `uncorrelated noise', is concatenated with a modifier for $\kLin$, `with linearly increasing standard deviation'.
+%
+The second component is described as `A smooth function with a lengthscale of [lengthscale] [units]', corresponding to the $\kSE$, `which applies until [changepoint]', which corresponds to the $\boldsymbol{\sigma}$.
+%
+Finally, the third component is described as `An approximately periodic function with a period of [period] [units] which applies from [changepoint]'.
+
+%Descriptions are sometimes modified depending on kernel parameters.  
+%Also, a separate description procedure is used to produce the detailed descriptions of each component, which operates on the same principles.
+
+%\fTBD{JL: We should also mention that the detailed descriptions are less modular - but not necessarily so}
+%\fTBD{JL: Talk about different templates based on parameters?}
+
+
+
+
+
+
+
+
+Automating the process of statistical modeling would have a tremendous impact on fields that currently rely on expert statisticians, machine learning researchers, and data scientists.
+While fitting simple models (such as linear regression) is largely automated by standard software packages, there has been little work on the automatic construction of flexible but interpretable models. 
+What are the ingredients required for an artificial intelligence system to be able to perform statistical modeling automatically? 
+In this paper we conjecture that the following ingredients may be useful for building an AI system for statistics, and we develop a working system which incorporates them:
+\begin{itemize}
+\item {\bf An open-ended language of models} expressive enough to
+  capture many of the modeling assumptions and model composition
+  techniques  applied by human statisticians to capture real-world phenomena
+\item {\bf A search procedure} to efficiently explore the space of
+  models spanned by the language
+\item {\bf A principled method for evaluating models} in terms of their complexity and their degree of fit to the
+  data
+\item {\bf A procedure for automatically generating reports} which
+  explain and visualize different factors underlying the data, make
+  the chosen modeling assumptions explicit, and quantify how each
+  component improves the predictive power of the model 
+\end{itemize}
+
+\begin{figure}[t]
+\centering
+\fbox{\includegraphics[trim=0cm 4.75cm 0cm 1.0cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/solarpages/pg_0007-crop}}
+\caption[Extract from an automatically-generated report]
+{Extract from an automatically-generated report describing the model components discovered by automatic model search.  This part of the report isolates and describes the approximately 11-year sunspot cycle, also noting its disappearance during the 16th century, a time known as the Maunder minimum \citep{lean1995reconstruction}.}
+\label{fig:periodic}
+\end{figure}
+
+The compositional structure of the language allows us to develop a method
+for automatically translating components of the model into
+natural-language descriptions of patterns in the data.
+
+We show examples of automatically generated reports which highlight
+interpretable features discovered in a variety of data sets (e.g.\
+figure~\ref{fig:periodic}).  The supplementary material to this paper
+includes 13 complete reports automatically generated by \procedurename{}.
+
+Good statistical modeling requires not only
+interpretability but predictive accuracy.
+
+
+
+
+
+\paragraph{Airline passenger data}
+
+
+
+Figure \ref{fig:airline_decomp} shows the decomposition produced by applying our method to monthly totals of international airline passengers~\citep{box2011time}.
+We observe similar components to the previous dataset: a long term trend, annual periodicity and medium-term deviations.
+In addition, the composite kernel captures the near-linearity of the long-term trend, and the linearly growing amplitude of the annual oscillations.
+%The discovery of linear structure allows for a growing uncertainty highly plausible extrapolation.\fTBD{Mention heteroskedasticity?}
+
+%Discovering this linearity results in very plausible extrapolations of the data.
+%Figure~\ref{fig:airline_grow} demonstrates this by ploting the full posterior of the kernel discovered at sequential levels of the search.
+%The first plot shows that the first kernel has discovered onyl short term continuity.
+%The second kernel discovers periodicity that varies with time.
+%The third kernel has discovered that the periodicity is growing approximately linearly.
+%Finally, the fourth kernel has split the data into an approximately linear trend and growing oscillations.
+
+%\begin{figure}[h!]
+%\centering
+%\newcommand{\wag}{4.8cm}  % width airline growth
+%\newcommand{\hag}{4cm}  % height airline growth
+%\begin{tabular}{cc}
+%\includegraphics[width=\wag,height=\hag]{../figures/decomposition/01-airline-s_max_level_0/01-airline-s_all_small}
+%\hspace{-1cm} \includegraphics[width=\wag,height=\hag]{../figures/decomposition/01-airline-s_max_level_1/01-airline-s_all_small} \\
+%\hspace{-1cm} \includegraphics[width=\wag,height=\hag]{../figures/decomposition/01-airline-s_max_level_2/01-airline-s_all_small} 
+%\hspace{-1cm} \includegraphics[width=\wag,height=\hag]{../figures/decomposition/01-airline-s_max_level_3/01-airline-s_all_small}
+%\end{tabular}
+%\caption{Posterior mean and variance for different levels of kernel search on the airline dataset. \TBD{RBG: it looks like the figures on the left got clipped.}}
+%\label{fig:airline_grow}
+%\end{figure}
+
+% Created by the command:
+% postprocessing.make_all_1d_figures(folder='../results/31-Jan-1d/', prefix='31-Jan-v3', rescale=False)
+
+%To evaluate the effectiveness of our method we performed two types of experiments.
+%First, we examined the ability of our algorithm to discover useful structure in one-dimensional datasets.  Second, we examined the predictive performance of our model on multi-dimensional datasets.
+% testing the ability of the algorithm to infer both an accurate regression function estimate and to produce an interpretable decomposition of a regression function.
+%The accuracy experiments show that our method consistently matches or beats previous state of the art regression methods (\TBD{not yet statistically significantly within each experiment - more experiments currently running\ldots}).
+%The decomposition experiments produce highly interpretable decompositions of time series data and highly plausible extrapolations; a particularly rare property of naively applied (linear) smoothers (\TBD{justify comment - e.g.~local linear is just linear, GP Sq-Exp nose dives towards the mean}).
+
+
+
+\paragraph{Solar irradiance Data} 
+Finally, we analyzed annual solar irradiation data from 1610 to 2011 \citep{lean1995reconstruction}.
+%
+\begin{figure}
+\newcommand{\wsd}{0.5\columnwidth}  % width solar decomp
+\newcommand{\hsd}{4cm}  % height solar decomp
+\newcommand{\srd}{\grammarfiguresdir/decomposition/11-Feb-02-solar-s}  % solar decomp results dir
+\newcommand{\mbs}{\hspace{-0.3cm}}  % move back
+\begin{tabular}{cc}
+\mbs \includegraphics[width=\wsd,height=\hsd]{\srd/02-solar-s_all} &
+\mbs \includegraphics[width=\wsd,height=\hsd]{\srd/02-solar-s_resid}
+\end{tabular}
+\caption[Decomposition of model discovered on solar irradiance dataset]
+{Full posterior and residuals on the solar irradiance dataset.}
+\label{fig:solar_decomp}
+\end{figure}
+%
+
+
+%\paragraph{Multidimensional decomposition}  Decomposition of multi-dimensional posteriors into sums of one-dimensional functions is possible as well, and was demonstrated in \cite{duvenaud2011additive11}.  \fTBD{Probably citing myself too much...}
+
+
+
+
+
+
+We demonstrate the ability of our procedure to discover and describe a variety of patterns on two time series.
+Full automatically-generated reports for 13 data sets are provided as supplementary material.
+
+\subsection{Summarizing 400 Years of Solar Activity}
+\label{sec:solar}
+
+\begin{figure}[h]
+\centering
+\includegraphics[trim=0.2cm 18.0cm 8cm 2cm, clip, width=0.5\columnwidth]{\grammarfiguresdir/solarpages/pg_0002-crop}
+\caption[Solar irradiance dataset]
+{Solar irradiance data.}
+\label{fig:solar}
+\end{figure}
+
+We show excerpts from the report automatically generated on annual solar irradiation data from 1610 to 2011 (figure~\ref{fig:solar}).
+This time series has two pertinent features: a roughly 11-year cycle of solar activity, and a period lasting from 1645 to 1715 with much smaller variance than the rest of the dataset.
+This flat region corresponds to the Maunder minimum, a period in which sunspots were extremely rare \citep{lean1995reconstruction}.
+\procedurename{} clearly identifies these two features, as discussed below.
+
+
+\begin{figure}[h]
+\centering
+\fbox{\includegraphics[trim=0cm 4.75cm 0cm 1.0cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/solarpages/pg_0007-crop}}
+\caption[Extract from an automatically-generated report]
+{Extract from an automatically-generated report describing the model components discovered by automatic model search.  This part of the report isolates and describes the approximately 11-year sunspot cycle, also noting its disappearance during the 16th century, a time known as the Maunder minimum \citep{lean1995reconstruction}.}
+\label{fig:periodic}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\fbox{\includegraphics[trim=0cm 10.8cm 0cm 6.3cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/solarpages/pg_0002-crop}}
+\caption[Automatically-generated descriptions of the solar irradiance data set]
+{Automatically generated descriptions of the components discovered by \procedurename{} on the solar irradiance data set.
+The dataset has been decomposed into diverse structures with simple descriptions.}
+\label{fig:exec}
+\end{figure}
+Figure \ref{fig:exec} shows the natural-language summaries of the top four components chosen by \procedurename{}.
+From these short summaries, we can see that our system has identified the Maunder minimum (second component) and 11-year solar cycle (fourth component).
+These components are visualized in figures~\ref{fig:maunder} and \ref{fig:periodic}, respectively. 
+The third component corresponds to long-term trends, as visualized in figure~\ref{fig:smooth}.
+
+\begin{figure}[ht]
+\centering
+\fbox{\includegraphics[trim=0cm 4.75cm 0cm 0.7cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/solarpages/pg_0005-crop}}
+\caption[A learned component corresponding to the Maunder minimum]
+{One of the learned components corresponds to the Maunder minimum.}
+\label{fig:maunder}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\fbox{\includegraphics[trim=0cm 4.75cm 0cm 1cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/solarpages/pg_0006-crop}}
+\caption[\procedurename{} isolating the part of the signal explained by a slowly-varying trend]
+{Characterizing the medium-term smoothness of solar activity levels.  By allowing other components to explain the periodicity, noise, and the Maunder minimum, \procedurename{} can isolate the part of the signal best explained by a slowly-varying trend.}
+\label{fig:smooth}
+\end{figure}
+
+\subsection{Finding heteroscedasticity in air traffic data}
+\label{sec:airline}
+
+\begin{figure}[h]
+\centering
+\includegraphics[trim=0.4cm 16.8cm 8cm 2cm, clip, width=0.5\columnwidth]{\grammarfiguresdir/airlinepages/pg_0002-crop}
+\caption[International airline passenger monthly volume dataset]
+{International airline passenger monthly volume \citep[e.g.][]{box2013time}.}
+\label{fig:airline}
+\end{figure}
+
+Next, we present the analysis generated by our procedure on international airline passenger data (figure~\ref{fig:airline}).
+The model constructed by \procedurename{} has four components: $\kLin + \kSE \times \kPer \times \kLin + \kSE + \kWN \times \kLin$, with descriptions given in figure~\ref{fig:exec-airline}.
+
+\begin{figure}[h]
+\centering
+\fbox{\includegraphics[trim=0cm 6.8cm 0cm 6cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/airlinepages/pg_0002-crop}}
+\caption[Short descriptions of the four components of the airline model]
+{Short descriptions and summary statistics for the four components of the airline model.}
+\label{fig:exec-airline}
+\end{figure}
+
+The second component (figure~\ref{fig:lin_periodic}) is accurately described as approximately ($\kSE$) periodic ($\kPer$) with linearly growing amplitude ($\kLin$).
+%
+\begin{figure}[h]
+\centering
+\fbox{\includegraphics[trim=0cm 4.75cm 0cm 0cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/airlinepages/pg_0004-crop}}
+\caption[Capturing non-stationary periodicity in the airline data]
+{Capturing non-stationary periodicity in the airline data}
+\label{fig:lin_periodic}
+\end{figure}
+%
+By multiplying a white noise kernel by a linear kernel, the model is able to express heteroscedasticity (figure~\ref{fig:heteroscedastic}).
+%
+\begin{figure}[h]
+\centering
+\fbox{\includegraphics[trim=0cm 0cm 0cm 0cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/airlinepages/pg_0006-crop}}
+\caption[Modeling heteroscedasticity in the airline dataset]
+{Modeling heteroscedasticity in the airline dataset.}
+\label{fig:heteroscedastic}
+\end{figure}
+
+\subsection{Comparison to equation learning}
+\label{sec:eqn-learning-comp}
+
+We now compare the descriptions generated by \procedurename{} to parametric functions produced by an equation learning system.
+We show equations produced by Eureqa \citep{Eureqa} for the data sets shown above, using the default mean absolute error performance metric.
+
+The learned function for the solar irradiance data is
+\begin{align*}
+\textrm{Irradiance($t$)} = 1361 + \alpha\sin(\beta + \gamma t)\sin(\delta + \epsilon t^2 - \zeta t)
+\end{align*}
+where $t$ is time and constants are replaced with symbols for brevity.
+This equation captures the constant offset of the data, and models the long-term trend with a product of sinusoids, but fails to capture the solar cycle or the Maunder minimum.
+
+The learned function for the airline passenger data is
+\begin{align*}
+\textrm{Passengers($t$)} = \alpha t + \beta\cos(\gamma - \delta t)\textrm{logistic}(\epsilon t - \zeta) - \eta
+\end{align*}
+which captures the approximately linear trend, and the periodic component with approximately linearly (logistic) increasing amplitude.
+However, the annual cycle is heavily approximated by a sinusoid and the model does not capture heteroscedasticity.
+
+
+
+
+
+
+\section{Related work}
+\label{sec:related-work}
+
+
+\subsection{Natural-language output}
+To the best of our knowledge, our procedure is the first example of automatic description of nonparametric statistical models.
+However, systems with natural language output have been built in the areas of video interpretation \citep{barbu2012video} and automated theorem proving \citep{GanesalingamG13}.
+
+
+
+
+
+\subsection{Interpretability versus accuracy}
+
+BIC trades off model fit and complexity by penalizing the number of parameters in a kernel expression.
+This can result in \procedurename{} favoring kernel expressions with nested products of sums, producing descriptions involving many additive components.
+While these models have good predictive performance the large number of components can make them less interpretable.
+We experimented with distributing all products over addition during the search, causing models with many additive components to be more heavily penalized by BIC.
+We call this procedure \procedurename{}-interpretability, in contrast to the unrestricted version of the search, \procedurename{}-accuracy.
+
+
+%\fTBD{Josh: Can you write about the Blessing of abstraction, and doing lots with a small amount of data?  This might become apparent from plotting the extraplolations.}
+%\fTBD{RBG: We could make this point as part of the learning curves for extrapolation by marking the points at which each additional aspect of the structure is found.}
+
+
+
+
+\section{Conclusion}
+
+Towards the goal of automating statistical modeling we have presented a system which constructs an appropriate model from an open-ended language and automatically generates detailed reports that describe patterns in the data captured by the model.
+We have demonstrated that our procedure can discover and describe a variety of patterns on several time series.
+Our procedure's extrapolation and interpolation performance on time-series are state-of-the-art compared to existing model construction techniques.
+We believe this procedure has the potential to make powerful statistical model-building techniques accessible to non-experts.
+
+
+
+
+
+
+
+
+
+
+\section{Discussion}
+
+
+%There has developed a large and mature literature on automatic structure discovery in unsupervised settings \fTBD{citations including Josh}.  
+%For example, searches over large model classes have been succesfully used in machine vision \cite{pinto2009high}, analogous to high-throughput methods used in biology.
+%However, relatively little attention has been paid to automatic structure discovery in supervised learning.
+%
+%Our work respresents a step towards automated structure discover in supervised settings.
+% data-based modeling, as opposed to proposing the model beforehand.
+
+%In particular, this work removes the need for an expert to propose a kernel family in order to effectively use a Gaussian process model.  
+%Choosing a kernel family is a stumbling block even for experts.
+%Automating the search over kernel structures will make it easier for non-statisticians to construct appropriate models for their data.
+
+%The ability to learn kernel parameters and combination weights automatically has been an important factor in enabling the widespread use of kernel methods.
+%For the most part, however, it has been up to the user to choose the proper form for the kernel, a task which requires considerable expertise.
+
+Towards the goal of automating the choice of kernel family, we introduced a space of composite kernels defined compositionally as sums and products of a small number of base kernels.  
+The set of models included in this space includes many standard regression models.
+We proposed a search procedure for this space of kernels which parallels the process of scientific discovery.
+
+We found that the learned structures are often capable of accurate extrapolation in complex time-series datasets, and are competitive with widely used kernel classes and kernel combination methods on a variety of prediction tasks.
+The learned kernels often yield decompositions of a signal into diverse and interpretable components, enabling model-checking by humans.  %provides an additional degree of reassurance that the learned structure reflects the world.
+We believe that a data-driven approach to choosing kernel structures automatically can help make nonparametric regression and classification methods accessible to non-experts.
+
+
+
+
+%\paragraph{Source Code}
+%Source code to perform all experiments is available on github\footnotemark.
+\footnote{
+%\url{http://www.github.com/jamesrobertlloyd/gpss-research}. 
+All \gp{} parameter optimisation was performed by automated calls to the GPML toolbox available at \url{http://www.gaussianprocess.org/gpml/code/}.}
+
+
+
+\outbpdocument{
+\bibliographystyle{plainnat}
+\bibliography{references.bib}
+}
+
+

@@ -32,6 +32,18 @@ Commonly used kernels families include the squared exponential (\kSE), periodic 
 %\input{\grammartablesdir/simple_kernels_table_v3.tex}
 
 
+The elements of this language are a set of  base
+kernels capturing different function properties, and a set of
+composition rules which combine kernels to yield other valid kernels.
+Our base kernels are white noise ($\kWN$), constant ($\kC$), linear ($\kLin$), squared exponential ($\kSE$) and periodic ($\kPer$), which on their own encode for uncorrelated noise, constant functions, linear functions, smooth functions and periodic functions respectively\footnote{Definitions of kernels are in the supplementary material.}.
+The composition rules are addition and multiplication:
+\begin{align}
+k_1 + k_2 =& \,\, k_1(x,x') + k_2(x,x')\\
+k_1 \times k_2 =& \,\, k_1(x,x') \times k_2(x,x')
+\end{align}
+
+Combining kernels using these operations can yield kernels encoding for richer structures such as approximate periodicity ($\kSE \times \kPer$) or smooth functions with linear trends ($\kSE + \kLin$).
+
 \newcommand{\fhbig}{1.6cm}
 \newcommand{\fwbig}{1.8cm}
 \newcommand{\kernpic}[1]{\includegraphics[height=\fhbig,width=\fwbig]{\grammarfiguresdir/structure_examples/#1}}
@@ -234,20 +246,20 @@ In other words, the features of $k_1 \times k_2$ are the cartesian product (all 
 
 
 
-
+\section{Expressing Symmetries}
 
 
 When modeling functions, encoding known symmetries greatly aids learning and prediction.  We demonstrate that in nonparametric regression, many types of symmetry can be enforced through operations on the covariance function.  These symmetries can be composed to produce nonparametric priors on functions whose domains have interesting topological structure such as spheres, torii, and M\"{o}bius strips.  We demonstrate that marginal likeihood an be used to automatically search over such structures.
 
 Joint work with David Reshef, Roger Grosse, Joshua B. Tenenbaum
 
-\section{Introduction}
+
 
 %connected Riemannian manifold
 
 It is well-known that the properties of the functions we wish to model can be expressed mainly through the covariance function \cite{rasmussen38gaussian}.
 
-\section{Expressing Symmetries}
+
 
 In this section, we give recipes for expressing several classes of symmetries.  Later, we will show how these can be combined to produce more interesting structures.
 
@@ -301,8 +313,8 @@ however, the second method will in general lead to non-differentiability along $
 
 \begin{figure}
 \begin{tabular}{cc}
-\includegraphics[width=0.45\columnwidth,clip=true,trim=16cm 1cm 3cm 1cm]{\topologyfiguresdir/symmetric-naive} &
-\includegraphics[width=0.45\columnwidth,clip=true,trim=16cm 1cm 3cm 1cm]{\topologyfiguresdir/symmetric-projection} \\
+\includegraphics[width=0.33\columnwidth,clip=true,trim=16cm 1cm 3cm 1cm]{\topologyfiguresdir/symmetric-naive} &
+\includegraphics[width=0.33\columnwidth,clip=true,trim=16cm 1cm 3cm 1cm]{\topologyfiguresdir/symmetric-projection} \\
 Additive method & min method
 \end{tabular}
 \caption[Two ways to introduce symmetry]{An illustration of two methods of introducing symmetry: The additive method or the min method.  The additive method has half the marginal variance away from $y = x$, but the min method introduces a non-differentiable seam along $y = x$.}
@@ -397,6 +409,15 @@ The second example is doesn't resemble a typical M\"{o}bius strip because the ed
 Another classic example of a function living on a Mobius strip is the auditory quality of 2-note intervals.  The harmony of a pair of notes is periodic (over octaves) for each note, and the 
 
 
+\section{Discrete data}
+
+Kernels can be defined over all types of data structures: Text, images, matrices, and even kernels . Coming up with a kernel on a new type of data used to be an easy way to get a NIPS paper.
+
+\subsection{Categorical variables}
+
+There is a simple way to do GP regression over categorical variables. Simply represent your categorical variable as a by a one-of-k encoding. This means that if your number ranges from 1 to 5, represent that as 5 different data dimensions, only one of which is on at a time. 
+
+Then, simply put a product of SE kernels on those dimensions. This is the same as putting one SE ARD kernel on all of them. The lengthscale hyperparameter will now encode whether, when that coding is active, the rest of the function changes. If you notice that the estimated lengthscales for your categorical variables is short, your model is saying that it's not sharing any information between data of different categories. 
 
 
 
