@@ -80,40 +80,8 @@ In this paper, we introduce a Gaussian process model that generalizes both GAMs 
 
 We note that a similar breakthrough has recently been made, called Hierarchical Kernel Learning (HKL)\cite{DBLP:journals/corr/abs-0909-0844}.  HKL explores a similar class of models, and sidesteps the possibly exponential number of interaction terms by cleverly selecting only a tractable subset.  However, this method suffers considerably from the fact that cross-validation must be used to set hyperparameters.  In addition, the machinery necessary to train these models is immense.  Finally, on real datasets, HKL is outperformed by the standard SE-GP \cite{DBLP:journals/corr/abs-0909-0844}.
 
-\section{Gaussian Process Models}
 
-Gaussian processes are a flexible and tractable prior over functions, useful for solving regression and classification tasks\cite{rasmussen38gaussian}.  The kind of structure which can be captured by a GP model is mainly determined by its \emph{kernel}: the covariance function.  One of the main difficulties in specifying a Gaussian process model is in choosing a kernel which can represent the structure present in the data.  For small to medium-sized datasets, the kernel has a large impact on modeling efficacy.
-  
-
-%\subsection{Additivity in a GP}
-\begin{figure}
-\centering
-\begin{tabular}{ccccc|c}
-\hspace{-0.2cm}\includegraphics[width=0.2\textwidth]{\additivefigsdir/additive_kernel_sum_p2.pdf} & \hspace{-0.4cm} + \hspace{-0.4cm} & 
-\includegraphics[width=0.2\textwidth]{\additivefigsdir/additive_kernel_sum_p1.pdf} & \hspace{-0.4cm} = \hspace{-0.4cm} & 
-\includegraphics[width=0.2\textwidth]{\additivefigsdir/additive_kernel.pdf} &
-\includegraphics[width=0.2\textwidth]{\additivefigsdir/sqexp_kernel.pdf} \\
-$k_1(x_1, x_1')$ & & $k_2(x_2, x_2')$ & & $k_1(x_1,x_1') + k_2(x_2,x_2')$ &$k_1(x_1,x_1')k_2(x_2,x_2')$ \\
-1D kernel & & 1D kernel & & 1st order kernel & 2nd order kernel \\ 
-%& & & & & \\
-%(Second Order) & & & & & Additive Kernel \\
-$\downarrow$ & & $\downarrow$ & & $\downarrow$ & $\downarrow$  \\
-\hspace{-0.2cm}\includegraphics[width=0.2\textwidth]{\additivefigsdir/additive_kernel_draw_sum_p1.pdf}& \hspace{-0.4cm} + \hspace{-0.4cm}& 
-\includegraphics[width=0.2\textwidth]{\additivefigsdir/additive_kernel_draw_sum_p2.pdf}& \hspace{-0.4cm} = \hspace{-0.4cm}&
-\includegraphics[width=0.2\textwidth]{\additivefigsdir/additive_kernel_draw_sum.pdf} &
-\includegraphics[width=0.2\textwidth]{\additivefigsdir/sqexp_draw.pdf} \\
-$f_1(x_1)$ & & $f_2(x_2)$ & & $f_1(x_1) + f_2(x_2)$ & $f(x_1, x_2)$ \\
-draw from & & draw from & & draw from & draw from\\
-1D GP prior & & 1D GP prior & & 1st order GP prior & 2nd order GP prior\\
-%Draw from product kernel GP prior & Draw from additive kernel GP prior\\
-\end{tabular}
-\caption[Additive kernels correspond to additive functions]{A first-order additive kernel, and a product kernel.  Left: a draw from a first-order additive kernel corresponds to a sum of draws from one-dimensional kernels.  Right: functions drawn from a product kernel prior have weaker long-range dependencies, and less long-range structure.
-%In this example, both kernels are composed of one dimensional squared-exponential kernels, but this need not be the case in general.
-}
-\label{fig:kernels}
-\end{figure}
-
-Figure \ref{fig:kernels} compares, for two-dimensional functions, a first-order additive kernel with a second-order kernel. We can see that a GP with a first-order additive kernel is an example of a GAM:  Each function drawn from this model is a sum of orthogonal one-dimensional functions.  Compared to functions drawn from the higher-order GP, draws from the first-order GP have more long-range structure.
+ We can see that a GP with a first-order additive kernel is an example of a GAM:  Each function drawn from this model is a sum of orthogonal one-dimensional functions.  Compared to functions drawn from the higher-order GP, draws from the first-order GP have more long-range structure.
 
   %The only weaknesses with this method are due to over-fitting the kernel hyperparameters, the kernel not being rich enough to capture the structure exhibited by the data, or due to the optimization process not finding the global optima of the hyperparameters.
 
@@ -342,10 +310,10 @@ Bengio et al.\cite{bengio2006curse} argue that models based on squared-exponenti
 \begin{figure}[h]
 \centering
 \begin{tabular}{cccc}
-\hspace{-0.25in} \includegraphics[width=0.27\textwidth]{\additivefigsdir/3d_add_kernel_1.pdf} &
-\hspace{-0.25in} \includegraphics[width=0.27\textwidth]{\additivefigsdir/3d_add_kernel_2.pdf} &
-\hspace{-0.25in} \includegraphics[width=0.27\textwidth]{\additivefigsdir/3d_add_kernel_3.pdf} & 
-\hspace{-0.25in} \includegraphics[width=0.27\textwidth]{\additivefigsdir/3d_add_kernel_321.pdf}\\
+\hspace{-0.25in} \includegraphics[width=0.27\textwidth]{\additivefigsdir/3d-kernel/3d_add_kernel_1} &
+\hspace{-0.25in} \includegraphics[width=0.27\textwidth]{\additivefigsdir/3d-kernel/3d_add_kernel_2} &
+\hspace{-0.25in} \includegraphics[width=0.27\textwidth]{\additivefigsdir/3d-kernel/3d_add_kernel_3} & 
+\hspace{-0.25in} \includegraphics[width=0.27\textwidth]{\additivefigsdir/3d-kernel/3d_add_kernel_321}\\
 1st order interactions & 2nd order interactions & 3rd order interactions & All interactions \\
 $k_1 + k_2 + k_3$ & $k_1k_2 + k_2k_3 + k_1k_3$ & $k_1k_2k_3$ & \\
 & & (Squared-exp kernel) & (Additive kernel)\\

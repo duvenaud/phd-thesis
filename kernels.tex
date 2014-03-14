@@ -5,7 +5,11 @@
 \label{ch:kernels}
 
 
-\section{Composing kernels}
+
+
+
+Kernels specify similarity between function values of two objects, not between similarity of objects
+
 
 
 %Kernel functions $\kernel : \InputSpace \times \InputSpace \to \Reals$ can be used to define a measure of similarity between two points $\inputVar, \inputVar'$ in some space $\InputSpace$.
@@ -30,6 +34,17 @@ There has been significant work on constructing \gp{} kernels and analyzing thei
 %
 Commonly used kernels families include the squared exponential (\kSE), periodic (\kPer), linear (\kLin), and rational quadratic (\kRQ) (see Figure~\ref{fig:basic_kernels} and the appendix).
 %\input{\grammartablesdir/simple_kernels_table_v3.tex}
+
+\paragraph{Kernel definitions}
+For scalar-valued inputs, the squared exponential (\kSE), periodic (\kPer), linear (\kLin), and rational quadratic (\kRQ) kernels are defined as follows:
+%
+\begin{eqnarray*}
+\kernel_{\SE}(\inputVar, \inputVar') =& \sigma^2\exp\left(-\frac{(\inputVar - \inputVar')^2}{2\ell^2}\right) \\
+\kernel_{\Per}(\inputVar, \inputVar') =& \sigma^2\exp\left(-\frac{2\sin^2 (\pi(\inputVar - \inputVar')/p)}{\ell^2}\right) \\
+\kernel_{\Lin}(\inputVar, \inputVar') =& \sigma_b^2 + \sigma_v^2(\inputVar - \ell)(\inputVar' - \ell) \\
+\kernel_{\RQ}(\inputVar, \inputVar') =& \sigma^2\left( 1 + \frac{(\inputVar - \inputVar')^2}{2 \alpha \ell^2} \right)^{-\alpha}
+\end{eqnarray*}
+
 
 
 The elements of this language are a set of  base
@@ -124,16 +139,16 @@ These dimensions are represented using subscripts, e.g. $\SE_2$ represents an \k
 \\
   {\small $\kLin \times \kSE$} & {\small increasing variation}
 & {\small $\kLin \times \kPer$} & {\small growing amplitude}
-\\
-\midrule
-  \addkernpic{additive_kernel} & \addkernpic{additive_kernel_draw_sum}
-& \addkernpic{sqexp_kernel}  & \addkernpic{sqexp_draw}
+%\\
+%\midrule
+%  \addkernpic{additive_kernel} & \addkernpic{additive_kernel_draw_sum}
+%& \addkernpic{sqexp_kernel}  & \addkernpic{sqexp_draw}
 \\
   {\small $\kSE_1 + \kSE_2$} & {\small $f_1(x_1)$ $+ f_2(x_2)$}
 & {\small $\kSE_1 \times \kSE_2$} & {\small $f(x_1, x_2)$}
 \end{tabularx}
-\caption[Examples of structures expressible by composite kernels]
-{ Examples of structures expressible by composite kernels.  
+\caption[Examples of one-dimensional structures expressible by composite kernels]
+{ Examples of one-dimensional structures expressible by composite kernels.  
 %The x-axis has the same scale for all plots.
 Left column and third columns: composite kernels $k(\cdot,0)$.
 Plots have same meaning as in figure \ref{fig:basic_kernels}.}
@@ -141,23 +156,14 @@ Plots have same meaning as in figure \ref{fig:basic_kernels}.}
 \end{figure}
 
 
-\paragraph{Kernel definitions}
-For scalar-valued inputs, the squared exponential (\kSE), periodic (\kPer), linear (\kLin), and rational quadratic (\kRQ) kernels are defined as follows:
-%
-\begin{eqnarray*}
-\kernel_{\SE}(\inputVar, \inputVar') =& \sigma^2\exp\left(-\frac{(\inputVar - \inputVar')^2}{2\ell^2}\right) \\
-\kernel_{\Per}(\inputVar, \inputVar') =& \sigma^2\exp\left(-\frac{2\sin^2 (\pi(\inputVar - \inputVar')/p)}{\ell^2}\right) \\
-\kernel_{\Lin}(\inputVar, \inputVar') =& \sigma_b^2 + \sigma_v^2(\inputVar - \ell)(\inputVar' - \ell) \\
-\kernel_{\RQ}(\inputVar, \inputVar') =& \sigma^2\left( 1 + \frac{(\inputVar - \inputVar')^2}{2 \alpha \ell^2} \right)^{-\alpha}
-\end{eqnarray*}
 
 
 
 
+\section{Structure through additivity}
 
-\subsection{Summation}
 
-By summing kernels, we can model the data as a superposition of independent functions, possibly representing different structures.
+By summing kernels, we can model the data as a sum of independent functions, possibly representing different structures.
 Suppose functions ${\function_1, \function_2}$ are draw from independent \gp{} priors, ${\function_1 \dist \GP(\mu_1, \kernel_1)}$, ${\function_2 \dist \GP(\mu_2, \kernel_2)}$.
 Then 
 %
@@ -183,9 +189,97 @@ These two kinds of structure are demonstrated in rows 2 and 4 of figure~\ref{fig
 
 
 
+A theme throughout this thesis is exploring the idea that a lot of the expressivity of \gp{} models comes from the fact that these models can be combined and decomposed additively.
 
 
-\subsubsection{Synthetic Data}
+\subsection{Derivation of Component Marginal Variance}
+
+In this section, we derive the posterior marginal variance and covariance of the additive components of a \gp{}.  These formulas let us plot the marginal variance of each component separately.  These formulas can also be used to examine the posterior covariance between pairs of components.
+
+Let us assume that our function $\vf$ is a sum of two functions, $\vf_1$ and $\vf_2$, where $\vf = \vf_1 + \vf_2$.  If $\vf_1$ and $\vf_2$ are a priori independent, and $\vf_1 \sim \gp( \vmu_1, k_1)$ and $\vf_2 \sim \gp( \vmu_2, k_2)$, then
+\begin{align}
+\left[ \begin{array}{c} \vf_1 \\ \vf_1^\star \\ \vf_2 \\ \vf_2^\star \\ \vf \\ \vf^\star \end{array} \right]
+\sim
+\Nt{
+\left[ \begin{array}{c} \vmu_1 \\ \vmu_1^\star \\ \vmu_2 \\ \vmu_2^\star \\ \vmu_1 + \vmu_2 \\ \vmu_1^\star + \vmu_2^\star \end{array} \right]
+}
+{\left[ \begin{array}{cccccc} 
+\vk_1 & \vk_1^\star & 0 & 0 & \vk_1 & \vk_1^\star \\ 
+\vk_1^\star & \vk_1^{\star\star} & 0 & 0 & \vk_1^\star & \vk_1^{\star\star} \\
+0 & 0 & \vk_2 & \vk_2^\star & \vk_2 & \vk_2^\star \\ 
+0 & 0 & \vk_2^\star & \vk_2^{\star\star} & \vk_2^\star & \vk_2^{\star\star} \\
+\vk_1 & \vk_1^\star & \vk_2 & \vk_2^\star & \vk_1 + \vk_2 & \vk_1^\star + \vk_2^\star \\ 
+\vk_1^\star & \vk_1^{\star\star}  & \vk_2^\star & \vk_2^{\star\star}  & \vk_1^\star + \vk_2^\star & \vk_1^{\star\star} + \vk_2^{\star\star}\\
+\end{array} \right]
+}
+\end{align}
+where $\vk_1 = k_1( \vX, \vX )$ and $\vk_1^\star = k_1( \vX^\star, \vX )$. 
+
+By the formula for Gaussian conditionals:
+\begin{align}
+\vx_A | \vx_B \sim \Nt{\vmu_A + \vSigma_{AB} \vSigma_{BB}\inv \left( \vx_B - \vmu_B \right) }
+{\vSigma_{AA} - \vSigma_{AB} \vSigma_{BB}\inv \vSigma_{BA} },
+\end{align}
+we get that the conditional variance of a Gaussian conditioned on its sum with another Gaussian is given by
+\begin{align}
+%\vf_1^\star | \vf \sim \Nt{\vmu_1^\star + \vk_1^{\star\tra} (\vK_1 + \vK_2)\inv \left( \vf - \vmu_1 - \vmu_2 \right) }
+\vf_1(\vx^\star) | \vf(\vx) \sim \mathcal{N}\big( 
+& \vmu_1(\vx^\star) + \vk_1(\vx^{\star}, \vx)  \left[ \vK_1(\vx, \vx) + \vK_2(\vx, \vx) \right]\inv \left( \vf(\vx) - \vmu_1(\vx) - \vmu_2(\vx) \right) , \nonumber \\
+& \vk_1(\vx^{\star}, \vx^{\star}) - \vk_1(\vx^{\star}, \vx)  \left[ \vK_1(\vx, \vx) + \vK_2(\vx, \vx) \right] \inv \vk_1(\vx, \vx^{\star}) 
+\big).
+\end{align}
+
+%The covariance between the two components, conditioned on their sum is given by:
+%\begin{align}
+%\cov(\vf_1^\star, \vf_2^\star) | \vf = - \vk_1^{\star\tra} (\vK_1 + \vK_2)\inv \vk_2^\star
+%\covargs{\vf_1(\vx^\star)}{\vf_2(\vx^\star) | \vf(\vx) }= - \vk_1(\vx^{\star}, \vx)  \left[ \vK_1(\vx, \vx) + \vK_2(\vx, \vx) \right] \inv \vk_1(\vx, \vx^{\star}) 
+%\end{align}
+
+These formulae express the posterior model uncertainty about different components of the signal, integrating over the possible configurations of the other components.
+
+
+
+\subsection{Additivity in multiple dimensions}
+  
+
+%\subsection{Additivity in a GP}
+\begin{figure}
+\centering
+\begin{tabular}{ccccc|c}
+\hspace{-0.2cm}\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel_sum_p2} 
+& \hspace{-0.4cm} \raisebox{1cm}{+} \hspace{-0.4cm} & 
+\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel_sum_p1} 
+& \hspace{-0.4cm} \raisebox{1cm}{=} \hspace{-0.4cm} & 
+\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel} &
+\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/sqexp_kernel} \\
+$k_1(x_1, x_1')$ & & $k_2(x_2, x_2')$ & & $k_1(x_1,x_1') + k_2(x_2,x_2')$ &$k_1(x_1,x_1')k_2(x_2,x_2')$ \\
+%1D kernel & & 1D kernel & & 1st order kernel & 2nd order kernel \\ 
+%& & & & & \\
+%(Second Order) & & & & & Additive Kernel \\
+&&&&& \\
+\large $\downarrow$ & & \large $\downarrow$ & & \large $\downarrow$ & \large $\downarrow$  \\
+\hspace{-0.2cm}\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel_draw_sum_p1}
+& \hspace{-0.4cm} \raisebox{1cm}{+} \hspace{-0.4cm} & 
+\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel_draw_sum_p2}
+& \hspace{-0.4cm} \raisebox{1cm}{=} \hspace{-0.4cm} &
+\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel_draw_sum} &
+\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/sqexp_draw} \\
+$f_1 \sim \GP\left(0, k_1\right)$ & & $f_2 \sim \GP\left(0, k_2\right)$ & & $f_1(x_1) + f_2(x_2)$ & $f(x_1, x_2)$ \\
+%draw from & & draw from & & draw from & draw from\\
+%1D GP prior & & 1D GP prior & & 1st order GP prior & 2nd order GP prior\\
+%Draw from product kernel GP prior & Draw from additive kernel GP prior\\
+\end{tabular}
+\caption[Additive kernels correspond to additive functions]{Top left: An additive kernel is simply a sum of kernels.  Bottom left:  A draw from an additive kernel corresponds to a sum of draws from \gp{}s with the corresponding kernels.  Top right: a product kernel is a product of kernels.  Bottom right:  A draw from a product kernel does not correspond to a product of draws from the corresponding kernels.
+%In this example, both kernels are composed of one dimensional squared-exponential kernels, but this need not be the case in general.
+}
+\label{fig:kernels}
+\end{figure}
+
+Figure \ref{fig:kernels} compares, for two-dimensional functions, a first-order additive kernel with a second-order kernel.
+
+
+
+\subsubsection{Long-range extrapolation through additivity}
 
 Because additive kernels can discover non-local structure in data, they are exceptionally well-suited to problems where local interpolation fails.  
 %[Would this make them good for nonstationary noise?]
@@ -212,7 +306,11 @@ True Function & Squared-exp GP & Additive GP & Additive GP \\
 Figure \ref{fig:synth2d} shows a dataset which demonstrates this feature of additive GPs, consisting of data drawn from a sum of two axis-aligned sine functions.  The training set is restricted to a small, L-shaped area; the test set contains a peak far from the training set locations.  The additive GP recovered both of the original sine functions (shown in green), and inferred correctly that most of the variance in the function comes from first-order interactions.  The ability of additive GPs to discover long-range structure suggests that this model may be well-suited to deal with covariate-shift problems.
 
 
-\subsection{Multiplication}
+
+
+
+
+\section{Structure through Multiplication}
 
 Multiplying kernels allows us to account for interactions between different input dimensions or different notions of similarity. 
 For instance, in multidimensional data, the multiplicative kernel $\SE_1 \times \SE_3$ represents a smoothly varying function of dimensions 1 and 3 which is not constrained to be additive.
@@ -236,13 +334,27 @@ k_1(\vx, \vx') \times k_2(\vx, \vx') = \left[\phi_1(\vx) + \phi_2(\vx)\right]\tr
 In other words, the features of $k_1 \times k_2$ are the cartesian product (all possible combinations) of the original sets of features.
 
 
+\subsection{Multiplying with constant functions}
+
+If we wish to model a function that's been multiplied by some fixed function $a(x)$, this can be easily achieved by multiplying the kernel by $a(\vx) a(\vx')$.
+
+This is why it is common practice to assume zero mean, since marginalizing over an unknown mean function can be equivalently expressed as a zero-mean \gp{} with a new kernel.
 
 
 
-
-\subsection{Kernels specify similarity between function values of two objects, not between similarity of objects.}
 
 \subsection{Signal versus noise}
+
+In most derivations of Gaussian processes, the model is given as $y = f + \epsilon$, where $\epsilon \simiid \Nt{0}{\sigma^2_{\textnormal{noise}}}$.
+
+However, $\epsilon$ can equivalently be thought of as another Gaussian process, and so this model can be written as one in which $f \sim \GP\left(0, k + \delta \right)$.  The lack of distinction between the noise model and the model of the signal raises the larger question:  Which part of a model represents signal, and which represents noise?
+
+Our answer is: \emph{it depends on what you want to do with the model}.  For example: often, we don't care about the short-term variations in a function, and only in the long-term trend.  However, in many other cases, we with to de-trend our data to see more clearly how much a particular part of the signal deviated from normal.
+
+\subsubsection{Student's $t$ processes}
+
+One shortcoming of the
+
 
 
 
@@ -350,6 +462,10 @@ In general, we can always enforce the symmetries obeyed by a given surface by fi
 
 
 
+
+
+
+
 \section{How to generate 3D shapes with a given topology}
 
 First create a mesh in 2d.  Then draw 3 independent functions from a GP prior with the relevant symmetries encoded in the kernel.  Then, map the 2d points making up the mesh through those 3 functions to get the 3D  coordinates of each point on the mesh.
@@ -367,9 +483,9 @@ Manifold $( \SE_1 \times \SE_2 )$  & Cylinder $( \SE_1 \times \Per_2 )$ & Toroid
 \label{fig:gen_surf}
 \end{figure}
 
+
+
 \subsection{M\"{o}bius strips}
-
-
 
 A prior on functions on M\"{o}bius strips can be achieved by enforcing the symmetries:
 %
@@ -529,15 +645,6 @@ What we'd really like to do is a max-pooling operation.  However, in general, a 
 \cite{Invariances13} show that, for Gaussian processes, with probability one, $f(\vx) = f(T(\vx))$ if and only if $k(x, x') = k(x, T(x'))$.
 
 
-\paragraph{Structure discovery}
-
-%There have been several attempts to uncover the structural form of a dataset by searching over a grammar of structures. For example, \cite{schmidt2009distilling}, \cite{todorovski1997declarative} and \cite{washio1999discovering} attempt to learn parametric forms of equations to describe time series, or relations between quantities. Because we learn expressions describing the covariance structure rather than the functions themselves, we are able to capture structure which does not have a simple parametric form.
-
-\citet{kemp2008discovery} learned the structural form of a graph used to model human similarity judgments.
-Examples of graphs included planes, trees, and cylinders.
-Some of their discrete graph structures have continous analogues in our own space; \eg $\SE_1 \times \SE_2$ and $\SE_1 \times \Per_2$ can be seen as mapping the data to a plane and a cylinder, respectively.
-
-%\citet{grosse2012exploiting} performed a greedy search over a compositional model class for unsupervised learning, using a grammar and a search procedure which parallel our own. This model class contained a large number of existing unsupervised models as special cases and was able to discover such structure automatically from data. Our work is tackling a similar problem, but in a supervised setting.
 
 
 
@@ -687,6 +794,17 @@ Such feature maps can capture rich structure \citep{DuvLloGroetal13}, and can en
 The relatively uninteresting properties of the kernels derived in this section simply reflect the fact that an arbitrary deep computation is not usually a useful representation, unless combined with learning.
 
 
+
+
+\section{Worked example: building a structured kernel for a time-series}
+
+\subsection{Modeling multiple periodicities}
+
+\subsection{Incoportating side-information}
+
+\subsection{Incoportating discrete covariates}
+
+\subsection{Breaking down the predictions, examining different parts of the model}
 
 
 \outbpdocument{
