@@ -148,7 +148,7 @@ These dimensions are represented using subscripts, e.g. $\SE_2$ represents an \k
 & {\small $\kSE_1 \times \kSE_2$} & {\small $f(x_1, x_2)$}
 \end{tabularx}
 \caption[Examples of one-dimensional structures expressible by composite kernels]
-{ Examples of one-dimensional structures expressible by composite kernels.  
+{ Examples of one-dimensionalstructures expressible by composite kernels.  
 %The x-axis has the same scale for all plots.
 Left column and third columns: composite kernels $k(\cdot,0)$.
 Plots have same meaning as in figure \ref{fig:basic_kernels}.}
@@ -425,8 +425,8 @@ however, the second method will in general lead to non-differentiability along $
 
 \begin{figure}
 \begin{tabular}{cc}
-\includegraphics[width=0.33\columnwidth,clip=true,trim=16cm 1cm 3cm 1cm]{\topologyfiguresdir/symmetric-naive} &
-\includegraphics[width=0.33\columnwidth,clip=true,trim=16cm 1cm 3cm 1cm]{\topologyfiguresdir/symmetric-projection} \\
+\includegraphics[width=0.33\columnwidth]{\symmetryfigsdir/symmetric-xy-naive-kerne} &
+\includegraphics[width=0.33\columnwidth]{\symmetryfigsdir/symmetric-xy-projection-sample} \\
 Additive method & min method
 \end{tabular}
 \caption[Two ways to introduce symmetry]{An illustration of two methods of introducing symmetry: The additive method or the min method.  The additive method has half the marginal variance away from $y = x$, but the min method introduces a non-differentiable seam along $y = x$.}
@@ -655,7 +655,7 @@ What we'd really like to do is a max-pooling operation.  However, in general, a 
 \label{sec:deep_kernels}
 
 
-\cite{NIPS2005_424} showed that kernel machines have limited generalization ability when they use a local kernel such as the squared-exp.
+\cite{ bengio2006curse} showed that kernel machines have limited generalization ability when they use a local kernel such as the squared-exp.
 However, many interesting non-local kernels can be constructed which allow non-trivial extrapolation.
 For example, periodic kernels can be viewed as a 2-layer-deep kernel, in which the first layer maps $x \rightarrow [\sin(x), \cos(x)]$, and the second layer maps through basis functions corresponding to the \humble{SE} kernel.
 
