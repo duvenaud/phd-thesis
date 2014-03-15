@@ -107,6 +107,40 @@ The \gplvm{} can also be thought of as a method for modeling the covariance matr
 
 
 
+\section{Outline}
+
+This thesis aims to present a set of related results about how the probabilistic nature of Gaussian process models allows them to be easily extended or composed with other models.
+Furthermore, the fact that the marginal likelihood is often available (or easily approximable) means that we can evaluate how much evidence the data provides for one structure over another.
+
+
+\paragraph{Chapter \ref{ch:kernels}} describes, in detail, the ways in which different sorts of structure can be introduced into a \gp{} model through the kernel.
+
+\paragraph{Chapter \ref{ch:grammar}} shows how to construct a general, open-ended language over kernels - which implies a corresponding language over models.
+Given a wide variety of structures, plus the ability to evaluate the suitability of each one, it's straightforward to automatically search over models.
+
+\paragraph{Chapter \ref{ch:description}} shows that, for the particular language of models constructed in chapter \ref{ch:grammar}, it's relatively easy to automatically generate english-language descriptions of the models discovered.
+Combined with 
+
+
+\section{Contributions}
+
+My doctorate was made possible, and enjoyable by the company of the many co-authors I was fortunate to work with.
+In this section, I detail the novel contributions of this thesis, and attempt to give proper credit to my tireless co-authors.
+
+\paragraph{Grammar on topologies}
+Chapter \ref{ch:kernels} contains a section on describes, in detail, the ways in which different sorts of structure can be introduced into a \gp{} model through the kernel.
+
+\paragraph{Deep kernels}
+Section \ref{sec:deep_kernels}
+
+The research upon which \paragraph{chapter \ref{ch:grammar}} is based was done in collaboration with James Robert Lloyd, Roger Grosse, Joshua B. Tenenbaum, and Zoubin Ghahramani.
+Specifically, myself, James Lloyd and Roger Grosse wrote the
+
+\paragraph{Chapter \ref{ch:description}} was written in collaboration with James Robert Lloyd, Roger Grosse, Joshua B. Tenenbaum, Zoubin Ghahramani.
+Specifically, James Lloyd wrote most of the code to automatically generate reports, and ran all of the experiments.
+The idea of the correspondence between kernels and adjectives grew out of many extended discussions between myself and James.
+The text was written mainly by myself and James Lloyd, with many helpful contributions and suggestions from Roger Grosse, Zoubin Ghaharamani, and Josh Tenenbaum.
+
 
 \outbpdocument{
 \bibliographystyle{plainnat}
