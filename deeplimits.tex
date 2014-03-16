@@ -72,7 +72,186 @@ We also present two related analyses:  first, we examine the properties of a arb
 \subsection{Single-layer models}
 
 \begin{figure}
-\input{\deeplimitstablesdir/architecture-comparison-aistats}
+\def\layersep{1.33cm}
+\def\nodesep{.75cm}
+\def\nodesize{.35cm}
+
+%\newcommand{\numdims}[0]{3}
+%\newcommand{\numhidden}[0]{4}
+%\newcommand{\upnodedist}[0]{0.6cm}
+%\newcommand{\bardist}[0]{\hspace{-0.2cm}}
+
+\begin{tabular}{c|c|c}
+\hspace{-0.5cm}
+\begin{tikzpicture}[shorten >=1pt,->,draw=black!50, node distance=\layersep]
+    \tikzstyle{every pin edge}=[<-,shorten <=1pt]
+    \tikzstyle{neuron}=[circle,fill=black!25,minimum size=17pt,inner sep=0pt]
+    \tikzstyle{input neuron}=[neuron, fill=green!50];
+    \tikzstyle{output neuron}=[neuron, fill=red!50];
+    \tikzstyle{hidden neuron}=[neuron, fill=blue!50];
+    \tikzstyle{annot} = [text width=4em, text centered]
+
+    % Draw the input layer nodes
+    \foreach \name / \y in {1,...,\numdims}
+    % This is the same as writing \foreach \name / \y in {1/1,2/2,3/3,4/4}
+        \node[input neuron, minimum size=\nodesize
+        %, pin=left:Input \#\y
+        ] (I-\name) at (0,-\nodesep*\y) {}; %{$x_\y$};
+
+    % Draw the hidden layer nodes
+    \foreach \name / \y in {1,...,\numhidden}
+        \path[yshift=0.5cm]
+            node[hidden neuron, minimum size=\nodesize] (H-\name) at (\layersep,-\nodesep*\y) {}; %{$\phi_\y$};
+
+    % Draw the output layer node
+    \foreach \name / \y in {1,...,\numdims}
+    	\node[output neuron, minimum size=\nodesize
+    	%,pin={[pin edge={->}]right:Output }
+    	] (O-\name) at (2*\layersep,-\nodesep*\y) {};%{$f^{1}_\y$};
+
+    % Connect every node in the input layer with every node in the
+    % hidden layer.
+    \foreach \source in {1,...,\numdims}
+        \foreach \dest in {1,...,\numhidden}
+            \path (I-\source) edge (H-\dest);
+
+    % Connect every node in the hidden layer with the output layer
+    \foreach \source in {1,...,\numhidden}
+        \foreach \dest in {1,...,\numdims}
+    	    \path (H-\source) edge (O-\dest);
+
+    % Annotate the layers
+    \node[annot,above of=I-1, node distance=\upnodedist] {Inputs};
+    \node[annot,above of=H-1, node distance=\upnodedist] {Hidden};
+    \node[annot,above of=O-1, node distance=\upnodedist] {Outputs};
+\end{tikzpicture}
+\bardist
+&
+\bardist
+\begin{tikzpicture}[shorten >=1pt,->,draw=black!50, node distance=\layersep]
+    \tikzstyle{every pin edge}=[<-,shorten <=1pt]
+    \tikzstyle{neuron}=[circle,fill=black!25,minimum size=17pt,inner sep=0pt]
+    \tikzstyle{input neuron}=[neuron, fill=green!50];
+    \tikzstyle{output neuron}=[neuron, fill=red!50];
+    \tikzstyle{hidden neuron}=[neuron, fill=blue!50];
+    \tikzstyle{annot} = [text width=4em, text centered]
+
+    % Draw the input layer nodes
+    \foreach \name / \y in {1,...,\numdims}
+    % This is the same as writing \foreach \name / \y in {1/1,2/2,3/3,4/4}
+        \node[input neuron, minimum size=\nodesize
+        %, pin=left:Input \#\y
+        ] (I-\name) at (0,-\nodesep*\y) {};
+
+    % Draw the hidden layer nodes
+    \foreach \name / \y in {1,...,\numhidden}
+        \path[yshift=0.5cm]
+            node[hidden neuron, minimum size=\nodesize] (H-\name) at (\layersep,-\nodesep*\y) {};
+
+    % Draw the hidden layer nodes
+    \foreach \name / \y in {1,...,\numhidden}
+        \path[yshift=0.5cm]
+            node[hidden neuron, minimum size=\nodesize] (H2-\name) at (2*\layersep,-\nodesep*\y) {};
+
+
+    % Draw the output layer node
+    \foreach \name / \y in {1,...,\numdims}
+    	\node[output neuron, minimum size=\nodesize
+    	%,pin={[pin edge={->}]right:Output }
+    	] (O-\name) at (3*\layersep,-\nodesep*\y) {};
+
+    % Connect every node in the input layer with every node in the
+    % hidden layer.
+    \foreach \source in {1,...,\numdims}
+        \foreach \dest in {1,...,\numhidden}
+            \path (I-\source) edge (H-\dest);
+            
+    \foreach \source in {1,...,\numhidden}
+        \foreach \dest in {1,...,\numhidden}
+            \path (H-\source) edge (H2-\dest);            
+
+    % Connect every node in the hidden layer with the output layer
+    \foreach \source in {1,...,\numhidden}
+        \foreach \dest in {1,...,\numdims}
+    	    \path (H2-\source) edge (O-\dest);
+
+    % Annotate the layers
+    \node[annot,above of=I-1, node distance=\upnodedist] {Inputs};
+    \node[annot,above of=H-1, node distance=\upnodedist] {Hidden};
+    \node[annot,above of=H2-1, node distance=\upnodedist] {Hidden};
+    \node[annot,above of=O-1, node distance=\upnodedist] {Outputs};
+\end{tikzpicture}
+\bardist
+&
+\bardist
+\begin{tikzpicture}[shorten >=1pt,->,draw=black!50, node distance=\layersep]
+    \tikzstyle{every pin edge}=[<-,shorten <=1pt]
+    \tikzstyle{neuron}=[circle,fill=black!25,minimum size=17pt,inner sep=0pt]
+    \tikzstyle{input neuron}=[neuron, fill=green!50];
+    \tikzstyle{output neuron}=[neuron, fill=red!50];
+    \tikzstyle{hidden neuron}=[neuron, fill=blue!50];
+    \tikzstyle{annot} = [text width=4em, text centered]
+
+    % Draw the input layer nodes
+    \foreach \name / \y in {1,...,\numdims}
+    % This is the same as writing \foreach \name / \y in {1/1,2/2,3/3,4/4}
+        \node[input neuron, minimum size=\nodesize
+        %, pin=left:Input \#\y
+        ] (I-\name) at (0,-\nodesep*\y) {};
+
+    % Draw the hidden layer nodes
+    \foreach \name / \y in {1,...,\numhidden}
+        \path[yshift=0.5cm]
+            node[hidden neuron, minimum size=\nodesize] (H-\name) at (\layersep,-\nodesep*\y) {};
+
+    % Draw the hidden layer nodes
+    \foreach \name / \y in {1,...,\numhidden}
+        \path[yshift=0.5cm]
+            node[hidden neuron, minimum size=\nodesize] (H2-\name) at (3*\layersep,-\nodesep*\y) {};
+
+    % Draw the output layer node
+    \foreach \name / \y in {1,...,\numdims}
+    	\node[output neuron, minimum size=\nodesize
+    	%,pin={[pin edge={->}]right:Output }
+    	] (O1-\name) at (2*\layersep,-\nodesep*\y) {};
+
+    % Draw the output layer node
+    \foreach \name / \y in {1,...,\numdims}
+    	\node[output neuron, minimum size=\nodesize
+    	%,pin={[pin edge={->}]right:Output }
+    	] (O2-\name) at (4*\layersep,-\nodesep*\y) {};
+
+    % Connect every node in the input layer with every node in the
+    % hidden layer.
+    \foreach \source in {1,...,\numdims}
+        \foreach \dest in {1,...,\numhidden}
+            \path (I-\source) edge (H-\dest);
+            
+    \foreach \source in {1,...,\numhidden}
+        \foreach \dest in {1,...,\numdims}
+            \path (H-\source) edge (O1-\dest);         
+            
+    \foreach \source in {1,...,\numdims}
+        \foreach \dest in {1,...,\numhidden}
+            \path (O1-\source) edge (H2-\dest);                
+
+    % Connect every node in the hidden layer with the output layer
+    \foreach \source in {1,...,\numhidden}
+        \foreach \dest in {1,...,\numdims}
+    	    \path (H2-\source) edge (O2-\dest);
+
+    % Annotate the layers
+    \node[annot,above of=I-1, node distance=\upnodedist] {Inputs};
+    \node[annot,above of=H-1, node distance=\upnodedist] {Hidden};
+    \node[annot,above of=O1-1, node distance=\upnodedist] {$\vf^{(1)}(\vx)$};
+    \node[annot,above of=H2-1, node distance=\upnodedist] {Hidden};
+    \node[annot,above of=O2-1, node distance=\upnodedist] {$\vf^{(1:2)}(\vx)$};
+
+\end{tikzpicture} \\
+\hspace{-0.5cm} a) One-hidden-layer MLP & 
+b) Two-hidden layer MLP & 
+\hspace{-0.3cm} c) Two-layer \gp{}: $\vy = \vf^{(2)} \left( \vf^{(1)}(\vx) \right)$
+\end{tabular}
 \caption[Comparison of neural network architectures]
 {GPs can be understood as one-hidden-layer MLP with infinitely many hidden units (a).
 There are two possible interpretations of deep GPs:
@@ -270,8 +449,7 @@ The log of the magnitude of the derivatives has moments
 \begin{align}
 m_{\log} = \expectargs{}{\log \left| \frac{\partial f(x)}{\partial x} \right|} & = 2 \log \left( \frac{\sigma}{\lengthscale} \right) - \log2 - \gamma \nonumber \\
 %\varianceargs{}{\log \left| \frac{\partial f(x)}{\partial x} \right|} & = \frac{1}{4}\left[ \pi^2 + 2 \log^2 2  - 2 \gamma( \gamma + log4 ) + 8 \left( \gamma + \log2 - \log \left(\frac{\sigma_f}{\lengthscale}\right)\right) \log\left(\frac{\sigma_f}{\lengthscale}\right) \right]
-v_{\log} = \varianceargs{}{\log \left| \frac{\partial f(x)}{\partial x} \right|} & = \frac{\pi^2}{4} + \frac{\log^2 2}{2}  - \gamma^2 - \gamma \log4 \nonumber \\
-& \hspace{-2cm} + 2 \log\left(\frac{\sigma}{\lengthscale}\right) \left[ \gamma + \log2 - \log \left(\frac{\sigma}{\lengthscale}\right) \right]
+v_{\log} = \varianceargs{}{\log \left| \frac{\partial f(x)}{\partial x} \right|} & = \frac{\pi^2}{4} + \frac{\log^2 2}{2}  - \gamma^2 - \gamma \log4 + 2 \log\left(\frac{\sigma}{\lengthscale}\right) \left[ \gamma + \log2 - \log \left(\frac{\sigma}{\lengthscale}\right) \right]
 \end{align}
 where $\gamma \approxeq 0.5772$ is Euler's constant.  Since the second moment is finite, by the central limit theorem, the limiting distribution of the size of the gradient approaches log-normal as L grows:
 \begin{align}
@@ -523,7 +701,85 @@ To what extent are these pathologies present in nets being used today?  In simul
 \label{sec:fix}
 
 \begin{figure}[h!]
-\input{\deeplimitstablesdir/input-connected}
+\def\layersep{1.33cm}
+\def\nodeseptwo{1.8cm}
+\def\nodesize{.35cm}
+
+\begin{tabular}{c}
+\bardist
+\begin{tikzpicture}[draw=black!80]
+    \tikzstyle{neuron}=[circle,minimum size=17pt, draw = black!80, fill = white, thick]
+    \tikzstyle{input neuron}=[neuron, fill=green!50];
+    \tikzstyle{output neuron}=[neuron, fill=red!50];
+    \tikzstyle{hidden neuron}=[neuron, fill=blue!50];
+    \tikzstyle{pile} =[thick, ->, >=stealth', shorten <=7pt, shorten >=8pt];
+
+    % Define the input layer node
+    \coordinate (I) at (0, 0);
+
+
+    % Define the hidden layer nodes
+    \foreach \name / \y in {1,...,\numhidden}
+    {
+        \coordinate (H-\name) at (\nodeseptwo*\y, 0);
+    }
+
+    % Connect every node            
+    \foreach \name in {1,...,\numhidden}
+    {
+	 \path[pile] (I) edge (H-\name) {};
+         %\path[pile] (I) edge [bend left] (H-\name) {};
+    }
+
+    \draw (I) node[neuron] {};
+    \draw (I) node[below = 0.5cm]  {$\vx$};
+
+    % Draw the hidden layer nodes
+    \foreach \name / \y in {1,...,\numhidden}
+    {
+	\draw (H-\name) node[neuron]  {};
+        \draw (H-\name) node[below = 0.34cm] {$\vf^{(\y)}(\vx)$};
+    }
+\end{tikzpicture} \\
+a) The standard \MLP{} connectivity architecture. \\
+\bardist
+\begin{tikzpicture}[draw=black!80]
+    \tikzstyle{neuron}=[circle,minimum size=17pt, draw = black!80, fill = white, thick]
+    \tikzstyle{input neuron}=[neuron, fill=green!50];
+    \tikzstyle{output neuron}=[neuron, fill=red!50];
+    \tikzstyle{hidden neuron}=[neuron, fill=blue!50];
+    \tikzstyle{pile} =[thick, ->, >=stealth', shorten <=7pt, shorten >=8pt];
+
+    % Define the input layer node
+    \coordinate (I) at (0, 0);
+
+
+    % Define the hidden layer nodes
+    \foreach \name / \y in {1,...,\numhidden}
+    {
+        \coordinate (H-\name) at (\nodeseptwo*\y, 0);
+    }
+
+    % Connect every node
+    \path[pile] (I) edge (H-1) {};          
+    \foreach \name in {2,...,\numhidden}
+    {
+	 \path[pile] (I) edge (H-\name) {};
+         \path[pile] (I) edge [bend left] (H-\name) {};
+    }
+
+    \draw (I) node[neuron] {};
+    \draw (I) node[below = 0.5cm]  {$\vx$};
+
+    % Draw the hidden layer nodes
+    \foreach \name / \y in {1,...,\numhidden}
+    {
+	\draw (H-\name) node[neuron]  {};
+        \draw (H-\name) node[below = 0.34cm] {$\vf^{(\y)}(\vx)$};
+    }
+\end{tikzpicture} \\
+b) Input-connected architecture.
+\end{tabular}
 \caption[Two different architectures for deep neural networks]
 {Two different architectures for deep neural networks.
 The standard architecture connects each layer's outputs to the next layer's inputs.
