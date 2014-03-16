@@ -164,12 +164,15 @@ Table \ref{tbl:all_orders} shows examples of the variance contributed by the dif
 
 \begin{table}[h]
 \caption[Relative variance contribution of each order of the additive model]
-{Relative variance contribution of each order in the additive model, on different datasets. Here, the maximum order of interaction is set to 10, or smaller if the input dimension less than 10.  Values are normalized to sum to 100.
+{Relative variance contribution of each order in the additive model, on different datasets.
+Here, the maximum order of interaction is set to 10, or smaller if the input dimension less than 10.
+Values are normalized to sum to 100.
 }
 \label{tbl:all_orders}
 \begin{center}
 \begin{tabular}{r | r r r r r r r r r r}
-Order of interaction & \nth{1} & \nth{2} & \nth{3} & \nth{4} & \nth{5} & \nth{6} & \nth{7} & \nth{8} & \nth{9} & \nth{10} \\ \hline
+ \multicolumn{1}{c}{} & \multicolumn{10}{c}{Order of interaction} \\
+Dataset & \nth{1} & \nth{2} & \nth{3} & \nth{4} & \nth{5} & \nth{6} & \nth{7} & \nth{8} & \nth{9} & \nth{10} \\ \hline
 pima  & $0.1 $ & $0.1 $ & $0.1 $ & $0.3 $ & $1.5 $ & ${\bf 96.4}$ & $1.4 $ & $0.0 $ & & \\
 liver  & $0.0 $ & $0.2 $ & ${\bf 99.7 } $ & $0.1 $ & $0.0 $ & $0.0 $ & & & & \\
 heart  & ${\bf 77.6} $ & $0.0 $ & $0.0 $ & $0.0 $ & $0.1 $ & $0.1 $ & $0.1 $ & $0.1 $ & $0.1 $ & $22.0 $ \\
@@ -182,7 +185,7 @@ housing  & $0.1 $ & $0.6 $ & ${\bf 80.6 }$ & $1.4 $ & $1.8 $ & $0.8 $ & $0.7 $ &
 \end{table}
 % End automatically generated LaTeX
 
-On different datasets, the dominant order of interaction estimated by the additive model varies widely. 
+On different datasets, the dominant order of interaction estimated by the additive model varies widely.
 An additive \gp{} with all of its variance coming from the 1st order is equivalent to a \GAM{}; an additive \gp{} with all its variance coming from the $D$th order is equivalent to a \SEGP{}.
 %
 % We can see that the length-scales learnt are not necessarily the same.  This is because, in a normal ARD-style kernel, the length-scale of a dimension is conflated with the variance of the function along that dimension.  The additive kernel separates these two hyperparameters.
