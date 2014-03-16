@@ -4,7 +4,7 @@
 \chapter{Warped Mixture Models}  % Or: extensions of the GP-LVM
 \label{ch:warped}
 
-\section{abstract}
+
 A mixture of Gaussians fit to a single curved or heavy-tailed cluster will report that the data contains many clusters.  
 To produce more appropriate clusterings, we introduce a model which warps a latent mixture of Gaussians to produce nonparametric cluster shapes.  
 The possibly low-dimensional latent mixture model allows us to summarize the properties of the high-dimensional clusters (or density manifolds) describing the data.  
@@ -15,10 +15,10 @@ We show that our model is effective for density estimation, performs better than
 %describes clusters as nonlinear manifolds, automatically infers the number of clusters, produces a potentially low-dimensional latent representation, and produces a density estimate. Our approach makes use of two tools from Bayesian nonparametrics: a Dirichlet process mixture model to allow an unbounded number of clusters, and a Gaussian process warping function to allow each cluster to have a complex shape. We derive a simple inference scheme for this model 
 %which analytically integrates out both the mixture parameters and the warping function.  We show that our model is effective for density estimation, and performs better than infinite Gaussian mixture models at discovering meaningful clusters.
 
-Joint work with Tomoharu Iwata 
+%Joint work with Tomoharu Iwata 
 
 
-\section{Introduction}
+
 Probabilistic mixture models are often used for clustering.
 However, if the mixture components are parametric (e.g. Gaussian), then the clustering obtained can be heavily dependent on how well each actual cluster can be modeled by a Gaussian.
 For example, a heavy tailed or curved cluster may need many components to model it.
@@ -65,10 +65,46 @@ We derive an inference procedure for the iWMM based on Markov chain Monte Carlo 
 
 \section{Gaussian Process Latent Variable Model}
 
-In this section, we give a brief introduction to the GPLVM, which can be viewed as a special case of the iWMM.
+
+Besides being useful for modeling functions, a simple extension allows \gp{}s to be useful for general density modeling.  
+
+
+
+Unfortunately, this extension causes many of the useful properties of the \gp{} not to hold.
+
+The \gplvm{} can also be thought of as a method for modeling the covariance matrix between all rows of $Y$ using a number of parameters which grows linearly with $N$.
+
+
+\begin{figure}[t]
+\begin{centering}
+\includegraphics[width=\textwidth]{\gplvmfiguresdir/gplvm_1d_draw_9}
+\end{centering}
+\caption[One-dimensional Gaussian process latent variable model]{A visual representation of the Gaussian process latent variable model.  Bottom: density and samples from a 1D Gaussian, specifying the distribution $p(\vX)$ in the latent space.  Top Right: A function drawn from a \gp{} prior.  Left: A nonparametric density defined by warping the latent density through the function drawn from a \gp{} prior.}  
+\label{fig:oned-gplvm}
+\end{figure}
+
+
+
+\begin{figure}
+\begin{centering}
+{\begin{tabular}{cccc}
+\phantom{h} & Latent space $p(\vX)$ & & Observed space $p(\vY)$ \\
+& \fbox{\includegraphics[height=15em,width=15em]{\gplvmfiguresdir/gplvm-latent-crop}} &
+\raisebox{7em}{$\overset{\mathlarger{f(x)}}{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\rightarrow}}}}}}}}$} &
+%\raisebox{7em}{\Huge $\overset{\textnormal{\Large{GP}}}\rightarrow$} &
+\fbox{\includegraphics[height=15em,width=15em]{\gplvmfiguresdir/gplvm-draw-crop}}
+\end{tabular}}
+\end{centering}
+\caption[Two-dimensional Gaussian process latent variable model]{A visual representation of the Gaussian process latent variable model.  Left:  Isocontours and samples from a 2D Gaussian, specifying the distribution $p(\vX)$ in the latent space.  Right: Density and samples from a nonparametric density defined by warping the latent density through a function drawn from a GP prior.}  
+\label{fig:twod-gplvm}
+\end{figure}
+
+
+
+In this section, we give a brief introduction to the \gplvm{}, which can be viewed as a special case of the iWMM.
 %The iWMM can be viewed as an extension of the Gaussian process latent variable model (GPLVM)~\cite{lawrence2004gaussian}.  
 The GPLVM is a probabilistic model of nonlinear manifolds.
-While not typically thought of as a density model, the GPLVM does in fact define a posterior density over observations~\cite{nickisch2010gaussian}.
+While not typically thought of as a density model, the \gplvm{} does in fact define a posterior density over observations~\cite{nickisch2010gaussian}.
 It does this by smoothly warping a single, isotropic Gaussian density in the latent space into a more complicated distribution in the observed space.  
 
 
@@ -79,7 +115,7 @@ and they are associated with a set of latent coordinates
 $\vX = (\vx_{1},\cdots,\vx_{N})^{\top}$,
 where $\vx_{n}\in{\mathbb R}^{Q}$.
 The GPLVM assumes that observations are generated by mapping the latent coordinates through a set of smooth functions, over which Gaussian process priors are placed.
-Under the GPLVM, the probability of observations given the latent coordinates, integrating out the mapping functions, is
+Under the \gplvm{}, the probability of observations given the latent coordinates, integrating out the mapping functions, is
 \begin{align}
 p(\vY | \vX,\bm{\theta})  = (2 \pi)^{-\frac{DN}{2}}  |\vK|^{-\frac{D}{2}} \exp \left( -\frac{1}{2} {\rm tr}( \vY^{\top} \vK^{-1} \vY) \right),
 \label{eq:py_x}
@@ -97,7 +133,7 @@ k(\vx_{n},\vx_{m}) &= \alpha \exp\left( - \frac{1}{2 \ell^2}(\vx_n - \vx_m)^{\to
 %and $\beta$ is the variance of the additive noise.
 This likelihood is simply the product of $D$ independent Gaussian process likelihoods, one for each output dimension.
 
-Typically, the GPLVM is used for dimensionality reduction or visualization, and the latent coordinates are determined by maximizing the posterior probability of the latent coordinates, while integrating out the warping function.  
+Typically, the \gplvm{} is used for dimensionality reduction or visualization, and the latent coordinates are determined by maximizing the posterior probability of the latent coordinates, while integrating out the warping function.  
 In that setting, the Gaussian prior density on $\vx$ is essentially a regularizer which keeps the latent coordinates from spreading arbitrarily far apart.  
 In contrast, we instead integrate out the latent coordinates as well as the warping function, and place a more flexible parameterization on $p(\vx)$ than a single isotropic Gaussian.
 
@@ -109,9 +145,9 @@ Just as the GPLVM can be viewed as a manifold learning algorithm, the iWMM can b
 
 \section{Infinite Warped Mixture Model}
 
-In this section, we define in detail the infinite warped mixture model (iWMM).
-In the same way as the GPLVM, the iWMM assumes a set of latent coordinates and a smooth, nonlinear mapping from the latent space to the observed space.
-In addition, the iWMM assumes that the latent coordinates
+In this section, we define in detail the infinite warped mixture model (\iwmm{}).
+In the same way as the \gplvm{}, the \iwmm{} assumes a set of latent coordinates and a smooth, nonlinear mapping from the latent space to the observed space.
+In addition, the \iwmm{} assumes that the latent coordinates
 are generated from a Dirichlet process mixture model.
 In particular, we use the following infinite Gaussian mixture model,
 \begin{align}

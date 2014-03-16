@@ -63,7 +63,7 @@ f(\vx) \sim \textnormal{\gp} \left(0, \frac{1}{2^{-2D}} \sum_{\vr \in \{0,1\}^D}
 \end{align}
 
 A \gp{} whose covariance is a sum of kernels corresponds to a sum of functions, each distributed according to a \gp{}.  Therefore, \eqref{eq:additive-gps} describes a sum of $2^D$ functions, each depending on a different subset of the inputs.
-This model class was studied by \citet{duvenaud2011additive11}, who showed that exact inference in these models can be performed in $\mathcal{O}(N^2 D^2 + N^3)$.
+%This model class was studied by \citet{duvenaud2011additive11}, who showed that exact inference in these models can be performed in $\mathcal{O}(N^2 D^2 + N^3)$.
 %Thus, the dropout prior is closely related to a model which learns many functions, each of which only depends on a subset of the inputs.
 
 
@@ -72,16 +72,28 @@ In this chapter, we introduce a Gaussian process model of functions which are $\
 
 \section{Introduction}
 %$f: {\bf x} \mapsto y$
-Most statistical regression models in use today are of the form: $g(y) = f(x_1) + f(x_2) + \dots + f(x_D)$.  Popular examples include logistic regression, linear regression, and Generalized Linear Models\cite{nelder1972generalized}.  This family of functions, known as Generalized Additive Models (GAM)\cite{hastie1990generalized}, are typically easy to fit and interpret.   Some extensions of this family, such as smoothing-splines ANOVA \cite{wahba1990spline}, add terms depending on more than one variable.  However, such models generally become intractable and difficult to fit as the number of terms increases.
+Most statistical regression models in use today are of the form: $g(y) = f(x_1) + f(x_2) + \dots + f(x_D)$.
+Popular examples include logistic regression, linear regression, and Generalized Linear Models \citep{nelder1972generalized}.
+This family of functions, known as Generalized Additive Models (\GAM{}) \citep{hastie1990generalized}, are typically easy to fit and interpret.   Some extensions of this family, such as smoothing-splines ANOVA \citep{wahba1990spline}, add terms depending on more than one variable.
+However, such models generally become intractable and difficult to fit as the number of terms increases.
 
-At the other end of the spectrum are kernel-based models, which typically allow the response to depend on all input variables simultaneously.  These have the form: $y = f(x_1, x_2, \dots, x_D)$.  A popular example would be a Gaussian process model using a squared-exponential (or Gaussian) kernel.  We denote this model as SE-GP.  This model is much more flexible than the GAM, but its flexibility makes it difficult to generalize to new combinations of input variables. %To the extent that a set of variables is relevant to the output, this model must be highly uncertain about any novel combination of those variables.
+At the other end of the spectrum are kernel-based models, which typically allow the response to depend on all input variables simultaneously.
+These have the form: $y = f(x_1, x_2, \dots, x_D)$.
+A popular example would be a Gaussian process model using a squared-exponential (or Gaussian) kernel.
+We denote this model as SE-GP.
+This model is much more flexible than the \GAM{}, but its flexibility makes it difficult to generalize to new combinations of input variables.
+%To the extent that a set of variables is relevant to the output, this model must be highly uncertain about any novel combination of those variables.
 
-In this paper, we introduce a Gaussian process model that generalizes both GAMs and the SE-GP.  This is achieved through a kernel which allow additive interactions of all orders, ranging from first order interactions (as in a GAM) all the way to $D$th-order interactions (as in a SE-GP).  Although this kernel amounts to a sum over an exponential number of terms, we show how to compute this kernel efficiently, and introduce a parameterization which limits the number of hyperparameters to $O(D)$.  A Gaussian process with this kernel function (an additive GP) constitutes a powerful model that allows one to automatically determine which orders of interaction are important.  We show that this model can significantly improve modeling efficacy, and has major advantages for model interpretability.  This model is also extremely simple to implement, and we provide example code.
+In this paper, we introduce a Gaussian process model that generalizes both \GAM{}s and the SE-GP.
+This is achieved through a kernel which allow additive interactions of all orders, ranging from first order interactions (as in a \GAM{}) all the way to $D$th-order interactions (as in a SE-GP).
+Although this kernel amounts to a sum over an exponential number of terms, we show how to compute this kernel efficiently, and introduce a parameterization which limits the number of hyperparameters to $O(D)$.
+A Gaussian process with this kernel function (an additive \gp{}) constitutes a powerful model that allows one to automatically determine which orders of interaction are important.
+We show that this model can significantly improve modeling efficacy, and has major advantages for model interpretability.
+%This model is also extremely simple to implement, and we provide example code.
 
-We note that a similar breakthrough has recently been made, called Hierarchical Kernel Learning (HKL)\cite{DBLP:journals/corr/abs-0909-0844}.  HKL explores a similar class of models, and sidesteps the possibly exponential number of interaction terms by cleverly selecting only a tractable subset.  However, this method suffers considerably from the fact that cross-validation must be used to set hyperparameters.  In addition, the machinery necessary to train these models is immense.  Finally, on real datasets, HKL is outperformed by the standard SE-GP \cite{DBLP:journals/corr/abs-0909-0844}.
 
 
- We can see that a GP with a first-order additive kernel is an example of a GAM:  Each function drawn from this model is a sum of orthogonal one-dimensional functions.  Compared to functions drawn from the higher-order GP, draws from the first-order GP have more long-range structure.
+We can see that a GP with a first-order additive kernel is an example of a GAM:  Each function drawn from this model is a sum of orthogonal one-dimensional functions.  Compared to functions drawn from the higher-order GP, draws from the first-order GP have more long-range structure.
 
   %The only weaknesses with this method are due to over-fitting the kernel hyperparameters, the kernel not being rich enough to capture the structure exhibited by the data, or due to the optimization process not finding the global optima of the hyperparameters.
 
@@ -103,38 +115,53 @@ Capturing these regularities will mean that a model can confidently extrapolate 
 %\subsection{Definition}
 
 
-We now give a precise definition of additive kernels.  We first assign each dimension $i \in \{1 \dots D\}$ a one-dimensional \emph{base kernel} $k_i(x_i, x'_i)$.  We then define the first order, second order and $n$th order additive kernel as:
-\begin{eqnarray}
-k_{add_1}({\bf x, x'}) & = & \sigma_1^2 \sum_{i=1}^D k_i(x_i, x_i') \\
-k_{add_2}({\bf x, x'}) & = & \sigma_2^2 \sum_{i=1}^D \sum_{j = i + 1}^D k_i(x_i, x_i') k_j(x_j, x_j') \\
-k_{add_n}({\bf x, x'}) & = & \sigma_n^2 \sum_{1 \leq i_1 < i_2 < ... < i_n \leq D} \left[ \prod_{d=1}^n k_{i_d}(x_{i_d}, x_{i_d}') \right]
-%k_{add_D}({\bf x, x'}) & = & \sigma_D^2 \prod_{d=1}^D k_{d}(x_{d}, x_{d}')
-\end{eqnarray}
-where $D$ is the dimension of our input space, and $\sigma_n^2$ is the variance assigned to all $n$th order interactions. The $n$th covariance function is a sum of ${D \choose n}$ terms.  In particular, the $D$th order additive covariance function has ${D \choose D} = 1$ term, a product of each dimension's covariance function:
-\begin{equation}
+We now give a precise definition of additive kernels.
+We first assign each dimension $i \in \{1 \dots D\}$ a one-dimensional \emph{base kernel} $k_i(x_i, x'_i)$.
+We then define the first order, second order and $n$th order additive kernel as:
+%
+\begin{align}
+k_{add_1}({\bf x, x'}) & = \sigma_1^2 \sum_{i=1}^D k_i(x_i, x_i') \\
+k_{add_2}({\bf x, x'}) & = \sigma_2^2 \sum_{i=1}^D \sum_{j = i + 1}^D k_i(x_i, x_i') k_j(x_j, x_j') \\
+k_{add_n}({\bf x, x'}) & = \sigma_n^2 \sum_{1 \leq i_1 < i_2 < ... < i_n \leq D} \left[ \prod_{d=1}^n k_{i_d}(x_{i_d}, x_{i_d}') \right] \\
+k_{add_D}({\bf x, x'}) & = \sigma_n^2 \sum_{1 \leq i_1 < i_2 < ... < i_D \leq D} \left[ \prod_{d=1}^D k_{i_d}(x_{i_d}, x_{i_d}') \right] = \sigma_D^2 \prod_{d=1}^D k_{d}(x_{d}, x_{d}')
+\end{align}
+%
+where $D$ is the dimension of our input space, and $\sigma_n^2$ is the variance assigned to all $n$th order interactions.
+The $n$th covariance function is a sum of ${D \choose n}$ terms.
+In particular, the $D$th order additive covariance function has ${D \choose D} = 1$ term, a product of each dimension's covariance function:
+%
+\begin{align}
 k_{add_D}({\bf x, x'}) = \sigma_D^2 \prod_{d=1}^D k_{d}(x_{d}, x_{d}')
-\end{equation}
+\end{align}
+%
 In the case where each base kernel is a one-dimensional squared-exponential kernel, the $D$th-order term corresponds to the multivariate squared-exponential kernel:
-\begin{equation}
+%
+\begin{align}
 %\resizebox{\textwidth}{!}{$
 k_{add_D}({\bf x, x'}) = \sigma_D^2 \prod_{d=1}^D k_{d}(x_{d}, x_{d}') = \sigma_D^2 \prod_{d=1}^D \exp \Big( -\frac{ ( x_{d} - x_{d}')^2}{2l^2_d} \Big) = \sigma_D^2  \exp \Big( -\sum_{d=1}^D \frac{ ( x_{d} - x_{d}')^2}{2l^2_d} \Big)
 %$}
-\end{equation}
-also commonly known as the Gaussian kernel.  The full additive kernel is a sum of the additive kernels of all orders.
 %
+\end{align}
+also commonly known as the Gaussian kernel.
+The full additive kernel is a sum of the additive kernels of all orders.
+
+
+
 \subsection{Parameterization}
+The only design choice necessary in specifying an additive kernel is the selection of a one-dimensional base kernel for each input dimension.
+Any parameters (such as length-scales) of the base kernels can be learned as usual by maximizing the marginal likelihood of the training data.  
 
-The only design choice necessary in specifying an additive kernel is the selection of a one-dimensional base kernel for each input dimension.  Any parameters (such as length-scales) of the base kernels can be learned as usual by maximizing the marginal likelihood of the training data.  
-
-In addition to the hyperparameters of each dimension-wise kernel, additive kernels are equipped with a set of $D$ hyperparameters $\sigma_1^2 \dots \sigma_D^2$ controlling how much variance we assign to each order of interaction.  These ``order variance'' hyperparameters have a useful interpretation:  The $d$th order variance hyperparameter controls how much of the target function's variance comes from interactions of the $d$th order.
+In addition to the hyperparameters of each dimension-wise kernel, additive kernels are equipped with a set of $D$ hyperparameters $\sigma_1^2 \dots \sigma_D^2$ controlling how much variance we assign to each order of interaction.
+These ``order variance'' hyperparameters have a useful interpretation:  the $d$th order variance hyperparameter controls how much of the target function's variance comes from interactions of the $d$th order.
 %
 %\input{\additivetablesdir/r_concrete_500_hypers_table.tex}
 %Table \ref{tbl:concrete} gives an example of hyperparameters learnt by both a SE-GP, and by those learnt by an additive GP whose base kernels are one-dimensional squared exponential kernels.  In this case, the 1st, 2nd and 3rd-order interactions contribute most to the final function.
 %
 %
-Table \ref{tbl:all_orders} shows examples of normalized order variance hyperparameters learned on real datasets.
+Table \ref{tbl:all_orders} shows examples of the variance contributed by the different orders of interaction, learned on real datasets.
 % --- Automatically generated by hypers_to_latex.m ---
 % Exported at 03-Jun-2011 00:22:23
+
 \begin{table}[h]
 \caption[Relative variance contribution of each order of the additive model]
 {Relative variance contribution of each order in the additive model, on different datasets. Here, the maximum order of interaction is set to 10, or smaller if the input dimension less than 10.  Values are normalized to sum to 100.
@@ -155,7 +182,8 @@ housing  & $0.1 $ & $0.6 $ & ${\bf 80.6 }$ & $1.4 $ & $1.8 $ & $0.8 $ & $0.7 $ &
 \end{table}
 % End automatically generated LaTeX
 
-On different datasets, the dominant order of interaction estimated by the additive model varies widely.  An additive GP with all of its variance coming from the 1st order is equivalent to a GAM; an additive GP with all its variance coming from the $D$th order is equivalent to a SE-GP.
+On different datasets, the dominant order of interaction estimated by the additive model varies widely. 
+An additive \gp{} with all of its variance coming from the 1st order is equivalent to a \GAM{}; an additive \gp{} with all its variance coming from the $D$th order is equivalent to a \SEGP{}.
 %
 % We can see that the length-scales learnt are not necessarily the same.  This is because, in a normal ARD-style kernel, the length-scale of a dimension is conflated with the variance of the function along that dimension.  The additive kernel separates these two hyperparameters.
 %
@@ -165,15 +193,19 @@ On different datasets, the dominant order of interaction estimated by the additi
 
 Because the hyperparameters can specify which degrees of interaction are important, the additive GP is an extremely general model.  
 %By optimizing these hyperparameters, we are approximately performing weighted model selection over a set of $D$ models.
-  If the function we are modeling is decomposable into a sum of low-dimensional functions, our model can discover this fact and exploit it (see Figure \ref{fig:synth2d}) .  If this is not the case, the hyperparameters can specify a suitably flexible model.
+  If the function we are modeling is decomposable into a sum of low-dimensional functions, our model can discover this fact and exploit it (see figure \ref{fig:synth2d}).
+  %TODO: Fix this reference.
+If this is not the case, the hyperparameters can specify a suitably flexible model.
 %In the limit of infinite data, a product kernel and its all-subsets expansion will converge to the same mean function (proof?).  However, in the medium-data regime, the additive kernel can discover structure in the functions it is modeling that the product kernel cannot.
 
 %The expected number of zero crossings is $O(k^d)$ for product kernels (sqexp), $O(kd)$ for first-order additive, and $O\left(k  {d \choose r}\right)$ for $r$th order additive functions. [Conjecture]
 
 %To push the analogy, using a product kernel is analogous to performing polynomial regression when we are forced to use a high-degree polynomial, even when the data do not support it.  One could also view the Gaussian kernel as one which makes the pessimistic assumption that the function we are model can vary independently for each new combination of variables observed.
-\subsection{Interpretability}
 
-As noted by \citet{plate1999accuracy}, one of the chief advantages of additive models such as GAM is their interpretability.
+
+
+\subsection{Interpretability}
+As noted by \citet{plate1999accuracy}, one of the chief advantages of additive models such as \GAM{} is their interpretability.
 % since a high-dimensional function is decomposed into a series of one- or two-dimensional functions.  
 Plate also notes that by allowing high-order interactions as well as low-order interactions, one can trade off interpretability with predictive accuracy.  In the case where the hyperparameters indicate that most of the variance in a function can be explained by low-order interactions, it is useful and easy to plot the corresponding low-order functions, as in Figure \ref{fig:interpretable functions}. 
 
@@ -185,50 +217,72 @@ Plate also notes that by allowing high-order interactions as well as low-order i
 \includegraphics[width=0.3\textwidth]{\additivefigsdir/interpretable_2nd_order1.pdf}\\
 \end{tabular}
 \caption[Low-order functions describing the concrete dataset]
-{Low-order functions on the concrete dataset.  Left, Centre:  By considering only first-order terms of the additive kernel, we recover a form of Generalized Additive Model, and can plot the corresponding 1-dimensional functions.  Green points indicate the original data, blue points are data after the mean contribution from the other dimensions' first-order terms has been subtracted.  The black line is the posterior mean of a GP with only one term in its kernel.  Right:  The posterior mean of a GP with only one second-order term in its kernel.}
+{Low-order functions on the concrete dataset.  
+Left, centre: by considering only first-order terms of the additive kernel, we recover a form of Generalized Additive Model, and can plot the corresponding 1-dimensional functions.
+Green points indicate the original data, blue points are data after the mean contribution from the other dimensions' first-order terms has been subtracted.
+The black line is the posterior mean of a \sgp{} with only one term in its kernel.
+Right:  the posterior mean of a \sgp{} with only one second-order term in its kernel.}
 \label{fig:interpretable functions}
 \end{figure}
 
 %\subsection{Allowable Base Kernels}
 %Any one-dimensional base kernel is allowable, and each dimension can use a different base kernel.  One could even specify a mixture of base kernels for each dimension, allowing the hyperparameters to specify the mixture weights.
 
+
 \subsection{Efficient Evaluation of Additive Kernels}
-An additive kernel over $D$ inputs with interactions up to order $n$ has $O(2^n)$ terms.  Na\"{i}vely summing over these terms quickly becomes intractable.  In this section, we show how one can evaluate the sum over all terms in $O(D^2)$.
+An additive kernel over $D$ inputs with interactions up to order $n$ has $O(2^n)$ terms.
+Na\"{i}vely summing over these terms quickly becomes intractable.
+In this section, we show how one can evaluate the sum over all terms in $O(D^2)$.
 
 %\subsection{ Elementary Symmetric Polynomials}
-The $n$th order additive kernel corresponds to the $n$th \textit{elementary symmetric polynomial}\cite{macdonald1998symmetric} \cite{stanley2001enumerative}, which we denote $e_n$.  For example:  if $\bf x$ has 4 input dimensions ($D = 4$), and if we let $z_i = k_i(x_i,x_i')$, then
-\begin{align*}
+To efficiently compute the additive kernel, we exploit the fact that the $n$th order additive kernel corresponds to the $n$th \textit{elementary symmetric polynomial} \citep{macdonald1998symmetric}
+%\cite{stanley2001enumerative}, 
+of the base kernels, which we denote $e_n$.
+For example:  if $\bf x$ has 4 input dimensions ($D = 4$), and if we let $z_i = k_i(x_i,x_i')$, then
+%
+\begin{align}
 %k_{a_1}({\bf x, x'}) & = e_0( z_1, z_2, z_3, z_4 ) & = & 1 \\
 k_{add_1}({\bf x, x'}) & = e_1( z_1, z_2, z_3, z_4 ) = z_1 + z_2 + z_3 + z_4 \\
 k_{add_2}({\bf x, x'}) & = e_2( z_1, z_2, z_3, z_4 ) = z_1 z_2 + z_1 z_3 + z_1z_4 + z_2 z_3 + z_2 z_4 + z_3 z_4 \\
 k_{add_3}({\bf x, x'}) & = e_3( z_1, z_2, z_3, z_4 ) = z_1 z_2 z_3 + z_1 z_2 z_4 + z_1 z_3 z_4 + z_2 z_3 z_4 \\
 k_{add_4}({\bf x, x'}) & = e_4( z_1, z_2, z_3, z_4 ) = z_1 z_2 z_3 z_4
-\end{align*}
-The Newton-Girard formulae give an efficient recursive form for computing these polynomials.  If we define $s_k$ to be the $k$th power sum:  $s_k(z_1,z_2,\dots,z_D) = \sum_{i=1}^Dz_i^k$, then
-\begin{equation}
+\end{align}
+%
+The Newton-Girard formulae give an efficient recursive form for computing these polynomials.
+If we define $s_k$ to be the $k$th power sum: $s_k(z_1,z_2,\dots,z_D) = \sum_{i=1}^Dz_i^k$, then
+%
+\begin{align}
 k_{add_n}({\bf x, x'}) = e_n(z_1,\dots,z_D) = \frac{1}{n} \sum_{k=1}^n (-1)^{(k-1)} e_{n-k}(z_1,\dots,z_D)s_k(z_1,\dots,z_D)
-\end{equation}
+\end{align}
+%
 %\begin{equation}
 %$s_k(z_1,z_2,\dots,z_n) = z_1^k + z_2^k + \dots + z_D^k = \sum_{i=1}^Dz_i^k$.
 %\end{equation}
 Where $e_0 \triangleq 1$.  The Newton-Girard formulae have time complexity $O( D^2 )$, while computing a sum over an exponential number of terms.
 %\subsection{Evaluation of Derivatives}
 
-Conveniently, we can use the same trick to efficiently compute all of the necessary derivatives of the additive kernel with respect to the base kernels.  We merely need to remove the kernel of interest from each term of the polynomials:
+Conveniently, we can use the same trick to efficiently compute all of the necessary derivatives of the additive kernel with respect to the base kernels.
+We merely need to remove the kernel of interest from each term of the polynomials:
+%
 \begin{align}
 \frac{\partial k_{add_n}}{\partial z_j} & = e_{n-1}(z_1,\dots,z_{j-1},z_{j+1}, \dots z_D)
 % & = \frac{1}{n-1} \sum_{k=1}^{n-1} (-1)^{(k-1)} e_{n-k-1}(z_1,\dots,z_{j-1},z_{j+1}, \dots z_D)s_k(z_1,\dots,z_{j-1},z_{j+1}, \dots z_D)
 \end{align}
+%
 This trick allows us to optimize the base kernel hyperparameters with respect to the marginal likelihood.
 
 %  The final derivative is a sum of multilinear terms, so if only one term depends on the hyperparameter under consideration, we can factorise it out and compute the sum with one degree less.
+
+
 \subsection{Computation}
-The computational cost of evaluating the Gram matrix of a product kernel (such as the SE kernel) is $O(N^2D)$, while the cost of evaluating the Gram matrix of the additive kernel is $O(N^2DR)$, where R is the maximum degree of interaction allowed (up to D).  In higher dimensions, this can be a significant cost, even relative to the fixed $O(N^3)$ cost of inverting the Gram matrix.
+The computational cost of evaluating the Gram matrix of a product kernel (such as the \kSE{} kernel) is $O(N^2D)$, while the cost of evaluating the Gram matrix of the additive kernel is $O(N^2DR)$, where R is the maximum degree of interaction allowed (up to D).
+In higher dimensions, this can be a significant cost, even relative to the fixed $O(N^3)$ cost of inverting the Gram matrix.
 %
 However, as our experiments show, typically only the first few orders of interaction are important for modeling a given function; hence if one is computationally limited, one can simply limit the maximum degree of interaction without losing much accuracy.
 
 %\subsection{Code}
-Additive Gaussian processes are particularly appealing in practice because their use requires only the specification of the base kernel.  All other aspects of GP inference remain the same.  All of the experiments in this paper were performed using the standard GPML toolbox\footnote{Available at \texttt{http://www.gaussianprocess.org/gpml/code/}}; code to perform all experiments is available at the author's website.\footnote{Example code available at: \texttt{http://mlg.eng.cam.ac.uk/duvenaud/}}
+Additive Gaussian processes are particularly appealing in practice because their use requires only the specification of the base kernel.  All other aspects of GP inference remain the same.  All of the experiments in this chapter were performed using the standard \GPML{} toolbox\footnote{Available at \texttt{http://www.gaussianprocess.org/gpml/code/}};
+code to perform all experiments is available at the author's website.\footnote{Example code available at: \texttt{http://mlg.eng.cam.ac.uk/duvenaud/}}
 
 
 \section{Related Work}
@@ -248,23 +302,38 @@ However, their approach learns a mixture over a small, fixed set of kernels, whi
 
 \begin{figure}
 \centering
-\begin{tabular}{c|c|c|c}
-\hspace{-0.06in} \includegraphics[width=0.23\textwidth]{\additivefigsdir/compare_models/hkl.pdf} \hspace{-0.07in} &
-\hspace{-0.06in} \includegraphics[width=0.23\textwidth]{\additivefigsdir/compare_models/gam.pdf} \hspace{-0.07in} &
-\hspace{-0.06in} \includegraphics[width=0.23\textwidth]{\additivefigsdir/compare_models/ard.pdf} \hspace{-0.07in} &
-\hspace{-0.06in} \includegraphics[height=0.19\textwidth]{\additivefigsdir/compare_models/additive.pdf} \\
-HKL kernel & GP-GAM kernel & Squared-exp GP & Additive GP kernel\\
- & & kernel & \\
+\begin{tabular}{c|c}
+HKL kernel & GP-GAM kernel \\
+\hspace{-0.06in} \includegraphics[height=0.35\textwidth]{\additivefigsdir/compare_models/hkl.pdf} \hspace{-0.07in} &
+\hspace{-0.06in} \includegraphics[height=0.35\textwidth]{\additivefigsdir/compare_models/gam.pdf} \hspace{-0.07in} \\ \hline \\
+ Squared-exp GP & Additive GP kernel\\
+\hspace{-0.06in} \includegraphics[height=0.35\textwidth]{\additivefigsdir/compare_models/ard.pdf} \hspace{-0.07in} &
+\hspace{-0.06in} \includegraphics[height=0.35\textwidth]{\additivefigsdir/compare_models/additive.pdf} \\
+
+
+% & & kernel & \\
 \end{tabular}
 \caption[A comparison of different additive model classes]
 {
 %A comparison of model flexibility between HKL, additive GPs, the GP-Generalized Additive Model, and the squared-exponential GP model.  
-A comparison of different additive model classes.  Nodes represent different interaction terms, ranging from first-order to fourth-order interactions.  Far left:  HKL can select a hull of interaction terms, but must use a pre-determined weighting over those terms.  Far right: the additive GP model can weight each order of interaction seperately.  Neither the HKL nor the additive model dominate one another in terms of flexibility, however the GP-GAM and the SE-GP are special cases of additive GPs. }
+A comparison of different additive model classes.
+Nodes represent different interaction terms, ranging from first-order to fourth-order interactions.
+Far left: \HKL{} can select a hull of interaction terms, but must use a pre-determined weighting over those terms.
+Far right: the additive \gp{} model can weight each order of interaction seperately.
+Neither \HKL{} nor the additive model dominate one another in terms of flexibility, however the \gp{}-\GAM{} and the \SEGP{} are special cases of additive \gp{}s. }
 \label{hulls-figure}
 \end{figure}
 
-Bach\cite{DBLP:journals/corr/abs-0909-0844} uses a regularized optimization framework to learn a weighted sum over an exponential number of kernels which can be computed in polynomial time.  The subsets of kernels considered by this method are restricted to be a \textit{hull} of kernels.\footnote{In the setting we are considering in this paper, a hull can be defined as a subset of all terms such that if term $\prod_{j \in J} k_j(\bf x, x')$ is included in the subset, then so are all terms $\prod_{j \in J / i} k_j(\bf x, x')$, for all $i \in J$.  For details, see \cite{DBLP:journals/corr/abs-0909-0844}.}
-Given each dimension's kernel, and a pre-defined weighting over all terms, HKL performs model selection by searching over hulls of interaction terms.
+We note that a similar breakthrough has recently been made by \citet{DBLP:journals/corr/abs-0909-0844} called Hierarchical Kernel Learning (\HKL{}).
+\HKL{} explores a similar class of models, and sidesteps the possibly exponential number of interaction terms by cleverly selecting only a tractable subset.
+However, this method suffers considerably from the fact that cross-validation must be used to set hyperparameters.
+In addition, the machinery necessary to train these models is immense.
+Finally, on real datasets, HKL is outperformed by the standard \SEGP{} \citep{DBLP:journals/corr/abs-0909-0844}.
+
+\citet{DBLP:journals/corr/abs-0909-0844} uses a regularized optimization framework to learn a weighted sum over an exponential number of kernels which can be computed in polynomial time.
+The subsets of kernels considered by this method are restricted to be a \textit{hull} of kernels.\footnote{In this setting, a hull is be defined as a subset of all terms such that if term $\prod_{j \in J} k_j(\bf x, x')$ is included in the subset, then so are all terms $\prod_{j \in J / i} k_j(\bf x, x')$, for all $i \in J$.
+For details, see \citep{DBLP:journals/corr/abs-0909-0844}.}
+Given each dimension's kernel, and a pre-defined weighting over all terms, \HKL{} performs model selection by searching over hulls of interaction terms.
 % \subsubsection{All-subsets kernel with uniform weightings}
 In \cite{DBLP:journals/corr/abs-0909-0844}, Bach also fixes the relative weighting between orders of interaction with a single term $\alpha$, computing the sum over all orders by:
 \begin{equation}
@@ -273,30 +342,44 @@ k_{a}({\bf x, x'}) = v_D^2 \prod_{d=1}^D \left(1 + \alpha k_{d}(x_{d}, x_{d}') \
 \end{equation}
 which has computational complexity $O(D)$.  However, this formulation forces the weight of all $n$th order terms to be weighted by $\alpha^n$.
 
-Figure \ref{hulls-figure} contrasts the HKL hull-selection method with the Additive GP hyperparameter-learning method. Neither method dominates the other in flexibility.  The main difficulty with the approach of \cite{DBLP:journals/corr/abs-0909-0844} is that hyperparameters are hard to set other than by cross-validation.  In contrast, our method optimizes the hyperparameters of each dimension's base kernel, as well as the relative weighting of each order of interaction. 
+Figure \ref{hulls-figure} contrasts the \HKL{} hull-selection method with the Additive \gp{} hyperparameter-learning method. Neither method dominates the other in flexibility.
+The main difficulty with the approach of \cite{DBLP:journals/corr/abs-0909-0844} is that hyperparameters are hard to set other than by cross-validation.
+In contrast, our method optimizes the hyperparameters of each dimension's base kernel, as well as the relative weighting of each order of interaction. 
 
 
 \subsection{ANOVA Procedures}
 
-Vapnik \cite{vapnik1998statistical} introduces the support vector ANOVA decomposition, which has the same form as our additive kernel.  However, they recommend approximating the sum over all $D$ orders with only one term ``of appropriate order'', presumably because of the difficulty of setting the hyperparameters of an SVM. Stitson et al.\cite{stitson1999support} performed experiments which favourably compared the support vector ANOVA decomposition to polynomial and spline kernels.  They too allowed only one order to be active, and set hyperparameters by cross-validation.
+Vapnik \cite{vapnik1998statistical} introduces the support vector \ANOVA{} decomposition, which has the same form as our additive kernel.
+However, they recommend approximating the sum over all $D$ orders with only one term ``of appropriate order'', presumably because of the difficulty of setting the hyperparameters of an \SVM{}.
+Stitson et al.\cite{stitson1999support} performed experiments which favourably compared the support vector \ANOVA{} decomposition to polynomial and spline kernels.
+They too allowed only one order to be active, and set hyperparameters by cross-validation.
 %
 %  The order of the kernel, kernel hyperparameters, the allowable regression error $\epsilon$, and the cost hyperparameter $c$ were all set by a lengthy cross-validation process.
 
 %\subsection{Smoothing Splines ANOVA}
-A closely related procedure from the statistics literature is smoothing-splines ANOVA (SS-ANOVA)\cite{wahba1990spline}. An SS-ANOVA model is estimated as a weighted sum of splines along each dimension, plus a sum of splines over all pairs of dimensions, all triplets, etc, with each individual interaction term having a separate weighting parameter.  Because the number of terms to consider grows exponentially in the order, in practice, only terms of first and second order are usually considered.  Learning in SS-ANOVA is usually done via penalized-maximum likelihood with a fixed sparsity hyperparameter.
+A closely related procedure from \citet{wahba1990spline} is smoothing-splines \ANOVA{} (\SSANOVA{}).
+An \SSANOVA{} model is estimated as a weighted sum of splines along each dimension, plus a sum of splines over all pairs of dimensions, all triplets, etc, with each individual interaction term having a separate weighting parameter.
+Because the number of terms to consider grows exponentially in the order, in practice, only terms of first and second order are usually considered.
+Learning in SS-ANOVA is usually done via penalized-maximum likelihood with a fixed sparsity hyperparameter.
 %\cite{shawe2004kernel} define ANOVA kernels thusly: "The ANOVA kernel of degree d is like the all-subsets kernel except that it is restricted to subsets of the given cardinality $d$."
 
 % estimated by generalized cross-validation\cite{craven1978smoothing}. 
 %MARS\cite{friedman1991multivariate} is another spline-based regression method.
 
-In contrast to these procedures, our method can easily include all $D$ orders of interaction, each weighted by a separate hyperparameter. As well, we can learn kernel hyperparameters individually per input dimension, allowing automatic relevance determination to operate.
+In contrast to these procedures, our method can easily include all $D$ orders of interaction, each weighted by a separate hyperparameter.
+As well, we can learn kernel hyperparameters individually per input dimension, allowing automatic relevance determination to operate.
+
+
 
 \subsection{Non-local Interactions}
-
 %In this section we give one motivation for why low-order interactions might help our predictive accuracy.
 %
 %The SE-GP model relies on local smoothing to make predictions at novel locations.  Recent work by Bengio et. al. discusses the limitations
-By far the most popular kernels for regression and classification tasks on continuous data are the squared exponential (Gaussian) kernel, and the Mat\'{e}rn kernels.  These kernels depend only on the scaled Euclidean distance between two points, both having the form: $ k({\bf x, x'}) = f(\sum_{d=1}^D \left( x_{d} - x_{d}' \right)^2 / l_d^2)$.
+By far the most popular kernels for regression and classification tasks on continuous data are the squared exponential (Gaussian) kernel, and the Mat\'{e}rn kernels.
+These kernels depend only on the scaled Euclidean distance between two points, both having the form:
+\begin{align}
+k({\bf x, x'}) = f(\sum_{d=1}^D \left( x_{d} - x_{d}' \right)^2 / l_d^2)
+\end{align}
 %\begin{eqnarray}
 %k_{se}({\bf x, x'}) & = & v_D^2  \exp \left( -\frac{r^2}{2} \right) \\
 %k_{\nu}({\bf x, x'}) & = & \frac{2^{1-\nu}}{\Gamma(\nu)}\left(\sqrt{2\nu}r\right) K_\nu \left(\sqrt{2\nu}r\right)
@@ -305,21 +388,29 @@ By far the most popular kernels for regression and classification tasks on conti
 %\begin{equation}
 %$r = \sqrt{\sum_{d=1}^D \left( x_{d} - x_{d}' \right)^2 / l_d^2 }$.
 %\end{equation}
-Bengio et al.\cite{bengio2006curse} argue that models based on squared-exponential kernels are particularily susceptible to the \textit{curse of dimensionality}.  They emphasize that the locality of the kernels means that these models cannot capture non-local structure.  They argue that many functions that we care about have such structure.  Methods based solely on local kernels will require training examples at all combinations of relevant inputs.
+\citet{bengio2006curse} argue that models based on squared-exponential kernels are particularily susceptible to the \textit{curse of dimensionality}.
+They emphasize that the locality of the kernels means that these models cannot capture non-local structure. 
+They argue that many functions that we care about have such structure.
+Methods based solely on local kernels will require training examples at all combinations of relevant inputs.
 
 \begin{figure}[h]
 \centering
 \begin{tabular}{cccc}
-\hspace{-0.25in} \includegraphics[width=0.27\textwidth]{\additivefigsdir/3d-kernel/3d_add_kernel_1} &
-\hspace{-0.25in} \includegraphics[width=0.27\textwidth]{\additivefigsdir/3d-kernel/3d_add_kernel_2} &
-\hspace{-0.25in} \includegraphics[width=0.27\textwidth]{\additivefigsdir/3d-kernel/3d_add_kernel_3} & 
-\hspace{-0.25in} \includegraphics[width=0.27\textwidth]{\additivefigsdir/3d-kernel/3d_add_kernel_321}\\
-1st order interactions & 2nd order interactions & 3rd order interactions & All interactions \\
+\hspace{-0.1in}
+ \includegraphics[trim=1em 0em 1em 0em, clip, width=0.25\textwidth]{\additivefigsdir/3d-kernel/3d_add_kernel_1} &
+\hspace{-0.2in} \includegraphics[trim=1em 0em 1em 0em, clip, width=0.25\textwidth]{\additivefigsdir/3d-kernel/3d_add_kernel_2} &
+\hspace{-0.2in} \includegraphics[trim=1em 0em 1em 0em, clip, width=0.25\textwidth]{\additivefigsdir/3d-kernel/3d_add_kernel_3} & 
+\hspace{-0.2in} \includegraphics[trim=1em 0em 1em 0em, clip, width=0.25\textwidth]{\additivefigsdir/3d-kernel/3d_add_kernel_321}\\
+1st-order terms &
+2nd-order terms & 
+3rd-order terms & 
+All interactions \\
 $k_1 + k_2 + k_3$ & $k_1k_2 + k_2k_3 + k_1k_3$ & $k_1k_2k_3$ & \\
-& & (Squared-exp kernel) & (Additive kernel)\\
+& & Squared-exp kernel & Additive kernel\\
 \end{tabular}
 \caption[Isocontours of additive kernels in 3 dimensions]
-{Isocontours of additive kernels in 3 dimensions.  The third-order kernel only considers nearby points relevant, while the lower-order kernels allow the output to depend on distant points, as long as they share one or more input value.}
+{Isocontours of additive kernels in 3 dimensions.
+The third-order kernel only considers nearby points relevant, while the lower-order kernels allow the output to depend on distant points, as long as they share one or more input value.}
 \label{fig:kernels3d}
 \end{figure}
 
@@ -331,23 +422,27 @@ Figure \ref{fig:kernels3d} provides a geometric comparison between squared-expon
 
 
 
-\subsection{Experimental Setup}
+%\subsection{Experimental Setup}
 %\subsubsection{Learning}
 
-%\subsubsection{Overfitting}
-%A multivariate squared exponential kernel has $D + 1$ hyperparameters, while an additive function with one hyperparameter per dimension (e.g., a scale parameter) on each dimension's covariance function will have $D \times 2$ hyperparameters.  Because each additional hyperparameter increases the tendency to overfit, we recommend allowing only one hyperparameter per input dimension. 
+\subsubsection{Overfitting}
+A multivariate squared exponential kernel has $D + 1$ hyperparameters, while an additive function with one hyperparameter per dimension (e.g., a scale parameter) on each dimension's covariance function will have $D \times 2$ hyperparameters.  Because each additional hyperparameter increases the tendency to overfit, we recommend allowing only one hyperparameter per input dimension. 
 
 %
 %Since there always exists a parameterization of the additive function corresponding to the product kernel, we initialize the hyperparameter search for the additive kernel by first learning hyperparameters for the equivalent product kernel.  This ensures that we start our search in a reasonable area of hyperparameter space.
 %
-%  Results were averaged over 10 cross-validation folds.  To limit the possibility of overfitting, we parametrized each of our one-dimensional kernel functions with only the lengthscale.  
+Results were averaged over 10 cross-validation folds.
+To limit the possibility of overfitting, we parametrized each of our one-dimensional kernel functions with only the lengthscale.  
 %Note that this parameterization is still more flexible than previous methods (HKL, SS-ANOVA).  % This needs to be double-checked.
 
 %\subsubsection{Initialization}
 %We tried 2 different hyperparameterizations, and 3 initialization strategies: \texttt{vo} indicates learning only the variance parameter of each one-dimensional kernel, and \texttt{lo} indicates learning only the lengthscale.  \texttt{grow} indicates that the model was initialized with only 1st-order interactions, and higher interactions were added in stages.  \texttt{ard init} indicates that lengthscales were initialized by first optimizing the hyperparameters of a squared-exp kernel, then copying the lengthscales for use in an additive kernel.
 %\subsection{Models}
 
-On a diverse collection of datasets, we compared five different models.  In the results tables below, GP Additive refers to a GP using the additive kernel with squared-exp base kernels.  For speed, we limited the maximum order of interaction in the additive kernels to 10.  GP-GAM denotes an additive GP model with only first-order interactions.  GP Squared-Exp is a GP model with a squared-exponential ARD kernel.  HKL\footnote{Code for HKL available at \texttt{http://www.di.ens.fr/\textasciitilde fbach/hkl/}} was run using the all-subsets kernel, which corresponds to the same set of kernels as considered by the additive GP with a squared-exp base kernel.     
+On a diverse collection of datasets, we compared five different models.
+In the results tables below, \gp{} Additive refers to a \gp{} using the additive kernel with squared-exp base kernels.
+For speed, we limited the maximum order of interaction in the additive kernels to 10.  \gp{}-\GAM{} denotes an additive \gp{} model with only first-order interactions.  \gp{} Squared-Exp is a \gp{} model with a squared-exponential \ARD{} kernel.  \HKL{}\footnote{Code for HKL available at \texttt{http://www.di.ens.fr/\textasciitilde fbach/hkl/}}
+was run using the all-subsets kernel, which corresponds to the same set of kernels as considered by the additive GP with a squared-exp base kernel.     
 
 %For all 3 GP models, we allowed 5 multiple restarts for all of our hyperparameter maximization steps, choosing the set of hyperparameters with the highest training-set marginal likelihood.  We ran each hyperparameter search for 500 function evaluations by the usual method of maximizing marginal likelihood, using L-BFGS \cite{nocedal1980updating}.  In addition to kernel hyperparameters, we fit a constant mean function to the data.
 For all GP models, we fit hyperparameters by the standard method of maximizing training-set marginal likelihood, using L-BFGS \cite{nocedal1980updating} for 500 iterations, allowing five random restarts.  In addition to learning kernel hyperparameters, we fit a constant mean function to the data.
@@ -355,19 +450,27 @@ For all GP models, we fit hyperparameters by the standard method of maximizing t
 In the classification experiments, GP inference was done using Expectation Propagation \cite{minka2001expectation}.
 
 \subsection{Bach Synthetic Dataset}
-In addition to standard UCI repository datasets, we generated a synthetic dataset following the same recipe as \cite{DBLP:journals/corr/abs-0909-0844}: From a covariance matrix drawn from a Wishart distribution with 1024 degrees of freedom, we select 8 variables.  We then construct the non-linear function $f(X) = \sum_{i=1}^4 \sum_{j=1+1}^4 X_i X_j + \epsilon$, which sums all 2-way products of the first 4 variables, and adds Gaussian noise $\epsilon$.  This dataset is one which can be predicted well by a kernel which is a sum of two-way interactions over the first 4 variables, ignoring the extra 4 noisy copies.
+In addition to standard UCI repository datasets, we generated a synthetic dataset following the same recipe as \cite{DBLP:journals/corr/abs-0909-0844}.
+This dataset was designed by \cite{DBLP:journals/corr/abs-0909-0844} to demonstrate the advantages of \HKL{} over \gp{}-\ARD{}.
+From a covariance matrix drawn from a Wishart distribution with 1024 degrees of freedom, we select 8 variables.
+We then construct the non-linear function $f(X) = \sum_{i=1}^4 \sum_{j=1+1}^4 X_i X_j + \epsilon$, which sums all 2-way products of the first 4 variables, and adds Gaussian noise $\epsilon$.
+This dataset is one which can be predicted well by a kernel which is a sum of two-way interactions over the first 4 variables, ignoring the extra 4 noisy copies.
+%TODO: Move description to grammar experiments?
 
-This dataset was designed by \cite{DBLP:journals/corr/abs-0909-0844} to demonstrate the advantages of HKL over GP-ARD. 
-
- If the dataset is large enough, HKL can construct a hull around only those subsets of cross terms that are optimal for predicting the output.  GP-ARD, in contrast, can only learn to ignore the noisy copy variables, but cannot learn to ignore the higher-term interactions between the predictive variables.  However, a GP with an additive kernel can learn both to ignore irrelevant variables, and to ignore certain orders of interaction.  In this example, the additive GP is able to recover the relevant structure.
+If the dataset is large enough, \HKL{} can construct a hull around only those subsets of cross terms that are optimal for predicting the output.
+\gp{}-\ARD{}, in contrast, can only learn to ignore the noisy copy variables, but cannot learn to ignore the higher-term interactions between the predictive variables.
+However, a GP with an additive kernel can learn both to ignore irrelevant variables, and to ignore certain orders of interaction.
+In this example, the additive \gp{} is able to recover the relevant structure.
 
 %\input{\additivetablesdir/synth_c_hypers_table.tex}
 
 %Table \ref{tbl:bach synth c 200} shows the hyperparameters learnt.  Note that while GP-ARD increases the lengthscale of the irrelevant variables, GP-AS reduces the signal variance.
  
+ 
+ 
 \subsection{Results}
-
-Tables \ref{tbl:Regression Mean Squared Error}, \ref{tbl:Regression Negative Log Likelihood}, \ref{tbl:Classification Percent Error} and \ref{tbl:Classification Negative Log Likelihood} show mean performance across 10 train-test splits.  Because HKL does not specify a noise model, it could not be included in the likelihood comparisons.
+Tables \ref{tbl:Regression Mean Squared Error}, \ref{tbl:Regression Negative Log Likelihood}, \ref{tbl:Classification Percent Error} and \ref{tbl:Classification Negative Log Likelihood} show mean performance across 10 train-test splits.
+Because \HKL{} does not specify a noise model, it could not be included in the likelihood comparisons.
 
 % --- Automatically generated by resultsToLatex2.m ---
 % Exported at 19-Jan-2012 10:55:19
@@ -445,7 +548,8 @@ GP Additive & $\mathbf{0.150}$ & $\mathbf{0.466}$ & $\mathbf{0.409}$ & $\mathbf{
 % End automatically generated LaTeX
 
 
-The model with best performance on each dataset is in bold, along with all other models that were not significantly different under a paired t-test. The additive model never performs significantly worse than any other model, and sometimes performs significantly better than all other models.  The difference between all methods is larger in the case of regression experiments. The performance of HKL is consistent with the results in \cite{DBLP:journals/corr/abs-0909-0844}, performing competitively but slightly worse than SE-GP.%  This is especially clear in the case of the regression tasks.
+The model with best performance on each dataset is in bold, along with all other models that were not significantly different under a paired $t$-test.
+The additive model never performs significantly worse than any other model, and sometimes performs significantly better than all other models.  The difference between all methods is larger in the case of regression experiments. The performance of HKL is consistent with the results in \cite{DBLP:journals/corr/abs-0909-0844}, performing competitively but slightly worse than SE-GP.%  This is especially clear in the case of the regression tasks.
 
 The additive GP performed best on datasets well-explained by low orders of interaction, and approximately as well as the SE-GP model on datasets which were well explained by high orders of interaction (see table \ref{tbl:all_orders}).
 Because the additive GP is a superset of both the GP-GAM model and the SE-GP model, instances where the additive GP performs slightly worse are presumably due to over-fitting, or due to the hyperparameter optimization becoming stuck in a local maximum. % Absence of over-fitting may explain the relatively strong performance of GP-GAM on classification tasks.  
@@ -462,11 +566,15 @@ Note that we are free to choose a different covariance function along each dimen
 \section{Conclusion}
 
 %We present a simple model which generalizes two widely-used classes of models.  A large increase in modeling power is gained at only modest computational cost.
-We present additive Gaussian processes: a simple family of models which generalizes two widely-used classes of models.  Additive GPs also introduce a tractable new type of structure into the GP framework.   Our experiments indicate that such additive structure is present in real datasets, allowing our model to perform better than standard GP models.  In the case where no such structure exists, our model can recover arbitrarily flexible models, as well.
+We present additive Gaussian processes: a simple family of models which generalizes two widely-used classes of models.
+Additive \gp{}s also introduce a tractable new type of structure into the \gp{} framework.
+Our experiments indicate that such additive structure is present in real datasets, allowing our model to perform better than standard \gp{} models.
+In the case where no such structure exists, our model can recover arbitrarily flexible models, as well.
 
-In addition to improving modeling efficacy, the additive GP also improves model interpretability:  the order variance hyperparameters indicate which sorts of structure are present in our model.
+In addition to improving modeling efficacy, the additive \gp{} also improves model interpretability:  the order variance hyperparameters indicate which sorts of structure are present in our model.
 
-Compared to HKL, which is the only other tractable procedure able to capture the same types of structure, our method benefits from being able to learn individual kernel hyperparameters, as well as the weightings of different orders of interaction.  Our experiments show that additive GPs are a state-of-the-art regression model.
+Compared to \HKL{}, which is the only other tractable procedure able to capture the same types of structure, our method benefits from being able to learn individual kernel hyperparameters, as well as the weightings of different orders of interaction.
+Our experiments show that additive \gp{}s are a state-of-the-art regression model.
 
 
 
