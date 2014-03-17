@@ -1,4 +1,4 @@
-function gp_fuzzy
+function gp_fuzzy( savefigs )
 %
 % A demo showing what happens if you condition on GPs.
 %
@@ -7,11 +7,10 @@ function gp_fuzzy
 
 addpath(genpath( 'utils' ));
 
-
+if nargin < 1; savefigs = false; end
 
 % How to save figure.
 introfigsdir = '../figures/intro';
-savefigs = true;
 dpi = 600;
 
 % How figure looks.

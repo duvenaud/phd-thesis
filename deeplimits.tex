@@ -398,19 +398,20 @@ Specifically, we will show that the size of the derivative of a one-dimensional 
 In this section, we derive the limiting distribution of the derivative of an arbitrarily deep, one-dimensional \gp{} with a squared-exp kernel:  %in order to shed light on the ways in which a deep \gp{}s are non-Gaussian, and the ways in which lower layers affect the computation performed by higher layers.
 %
 \newcommand{\onedsamplepic}[1]{
-\hspace{-0.2in}
-\includegraphics[trim=2mm 2mm 2mm 6.4mm, clip, width=0.5\columnwidth]{\deeplimitsfiguresdir/1d_samples/latent_seed_0_1d_large/layer-#1}} 
+\hspace{-0.25in}
+\includegraphics[trim=2mm 2mm 2mm 6.4mm, clip, width=0.255\columnwidth]{\deeplimitsfiguresdir/1d_samples/latent_seed_0_1d_large/layer-#1}} 
+%
 \newcommand{\onedsamplepiccon}[1]{
-\hspace{-0.2in}
-\includegraphics[trim=2mm 2mm 2mm 6.4mm, clip, width=0.5\columnwidth]{\deeplimitsfiguresdir/1d_samples/latent_seed_0_1d_large_connected/layer-#1}} 
+\hspace{-0.25in}
+\includegraphics[trim=2mm 2mm 2mm 6.4mm, clip, width=0.255\columnwidth]{\deeplimitsfiguresdir/1d_samples/latent_seed_0_1d_large_connected/layer-#1}} 
+%
 \begin{figure}
 \centering
-\begin{tabular}{cc}
-\hspace{-0.1in} One layer & \hspace{-0.2in} 2-Layer Composition \\
+\begin{tabular}{cccc}
+\hspace{-0.1in} 1 layer & \hspace{-0.2in} 2 Layers & 5 Layers & \hspace{-0.25in} 10 Layers \\
 \hspace{0.03in}
 \onedsamplepic{1} &
-\onedsamplepic{2} \\
-\hspace{-0.2in}  5-Layer Composition & \hspace{-0.25in} 10-Layer Composition \\
+\onedsamplepic{2} &
 \onedsamplepic{5} &
 \onedsamplepic{10}
 %& 6 layers \\ & largest , for unconnected layers & largest, for connected layers
@@ -799,14 +800,13 @@ Formally, this functional dependence can be written as
 %
 Draws from the resulting prior are shown in figures \ref{fig:deep_draw_1d_connected}, \ref{fig:no_filamentation} and \ref{fig:deep_map_connected}.
 %
-\begin{figure}[h!]
+\begin{figure}[t]
 \centering
-\begin{tabular}{cc}
-\hspace{-0.1in} One layer & \hspace{-0.2in} 2-Layer Composition \\
+\begin{tabular}{cccc}
+\hspace{-0.1in} One layer & \hspace{-0.2in} 2 Layers & \hspace{-0.2in}  5 Layers & \hspace{-0.25in} 10 Layers \\
 \hspace{0.03in}
 \onedsamplepiccon{1} &
-\onedsamplepiccon{2} \\
-\hspace{-0.2in}  5-Layer Composition & \hspace{-0.25in} 10-Layer Composition \\
+\onedsamplepiccon{2} &
 \onedsamplepiccon{5} &
 \onedsamplepiccon{10}
 %& 6 layers \\ & largest , for unconnected layers & largest, for connected layers

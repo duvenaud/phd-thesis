@@ -163,10 +163,9 @@ Table \ref{tbl:all_orders} shows examples of the variance contributed by the dif
 % Exported at 03-Jun-2011 00:22:23
 
 \begin{table}[h]
-\caption[Relative variance contribution of each order of the additive model]
-{Relative variance contribution of each order in the additive model, on different datasets.
-Here, the maximum order of interaction is set to 10, or smaller if the input dimension less than 10.
-Values are normalized to sum to 100.
+\caption[Relative variance contributed by each order of the additive model]
+{Percentage of variance contributed by each order of the additive model, on different datasets.
+The maximum order of interaction is set to 10, or smaller if the input dimension less than 10.
 }
 \label{tbl:all_orders}
 \begin{center}
@@ -208,25 +207,47 @@ If this is not the case, the hyperparameters can specify a suitably flexible mod
 
 
 \subsection{Interpretability}
-As noted by \citet{plate1999accuracy}, one of the chief advantages of additive models such as \GAM{} is their interpretability.
+%As noted by \citet{plate1999accuracy}, o
+One of the chief advantages of additive models such as \GAM{}s is their interpretability.
 % since a high-dimensional function is decomposed into a series of one- or two-dimensional functions.  
-Plate also notes that by allowing high-order interactions as well as low-order interactions, one can trade off interpretability with predictive accuracy.  In the case where the hyperparameters indicate that most of the variance in a function can be explained by low-order interactions, it is useful and easy to plot the corresponding low-order functions, as in Figure \ref{fig:interpretable functions}. 
+\citet{plate1999accuracy} demonstrated that by allowing high-order interactions as well as low-order interactions, one can trade off interpretability with predictive accuracy.  In the case where the hyperparameters indicate that most of the variance in a function can be explained by low-order interactions, it is informative to plot the corresponding low-order functions, as in Figure \ref{fig:interpretable functions}. 
+
+
+\newcommand{\concretepic}[1]{\includegraphics[width=0.31\columnwidth]{\decompfigsdir/concrete-component-#1}}
+\newcommand{\concretelegend}[0]{\raisebox{5mm}{\includegraphics[trim=56mm 1mm 6mm 33mm, clip, width=0.2\columnwidth]{\decompfigsdir/concrete-component-1-legend}}}
 
 \begin{figure}[h]
 \centering
 \begin{tabular}{ccc}
-\includegraphics[width=0.3\textwidth]{\additivefigsdir/interpretable_1st_order1.pdf} &
-\includegraphics[width=0.3\textwidth]{\additivefigsdir/interpretable_1st_order2.pdf}& 
-\includegraphics[width=0.3\textwidth]{\additivefigsdir/interpretable_2nd_order1.pdf}\\
+%\includegraphics[width=0.3\textwidth]{\additivefigsdir/interpretable_1st_order1.pdf} &
+%\includegraphics[width=0.3\textwidth]{\additivefigsdir/interpretable_1st_order2.pdf}& 
+%'Cement','Slag','Fly Ash','Water','Plasticizer','Coarse','Fine','Age'
+\concretepic{1} & \concretepic{2} & \concretepic{3} \\
+\concretepic{4} & \concretepic{5} & \concretepic{6} \\
+\concretepic{7} & \concretepic{8} & \concretelegend \\
 \end{tabular}
-\caption[Low-order functions describing the concrete dataset]
-{Low-order functions on the concrete dataset.  
-Left, centre: by considering only first-order terms of the additive kernel, we recover a form of Generalized Additive Model, and can plot the corresponding 1-dimensional functions.
-Green points indicate the original data, blue points are data after the mean contribution from the other dimensions' first-order terms has been subtracted.
-The black line is the posterior mean of a \sgp{} with only one term in its kernel.
-Right:  the posterior mean of a \sgp{} with only one second-order term in its kernel.}
+\caption[Decomposition of posterior into interpretable one-dimensional functions]
+{By considering only one-dimensional terms of the additive kernel, we recover a form of Generalized Additive Model, and can plot the corresponding 1-dimensional functions.
+Blue points indicate the original data, green points are data after the mean contribution from the other dimensions' first-order terms has been subtracted.
+%The black line is the posterior mean of a \sgp{} with only one term in its kernel.
+%Right:  the posterior mean of a \sgp{} with only one second-order term in its kernel.
+}
 \label{fig:interpretable functions}
 \end{figure}
+
+\begin{figure}[h]
+\centering
+\begin{tabular}{ccc}
+%\includegraphics[width=0.3\textwidth]{\additivefigsdir/interpretable_1st_order1.pdf} &
+%\includegraphics[width=0.3\textwidth]{\additivefigsdir/interpretable_1st_order2.pdf}& 
+\includegraphics[width=0.5\textwidth]{\additivefigsdir/interpretable_2nd_order1.pdf}\\
+\end{tabular}
+\caption[Visualizing two-way interactions]
+{two-way interactions on the concrete dataset.  
+The surface shows the posterior mean of the predicted strength, controlling for all other terms.}
+\label{fig:interpretable interactions}
+\end{figure}
+
 
 %\subsection{Allowable Base Kernels}
 %Any one-dimensional base kernel is allowable, and each dimension can use a different base kernel.  One could even specify a mixture of base kernels for each dimension, allowing the hyperparameters to specify the mixture weights.
