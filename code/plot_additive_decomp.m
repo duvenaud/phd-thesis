@@ -4,7 +4,8 @@ function plot_additive_decomp( X, y, kernel_components, kernel_params, log_noise
 %
 % X,y: The original data
 % kernel_components: a cell array of covariance functions, to be added
-% together.  Must include noise!
+%                    together.  This code can figure out which dimension
+%                    each kernel applies to.
 % kernel_params: a cell array of kernel hyperparameters.
 %
 % David Duvenaud
@@ -16,12 +17,11 @@ addpath(genpath( 'gpml' ));
 if nargin < 1; savefigs = false; end
 
 nstar = 200;
-show_samples = false;
+show_samples = true;
 
 [N,D] = size(X);
 num_components = length(kernel_components);
 assert(num_components == length(kernel_params));
-assert(D == num_components);
 
 noise_var = exp(2*log_noise);
 
@@ -30,7 +30,8 @@ noise_var = exp(2*log_noise);
 complete_cov = { 'covSum', kernel_components };
 complete_hypers = horzcat( kernel_params{:} );
 
-complete_sigma = feval(complete_cov{:}, complete_hypers, X) + eye(length(y)).*noise_var;
+noise_cov = eye(length(y)).*noise_var;
+complete_sigma = feval(complete_cov{:}, complete_hypers, X) + noise_cov;
 
 %complete_sigmastar = feval(complete_cov{:}, complete_hypers, X, xrange);
 %complete_sigmastarstart = feval(complete_cov{:}, complete_hypers, xrange);
@@ -48,7 +49,14 @@ complete_sigma = feval(complete_cov{:}, complete_hypers, X) + eye(length(y)).*no
 
 
 % Next, show the posterior of each component, one at a time.
-for d = 1:D
+for i = 1:num_components
+    
+    cur_cov = kernel_components{i};
+    cur_hyp = kernel_params{i};    
+    
+    % Figure out which dimension this kernel applies to.
+    assert( strcmp( cur_cov{1}, 'covMask' ) );
+    d = cur_cov{2}{1};
     
     left_extend = 0.1;
     right_extend = 0.1;
@@ -58,8 +66,7 @@ for d = 1:D
     xstar = NaN(nstar,D);
     xstar(:, d) = xrange;
     
-    cur_cov = kernel_components{d};
-    cur_hyp = kernel_params{d};
+
 
     % Compute Gram matrices of just this component.
     component_sigma = feval(cur_cov{:}, cur_hyp, X);
@@ -69,6 +76,7 @@ for d = 1:D
     % Compute posterior of just this component.
     component_mean = component_sigma_star / complete_sigma * y;
     component_var = component_sigma_starstar - component_sigma_star / complete_sigma * component_sigma_star';
+    
     data_mean = component_sigma / complete_sigma * y;
     %data_mean = y - (complete_sigma - component_sigma) / complete_sigma * y;
 
@@ -78,6 +86,10 @@ for d = 1:D
     filename = sprintf( '%s-component-%d', fileprefix, d );
     nice_oned_plot( X(:,d), y, data_mean, xrange, component_mean, component_var, show_samples, savefigs, filename)
 end
+
+complete_mean = (complete_sigma - noise_cov) / complete_sigma * y;
+rs = 1 - var(complete_mean - y)/ var(y)
+
 
 
 end
