@@ -1,11 +1,11 @@
+function decomp_concrete(savefigs)
 %
 % A simple demo script to show the decomposition of a dataset into individual components.
 %
 % David Duvenaud
 % 2011
 
-
-savefigs = true;
+if nargin < 1; savefigs = false; end
 
 % How to save figure.
 decompfigsdir = '../figures/decomp/';
@@ -52,8 +52,11 @@ hyp.cov = horzcat( kernel_hypers{:} );
 hyp = minimize(hyp, @gp, -100, inference, meanfunc, complete_cov, likfunc, X, y);
 
 % Break up hyperparameters again.
+ix = 1;
 for i = 1:D
-    kernel_hypers{i} = [hyp.cov(2*D - 1), hyp.cov(2*D)];
+    cur_num_hypers = str2double(feval(kernel_components{i}{:}));
+    kernel_hypers{i} = hyp.cov(ix:ix + cur_num_hypers - 1);
+    ix = ix + cur_num_hypers;
 end
 
 

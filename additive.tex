@@ -221,14 +221,17 @@ One of the chief advantages of additive models such as \GAM{}s is their interpre
 \begin{tabular}{ccc}
 %\includegraphics[width=0.3\textwidth]{\additivefigsdir/interpretable_1st_order1.pdf} &
 %\includegraphics[width=0.3\textwidth]{\additivefigsdir/interpretable_1st_order2.pdf}& 
-%'Cement','Slag','Fly Ash','Water','Plasticizer','Coarse','Fine','Age'
+Cement & Slag & Fly Ash\\
 \concretepic{1} & \concretepic{2} & \concretepic{3} \\
+ Water & Plasticizer & Coarse\\
 \concretepic{4} & \concretepic{5} & \concretepic{6} \\
-\concretepic{7} & \concretepic{8} & \concretelegend \\
+ Fine & Age \\
+ \concretepic{7} & \concretepic{8} & \concretelegend \\
 \end{tabular}
 \caption[Decomposition of posterior into interpretable one-dimensional functions]
 {By considering only one-dimensional terms of the additive kernel, we recover a form of Generalized Additive Model, and can plot the corresponding 1-dimensional functions.
-Blue points indicate the original data, green points are data after the mean contribution from the other dimensions' first-order terms has been subtracted.
+Blue points indicate the original data, green points are data after the contribution from all other terms has been subtracted.
+The vertical axis is the same for all plots.
 %The black line is the posterior mean of a \sgp{} with only one term in its kernel.
 %Right:  the posterior mean of a \sgp{} with only one second-order term in its kernel.
 }

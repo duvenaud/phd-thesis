@@ -90,7 +90,8 @@ This is a similar motivation as for the use of sparsity-inducing methods:  on ma
 
 \subsection{Why assume zero mean?}
 
-It is common practice to assume zero mean, since marginalizing over an unknown mean function can be equivalently expressed as a different \gp{} with zero-mean, and another term added to the kernel.
+In literature, as well as in practice, it is common to construct \gp{} priors with a zero mean function.
+This might seem strange, since it is presumably a good place to put prior information, or if we are comparing models, to express  since marginalizing over an unknown mean function can be equivalently expressed as a different \gp{} with zero-mean, and another term added to the kernel.
 Specifically, if we wish to model an unknown function $f(\vx)$ with known mean $m(\vx)$, (with unknown magnitude $c \sim \Nt{0}{\sigma^2_c}$), we can equivalently express this model using another \gp{} with zero mean:
 %$related modelquivalently (\vx) a(\vx)$ with $f \sim \GPt{0}{k(\vx,\vx')}$, then this 
 %
@@ -134,7 +135,8 @@ This thesis aims to present a set of related results about how the probabilistic
 Furthermore, the fact that the marginal likelihood is often available (or easily approximable) means that we can evaluate how much evidence the data provides for one structure over another.
 
 
-\paragraph{Chapter \ref{ch:kernels}} describes, in detail, the ways in which different sorts of structure can be introduced into a \gp{} model through the kernel.
+\paragraph{Chapter \ref{ch:kernels}} contains a wide-ranging overview of many of the types of structured priors on functions that can be easily expressed by constructing appropriate covariance functions.
+%describes, in detail, the ways in which different sorts of structure can be introduced into a \gp{} model through the kernel.
 %TODO: Expand this description.
 
 \paragraph{Chapter \ref{ch:grammar}} shows how to construct a general, open-ended language over kernels - which implies a corresponding language over models.
@@ -161,17 +163,20 @@ In this section, I %detail the novel contributions of this thesis, and
 attempt to give proper credit to my tireless co-authors.
 
 \paragraph{Structure through kernels}
-Chapter \ref{ch:kernels} contains a wide-ranging overview of many of the types of structured priors on functions that can be easily expressed by constructing appropriate covariance functions.
-Section \ref{sec:deep_kernels}, describing how symmetries in the kernel of a \gplvm{} give rise to priors on manifolds with interesting topologies, is based on a collaboration with David Reshef, Roger Grosse, Josh Tenenbaum, and Zoubin Ghahramani.
+%Chapter \ref{ch:kernels} contains a wide-ranging overview of many of the types of structured priors on functions that can be easily expressed by constructing appropriate covariance functions.
+Section \ref{sec:deep_kernels} of chapter \ref{ch:kernels}, describing how symmetries in the kernel of a \gplvm{} give rise to priors on manifolds with interesting topologies, is based on a collaboration with David Reshef, Roger Grosse, Josh Tenenbaum, and Zoubin Ghahramani.
 
 \paragraph{Structure Search}
 The research upon which Chapter \ref{ch:grammar} is based was done in collaboration with James Robert Lloyd, Roger Grosse, Joshua B. Tenenbaum, and Zoubin Ghahramani, and was published in \citep{DuvLloGroetal13}.
-Myself, James Lloyd and Roger Grosse jointly discussed the idea of applying the grammar-based language of models developed by \citet{grosse2012exploiting} to \gp{}s, and wrote the first versions of the code together.  Carl Rasmussen, Zoubin Ghahramani and Josh Tenenbaum provided many conceptual insights, as well as suggestions about when the resulting procedure could be most fruitfully applied.
+[Joint first author]
+Myself, James Lloyd and Roger Grosse jointly developed the idea of searching through a grammar-based language of \gp{} models, inspired by \citet{grosse2012exploiting}, and wrote the first versions of the code together.
+James Lloyd ran almost all of the experiments.
+ Carl Rasmussen, Zoubin Ghahramani and Josh Tenenbaum provided many conceptual insights, as well as suggestions about how the resulting procedure could be most fruitfully applied.
 
 \paragraph{Automatic Statistician} The work appearing in chapter \ref{ch:description} was written in collaboration with James Robert Lloyd, Roger Grosse, Joshua B. Tenenbaum, Zoubin Ghahramani, and was published in \citep{LloDuvGroetal14}.
-The idea of the correspondence between kernels and adjectives grew out of many extended discussions between James and myself.
+The idea of the correspondence between kernels and adjectives grew out of discussions between James and myself.
 James Lloyd wrote most of the code to automatically generate reports, and ran all of the experiments.
-The text was written mainly by myself and James Lloyd, with many helpful contributions and suggestions from Roger Grosse, Zoubin Ghaharamani, and Josh Tenenbaum.
+The text was written mainly by myself, James Lloyd, and Zoubin Ghahramani, with many helpful contributions and suggestions from Roger Grosse and Josh Tenenbaum.
 
 \paragraph{Additive Gaussian processes}
 
@@ -188,7 +193,7 @@ Zoubin Ghahramani provided initial guidance, as well as many helpful suggestions
 
 
 \paragraph{Deep Gaussian Processes}
-The results contained in chapter {ch:deep-limits} were inspired by discussions with Oren Rippel, Ryan Adams and Zoubin Ghahramani, and appear in \citep{DuvRipAdaGha14}.
+The ideas contained in chapter \ref{ch:deep-limits} were developed through discussions with Oren Rippel, Ryan Adams and Zoubin Ghahramani, and appear in \citep{DuvRipAdaGha14}.  The derivations, experiments and writing were done mainly by myself, with many helpful suggestions by my co-authors.
 
 \outbpdocument{
 \bibliographystyle{plainnat}

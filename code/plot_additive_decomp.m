@@ -61,22 +61,23 @@ for d = 1:D
     cur_cov = kernel_components{d};
     cur_hyp = kernel_params{d};
 
-    % Compute posterior of just this component.
-    decomp_sigma = feval(cur_cov{:}, cur_hyp, X);
-    decomp_sigma_star = feval(cur_cov{:}, cur_hyp, xstar, X);
-    decomp_sigma_starstar = feval(cur_cov{:}, cur_hyp, xstar);
-    decomp_mean = decomp_sigma_star / complete_sigma * y;
-    decomp_var = decomp_sigma_starstar - decomp_sigma_star / complete_sigma * decomp_sigma_star';
+    % Compute Gram matrices of just this component.
+    component_sigma = feval(cur_cov{:}, cur_hyp, X);
+    component_sigma_star = feval(cur_cov{:}, cur_hyp, xstar, X);
+    component_sigma_starstar = feval(cur_cov{:}, cur_hyp, xstar);
     
-    data_mean = decomp_sigma' / complete_sigma * y;
+    % Compute posterior of just this component.
+    component_mean = component_sigma_star / complete_sigma * y;
+    component_var = component_sigma_starstar - component_sigma_star / complete_sigma * component_sigma_star';
+    data_mean = component_sigma / complete_sigma * y;
+    %data_mean = y - (complete_sigma - component_sigma) / complete_sigma * y;
 
 
     % Plot posterior mean and variance.
     figure(d); clf;
     filename = sprintf( '%s-component-%d', fileprefix, d );
-    nice_oned_plot( X(:,d), y, data_mean, xrange, decomp_mean, decomp_var, show_samples, savefigs, filename)
+    nice_oned_plot( X(:,d), y, data_mean, xrange, component_mean, component_var, show_samples, savefigs, filename)
 end
-
 
 
 end
@@ -120,7 +121,9 @@ function nice_oned_plot( X, y, y_adjusted, xstar, mean, full_variance, show_samp
         rand('state',seed);
 
         for n_sample = 1:num_rand_samples
-            sample = mvnrnd( mean, full_variance + eye(length(xstar)).*max(full_variance(:)).*0.0001, 1);
+            L = chol(full_variance + eye(length(xstar)).*max(full_variance(:)).*0.0001);
+            sample = mean + L'*randn(length(xstar),1);
+            %sample = mvnrnd( mean, full_variance + eye(length(xstar)).*max(full_variance(:)).*0.0001, 1);
             hs = plot( xstar, sample, '-', 'Color', colorbrew(n_sample), 'Linewidth', 1); hold on;
             %
         end
