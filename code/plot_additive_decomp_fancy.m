@@ -17,7 +17,9 @@ addpath(genpath( 'gpml' ));
 if nargin < 7; savefigs = false; end
 if nargin < 6; show_samples = true; end
 
-nstar = 300;
+nstar = 200;
+
+
 
 
 [N,D] = size(X);
@@ -29,7 +31,7 @@ noise_var = exp(2*log_noise);
 % First, compute and plot the entire model.
 % concatenate all additive components
 complete_cov = { 'covSum', kernel_components };
-complete_hypers = vertcat( kernel_params{:} );
+complete_hypers = unwrap( kernel_params );
 
 noise_cov = eye(length(y)).*noise_var;
 complete_sigma = feval(complete_cov{:}, complete_hypers, X) + noise_cov;
@@ -40,6 +42,18 @@ complete_sigma = feval(complete_cov{:}, complete_hypers, X) + noise_cov;
 % First, plot the data
 %complete_mean = complete_sigmastar' / complete_sigma * y;
 %complete_var = complete_sigmastarstart - complete_sigmastar' / complete_sigma * complete_sigmastar;
+
+% Detect categorical dimensions.
+categorical = zeros(1,D);
+for d = 1:D
+    num_unique = length(unique(X(:,d)));
+    if num_unique < 10
+        categorical(d) = true;
+        fprintf('Dimension %d is categorical with %d different values\n', ...
+                d, num_unique);
+    end
+end
+
 
 
 
@@ -123,7 +137,7 @@ function nice_oned_plot( X, y, y_adjusted, xstar, mean, full_variance, show_samp
                    'EdgeColor', 'none'); hold on;
     end    
     
-    h_data_orig = plot( X, y, 'ko', 'Linewidth', 1.5, 'Markersize', 10, 'Color', colorbrew(2)); hold on;
+    h_data_orig = plot( X, y, 'k.', 'Linewidth', 1.5, 'Markersize', 10, 'Color', colorbrew(2)); hold on;
 
     if show_samples
         % Plot posterior samples
@@ -165,7 +179,7 @@ function nice_oned_plot( X, y, y_adjusted, xstar, mean, full_variance, show_samp
 
     % Add axes, legend, make the plot look nice, and save it.
     tightfig();
-    set_fig_units_cm(10,6);
+    set_fig_units_cm(14,10);
 
     if savefigs
         %filename = sprintf('%s/%s-%d', introfigsdir, 'fuzzy', N );

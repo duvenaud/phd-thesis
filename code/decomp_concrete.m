@@ -7,6 +7,8 @@ function decomp_concrete(savefigs)
 
 if nargin < 1; savefigs = false; end
 
+show_samples = false;
+
 % How to save figure.
 decompfigsdir = '../figures/decomp/';
 fileprefix = [decompfigsdir 'concrete'];
@@ -47,18 +49,14 @@ end
 
 % concatenate all additive components
 complete_cov = { 'covSum', kernel_components };
-hyp.cov = horzcat( kernel_hypers{:} );
+hyp.cov = unwrap(kernel_hypers);
 
 hyp = minimize(hyp, @gp, -100, inference, meanfunc, complete_cov, likfunc, X, y);
 
-% Break up hyperparameters again.
-ix = 1;
-for i = 1:D
-    cur_num_hypers = str2double(feval(kernel_components{i}{:}));
-    kernel_hypers{i} = hyp.cov(ix:ix + cur_num_hypers - 1);
-    ix = ix + cur_num_hypers;
-end
+% Pack up hyperparameters again.
+kernel_hypers = rewrap(kernel_hypers, hyp.cov);
 
 
 
-plot_additive_decomp( X, y, kernel_components, kernel_hypers, hyp.lik, savefigs, fileprefix )
+plot_additive_decomp( X, y, kernel_components, kernel_hypers, hyp.lik, ...
+                      show_samples, savefigs, fileprefix )

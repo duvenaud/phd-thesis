@@ -1,4 +1,4 @@
-function gp_fuzzy( savefigs )
+function plot_oned_gp( savefigs )
 %
 % A demo showing what happens if you condition on GPs.
 %

@@ -206,50 +206,6 @@ If this is not the case, the hyperparameters can specify a suitably flexible mod
 
 
 
-\subsection{Interpretability}
-%As noted by \citet{plate1999accuracy}, o
-One of the chief advantages of additive models such as \GAM{}s is their interpretability.
-% since a high-dimensional function is decomposed into a series of one- or two-dimensional functions.  
-\citet{plate1999accuracy} demonstrated that by allowing high-order interactions as well as low-order interactions, one can trade off interpretability with predictive accuracy.  In the case where the hyperparameters indicate that most of the variance in a function can be explained by low-order interactions, it is informative to plot the corresponding low-order functions, as in Figure \ref{fig:interpretable functions}. 
-
-
-\newcommand{\concretepic}[1]{\includegraphics[width=0.31\columnwidth]{\decompfigsdir/concrete-component-#1}}
-\newcommand{\concretelegend}[0]{\raisebox{5mm}{\includegraphics[trim=56mm 1mm 6mm 33mm, clip, width=0.2\columnwidth]{\decompfigsdir/concrete-component-1-legend}}}
-
-\begin{figure}[h]
-\centering
-\begin{tabular}{ccc}
-%\includegraphics[width=0.3\textwidth]{\additivefigsdir/interpretable_1st_order1.pdf} &
-%\includegraphics[width=0.3\textwidth]{\additivefigsdir/interpretable_1st_order2.pdf}& 
-Cement & Slag & Fly Ash\\
-\concretepic{1} & \concretepic{2} & \concretepic{3} \\
- Water & Plasticizer & Coarse\\
-\concretepic{4} & \concretepic{5} & \concretepic{6} \\
- Fine & Age \\
- \concretepic{7} & \concretepic{8} & \concretelegend \\
-\end{tabular}
-\caption[Decomposition of posterior into interpretable one-dimensional functions]
-{By considering only one-dimensional terms of the additive kernel, we recover a form of Generalized Additive Model, and can plot the corresponding 1-dimensional functions.
-Blue points indicate the original data, green points are data after the contribution from all other terms has been subtracted.
-The vertical axis is the same for all plots.
-%The black line is the posterior mean of a \sgp{} with only one term in its kernel.
-%Right:  the posterior mean of a \sgp{} with only one second-order term in its kernel.
-}
-\label{fig:interpretable functions}
-\end{figure}
-
-\begin{figure}[h]
-\centering
-\begin{tabular}{ccc}
-%\includegraphics[width=0.3\textwidth]{\additivefigsdir/interpretable_1st_order1.pdf} &
-%\includegraphics[width=0.3\textwidth]{\additivefigsdir/interpretable_1st_order2.pdf}& 
-\includegraphics[width=0.5\textwidth]{\additivefigsdir/interpretable_2nd_order1.pdf}\\
-\end{tabular}
-\caption[Visualizing two-way interactions]
-{two-way interactions on the concrete dataset.  
-The surface shows the posterior mean of the predicted strength, controlling for all other terms.}
-\label{fig:interpretable interactions}
-\end{figure}
 
 
 %\subsection{Allowable Base Kernels}
