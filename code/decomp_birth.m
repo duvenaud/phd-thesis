@@ -101,11 +101,11 @@ complete_cov = { 'covSum', kernel_components };
 
 hyp.cov = unwrap(kernel_hypers);
 
-subset = randperm(N, 300);
-hyp = minimize(hyp, @gp, -100, inference, meanfunc, complete_cov, likfunc, ...
-               X(subset, :), y(subset));
+subset = randperm(N, 1000);
+%hyp = minimize(hyp, @gp, -100, inference, meanfunc, complete_cov, likfunc, ...
+               %X(subset, :), y(subset));
 
-save hypers
+load('hypers.mat', 'hyp');
            
 % Pack up hyperparameters again.
 kernel_hypers = rewrap(kernel_hypers, hyp.cov);

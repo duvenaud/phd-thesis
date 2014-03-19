@@ -687,10 +687,10 @@ where $T_{ij}(\vx)$ is the operator which replaces each $x_{mn}$ with $x_{m+i, n
 
 
 
-Is there a pathology of the additive construction that appears in the limit?
+%Is there a pathology of the additive construction that appears in the limit?
 
-\subsection{Max-pooling}
-What we'd really like to do is a max-pooling operation.  However, in general, a kernel which is the max of other kernels is not PSD [put counterexample here?].  Is the max over co-ordinate switching PSD?
+%\subsection{Max-pooling}
+%What we'd really like to do is a max-pooling operation.  However, in general, a kernel which is the max of other kernels is not PSD [put counterexample here?].  Is the max over co-ordinate switching PSD?
 
 \section{Related Work}
 \label{sec:related_work}
@@ -709,11 +709,22 @@ What we'd really like to do is a max-pooling operation.  However, in general, a 
 
 \subsection{Modeling multiple periodicities}
 
-\subsection{Incoportating side-information}
+\begin{figure}
+\begin{tabular}{ccc}
+Long-term trend & Weekly periodicity &Yearly periodicity \\
+\includegraphics[width=0.31\columnwidth]{\examplefigsdir/births-component-1} &
+\includegraphics[width=0.31\columnwidth]{\examplefigsdir/births-component-3} & 
+\includegraphics[width=0.31\columnwidth]{\examplefigsdir/births-component-2-zoom} 
+\end{tabular}
+\caption[Composite model of births data]{A composite \gp{} model of births data. (blue)}
+\label{fig:quebec-decomp}
+\end{figure}
 
-\subsection{Incoportating discrete covariates}
 
-\subsection{Breaking down the predictions, examining different parts of the model}
+
+%\subsection{Incoportating discrete covariates}
+
+%\subsection{Breaking down the predictions, examining different parts of the model}
 
 
 \outbpdocument{

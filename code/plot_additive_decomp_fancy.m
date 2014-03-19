@@ -17,7 +17,7 @@ addpath(genpath( 'gpml' ));
 if nargin < 7; savefigs = false; end
 if nargin < 6; show_samples = true; end
 
-nstar = 200;
+nstar = 400;
 
 
 
@@ -73,33 +73,43 @@ for i = 1:num_components
     assert( strcmp( cur_cov{1}, 'covMask' ) );
     d = cur_cov{2}{1};
     
-    left_extend = 0.1;
-    right_extend = 0.1;
-    x_left = min(X(:,d)) - (max(X(:,d)) - min(X(:,d)))*left_extend;
-    x_right = max(X(:,d)) + (max(X(:,d)) - min(X(:,d)))*right_extend;
-    xrange = linspace(x_left, x_right, nstar)';
-    xstar = NaN(nstar,D);
-    xstar(:, d) = xrange;
-    
+    for zoom = [true, false]
+        if zoom
+            left_extend = -0.5;
+            right_extend = -0.49;
+        else
+            left_extend = 0.05;
+            right_extend = 0.2;
+        end
+        x_left = min(X(:,d)) - (max(X(:,d)) - min(X(:,d)))*left_extend;
+        x_right = max(X(:,d)) + (max(X(:,d)) - min(X(:,d)))*right_extend;
+        xrange = linspace(x_left, x_right, nstar)';
+        xstar = NaN(nstar,D);
+        xstar(:, d) = xrange;
 
 
-    % Compute Gram matrices of just this component.
-    component_sigma = feval(cur_cov{:}, cur_hyp, X);
-    component_sigma_star = feval(cur_cov{:}, cur_hyp, xstar, X);
-    component_sigma_starstar = feval(cur_cov{:}, cur_hyp, xstar);
-    
-    % Compute posterior of just this component.
-    component_mean = component_sigma_star / complete_sigma * y;
-    component_var = component_sigma_starstar - component_sigma_star / complete_sigma * component_sigma_star';
-    
-    data_mean = component_sigma / complete_sigma * y;
-    %data_mean = y - (complete_sigma - component_sigma) / complete_sigma * y;
+
+        % Compute Gram matrices of just this component.
+        component_sigma = feval(cur_cov{:}, cur_hyp, X);
+        component_sigma_star = feval(cur_cov{:}, cur_hyp, xstar, X);
+        component_sigma_starstar = feval(cur_cov{:}, cur_hyp, xstar);
+
+        % Compute posterior of just this component.
+        component_mean = component_sigma_star / complete_sigma * y;
+        component_var = component_sigma_starstar - component_sigma_star / complete_sigma * component_sigma_star';
+
+        data_mean = component_sigma / complete_sigma * y;
+        %data_mean = y - (complete_sigma - component_sigma) / complete_sigma * y;
 
 
-    % Plot posterior mean and variance.
-    figure(i); clf;
-    filename = sprintf( '%s-component-%d', fileprefix, d );
-    nice_oned_plot( X(:,d), y, data_mean, xrange, component_mean, component_var, show_samples, savefigs, filename)
+        % Plot posterior mean and variance.
+        figure(i); clf;
+        filename = sprintf( '%s-component-%d', fileprefix, i );
+        if zoom
+            filename = [filename, '-zoom'];
+        end
+        nice_oned_plot( X(:,d), y, data_mean, xrange, component_mean, component_var, show_samples, savefigs, filename)
+    end
 end
 
 complete_mean = (complete_sigma - noise_cov) / complete_sigma * y;
@@ -157,7 +167,7 @@ function nice_oned_plot( X, y, y_adjusted, xstar, mean, full_variance, show_samp
     end
     
     
-    h_data_adjust = plot( X, y_adjusted, 'k+', 'Linewidth', 1.5, 'Markersize', 10, 'Color', colorbrew(3)); hold on;
+    h_data_adjust = plot( X, y_adjusted, 'k+', 'Linewidth', 1.5, 'Markersize', 5, 'Color', colorbrew(3)); hold on;
     
     
     %ylim( ylimits);
@@ -179,7 +189,7 @@ function nice_oned_plot( X, y, y_adjusted, xstar, mean, full_variance, show_samp
 
     % Add axes, legend, make the plot look nice, and save it.
     tightfig();
-    set_fig_units_cm(14,10);
+    set_fig_units_cm(11,8);
 
     if savefigs
         %filename = sprintf('%s/%s-%d', introfigsdir, 'fuzzy', N );
