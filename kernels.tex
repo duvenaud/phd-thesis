@@ -196,9 +196,16 @@ A theme throughout this thesis is exploring the idea that a lot of the expressiv
 
 In this section, we derive the posterior marginal variance and covariance of the additive components of a \gp{}.  These formulas let us plot the marginal variance of each component separately.  These formulas can also be used to examine the posterior covariance between pairs of components.
 
-Let us assume that our function $\vf$ is a sum of two functions, $\vf_1$ and $\vf_2$, where $\vf = \vf_1 + \vf_2$.  If $\vf_1$ and $\vf_2$ are a priori independent, and $\vf_1 \sim \gp( \vmu_1, k_1)$ and $\vf_2 \sim \gp( \vmu_2, k_2)$, then
+Let us assume that our function $\vf$ is a sum of two functions, $\vf_1$ and $\vf_2$, where $\vf = \vf_1 + \vf_2$.  If $\vf_1$ and $\vf_2$ are \emph{a priori} independent, and $\vf_1 \sim \gp( \vmu_1, k_1)$ and $\vf_2 \sim \gp( \vmu_2, k_2)$, then
 \begin{align}
-\left[ \begin{array}{c} \vf_1 \\ \vf_1^\star \\ \vf_2 \\ \vf_2^\star \\ \vf \\ \vf^\star \end{array} \right]
+\left[ \begin{array}{l} 
+\vf_1(\vx) \\
+\vf_1(\vx^\star) \\
+\vf_2(\vx) \\
+\vf_2(\vx^\star) \\
+\vf_1(\vx) + \vf_2(\vx) \\
+\vf_1(\vx^\star) + \vf_2(\vx^\star)
+\end{array} \right]
 \sim
 \Nt{
 \left[ \begin{array}{c} \vmu_1 \\ \vmu_1^\star \\ \vmu_2 \\ \vmu_2^\star \\ \vmu_1 + \vmu_2 \\ \vmu_1^\star + \vmu_2^\star \end{array} \right]
@@ -222,18 +229,24 @@ By the formula for Gaussian conditionals:
 \end{align}
 we get that the conditional variance of a Gaussian conditioned on its sum with another Gaussian is given by
 \begin{align}
-%\vf_1^\star | \vf \sim \Nt{\vmu_1^\star + \vk_1^{\star\tra} (\vK_1 + \vK_2)\inv \left( \vf - \vmu_1 - \vmu_2 \right) }
-\vf_1(\vx^\star) | \vf(\vx) \sim \mathcal{N}\big( 
-& \vmu_1(\vx^\star) + \vk_1(\vx^{\star}, \vx)  \left[ \vK_1(\vx, \vx) + \vK_2(\vx, \vx) \right]\inv \left( \vf(\vx) - \vmu_1(\vx) - \vmu_2(\vx) \right) , \nonumber \\
-& \vk_1(\vx^{\star}, \vx^{\star}) - \vk_1(\vx^{\star}, \vx)  \left[ \vK_1(\vx, \vx) + \vK_2(\vx, \vx) \right] \inv \vk_1(\vx, \vx^{\star}) 
-\big).
+\vf_1^\star | \vf \sim \Nt{\vmu_1^\star + \vk_1^{\star\tra} (\vK_1 + \vK_2)\inv \left( \vf - \vmu_1 - \vmu_2 \right) } { \vk_1^{\star\star} - \vk_1^{\star\tra} (\vK_1 + \vK_2)\inv \vk_1^{\star}}
+%\vf_1(\vx^\star) | \vf(\vx) \sim \mathcal{N}\big( 
+%& \vmu_1(\vx^\star) + \vk_1(\vx^{\star}, \vx)  \left[ \vK_1(\vx, \vx) + \vK_2(\vx, \vx) \right]\inv \left( \vf(\vx) - \vmu_1(\vx) - \vmu_2(\vx) \right) , \nonumber \\
+%& \vk_1(\vx^{\star}, \vx^{\star}) - \vk_1(\vx^{\star}, \vx)  \left[ \vK_1(\vx, \vx) + \vK_2(\vx, \vx) \right] \inv \vk_1(\vx, \vx^{\star}) 
+%\big).
 \end{align}
 
-%The covariance between the two components, conditioned on their sum is given by:
-%\begin{align}
-%\cov(\vf_1^\star, \vf_2^\star) | \vf = - \vk_1^{\star\tra} (\vK_1 + \vK_2)\inv \vk_2^\star
-%\covargs{\vf_1(\vx^\star)}{\vf_2(\vx^\star) | \vf(\vx) }= - \vk_1(\vx^{\star}, \vx)  \left[ \vK_1(\vx, \vx) + \vK_2(\vx, \vx) \right] \inv \vk_1(\vx, \vx^{\star}) 
-%\end{align}
+We can even compute the posterior covariance between two components, conditioned on their sum:
+%
+\begin{align}
+\covargs{ \vf_1^\star}{\vf_2^\star | \vf } 
+& = - \vk_1^{\star\tra} (\vK_1 + \vK_2)\inv \vk_2^\star
+%\covargs{\vf_1(\vx^\star)}{\vf_2(\vx^\star) | \vf(\vx) }
+%& = - \vk_1(\vx^{\star}, \vx)  \left[ \vK_1(\vx, \vx) + \vK_2(\vx, \vx) \right] \inv \vk_1(\vx, \vx^{\star}) 
+\label{eq:post-component-cov}
+\end{align}
+%
+We conjecture that \ref{eq:post-component-cov} is always negative.
 
 These formulae express the posterior model uncertainty about different components of the signal, integrating over the possible configurations of the other components.
 
@@ -520,11 +533,18 @@ In general, we can always enforce the symmetries obeyed by a given surface by fi
 
 
 
-\section{How to generate 3D shapes with a given topology}
+\section{Generating shapes with a given topology}
 
+In this section, we give a geometric illustration of the symmetries encoded by \gp{}s with different sorts of kernels.
+The language of models of functions exhibiting symmetries, can be used to create a prior on surfaces, by warping a latent surface $\vx$ to an observed surface $\vy = \vf(\vx)$.
+The distribution on $\vf$ allows us to put mass on 
+
+%If we set the input $\vx$ to be a 2-dimensional plane, intro 3 dimensions using a \gp{} encoding certain symmetries, the resulting surfaces will correspon
 First create a mesh in 2d.  Then draw 3 independent functions from a GP prior with the relevant symmetries encoded in the kernel.  Then, map the 2d points making up the mesh through those 3 functions to get the 3D  coordinates of each point on the mesh.
 
 This is similar in spirit to the GP-LVM model \cite{lawrence2005probabilistic}, which learns an embedding of the data into a low-dimensional space, and constructs a fixed kernel structure over that space.
+%The GP-LVM will be discussed in further detail in chapter ...
+
 
 \begin{figure}
 \begin{tabular}{ccc}
@@ -553,24 +573,27 @@ If we imagine moving along the edge of a M\"{o}bius strip, that is equivalent to
 Figure \ref{fig:mobius} shows this.
 %
 \begin{figure}
-\begin{tabular}[t]{m{.33\columnwidth} m{.33\columnwidth} m{.33\columnwidth}}
+\begin{tabular}[t]{c|c}
 %\begin{columns}
-\centering Function on M\"{o}bius strip &
+\centering
 M\"{o}bius manifold & 
 Sudanese M\"{o}bius strip \\
-\includegraphics[width=0.3\columnwidth, height=0.3\columnwidth, clip=true,trim=3cm 2cm 2cm 2cm]{\topologyfiguresdir/mobius_field} &
+$( \Per_1 \times \Per_2 )$ and $f(x,y) = f(y,x)$ & \\
 %\includegraphics[width=0.45\columnwidth, height=0.45\columnwidth, clip=true,trim=2cm 2cm 2cm 1cm]{\topologyfiguresdir/mobius_regression} \\
 \includegraphics[width=0.3\columnwidth]{\topologyfiguresdir/mobius} &
 %\includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/mobius} 
 %\begin{minipage}{0.33\columnwidth}
-{\begin{tabular}[t]{p{.3\columnwidth}}
-\includegraphics[width=0.3\columnwidth,clip=true,trim=0cm 0cm 10cm 0cm]{\topologyfiguresdir/sudanese-wikipedia}
-\\
-\includegraphics[width=0.3\columnwidth,clip=true,trim=10.55cm 0cm 0cm 0cm]{\topologyfiguresdir/sudanese-wikipedia}
-\end{tabular}}
+%{\begin{tabular}[t]{p{.3\columnwidth}}
+%\includegraphics[width=0.3\columnwidth,clip=true,trim=0cm 0cm 10cm 0cm]{\topologyfiguresdir/sudanese-wikipedia}
+%\\
+%\includegraphics[width=0.3\columnwidth,clip=true,trim=10.55cm 0cm 0cm 0cm]{\topologyfiguresdir/sudanese-wikipedia}
+%\end{tabular}}
 %\end{minipage}
+\raisebox{1cm}{\includegraphics[width=0.4\columnwidth,clip=true,trim=0cm 0cm 10cm 0cm]{\topologyfiguresdir/sudanese-wikipedia}}
 \end{tabular}
-\caption[Generating M\"{o}bius strips]{Generating M\"{o}bius strips.  By enforcing that the functions mapping from $\mathbb{R}^2$ to $\mathbb{R}^3$ obey the appropriate symmetries, the surfaces created have topology corresponding to a M\"{o}bius strip. TODO: Talk about Sudanese representation.}
+\caption[Generating M\"{o}bius strips]{Generating M\"{o}bius strips.  By enforcing that the functions mapping from $\mathbb{R}^2$ to $\mathbb{R}^3$ obey the appropriate symmetries, the surfaces created have topology corresponding to a M\"{o}bius strip.
+M\"{o}bius strips generated this way do not have the familiar shape of a circular flat surface with a half-twist; rather they tend to look like \emph{Sudanese} M\"{o}bius strips \citep{sudanese1984}, whose edge has a circular shape. 
+}
 \label{fig:mobius}
 \end{figure}
 %
@@ -597,6 +620,9 @@ Then, simply put a product of SE kernels on those dimensions. This is the same a
 
 \begin{figure}
 \begin{center}
+\begin{tabular}{cc}
+Function on M\"{o}bius strip & \\
+\includegraphics[width=0.3\columnwidth, height=0.3\columnwidth, clip=true,trim=3cm 2cm 2cm 2cm]{\topologyfiguresdir/mobius_field} & 
   \begin{tikzpicture}
 
 %\pgfmathsetmacro{\r}{3cm}
@@ -639,8 +665,8 @@ Then, simply put a product of SE kernels on those dimensions. This is the same a
 	\fill[green, opacity=0.5, draw=black] (O) circle (1.8);
 	\node at ($(O)+(90:1.4)$) {$\theta_2$};	
 	\end{scope}	
-	
   \end{tikzpicture}
+\end{tabular}
 \end{center}
 \caption[The energy of a molecular configuration obeys the same symmetries as a M\"{o}bius strip]{An example of a function expressing the same symmetries as a M\"{o}bius strip in two of its arguments.  The energy of a molecular configuration $f(\theta_1, \theta_2)$ depends only on the relative angles between atoms, and because each atom is indistiguishable, is invariant to permuting the atoms. }
 \label{fig:molecule}

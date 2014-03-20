@@ -140,5 +140,8 @@ fprintf('Estimated short-term ell: %f\n', exp(short_hypers(1)));
 fprintf('Estimated short-term sf: %f\n', exp(short_hypers(2)));
 fprintf('\n');
 
-plot_additive_decomp_fancy( X, y, kernel_components, kernel_hypers, hyp.lik, ...
+plot_additive_decomp_cov( X, y, kernel_components, kernel_hypers, hyp.lik, ...
                       show_samples, savefigs, fileprefix )
+
+%plot_additive_decomp_fancy( X, y, kernel_components, kernel_hypers, hyp.lik, ...
+%                      show_samples, savefigs, fileprefix )

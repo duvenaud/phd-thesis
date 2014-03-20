@@ -57,6 +57,7 @@ hyp = minimize(hyp, @gp, -100, inference, meanfunc, complete_cov, likfunc, X, y)
 kernel_hypers = rewrap(kernel_hypers, hyp.cov);
 
 
-
-plot_additive_decomp( X, y, kernel_components, kernel_hypers, hyp.lik, ...
+plot_additive_decomp_cov( X, y, kernel_components, kernel_hypers, hyp.lik, ...
                       show_samples, savefigs, fileprefix )
+%plot_additive_decomp( X, y, kernel_components, kernel_hypers, hyp.lik, ...
+%                      show_samples, savefigs, fileprefix )
