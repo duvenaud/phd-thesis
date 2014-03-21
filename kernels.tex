@@ -196,7 +196,13 @@ A theme throughout this thesis is exploring the idea that a lot of the expressiv
 
 In this section, we derive the posterior marginal variance and covariance of the additive components of a \gp{}.  These formulas let us plot the marginal variance of each component separately.  These formulas can also be used to examine the posterior covariance between pairs of components.
 
-Let us assume that our function $\vf$ is a sum of two functions, $\vf_1$ and $\vf_2$, where $\vf = \vf_1 + \vf_2$.  If $\vf_1$ and $\vf_2$ are \emph{a priori} independent, and $\vf_1 \sim \gp( \vmu_1, k_1)$ and $\vf_2 \sim \gp( \vmu_2, k_2)$, then
+%Let us assume that our function $\vf$ is a sum of two functions, $\vf_1$ and $\vf_2$, where $\vf = \vf_1 + \vf_2$.  
+
+Let's examine the joint prior over the sum of two functions.
+We'll distinguish between $f(\vx)$ (the function values at the training locations) and  $f(\vx^\star)$ (the function values at some other, query locations) so that it's clear which matrices to use to extrapolate.
+
+If $\vf_1$ and $\vf_2$ are \emph{a priori} independent, and $\vf_1 \sim \gp( \vmu_1, k_1)$ and $\vf_2 \sim \gp( \vmu_2, k_2)$, then
+%
 \begin{align}
 \left[ \begin{array}{l} 
 \vf_1(\vx) \\
@@ -211,15 +217,16 @@ Let us assume that our function $\vf$ is a sum of two functions, $\vf_1$ and $\v
 \left[ \begin{array}{c} \vmu_1 \\ \vmu_1^\star \\ \vmu_2 \\ \vmu_2^\star \\ \vmu_1 + \vmu_2 \\ \vmu_1^\star + \vmu_2^\star \end{array} \right]
 }
 {\left[ \begin{array}{cccccc} 
-\vk_1 & \vk_1^\star & 0 & 0 & \vk_1 & \vk_1^\star \\ 
-\vk_1^\star & \vk_1^{\star\star} & 0 & 0 & \vk_1^\star & \vk_1^{\star\star} \\
-0 & 0 & \vk_2 & \vk_2^\star & \vk_2 & \vk_2^\star \\ 
-0 & 0 & \vk_2^\star & \vk_2^{\star\star} & \vk_2^\star & \vk_2^{\star\star} \\
-\vk_1 & \vk_1^\star & \vk_2 & \vk_2^\star & \vk_1 + \vk_2 & \vk_1^\star + \vk_2^\star \\ 
-\vk_1^\star & \vk_1^{\star\star}  & \vk_2^\star & \vk_2^{\star\star}  & \vk_1^\star + \vk_2^\star & \vk_1^{\star\star} + \vk_2^{\star\star}\\
+\vK_1 & \vK_1^\star & 0 & 0 & \vK_1 & \vK_1^\star \\ 
+\vK_1^\star & \vK_1^{\star\star} & 0 & 0 & \vK_1^\star & \vK_1^{\star\star} \\
+0 & 0 & \vK_2 & \vK_2^\star & \vK_2 & \vK_2^\star \\ 
+0 & 0 & \vK_2^\star & \vK_2^{\star\star} & \vK_2^\star & \vK_2^{\star\star} \\
+\vK_1 & \vK_1^\star & \vK_2 & \vK_2^\star & \vK_1 + \vK_2 & \vK_1^\star + \vK_2^\star \\ 
+\vK_1^\star & \vK_1^{\star\star}  & \vK_2^\star & \vK_2^{\star\star}  & \vK_1^\star + \vK_2^\star & \vK_1^{\star\star} + \vK_2^{\star\star}\\
 \end{array} \right]
 }
 \end{align}
+%
 where $\vk_1 = k_1( \vX, \vX )$ and $\vk_1^\star = k_1( \vX^\star, \vX )$. 
 
 By the formula for Gaussian conditionals:
@@ -291,11 +298,17 @@ R-squared = 0.9094
 
 \begin{figure}[h]
 \centering
-\begin{tabular}{ccc}
-%\includegraphics[width=0.3\textwidth]{\additivefigsdir/interpretable_1st_order1.pdf} &
-%\includegraphics[width=0.3\textwidth]{\additivefigsdir/interpretable_1st_order2.pdf}& 
-\includegraphics[width=0.5\textwidth]{\additivefigsdir/interpretable_2nd_order1.pdf}\\
-\end{tabular}
+\begin{tabular}{*{9}{c}}
+ & Cement & Slag & Fly Ash & Water & Plasticizer & Coarse & Fine & Age \\ 
+ \rotatebox{90}{Cement} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Cement-Cement} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Cement-Slag} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Cement-Fly-Ash} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Cement-Water} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Cement-Plasticizer} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Cement-Coarse} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Cement-Fine} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Cement-Age} \\ 
+ \rotatebox{90}{Slag} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Slag-Cement} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Slag-Slag} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Slag-Fly-Ash} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Slag-Water} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Slag-Plasticizer} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Slag-Coarse} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Slag-Fine} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Slag-Age} \\ 
+ \rotatebox{90}{Fly Ash} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fly-Ash-Cement} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fly-Ash-Slag} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fly-Ash-Fly-Ash} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fly-Ash-Water} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fly-Ash-Plasticizer} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fly-Ash-Coarse} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fly-Ash-Fine} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fly-Ash-Age} \\ 
+ \rotatebox{90}{Water} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Water-Cement} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Water-Slag} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Water-Fly-Ash} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Water-Water} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Water-Plasticizer} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Water-Coarse} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Water-Fine} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Water-Age} \\ 
+ \rotatebox{90}{Plasticizer} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Plasticizer-Cement} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Plasticizer-Slag} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Plasticizer-Fly-Ash} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Plasticizer-Water} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Plasticizer-Plasticizer} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Plasticizer-Coarse} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Plasticizer-Fine} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Plasticizer-Age} \\ 
+ \rotatebox{90}{Coarse} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Coarse-Cement} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Coarse-Slag} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Coarse-Fly-Ash} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Coarse-Water} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Coarse-Plasticizer} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Coarse-Coarse} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Coarse-Fine} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Coarse-Age} \\ 
+ \rotatebox{90}{Fine} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fine-Cement} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fine-Slag} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fine-Fly-Ash} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fine-Water} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fine-Plasticizer} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fine-Coarse} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fine-Fine} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fine-Age} \\ 
+ \rotatebox{90}{Age} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Age-Cement} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Age-Slag} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Age-Fly-Ash} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Age-Water} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Age-Plasticizer} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Age-Coarse} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Age-Fine} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Age-Age} \\ 
+ \end{tabular}
 \caption[Visualizing two-way interactions]
 {two-way interactions on the concrete dataset.  
 The surface shows the posterior mean of the predicted strength, controlling for all other terms.}
@@ -747,6 +760,21 @@ Long-term trend & Weekly periodicity &Yearly periodicity \\
 \end{figure}
 
 
+
+
+
+
+\begin{figure}
+\begin{tabular}{*{5}{c}}
+ & Long-term & Weekly & Yearly & Short-term \\ 
+ \rotatebox{90}{Long-term} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Long-term-Long-term} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Long-term-Weekly} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Long-term-Yearly} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Long-term-Short-term} \\ 
+ \rotatebox{90}{Weekly} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Weekly-Long-term} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Weekly-Weekly} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Weekly-Yearly} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Weekly-Short-term} \\ 
+ \rotatebox{90}{Yearly} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Yearly-Long-term} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Yearly-Weekly} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Yearly-Yearly} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Yearly-Short-term} \\ 
+ \rotatebox{90}{Short-term} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Short-term-Long-term} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Short-term-Weekly} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Short-term-Yearly} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Short-term-Short-term} \\ 
+ \end{tabular}
+\caption[Two-way interactions in births data]{Two-way interactions in births data}
+\label{fig:quebec-decomp}
+\end{figure}
 
 %\subsection{Incoportating discrete covariates}
 

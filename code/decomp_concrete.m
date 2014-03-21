@@ -58,6 +58,6 @@ kernel_hypers = rewrap(kernel_hypers, hyp.cov);
 
 
 plot_additive_decomp_cov( X, y, kernel_components, kernel_hypers, hyp.lik, ...
-                      show_samples, savefigs, fileprefix )
+                      savefigs, fileprefix, feature_names )
 %plot_additive_decomp( X, y, kernel_components, kernel_hypers, hyp.lik, ...
 %                      show_samples, savefigs, fileprefix )

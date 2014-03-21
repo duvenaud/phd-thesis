@@ -77,13 +77,17 @@ shortterm_hyp = [log(shortterm_ell); log(shortterm_sf)];
 % Now construct the kernel.
 kernel_components = cell(0);
 kernel_hypers = cell(0);
+kernel_names = cell(0);
 
+kernel_names{end+1} = 'Long-term';
 kernel_components{end+1} = longterm_cov;
 kernel_hypers{end+1} =  longterm_hyp;
 
+kernel_names{end+1} = 'Weekly';
 kernel_components{end+1} = weekly_period_cov;
 kernel_hypers{end+1} =  weekly_period_hyp;
 
+kernel_names{end+1} = 'Yearly';
 kernel_components{end+1} = yearly_period_cov;
 kernel_hypers{end+1} =  yearly_period_hyp;
 
@@ -93,6 +97,7 @@ kernel_hypers{end+1} =  yearly_period_hyp;
 %kernel_components{end+1} = medterm_cov;
 %kernel_hypers{end+1} =  medterm_hyp;
 
+kernel_names{end+1} = 'Short-term';
 kernel_components{end+1} = shortterm_cov;
 kernel_hypers{end+1} =  shortterm_hyp;
 
@@ -141,7 +146,7 @@ fprintf('Estimated short-term sf: %f\n', exp(short_hypers(2)));
 fprintf('\n');
 
 plot_additive_decomp_cov( X, y, kernel_components, kernel_hypers, hyp.lik, ...
-                      show_samples, savefigs, fileprefix )
+                      savefigs, fileprefix, kernel_names )
 
 %plot_additive_decomp_fancy( X, y, kernel_components, kernel_hypers, hyp.lik, ...
 %                      show_samples, savefigs, fileprefix )
