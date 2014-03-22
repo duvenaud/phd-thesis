@@ -5,7 +5,9 @@
 \label{ch:kernels}
 
 
+This chapter is meant as a tutorial of the different ways one can express structure in a prior over functions.
 
+We shall see that a few Gaussian identities will pop up again and again to help us reason about the covariance function affects the models we'll construct.
 
 
 Kernels specify similarity between function values of two objects, not between similarity of objects.
@@ -296,22 +298,33 @@ The vertical axis is the same for all plots.
 
 R-squared = 0.9094
 
-\begin{figure}[h]
+\begin{figure}[h!]
 \centering
-\begin{tabular}{*{9}{c}}
- & Cement & Slag & Fly Ash & Water & Plasticizer & Coarse & Fine & Age \\ 
- \rotatebox{90}{Cement} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Cement-Cement} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Cement-Slag} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Cement-Fly-Ash} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Cement-Water} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Cement-Plasticizer} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Cement-Coarse} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Cement-Fine} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Cement-Age} \\ 
- \rotatebox{90}{Slag} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Slag-Cement} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Slag-Slag} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Slag-Fly-Ash} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Slag-Water} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Slag-Plasticizer} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Slag-Coarse} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Slag-Fine} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Slag-Age} \\ 
- \rotatebox{90}{Fly Ash} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fly-Ash-Cement} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fly-Ash-Slag} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fly-Ash-Fly-Ash} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fly-Ash-Water} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fly-Ash-Plasticizer} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fly-Ash-Coarse} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fly-Ash-Fine} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fly-Ash-Age} \\ 
- \rotatebox{90}{Water} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Water-Cement} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Water-Slag} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Water-Fly-Ash} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Water-Water} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Water-Plasticizer} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Water-Coarse} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Water-Fine} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Water-Age} \\ 
- \rotatebox{90}{Plasticizer} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Plasticizer-Cement} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Plasticizer-Slag} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Plasticizer-Fly-Ash} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Plasticizer-Water} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Plasticizer-Plasticizer} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Plasticizer-Coarse} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Plasticizer-Fine} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Plasticizer-Age} \\ 
- \rotatebox{90}{Coarse} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Coarse-Cement} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Coarse-Slag} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Coarse-Fly-Ash} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Coarse-Water} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Coarse-Plasticizer} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Coarse-Coarse} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Coarse-Fine} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Coarse-Age} \\ 
- \rotatebox{90}{Fine} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fine-Cement} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fine-Slag} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fine-Fly-Ash} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fine-Water} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fine-Plasticizer} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fine-Coarse} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fine-Fine} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Fine-Age} \\ 
- \rotatebox{90}{Age} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Age-Cement} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Age-Slag} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Age-Fly-Ash} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Age-Water} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Age-Plasticizer} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Age-Coarse} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Age-Fine} & \includegraphics[width=0.125000\columnwidth]{../figures/decomp/concrete-Age-Age} \\ 
+%
+%
+%
+\renewcommand{\tabcolsep}{1mm}
+\def\incpic#1{\includegraphics[width=0.143\columnwidth]{../figures/decomp/concrete-#1}}
+\begin{tabular}{p{2mm}*{6}{c}}
+ & {Cement} & {Slag} & {Fly Ash} & {Water} & {Plasticizer} & {Age} \\ 
+ \rotatebox{90}{{Cement}} & \incpic{Cement-Cement} & \incpic{Cement-Slag} & \incpic{Cement-Fly-Ash} & \incpic{Cement-Water} & \incpic{Cement-Plasticizer} & \incpic{Cement-Age} \\ 
+ \rotatebox{90}{{Slag}} & \incpic{Slag-Cement} & \incpic{Slag-Slag} & \incpic{Slag-Fly-Ash} & \incpic{Slag-Water} & \incpic{Slag-Plasticizer} & \incpic{Slag-Age} \\ 
+ \rotatebox{90}{{Fly Ash}} & \incpic{Fly-Ash-Cement} & \incpic{Fly-Ash-Slag} & \incpic{Fly-Ash-Fly-Ash} & \incpic{Fly-Ash-Water} & \incpic{Fly-Ash-Plasticizer} & \incpic{Fly-Ash-Age} \\ 
+ \rotatebox{90}{{Water}} & \incpic{Water-Cement} & \incpic{Water-Slag} & \incpic{Water-Fly-Ash} & \incpic{Water-Water} & \incpic{Water-Plasticizer} & \incpic{Water-Age} \\ 
+ \rotatebox{90}{{Plasticizer}} & \incpic{Plasticizer-Cement} & \incpic{Plasticizer-Slag} & \incpic{Plasticizer-Fly-Ash} & \incpic{Plasticizer-Water} & \incpic{Plasticizer-Plasticizer} & \incpic{Plasticizer-Age} \\ 
+ \rotatebox{90}{{Age}} & \incpic{Age-Cement} & \incpic{Age-Slag} & \incpic{Age-Fly-Ash} & \incpic{Age-Water} & \incpic{Age-Plasticizer} & \incpic{Age-Age} \\ 
  \end{tabular}
+%
+%
+%
 \caption[Visualizing two-way interactions]
-{two-way interactions on the concrete dataset.  
-The surface shows the posterior mean of the predicted strength, controlling for all other terms.}
+{two-way interactions on the concrete dataset.
+Plots on the diagonal show the posterior covariance of each function.
+Red indicates high covariance, blue indicates low.
+Off-diagonal plots show posterior covariance between each pair of functions, as a function of both inputs.
+Because each
+The `Coarse' and `Fine' dimensions are not shown here because their variance was zero.
+}
 \label{fig:interpretable interactions}
 \end{figure}
 
@@ -459,8 +472,9 @@ In this section, we give recipes for expressing several classes of symmetries.  
 Given $D$ dimensions, we can enforce rotational symmetry on any subset of the dimensions:
 %
 \begin{align}
-f(x) = f( x_i + k \tau_i) \quad \forall k \in \mathbb{Z}
+f(x) = f( x_i + \tau_i)% \quad \forall k \in \mathbb{Z}
 \end{align}
+% TODO: Generalize this to multiple dimensions.
 %
 by the applying a kernel between pairs transformed coordinates $\sin(x), \cos(x)$:
 %
@@ -479,8 +493,10 @@ f(x) = f( -x)
 by the kernel transform
 %
 \begin{align}
-k_{\textnormal{symm arg1}}(x, x') & = k(x, x') + k(x, -x') + k(-x, x') + k(-x, -x')
+k_{\textnormal{symm arg1}}(x, x') & = k(x, x') + k(x, -x')
 \end{align}
+%
+Note that, because $k(\vx, \vx') = k(\vx', \vx')$ for any PSD kernel, so we don't need to include the corresponding terms $k(-x, x')$ and $k(-x, -x')$.
 
 \paragraph{Reflective Symmetry along a diagonal}
 We can enforce symmetry between any two dimensions:
@@ -494,9 +510,11 @@ by two methods:  In the additive method, we transform the kernel by:
 \begin{align}
 k_{\textnormal{reflect add}}(x, y, x', y') 
  = k(x, y, x', y') + k(x, y, y', x')
- + k(y, x, x', y') + k(y, x, y', x')
+% + k(y, x, x', y') + k(y, x, y', x')
 \end{align}
+%
 or by
+%
 \begin{align}
 k_{\textnormal{reflect min}}(x, y, x', y') = k( & \min(x, y), \max(x,y), % \nonumber \\ & 
 \min(x', y'), \max(x',y') )
@@ -591,7 +609,7 @@ Figure \ref{fig:mobius} shows this.
 \centering
 M\"{o}bius manifold & 
 Sudanese M\"{o}bius strip \\
-$( \Per_1 \times \Per_2 )$ and $f(x,y) = f(y,x)$ & \\
+$( \Per_1 \times \Per_2 )$ and $f(x,y) = f(y,x)$ & generated parametrically\\
 %\includegraphics[width=0.45\columnwidth, height=0.45\columnwidth, clip=true,trim=2cm 2cm 2cm 1cm]{\topologyfiguresdir/mobius_regression} \\
 \includegraphics[width=0.3\columnwidth]{\topologyfiguresdir/mobius} &
 %\includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/mobius} 
@@ -604,8 +622,11 @@ $( \Per_1 \times \Per_2 )$ and $f(x,y) = f(y,x)$ & \\
 %\end{minipage}
 \raisebox{1cm}{\includegraphics[width=0.4\columnwidth,clip=true,trim=0cm 0cm 10cm 0cm]{\topologyfiguresdir/sudanese-wikipedia}}
 \end{tabular}
-\caption[Generating M\"{o}bius strips]{Generating M\"{o}bius strips.  By enforcing that the functions mapping from $\mathbb{R}^2$ to $\mathbb{R}^3$ obey the appropriate symmetries, the surfaces created have topology corresponding to a M\"{o}bius strip.
-M\"{o}bius strips generated this way do not have the familiar shape of a circular flat surface with a half-twist; rather they tend to look like \emph{Sudanese} M\"{o}bius strips \citep{sudanese1984}, whose edge has a circular shape. 
+\caption[Generating M\"{o}bius strips]{Generating M\"{o}bius strips.
+Left: By enforcing that the functions mapping from $\mathbb{R}^2$ to $\mathbb{R}^3$ obey the appropriate symmetries, surfaces sampled from the prior have topology corresponding to a M\"{o}bius strip.
+M\"{o}bius strips generated this way do not have the familiar shape of a circular flat surface with a half-twist; rather they tend to look like \emph{Sudanese} M\"{o}bius strips \citep{sudanese1984}, whose edge has a circular shape.
+Right: A Sudanese projection of a M\"{o}bius strip.
+Image adapted from \citep{sudanesepict}.
 }
 \label{fig:mobius}
 \end{figure}
@@ -765,12 +786,14 @@ Long-term trend & Weekly periodicity &Yearly periodicity \\
 
 
 \begin{figure}
+\renewcommand{\tabcolsep}{1mm}
+\def \incpic#1{\includegraphics[width=0.200\columnwidth]{../figures/worked-example/births-#1}}
 \begin{tabular}{*{5}{c}}
- & Long-term & Weekly & Yearly & Short-term \\ 
- \rotatebox{90}{Long-term} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Long-term-Long-term} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Long-term-Weekly} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Long-term-Yearly} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Long-term-Short-term} \\ 
- \rotatebox{90}{Weekly} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Weekly-Long-term} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Weekly-Weekly} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Weekly-Yearly} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Weekly-Short-term} \\ 
- \rotatebox{90}{Yearly} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Yearly-Long-term} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Yearly-Weekly} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Yearly-Yearly} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Yearly-Short-term} \\ 
- \rotatebox{90}{Short-term} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Short-term-Long-term} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Short-term-Weekly} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Short-term-Yearly} & \includegraphics[width=0.250000\columnwidth]{../figures/worked-example/births-Short-term-Short-term} \\ 
+ & {Long-term} & {Weekly} & {Yearly} & {Short-term} \\ 
+ \rotatebox{90}{{Long-term}} & \incpic{Long-term-Long-term} & \incpic{Long-term-Weekly} & \incpic{Long-term-Yearly} & \incpic{Long-term-Short-term} \\ 
+ \rotatebox{90}{{Weekly}} & \incpic{Weekly-Long-term} & \incpic{Weekly-Weekly} & \incpic{Weekly-Yearly} & \incpic{Weekly-Short-term} \\ 
+ \rotatebox{90}{{Yearly}} & \incpic{Yearly-Long-term} & \incpic{Yearly-Weekly} & \incpic{Yearly-Yearly} & \incpic{Yearly-Short-term} \\ 
+ \rotatebox{90}{{Short-term}} & \incpic{Short-term-Long-term} & \incpic{Short-term-Weekly} & \incpic{Short-term-Yearly} & \incpic{Short-term-Short-term} \\ 
  \end{tabular}
 \caption[Two-way interactions in births data]{Two-way interactions in births data}
 \label{fig:quebec-decomp}

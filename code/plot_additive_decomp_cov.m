@@ -123,8 +123,8 @@ for i = 1:num_components
             
             title1 = strrep(column_names{i}, ' ', '-');
             title2 = strrep(column_names{j}, ' ', '-');
-            filename = sprintf('%s-%s-%s', file_prefix, title1, title2);
-            save2pdf([filename '.pdf'], gcf, dpi, true );
+            filename = sprintf('%s-%s', title1, title2);
+            save2pdf([file_prefix, '-', filename '.pdf'], gcf, dpi, true );
             filenames{i}{j} = filename;
         else
             subplot(num_components, num_components, j + (i - 1) * num_components);
@@ -137,21 +137,26 @@ for i = 1:num_components
     end
 end
 
-
+smalltext = '';
+if num_components > 7; smalltext = '\small'; end
+    
 % Print a latex table.
-fprintf('\n\\begin{tabular}{*{%d}{c}}\n & ', num_components + 1);
+fprintf('\n\\renewcommand{\\tabcolsep}{1mm}');
+fprintf('\n\\def\\incpic#1{\\includegraphics[width=%1.3f\\columnwidth]{%s-#1}}', ...
+        1/(num_components + 1), file_prefix);
+fprintf('\n\\begin{tabular}{p{2mm}*{%d}{p{%1.3f\\columnwidth}}}\n & ', ...
+        num_components, 1/(num_components + 1));
 for i = 1:num_components
     % print header
     if i == 1
         for j = 1:num_components
-            fprintf('%s', column_names{j});
+            fprintf('%s{%s}', smalltext, column_names{j});
             if j < num_components; fprintf(' & '); else fprintf(' \\\\ \n '); end
         end
     end
-    fprintf('\\rotatebox{90}{%s} & ', column_names{i});
+    fprintf('\\rotatebox{90}{%s{%s}} & ', smalltext, column_names{i});
     for j = 1:num_components
-        fprintf('\\includegraphics[width=%f\\columnwidth]{%s}', ...
-                1/num_components, filenames{i}{j});
+        fprintf('\\incpic{%s}', filenames{i}{j});
         if j < num_components; fprintf(' & '); else fprintf(' \\\\ \n '); end
     end
 end
