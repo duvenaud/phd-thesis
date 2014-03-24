@@ -454,9 +454,9 @@ One shortcoming of the
 \section{Expressing Symmetries}
 
 
-When modeling functions, encoding known symmetries greatly aids learning and prediction.  We demonstrate that in nonparametric regression, many types of symmetry can be enforced through operations on the covariance function.  These symmetries can be composed to produce nonparametric priors on functions whose domains have interesting topological structure such as spheres, torii, and M\"{o}bius strips.  We demonstrate that marginal likeihood an be used to automatically search over such structures.
+When modeling functions, encoding known symmetries greatly aids learning and prediction.  We demonstrate that in nonparametric regression, many types of symmetry can be enforced through operations on the covariance function.  These symmetries can be composed to produce nonparametric priors on functions whose domains have interesting topological structure such as spheres, torii, and M\"{o}bius strips.
 
-Joint work with David Reshef, Roger Grosse, Joshua B. Tenenbaum
+%Joint work with David Reshef, Roger Grosse, Joshua B. Tenenbaum
 
 
 
@@ -493,7 +493,7 @@ f(x) = f( -x)
 by the kernel transform
 %
 \begin{align}
-k_{\textnormal{symm arg1}}(x, x') & = k(x, x') + k(x, -x')
+k_{\textnormal{symm arg1}}(x, x') & = k(x, x') + k(x, -x') + k(-x, x') + k(-x, -x')
 \end{align}
 %
 Note that, because $k(\vx, \vx') = k(\vx', \vx')$ for any PSD kernel, so we don't need to include the corresponding terms $k(-x, x')$ and $k(-x, -x')$.
@@ -510,7 +510,7 @@ by two methods:  In the additive method, we transform the kernel by:
 \begin{align}
 k_{\textnormal{reflect add}}(x, y, x', y') 
  = k(x, y, x', y') + k(x, y, y', x')
-% + k(y, x, x', y') + k(y, x, y', x')
+ + k(y, x, x', y') + k(y, x, y', x')
 \end{align}
 %
 or by
@@ -522,12 +522,35 @@ k_{\textnormal{reflect min}}(x, y, x', y') = k( & \min(x, y), \max(x,y), % \nonu
 however, the second method will in general lead to non-differentiability along $x = y$.  Figure \ref{fig:add_vs_min} shows the difference.
 
 \begin{figure}
-\begin{tabular}{cc}
-\includegraphics[width=0.33\columnwidth]{\symmetryfigsdir/symmetric-xy-naive-kernel} &
-\includegraphics[width=0.33\columnwidth]{\symmetryfigsdir/symmetric-xy-projection-sample} \\
-Additive method & min method
+\begin{tabular}{ccc}
+\includegraphics[width=0.3\columnwidth]{\symmetryfigsdir/symmetric-xy-naive-sample} &
+\includegraphics[width=0.3\columnwidth]{\symmetryfigsdir/symmetric-xy-prod-sample} &
+\includegraphics[width=0.3\columnwidth]{\symmetryfigsdir/symmetric-xy-projection-sample} \\
+Additive method & Product method & Representer method \\[0.5ex]
+%$k(x, y, x', y') + k(x, y, y', x')$ & $k(x, y, x', y') \times k(x, y, y', x')$ & $k( \min(x, y), \max(x,y),$ \\
+% $+ k(y, x, x', y') + k(y, x, y', x')$ & $\times k(y, x, x', y') \times k(y, x, y', x')$ & $\min(x', y'), \max(x',y') )$
+$\begin{array}{r@{}l@{}}
+k(x, y, x', y') & {}+ k(x, y, y', x') \\
+{}+ k(y, x, x', y') & {}+ k(y, x, y', x')
+\end{array}$
+&
+$\begin{array}{r@{}l@{}}
+k(x, y, x', y') & {}\times k(x, y, y', x') \\
+{}\times k(y, x, x', y') & {}\times k(y, x, y', x')
+\end{array}$
+&
+$\begin{array}{r@{}l@{}}
+k( &{}\min(x, y), \max(x,y), \\
+&{}\min(x', y'), \max(x',y') )
+\end{array}$
 \end{tabular}
-\caption[Two ways to introduce symmetry]{An illustration of two methods of introducing symmetry: The additive method or the min method.  The additive method has half the marginal variance away from $y = x$, but the min method introduces a non-differentiable seam along $y = x$.}
+\caption[Three ways to introduce symmetry]{An illustration of three methods of introducing symmetry.
+Left:  The additive method.
+Center: The product method.
+Right: The representer method.
+%The additive method has half the marginal variance away from $y = x$, but the min method introduces a non-differentiable seam along $y = x$.
+All three methods introduce a different type of nonstationarity.
+}
 \label{fig:add_vs_min}
 \end{figure}
 
@@ -556,6 +579,13 @@ In general, we can always enforce the symmetries obeyed by a given surface by fi
 
 %Because then one dimension would be special.
 
+
+\subsection{Checking for Symmetries}
+In some situations, we might not know \emph{a priori} whether a particular symmetry is present in a function.
+%Again, the fact that we can compare marginal likelihoods in \gp{}s means that we can 
+Because \gp{}s let us build models both with and without certain symmetries, we can compute the amount of evidence that the data provide for each of these possibilities.
+To do so, we simple need to compare the marginal likelihood of the data
+We demonstrate that marginal likeihood an be used to automatically search over such structures.
 
 
 

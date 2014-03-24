@@ -12,15 +12,16 @@ N_1d = 50;   % Fineness of grid in each dimension.
 range = linspace( -5, 5, N_1d);   % Choose a set of x locations.
 
 
-plot_2d_gp_and_kernel( range, @gnn_kernel );
-plot_2d_gp_and_kernel( range, @add_kernel );
-plot_2d_gp_and_kernel( range, @fa_kernel );
-plot_2d_gp_and_kernel( range, @se_kernel );
-plot_2d_gp_and_kernel( range, @se_1d_kernel );
-plot_2d_gp_and_kernel( range, @se_1d_kernel_plus_2d );
-plot_2d_gp_and_kernel( range, @symm_xy_kernel_naive );
-plot_2d_gp_and_kernel( range, @symm_xy_kernel_proj );
-plot_2d_gp_and_kernel( range, @spline_kernel );
+%plot_2d_gp_and_kernel( range, @gnn_kernel );
+%plot_2d_gp_and_kernel( range, @add_kernel );
+%plot_2d_gp_and_kernel( range, @fa_kernel );
+%plot_2d_gp_and_kernel( range, @se_kernel );
+%plot_2d_gp_and_kernel( range, @se_1d_kernel );
+%plot_2d_gp_and_kernel( range, @se_1d_kernel_plus_2d );
+%plot_2d_gp_and_kernel( range, @symm_xy_kernel_naive );
+plot_2d_gp_and_kernel( range, @symm_xy_kernel_prod );
+%plot_2d_gp_and_kernel( range, @symm_xy_kernel_proj );
+%plot_2d_gp_and_kernel( range, @spline_kernel );
 
 end
 
@@ -119,6 +120,15 @@ function sigma = symm_xy_kernel_naive(x, y)
     
     xs = [x(2, :); x(1, :)];
     sigma = 0.5.*exp( -0.5.*sq_dist(x, y)) + 0.5.*exp( -0.5.*sq_dist(xs, y));
+end
+
+function sigma = symm_xy_kernel_prod(x, y)
+    if nargin == 0
+        sigma = 'symmetric-xy-prod'; return;
+    end
+    
+    xs = [x(2, :); x(1, :)];
+    sigma = 0.5.*exp( -0.5.*sq_dist(x, y)) .* exp( -0.5.*sq_dist(xs, y));
 end
 
 

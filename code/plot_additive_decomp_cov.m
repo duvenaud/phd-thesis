@@ -94,23 +94,30 @@ for i = 1:num_components
         x2range = linspace(x2_left, x2_right, nstar)';
         x2star = NaN(nstar,D);
         x2star(:, d2) = x2range;
-
+       
         % Compute posterior covariance between these two components.
         component1_sigma_star = feval(cur_cov1{:}, cur_hyp1, x1star, X);
-        component2_sigma_star = feval(cur_cov2{:}, cur_hyp2, x2star, X);   
+        component1_sigma_starstar = feval(cur_cov1{:}, cur_hyp1, x1star);
+        component2_sigma_star = feval(cur_cov2{:}, cur_hyp2, x2star, X);
+        component2_sigma_starstar = feval(cur_cov2{:}, cur_hyp2, x2star);
+        
         covar = component1_sigma_star / complete_sigma * component2_sigma_star';
+        var1 = component1_sigma_star / complete_sigma * component1_sigma_star';
+        var2 = component2_sigma_star / complete_sigma * component2_sigma_star';
         
         % Diagonals have an extra term.
         if i == j
-            component1_sigma_starstar = feval(cur_cov1{:}, cur_hyp1, x1star);
-            covar = covar + component1_sigma_starstar;
+            covar = covar + component1_sigma_starstar; % is equal to component2_sigma_starstar
+            var1 = var1 + component1_sigma_starstar;
+            var2 = var2 + component2_sigma_starstar;
         end
+        
+        correlation = covar ./ sqrt(bsxfun(@times, diag(var1), diag(var2)'));
 
-
-            
         % Plot posterior mean and variance.
         if savefigs
             clf; imagesc(covar);
+            %caxis([-1 1]);
             
             % Make the plot look nice.
             set( gca, 'XTick', [] );
@@ -129,6 +136,7 @@ for i = 1:num_components
         else
             subplot(num_components, num_components, j + (i - 1) * num_components);
             imagesc(covar);
+            %caxis([-1 1]);
         end
         
         % Keep track of max and min for unified colobar.
@@ -137,30 +145,34 @@ for i = 1:num_components
     end
 end
 
-smalltext = '';
-if num_components > 7; smalltext = '\small'; end
-    
-% Print a latex table.
-fprintf('\n\\renewcommand{\\tabcolsep}{1mm}');
-fprintf('\n\\def\\incpic#1{\\includegraphics[width=%1.3f\\columnwidth]{%s-#1}}', ...
-        1/(num_components + 1), file_prefix);
-fprintf('\n\\begin{tabular}{p{2mm}*{%d}{p{%1.3f\\columnwidth}}}\n & ', ...
-        num_components, 1/(num_components + 1));
-for i = 1:num_components
-    % print header
-    if i == 1
+if savefigs
+    smalltext = '';
+    if num_components > 7; smalltext = '\small'; end
+
+    % Print a latex table.
+    fprintf('\n\\renewcommand{\\tabcolsep}{1mm}');
+    fprintf('\n\\def\\incpic#1{\\includegraphics[width=%1.3f\\columnwidth]{%s-#1}}', ...
+            1/(num_components + 1), file_prefix);
+    %fprintf('\n\\begin{tabular}{p{2mm}*{%d}{p{%1.3f\\columnwidth}}}\n & ', ...
+    %        num_components, 1/(num_components + 1));
+    fprintf('\n\\begin{tabular}{p{2mm}*{%d}{c}}\n & ', ...
+            num_components);
+    for i = 1:num_components
+        % print header
+        if i == 1
+            for j = 1:num_components
+                fprintf('%s{%s}', smalltext, column_names{j});
+                if j < num_components; fprintf(' & '); else fprintf(' \\\\ \n '); end
+            end
+        end
+        fprintf('\\rotatebox{90}{%s{%s}} & ', smalltext, column_names{i});
         for j = 1:num_components
-            fprintf('%s{%s}', smalltext, column_names{j});
+            fprintf('\\incpic{%s}', filenames{i}{j});
             if j < num_components; fprintf(' & '); else fprintf(' \\\\ \n '); end
         end
     end
-    fprintf('\\rotatebox{90}{%s{%s}} & ', smalltext, column_names{i});
-    for j = 1:num_components
-        fprintf('\\incpic{%s}', filenames{i}{j});
-        if j < num_components; fprintf(' & '); else fprintf(' \\\\ \n '); end
-    end
+    fprintf('\\end{tabular}\n');
 end
-fprintf('\\end{tabular}\n');
 
 % Unify color scales.
 if unify_color_scales
