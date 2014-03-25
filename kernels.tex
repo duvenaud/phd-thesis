@@ -49,10 +49,9 @@ For scalar-valued inputs, the squared exponential (\kSE), periodic (\kPer), line
 
 
 
-The elements of this language are a set of  base
-kernels capturing different function properties, and a set of
-composition rules which combine kernels to yield other valid kernels.
-Our base kernels are white noise ($\kWN$), constant ($\kC$), linear ($\kLin$), squared exponential ($\kSE$) and periodic ($\kPer$), which on their own encode for uncorrelated noise, constant functions, linear functions, smooth functions and periodic functions respectively\footnote{Definitions of kernels are in the supplementary material.}.
+The elements of this language are a set of base kernels capturing different function properties, and a set of composition rules which combine kernels to yield other valid kernels.
+Our base kernels are white noise ($\kWN$), constant ($\kC$), linear ($\kLin$), squared exponential ($\kSE$) and periodic ($\kPer$), which on their own encode for uncorrelated noise, constant functions, linear functions, smooth functions and periodic functions respectively.
+
 The composition rules are addition and multiplication:
 \begin{align}
 k_1 + k_2 =& \,\, k_1(x,x') + k_2(x,x')\\
@@ -440,13 +439,13 @@ This is why it is common practice to assume zero mean, since marginalizing over 
 
 In most derivations of Gaussian processes, the model is given as $y = f + \epsilon$, where $\epsilon \simiid \Nt{0}{\sigma^2_{\textnormal{noise}}}$.
 
-However, $\epsilon$ can equivalently be thought of as another Gaussian process, and so this model can be written as one in which $f \sim \GP\left(0, k + \delta \right)$.  The lack of distinction between the noise model and the model of the signal raises the larger question:  Which part of a model represents signal, and which represents noise?
+However, $\epsilon$ can equivalently be thought of as another Gaussian process, and so this model can be written as $f \sim \GP\left(0, k + \delta \right)$.  The lack of a hard distinction between the noise model and the signal model raises the larger question:  Which part of a model represents signal, and which represents noise?
 
 Our answer is: \emph{it depends on what you want to do with the model}.  For example: often, we don't care about the short-term variations in a function, and only in the long-term trend.  However, in many other cases, we with to de-trend our data to see more clearly how much a particular part of the signal deviated from normal.
 
-\subsubsection{Student's $t$ processes}
+%\subsubsection{Student's $t$ processes}
 
-One shortcoming of the
+%One shortcoming of the
 
 
 
@@ -454,17 +453,25 @@ One shortcoming of the
 \section{Expressing Symmetries}
 
 
+
 When modeling functions, encoding known symmetries greatly aids learning and prediction.  We demonstrate that in nonparametric regression, many types of symmetry can be enforced through operations on the covariance function.  These symmetries can be composed to produce nonparametric priors on functions whose domains have interesting topological structure such as spheres, torii, and M\"{o}bius strips.
 
 %Joint work with David Reshef, Roger Grosse, Joshua B. Tenenbaum
 
-
+% I would cite Pierre Chiche but he hasn't actually published his damn papers.
 
 %connected Riemannian manifold
 
-It is well-known that the properties of the functions we wish to model can be expressed mainly through the covariance function \cite{rasmussen38gaussian}.
+%It is well-known that the properties of the functions we wish to model can be expressed mainly through the covariance function \cite{rasmussen38gaussian}.
 
-
+\citet{ginsbourger2012argumentwise} and \citet{Invariances13} characterized \gp{} priors on functions invariant to transformations.
+They showed that the only way to construct a prior on functions which respect a given invariance, is to construct a kernel which is invariant to the same invariance.
+Formally,
+given a symmetry $\Phi$, and $f \sim \GPt{0}{k(\vx,\vx')}$, $f$ is invariant under the action of a finite group $\Phi$ if and only if k is argumentwise invariant:
+%
+\begin{align}
+\forall \vx, \forall g \in G, \quad k( g(\vx), x') = k(\vx, \vx')
+\end{align}
 
 In this section, we give recipes for expressing several classes of symmetries.  Later, we will show how these can be combined to produce more interesting structures.
 
@@ -530,13 +537,13 @@ Additive method & Product method & Representer method \\[0.5ex]
 %$k(x, y, x', y') + k(x, y, y', x')$ & $k(x, y, x', y') \times k(x, y, y', x')$ & $k( \min(x, y), \max(x,y),$ \\
 % $+ k(y, x, x', y') + k(y, x, y', x')$ & $\times k(y, x, x', y') \times k(y, x, y', x')$ & $\min(x', y'), \max(x',y') )$
 $\begin{array}{r@{}l@{}}
-k(x, y, x', y') & {}+ k(x, y, y', x') \\
-{}+ k(y, x, x', y') & {}+ k(y, x, y', x')
+k(x, y, x', y') & {}+ k(x, y, y', x') 
+% \\ {}+ k(y, x, x', y') & {}+ k(y, x, y', x')
 \end{array}$
 &
 $\begin{array}{r@{}l@{}}
 k(x, y, x', y') & {}\times k(x, y, y', x') \\
-{}\times k(y, x, x', y') & {}\times k(y, x, y', x')
+% {}\times k(y, x, x', y') & {}\times k(y, x, y', x')
 \end{array}$
 &
 $\begin{array}{r@{}l@{}}
@@ -782,11 +789,11 @@ where $T_{ij}(\vx)$ is the operator which replaces each $x_{mn}$ with $x_{m+i, n
 %\subsection{Max-pooling}
 %What we'd really like to do is a max-pooling operation.  However, in general, a kernel which is the max of other kernels is not PSD [put counterexample here?].  Is the max over co-ordinate switching PSD?
 
-\section{Related Work}
-\label{sec:related_work}
+%\section{Related Work}
+%\label{sec:related_work}
 
-\paragraph{Invariances in Gaussian processes}
-\cite{Invariances13} show that, for Gaussian processes, with probability one, $f(\vx) = f(T(\vx))$ if and only if $k(x, x') = k(x, T(x'))$.
+%\paragraph{Invariances in Gaussian processes}
+%\cite{Invariances13} show that, for Gaussian processes, with probability one, $f(\vx) = f(T(\vx))$ if and only if $k(x, x') = k(x, T(x'))$.
 
 
 
@@ -797,9 +804,9 @@ where $T_{ij}(\vx)$ is the operator which replaces each $x_{mn}$ with $x_{m+i, n
 
 \section{Worked example: building a structured kernel for a time-series}
 
-\subsection{Modeling multiple periodicities}
+%\subsection{Modeling multiple periodicities}
 
-\begin{figure}
+\begin{figure}[h]
 \begin{tabular}{ccc}
 Long-term trend & Weekly periodicity &Yearly periodicity \\
 \includegraphics[width=0.31\columnwidth]{\examplefigsdir/births-component-1} &
@@ -814,7 +821,7 @@ Long-term trend & Weekly periodicity &Yearly periodicity \\
 
 
 
-
+\iffalse
 \begin{figure}
 \renewcommand{\tabcolsep}{1mm}
 \def \incpic#1{\includegraphics[width=0.200\columnwidth]{../figures/worked-example/births-#1}}
@@ -828,10 +835,23 @@ Long-term trend & Weekly periodicity &Yearly periodicity \\
 \caption[Two-way interactions in births data]{Two-way interactions in births data}
 \label{fig:quebec-decomp}
 \end{figure}
-
+\fi
 %\subsection{Incoportating discrete covariates}
 
 %\subsection{Breaking down the predictions, examining different parts of the model}
+
+
+\section{Conclusion}
+
+We've seen that kernels are a flexible and powerful language for building models of different types of functions.
+However, for a given problem, it can difficult to specify an appropriate kernel, even after looking at the data.
+Rather than choosing one kernel \emph{a priori}, one should at least try out a few different kernels.
+However, it might be difficult to enumerate all plausible kernels, and tedious to search over them.
+%In fact, choosing the kernel can be considered one of the main difficulties in doing inference.
+
+Analogously, we usually don't expect to simply guess the best value of some parameter.
+Rather, we specify a search space and an objective, and ask the computer to the search this space for us. 
+In the next chapter, we'll see how to perform such a search over the discrete space of kernel expressions.
 
 
 \outbpdocument{
