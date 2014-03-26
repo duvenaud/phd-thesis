@@ -32,7 +32,7 @@ The kernel specifies which structures are likely under the \gp{} prior, which in
 In this section, we review the ways in which kernel families\footnotemark can be composed to express diverse priors over functions. 
 \footnotetext{When unclear from context, we use `kernel family' to refer to the parametric forms of the functions given in the appendix. A kernel is a kernel family with all of the parameters specified.}  
 
-There has been significant work on constructing \gp{} kernels and analyzing their properties, summarized in Chapter 4 of \cite{rasmussen38gaussian}. 
+There has been significant work on constructing \gp{} kernels and analyzing their properties, summarized in \cite[Chapter~4]{rasmussen38gaussian}. 
 %
 Commonly used kernels families include the squared exponential (\kSE), periodic (\kPer), linear (\kLin), and rational quadratic (\kRQ) (see Figure~\ref{fig:basic_kernels} and the appendix).
 %\input{\grammartablesdir/simple_kernels_table_v3.tex}
@@ -49,44 +49,38 @@ For scalar-valued inputs, the squared exponential (\kSE), periodic (\kPer), line
 
 
 
-The elements of this language are a set of base kernels capturing different function properties, and a set of composition rules which combine kernels to yield other valid kernels.
+%The elements of this language are a set of base kernels capturing different function properties, and a set of composition rules which combine kernels to yield other valid kernels.
 Our base kernels are white noise ($\kWN$), constant ($\kC$), linear ($\kLin$), squared exponential ($\kSE$) and periodic ($\kPer$), which on their own encode for uncorrelated noise, constant functions, linear functions, smooth functions and periodic functions respectively.
 
-The composition rules are addition and multiplication:
+There are several ways to obtain new kernels from old. %TODO:cite
+In this chapter, we'll focus on two methods for combining two kernels: addition and multiplication.
 \begin{align}
 k_1 + k_2 =& \,\, k_1(x,x') + k_2(x,x')\\
 k_1 \times k_2 =& \,\, k_1(x,x') \times k_2(x,x')
 \end{align}
 
-Combining kernels using these operations can yield kernels encoding for richer structures such as approximate periodicity ($\kSE \times \kPer$) or smooth functions with linear trends ($\kSE + \kLin$).
+Combining kernels using these operations can yield kernels encoding for richer structures than are encoded in the original kernels.
+ such as approximate periodicity ($\kSE \times \kPer$) or smooth functions with linear trends ($\kSE + \kLin$).
 
-\newcommand{\fhbig}{1.6cm}
-\newcommand{\fwbig}{1.8cm}
+\newcommand{\fhbig}{2cm}
+\newcommand{\fwbig}{3cm}
 \newcommand{\kernpic}[1]{\includegraphics[height=\fhbig,width=\fwbig]{\grammarfiguresdir/structure_examples/#1}}
 \newcommand{\kernpicr}[1]{\rotatebox{90}{\includegraphics[height=\fwbig,width=\fhbig]{\grammarfiguresdir/structure_examples/#1}}}
 \newcommand{\addkernpic}[1]{{\includegraphics[height=\fhbig,width=\fwbig]{\grammarfiguresdir/additive_multi_d/#1}}}
 \newcommand{\largeplus}{\tabbox{{\Large+}}}
 \newcommand{\largeeq}{\tabbox{{\Large=}}}
 \newcommand{\largetimes}{\tabbox{{\Large$\times$}}}
-\begin{figure}[ht]
+
+\begin{figure}[h]
 \centering
-%\begin{tabular}{m{\fwbig}m{0.01\textwidth}m{\fwbig}m{0.01\textwidth}m{\fwbig}m{\fwbig}m{\fwbig}}
-%\begin{tabular}{C{\fwbig}C{\fwbig}C{\fwbig}C{\fwbig}}%{m{\fwbig}m{\fwbig}m{\fwbig}}
-\begin{tabularx}{\columnwidth}{XXXX}
-%Composite & Draws from \gp{} & \gp{} posterior \\ \toprule
-  \kernpic{se_kernel} & \kernpic{se_kernel_draws}
-& \kernpic{per_kernel} & \kernpic{per_kernel_draws_s2}
-\\
-  {\small Squared-exp (\kSE)} & {\small local \newline variation} 
-& {\small Periodic (\kPer)} & {\small repeating structure}
-\\
-\midrule
-  \kernpic{lin_kernel} & \kernpic{lin_kernel_draws}
-& \kernpic{rq_kernel} & \kernpic{rq_kernel_draws}
-\\
-  {\small Linear (\kLin)} & {\small linear \newline functions} 
-& {\small Rational- \newline quadratic(\kRQ)} & {\small multi-scale \newline \phantom{iii}variation}
-\end{tabularx}
+\begin{tabular}{cccc}
+\kernpic{se_kernel} & \kernpic{per_kernel} & \kernpic{lin_kernel} & \kernpic{rq_kernel}\\
+Squared-exp (\kSE)  & Periodic (\kPer) & Linear (\kLin) & Rational quadratic (\kRQ) \\
+%& & & \\
+\large $\downarrow$ & \large $\downarrow$ & \large $\downarrow$ & \large $\downarrow$  \\
+\kernpic{se_kernel_draws} & \kernpic{per_kernel_draws_s2} & \kernpic{lin_kernel_draws} & \kernpic{rq_kernel_draws}\\
+local variation           & repeating structure   & linear functions        & multi-scale variation \\
+\end{tabular}
 \caption[Examples of structures expressible by base kernels]
 {Examples of structures expressible by base kernels.
 Left and third columns: base kernels $k(\cdot,0)$.
@@ -107,59 +101,44 @@ This allows one to create richly structured and interpretable kernels from well 
 All of the base kernels we use are one-dimensional; kernels over multidimensional inputs are constructed by adding and multiplying kernels over individual dimensions.
 These dimensions are represented using subscripts, e.g. $\SE_2$ represents an \kSE{} kernel over the second dimension of $\inputVar$.
 %
-%\newcommand{\fhbig}{1.6cm}
-%\newcommand{\fwbig}{1.8cm}
-%\newcommand{\kernpic}[1]{\includegraphics[height=\fhbig,width=\fwbig]{../figures/structure_examples/#1}}
-%\newcommand{\kernpicr}[1]{\rotatebox{90}{\includegraphics[height=\fwbig,width=\fhbig]{../figures/structure_examples/#1}}}
-%\newcommand{\addkernpic}[1]{{\includegraphics[height=\fhbig,width=\fwbig]{../figures/additive_multi_d/#1}}}
-%\newcommand{\largeplus}{\tabbox{{\Large+}}}
-%\newcommand{\largeeq}{\tabbox{{\Large=}}}
-%\newcommand{\largetimes}{\tabbox{{\Large$\times$}}}
-\begin{figure}[ht]
+\begin{figure}[h]
 \centering
-\renewcommand{\tabularxcolumn}[1]{>{\arraybackslash}m{#1}}
-%\begin{tabular}{m{\fwbig}m{0.01\textwidth}m{\fwbig}m{0.01\textwidth}m{\fwbig}m{\fwbig}m{\fwbig}}
-%\begin{tabular}{C{\fwbig}C{\fwbig}C{\fwbig}C{\fwbig}}%{m{\fwbig}m{\fwbig}m{\fwbig}}
-\begin{tabularx}{\columnwidth}{XXXX}
-  \kernpic{lin_times_lin} & \kernpic{lin_times_lin_draws} 
-& \kernpic{se_times_per} & \kernpic{se_times_per_draws_s7}
-\\
-  {\small $\kLin \times \kLin$} & {\small quadratic functions}
-& {\small $\kSE \times \kPer$} & {\small locally \newline periodic}
-\\
-\midrule 
-  \kernpic{lin_plus_per} & \kernpic{lin_plus_per_draws}
-& \kernpic{se_plus_per} & \kernpic{se_plus_per_draws_s7}
-\\
-  {\small $\kLin + \kPer$} & {\small periodic with trend}
-& {\small $\kSE + \kPer$ } & {\small periodic with noise}
-\\
-\midrule
-  \kernpic{se_times_lin} & \kernpic{se_times_lin_draws_s2}
-& \kernpic{lin_times_per} & \kernpic{lin_times_per_draws_s2}
-\\
-  {\small $\kLin \times \kSE$} & {\small increasing variation}
-& {\small $\kLin \times \kPer$} & {\small growing amplitude}
-%\\
-%\midrule
-%  \addkernpic{additive_kernel} & \addkernpic{additive_kernel_draw_sum}
-%& \addkernpic{sqexp_kernel}  & \addkernpic{sqexp_draw}
-\\
-  {\small $\kSE_1 + \kSE_2$} & {\small $f_1(x_1)$ $+ f_2(x_2)$}
-& {\small $\kSE_1 \times \kSE_2$} & {\small $f(x_1, x_2)$}
-\end{tabularx}
-\caption[Examples of one-dimensional structures expressible by composite kernels]
-{ Examples of one-dimensionalstructures expressible by composite kernels.  
+\begin{tabular}{cccc}
+\kernpic{lin_times_lin} & \kernpic{se_times_per} & \kernpic{se_times_lin} & \kernpic{lin_times_per}\\
+$\kLin \times \kLin$ & $\kSE \times \kPer$ & $\kLin \times \kSE$ & $\kLin \times \kPer$ \\
+%& & & \\
+\large $\downarrow$ & \large $\downarrow$ & \large $\downarrow$ & \large $\downarrow$  \\
+\kernpic{lin_times_lin_draws}  & \kernpic{se_times_per_draws_s7} & \kernpic{se_times_lin_draws_s2} & \kernpic{lin_times_per_draws_s2} \\
+quadratic functions & locally \newline periodic & increasing variation       & growing amplitude \\
+\end{tabular}
+\caption[Examples of one-dimensional structures expressible by multiplying kernels]
+{ Examples of one-dimensional structures expressible by multiplying kernels.  
 %The x-axis has the same scale for all plots.
-Left column and third columns: composite kernels $k(\cdot,0)$.
 Plots have same meaning as in figure \ref{fig:basic_kernels}.}
-\label{fig:kernels}
+\label{fig:kernels_times}
 \end{figure}
 
 
 
 
 
+\begin{figure}[h]
+\centering
+\begin{tabular}{cccc}
+%Composite & Draws from \gp{} & \gp{} posterior \\ \toprule
+\kernpic{lin_plus_per} & \kernpic{se_plus_per} & \kernpic{se_plus_lin} & \kernpic{longse_plus_se}\\
+$\kLin + \kPer$ & $\kSE + \kPer$ & $\kSE + \kLin$ & $\kSE^{(\textnormal{long})} + \kSE$ \\
+%& & & \\
+\large $\downarrow$ & \large $\downarrow$ & \large $\downarrow$ & \large $\downarrow$  \\
+\kernpic{lin_plus_per_draws} & \kernpic{se_plus_per_draws_s7} & \kernpic{se_plus_lin_draws_s5} & \kernpic{rq_kernel_draws}\\
+periodic plus trend & periodic plus noise & linear plus variation & slow \& fast variation \\
+\end{tabular}
+\caption[Examples of one-dimensional structures expressible by adding kernels]
+{ Examples of one-dimensional structures expressible by adding kernels.  
+%The x-axis has the same scale for all plots.
+Plots have same meaning as in figure \ref{fig:basic_kernels}.}
+\label{fig:kernels_plus}
+\end{figure}
 
 \section{Structure through additivity}
 

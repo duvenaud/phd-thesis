@@ -13,7 +13,7 @@ randn('state',seed);
 rand('state',seed);
 
 savefigs = true;
-figpath = 'structure_examples/';
+figpath = '../figures/grammar/structure_examples/';
 
 % Make up some data
 %X = [ -2 -1 0 1 2 ]' .* 2;
@@ -40,7 +40,7 @@ lin_output_var = 0.5;
 lin_kernel = @(x,y) lin_output_var*( (x + 1) .* (y + 1) );
 
 longse_length_scale = 20;
-longse_output_var = 20;
+longse_output_var = 10;
 longse_kernel = @(x,y) longse_output_var*exp( - 0.5 * ( ( x - y ) .^ 2 ) ./ longse_length_scale^2 );
 
 per_length_scale = 1;
@@ -65,13 +65,14 @@ lin_times_lin = @(x,y) lin_kernel(x, y) .* lin_kernel(x, y);
 longse_times_per = @(x,y) longse_kernel(x, y) .* per_kernel(x, y);
 longse_plus_per = @(x,y) longse_kernel(x, y) + per_kernel(x, y);
 longse_times_lin = @(x,y) longse_kernel(x, y) .* lin_kernel(x, y);
+longse_plus_se = @(x,y) longse_kernel(x, y) + se_kernel(x, y);
 
 % kernel_names = {'se_kernel', 'lin_kernel', 'per_kernel', 'longse_kernel', ...
 %            'se_plus_lin', 'se_plus_per', 'se_times_lin', 'se_times_per', ...
 %            'lin_times_per', 'lin_plus_per', 'lin_times_lin', ...
 %            'longse_times_per', 'longse_plus_per', 'longse_times_lin', ...
 %            'rq_kernel','c_kernel'};
-kernel_names = {'c_kernel'};
+kernel_names = {'longse_plus_se'};
 
 % Automatically build kernel names from function names.
 for i = 1:numel(kernel_names)
