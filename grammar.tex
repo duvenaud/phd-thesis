@@ -40,15 +40,11 @@ series data sets from various domains.
 %Joint work with James Robert Lloyd, Roger Grosse, Joshua B. Tenenbaum and Zoubin Ghahramani.
 
 
-
-
-
-
-\section{Introduction}
+%\section{Introduction}
 
 %Supervised learning problems, such as classification and regression, learn a function $\function$ from some input (predictor) variables, $\InputVar$, to some output (response) variables, $\outputVar$.
-Kernel-based nonparametric models, such as support vector machines and Gaussian processes (\gp{}s), have been one of the dominant paradigms for supervised machine learning over the last 20 years.
-These methods depend on defining a kernel function, $\kernel(\inputVar,\inputVar')$, which specifies how similar or correlated outputs $\outputVar$ and $\outputVar'$ are expected to be at two inputs $\inputVar$ and $\inputVar'$.
+%Kernel-based nonparametric models, such as support vector machines and Gaussian processes (\gp{}s), have been one of the dominant paradigms for supervised machine learning over the last 20 years.
+%These methods depend on defining a kernel function, $\kernel(\inputVar,\inputVar')$, which specifies how similar or correlated outputs $\outputVar$ and $\outputVar'$ are expected to be at two inputs $\inputVar$ and $\inputVar'$.
 By defining the measure of similarity between inputs, the kernel determines the pattern of inductive generalization.
 %The kernel function gives a measure of similarity between inputs and determines the pattern of inductive generalizations that are made. 
 
@@ -61,10 +57,10 @@ However, to apply existing kernel learning algorithms, the user must specify the
 To make kernel learning more generally applicable, we reframe the kernel learning problem as one of structure discovery, and automate the choice of kernel form.
 In particular, we formulate a space of kernel structures defined compositionally in terms of sums and products of a small number of base kernel structures.
 This provides an expressive modeling language which concisely captures many widely used techniques for constructing kernels.
-We focus on Gaussian process regression, where the kernel specifies a covariance function, because the Bayesian framework is a convenient way to formalize structure discovery.
+%We focus on Gaussian process regression, where the kernel specifies a covariance function, because the Bayesian framework is a convenient way to formalize structure discovery.
 Borrowing discrete search techniques which have proved successful in equation discovery \cite{todorovski1997declarative} and unsupervised learning \cite{grosse2012exploiting}, we automatically search over this space of kernel structures using marginal likelihood as the search criterion.
 
-We found that our structure discovery algorithm is able to automatically recover known structures from synthetic data as well as plausible structures for a variety of real-world datasets. 
+This simple structure discovery algorithm is able to automatically recover known structures from synthetic data as well as plausible structures for a variety of real-world datasets. 
 On a variety of time series datasets, the learned kernels yield decompositions of the unknown function into interpretable components that enable accurate extrapolation beyond the range of the observations.
 Furthermore, the automatically discovered kernels outperform a variety of widely used kernel classes and kernel combination methods on supervised prediction tasks.
 
@@ -74,9 +70,8 @@ Furthermore, the automatically discovered kernels outperform a variety of widely
 %Section \ref{sec:related_work} situates our work in the context of other nonparametric regression, kernel learning, and structure discovery methods.
 %We evaluate our methods on synthetic datasets, time series analysis, and high-dimensional prediction problems in Sections \ref{sec:synthetic} through \ref{sec:quantitative}, respectively.
 
-While we focus on Gaussian process regression, we believe our kernel search method can be extended to other supervised learning frameworks such as classification or ordinal regression, or to other kinds of kernel architectures such as kernel SVMs.
-We hope that the algorithm developed in this paper will help replace the current and often opaque art of kernel engineering with a more transparent science of automated kernel construction%\fTBD{Previously discovery}
-.
+
+We hope that the \procedurename{} algorithm will help replace the current and often opaque art of kernel engineering with a more transparent science of automated kernel construction.
 
 
 %Kernel learning has been an important topic in machine learning since the kernel essentially determines the pattern of inductive
@@ -87,13 +82,6 @@ We hope that the algorithm developed in this paper will help replace the current
 %This provides a more expressive modeling language, allows us to exploit efficient discrete search methods that rapidly explore a large space of structures, and yields results that are both more interpretable and better in objective generalization performance.
 %A key challenge for kernel based methods is learning an appropriate kernel from data, and a great many papers have been written on this important topic\TBD{ cite kernel learning for SVMs and GP literature}. \TBD{RBG: sounds like another approach to the same problem; want it to be an underexplored \emph{aspect} of the problem}
 %In this paper, we pose the problem of kernel learning as a problem of structure discovery from data.
-%\fTBD{RBG: Any way to argue that kernel learning algorithms were an important factor in making kernel methods practical?  Then our method is the next logical step.}
-
-%We demonstrate \NA{our method} in a Bayesian setting where the kernel specifies a covariance function for \gp{} regression.
-%This framework is also applicable to other probabilistic supervised learning problems \eg classification\TBD{ ref}, ordinal regression\TBD{ ref}, and ranking\TBD{ ref}.
-
-%Traditionally, Gaussian process kernels have simple forms, such as squared-exponential or Matern, which depend on few free parameters which can be optimised (or inferred) from data.
-%However, one can also straightforwardly form composite kernels by combining simple base kernels through operations such as summation, multiplication, and change of coordinates, which all preserve positive definiteness.
 
 %We use this insight to define a simple grammar over composite kernels, and we develop an automated search algorithm over the (exponentially large) space of kernels that can be derived from this grammar.
 %The search criterion is the marginal likelihood of the kernel, which is the driving term for Bayesian model comparison and selection in analogous structure discovery tasks such as graphical model learning \cite{heckerman1995learning}.
@@ -142,8 +130,7 @@ Good statistical modeling requires not only
 interpretability but predictive accuracy. We compare \procedurename{} against
 existing model construction techniques in terms of predictive
 performance at extrapolation, and we find state-of-the-art performance
-on 13 time series. In the remainder of this paper we describe the
-components of \procedurename{} in detail. 
+on 13 time series.
 
 
 
@@ -205,9 +192,7 @@ We approximate this intractable integral with the Bayesian information criterion
 %For instance, random cross-validation could be used when the goal is interpolation.
 
 Unfortunately, optimizing over parameters is not a convex optimization problem, and the space can have many local optima.
-%Unfortunately, the required optimization over parameters is not convex, and the space can have many local optima.
-%The example in figure \ref{fig:mauna_grow} can be modeled with a short length scale and small noise or a long length scale and large noise, and both explanations are better than any intermediate ones.
-For example, in data with periodic structure, integer multiples of the true period (\ie harmonics) are often local optima. 
+For example, in data with periodic structure, integer multiples of the true period (harmonics) are often local optima. 
 %
 To alleviate this difficulty, we take advantage of our search procedure to provide reasonable initializations: all of the parameters which were part of the previous kernel are initialized to their previous values.
 All parameters are then optimized using conjugate gradients, randomly restarting the newly introduced parameters.
@@ -241,10 +226,6 @@ This procedure is not guaranteed to find the global optimum, but it implements t
 
 
 
-
-% new material:
-
-
 The general problem of regression consists of learning a function $f$
 mapping from some input space $\mathcal{X}$ to some output space
 $\mathcal{Y}$. We would like an expressive language which can
@@ -271,14 +252,15 @@ specifying a language of kernels.
 The elements of this language are a set of  base
 kernels capturing different function properties, and a set of
 composition rules which combine kernels to yield other valid kernels.
-Our base kernels are white noise ($\kWN$), constant ($\kC$), linear ($\kLin$), squared exponential ($\kSE$) and periodic ($\kPer$), which on their own encode for uncorrelated noise, constant functions, linear functions, smooth functions and periodic functions respectively\footnote{Definitions of kernels are in the supplementary material.}.
+Our base kernels are white noise ($\kWN$), constant ($\kC$), linear ($\kLin$), squared exponential ($\kSE$) and periodic ($\kPer$), which on their own encode for uncorrelated noise, constant functions, linear functions, smooth functions and periodic functions respectively.
+%\footnote{Definitions of kernels are in the supplementary material.}.
 The composition rules are addition and multiplication:
 \begin{align}
 k_1 + k_2 =      & \,\, k_1(x,x') + k_2(x,x') \\
 k_1 \times k_2 = & \,\, k_1(x,x') \times k_2(x,x')
 \end{align}
 
-Combining kernels using these operations can yield kernels encoding for richer structures such as approximate periodicity ($\kSE \times \kPer$) or smooth functions with linear trends ($\kSE + \kLin$).
+%Combining kernels using these operations can yield kernels encoding for richer structures such as approximate periodicity ($\kSE \times \kPer$) or smooth functions with linear trends ($\kSE + \kLin$).
 
 %This kernel composition framework (with different base kernels) was described by \citet{DuvLloGroetal13}.
 %We extend and adapt this framework in several ways.
@@ -299,8 +281,8 @@ Table~\ref{table:motifs} lists common regression models that can be expressed by
 \begin{tabular}{l|l}
 Regression model & Kernel \\
 \midrule
-\gp{} smoothing & $\kSE + \kWN$ \\
 Linear regression & $\kC + \kLin + \kWN$ \\
+Kernel ridge regression & $\kSE + \kWN$ \\
 Multiple kernel learning & $\sum \kSE$ + \kWN\\
 Trend, cyclical, irregular & $\sum \kSE + \sum \kPer$ + \kWN\\
 Fourier decomposition & $\kC + \sum \cos$ + \kWN\\
@@ -690,12 +672,6 @@ this is a flexible approach to kernel learning but relies upon finding structure
 Instead we focus on domains where most of the interesting structure is in \function(\inputVar).
 %}\fTBD{removed comment about interpretability}%; this is a flexible approach to kernel learning but potentially less interpretable.
 
-%To learn periodic structure, 
-\citet{WilAda13} derive kernels of the form ${\SE \times \cos(x-x')}$, forming a basis for stationary kernels.
-% through spectral density estimation.
-%motivated as spectral density estimation.
-These kernels share similarities with ${\kSE \times \kPer}$ but can express negative prior correlation, and could usefully be included in our grammar.
-
 \citet{diosan2007evolving} and \citet{bing2010gp} learn composite kernels for support vector machines and relevance vector machines, using genetic search algorithms.
 %Our work goes beyond this prior work by demonstrating the structure implied by composite kernels, employing a Bayesian search criterion, and allowing for the automatic discovery of interpretable structure from data.
 Our work employs a Bayesian search criterion, and goes beyond this prior work by demonstrating the interpretability of the structure implied by composite kernels, and how such structure allows for extrapolation.
@@ -708,7 +684,7 @@ Our work employs a Bayesian search criterion, and goes beyond this prior work by
 
 \subsection{Structure discovery}
 
-There have been several attempts to uncover the structural form of a dataset by searching over a grammar of structures. For example, \cite{schmidt2009distilling}, \cite{todorovski1997declarative} and \cite{washio1999discovering} attempt to learn parametric forms of equations to describe time series, or relations between quantities. Because we learn expressions describing the covariance structure rather than the functions themselves, we are able to capture structure which does not have a simple parametric form.
+There have been several attempts to uncover the structural form of a dataset by searching over a grammar of structures. For example, \cite{Schmidt2009b}, \cite{todorovski1997declarative} and \cite{washio1999discovering} attempt to learn parametric forms of equations to describe time series, or relations between quantities. Because we learn expressions describing the covariance structure rather than the functions themselves, we are able to capture structure which does not have a simple parametric form.
 
 \citet{kemp2008discovery} learned the structural form of a graph used to model human similarity judgments.
 Examples of graphs included planes, trees, and cylinders.
@@ -1118,6 +1094,9 @@ The learned kernels often yield decompositions of a signal into diverse and inte
 We believe that a data-driven approach to choosing kernel structures automatically can help make nonparametric regression and classification methods accessible to non-experts.
 
 
+\section{Future work}
+
+While we focus on Gaussian process regression, we believe our kernel search method can be extended to other supervised learning frameworks such as classification or ordinal regression, or to other kinds of kernel architectures such as kernel SVMs.
 
 
 %\paragraph{Source Code}

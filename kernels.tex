@@ -84,7 +84,7 @@ k(x,x') = \feat(x)\tra \feat(x')
 \end{align}
 
 \gp{} regression is actually equivalent to performing Bayesian linear regression on the features $\feat(x)$.
-The link between Gaussian processes, linear regression, and neural networks is explored further in chapter~\ref{ch:deep-limits}.
+The links between Gaussian processes, linear regression, and neural networks is explored further in chapter~\ref{ch:deep-limits}.
 
 
 \section{Combining Kernels}
@@ -365,7 +365,12 @@ R-squared = 0.9094
  \rotatebox{90}{\parbox{0.1\columnwidth}{Plasticizer}} & \incpic{Plasticizer-Cement} & \incpic{Plasticizer-Slag} & \incpic{Plasticizer-Fly-Ash} & \incpic{Plasticizer-Water} & \incpic{Plasticizer-Plasticizer} & \incpic{Plasticizer-Age} \\ 
  \rotatebox{90}{{Age}} & \incpic{Age-Cement} & \incpic{Age-Slag} & \incpic{Age-Fly-Ash} & \incpic{Age-Water} & \incpic{Age-Plasticizer} & \incpic{Age-Age} \\
  \end{tabular}
-\includegraphics[width=0.1\columnwidth, clip, trim=6.25cm 0cm 0cm 0cm]{../figures/decomp/concrete-colorbar}
+ \fbox{
+\begin{tabular}{c}
+ Correlation \\[1ex]
+\includegraphics[width=0.1\columnwidth, clip, trim=6.2cm 0cm 0cm 0cm]{../figures/decomp/concrete-colorbar}
+\end{tabular}
+}
 %
 %
 %
@@ -797,7 +802,8 @@ k_{\textnormal{conv}} \left( (x_{11}, x_{12}, \dots, x_{RC} ), (x_{11}', x_{12}'
 \sum_{i=-L}^L \sum_{j=-L}^L k\left( \vx, T_{ij}(\vx') \right)
 \end{align}
 %
-where $T_{ij}(\vx)$ is the operator which replaces each $x_{mn}$ with $x_{m+i, n+j}$.  Thus we are simply defining the covariance between two images to be the sum of all covariances between all relative translations of the two images.  We can also normalize the kernel by pre-multiplying it with $\sqrt{k_{\textnormal{conv}}(\vx, \vx) k_{\textnormal{conv}}(\vx', \vx') }$.
+where $T_{ij}(\vx)$ is the operator which replaces each $x_{mn}$ with $x_{m+i, n+j}$.  Thus we are simply defining the covariance between two images to be the sum of all covariances between all relative translations of the two images.
+%We can also normalize the kernel by pre-multiplying it with $\sqrt{k_{\textnormal{conv}}(\vx, \vx) k_{\textnormal{conv}}(\vx', \vx') }$.
 
 %$f \left( \begin{tikzpicture} \draw[step=0.1,black,thin] (0.3,0.3) grid (1,1); \end{tikzpicture} \right)$
 
