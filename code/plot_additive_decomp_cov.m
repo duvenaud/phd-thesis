@@ -20,8 +20,6 @@ if nargin < 6; show_samples = true; end
 nstar = 400;
 dpi = 300;
 
-unify_color_scales = false;
-
 
 [N,D] = size(X);
 num_components = length(kernel_components);
@@ -101,23 +99,26 @@ for i = 1:num_components
         component2_sigma_star = feval(cur_cov2{:}, cur_hyp2, x2star, X);
         component2_sigma_starstar = feval(cur_cov2{:}, cur_hyp2, x2star);
         
-        covar = component1_sigma_star / complete_sigma * component2_sigma_star';
-        var1 = component1_sigma_star / complete_sigma * component1_sigma_star';
-        var2 = component2_sigma_star / complete_sigma * component2_sigma_star';
+        covar = -component1_sigma_star / complete_sigma * component2_sigma_star';
+        var1 = -component1_sigma_star / complete_sigma * component1_sigma_star';
+        var2 = -component2_sigma_star / complete_sigma * component2_sigma_star';
         
         % Diagonals have an extra term.
         if i == j
             covar = covar + component1_sigma_starstar; % is equal to component2_sigma_starstar
+            assert(all(component1_sigma_starstar(:) == component2_sigma_starstar(:)));
             var1 = var1 + component1_sigma_starstar;
             var2 = var2 + component2_sigma_starstar;
         end
         
         correlation = covar ./ sqrt(bsxfun(@times, diag(var1), diag(var2)'));
+        
+        assert(all(abs(correlation(:)) <= 1));
 
         % Plot posterior mean and variance.
         if savefigs
-            clf; imagesc(covar);
-            %caxis([-1 1]);
+            clf; imagesc(correlation);
+            caxis([-0.5 1]);
             
             % Make the plot look nice.
             set( gca, 'XTick', [] );
@@ -135,15 +136,23 @@ for i = 1:num_components
             filenames{i}{j} = filename;
         else
             subplot(num_components, num_components, j + (i - 1) * num_components);
-            imagesc(covar);
-            %caxis([-1 1]);
+            imagesc(correlation);
+            caxis([-0.5 1]);
         end
         
         % Keep track of max and min for unified colobar.
-        cmax = max([cmax, max(covar(:))]);
-        cmin = min([cmin, min(covar(:))]);
+        cmax = max([cmax, max(correlation(:))]);
+        cmin = min([cmin, min(correlation(:))]);
     end
 end
+
+% Print colorbar
+figure;  caxis([-0.5 1]); hc = colorbar('vert'); axis off;
+set(hc, 'FontName', 'Times New Roman', 'Fontsize', 12);
+%tightfig();
+set_fig_units_cm(10,4);
+save2pdf([file_prefix, '-colorbar.pdf'], gcf, dpi, true );
+
 
 if savefigs
     smalltext = '';
@@ -172,16 +181,6 @@ if savefigs
         end
     end
     fprintf('\\end{tabular}\n');
-end
-
-% Unify color scales.
-if unify_color_scales
-    for i = 1:num_components
-        for j = 1:num_components
-            subplot(num_components, num_components, j + (i - 1) * num_components);
-            caxis([cmin cmax]);
-        end
-    end
 end
 
 end

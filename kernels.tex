@@ -1,67 +1,35 @@
 \input{common/header.tex}
 \inbpdocument
 
-\chapter{Structure through Kernels}
+\chapter{Expressing Structure with Kernels}
 \label{ch:kernels}
 
-
-This chapter is meant as a tutorial of the different ways one can express structure in a prior over functions.
-
-We shall see that a few Gaussian identities will pop up again and again to help us reason about the covariance function affects the models we'll construct.
+In this chapter, we'll show how to use kernels (also called \emph{covariance functions}) to express many different kinds of priors on functions.
+By combining a few simple base kernels, we'll be able to create many different kinds of structured priors.
 
 
-Kernels specify similarity between function values of two objects, not between similarity of objects.
-
-
-
-%Kernel functions $\kernel : \InputSpace \times \InputSpace \to \Reals$ can be used to define a measure of similarity between two points $\inputVar, \inputVar'$ in some space $\InputSpace$.
 %\fTBD{Define $\GP\sim\dots$ here?}
-Gaussian process models use a kernel to define the covariance between any two function values: ${\textrm{Cov}(\outputVar, \outputVar') = \kernel(\inputVar,\inputVar')}$.
-%The kernel determines which sorts of structures the model places most of its probability mass upon, and in effect determines the generalization properties of the model.
-The kernel specifies which structures are likely under the \gp{} prior, which in turn determines the generalization properties of the model.
-%The kernel, $\kernel$, must define a valid covariance function\fTBD{expand me}; when this is the case $\kernel$ is said to be positive semi-definite (PSD).
-%\fTBD{RBG: we should make the distinction between kernels and kernel families, and then use it consistently}
+Gaussian process models use a kernel to define the covariance between any two function values:
+%${\textrm{Cov}(\outputVar, \outputVar') = \kernel(\inputVar,\inputVar')}$
 %
-%Examples of commonly used kernels include squared exponential (SE), periodic (Per) and linear kernels (Lin) defined below\fTBD{If we add RQ then we have everything in one place}
-%\begin{eqnarray}
-%\kernel_\textrm{SE}(\inputVar, \inputVar') = & \sigma^2\exp\left(-\frac{(\inputVar - \inputVar')^2}{2\ell^2}\right) \\
-%\kernel_\textrm{Per}(\inputVar, \inputVar') = & \sigma^2\exp\left(-\frac{2\sin^2(\pi|\inputVar - \inputVar'|/p)}{\ell^2}\right) \\
-%\kernel_\textrm{Lin}(\inputVar, \inputVar') = & \sigma_b^2 + \sigma_v^2(\inputVar - \ell)(\inputVar' - \ell).
-%\end{eqnarray}
-%
-In this section, we review the ways in which kernel families\footnotemark can be composed to express diverse priors over functions. 
-\footnotetext{When unclear from context, we use `kernel family' to refer to the parametric forms of the functions given in the appendix. A kernel is a kernel family with all of the parameters specified.}  
-
-There has been significant work on constructing \gp{} kernels and analyzing their properties, summarized in \cite[Chapter~4]{rasmussen38gaussian}. 
-%
-Commonly used kernels families include the squared exponential (\kSE), periodic (\kPer), linear (\kLin), and rational quadratic (\kRQ) (see Figure~\ref{fig:basic_kernels} and the appendix).
-%\input{\grammartablesdir/simple_kernels_table_v3.tex}
-
-\paragraph{Kernel definitions}
-For scalar-valued inputs, the squared exponential (\kSE), periodic (\kPer), linear (\kLin), and rational quadratic (\kRQ) kernels are defined as follows:
-%
-\begin{eqnarray*}
-\kernel_{\SE}(\inputVar, \inputVar') =& \sigma^2\exp\left(-\frac{(\inputVar - \inputVar')^2}{2\ell^2}\right) \\
-\kernel_{\Per}(\inputVar, \inputVar') =& \sigma^2\exp\left(-\frac{2\sin^2 (\pi(\inputVar - \inputVar')/p)}{\ell^2}\right) \\
-\kernel_{\Lin}(\inputVar, \inputVar') =& \sigma_b^2 + \sigma_v^2(\inputVar - \ell)(\inputVar' - \ell) \\
-\kernel_{\RQ}(\inputVar, \inputVar') =& \sigma^2\left( 1 + \frac{(\inputVar - \inputVar')^2}{2 \alpha \ell^2} \right)^{-\alpha}
-\end{eqnarray*}
-
-
-
-%The elements of this language are a set of base kernels capturing different function properties, and a set of composition rules which combine kernels to yield other valid kernels.
-Our base kernels are white noise ($\kWN$), constant ($\kC$), linear ($\kLin$), squared exponential ($\kSE$) and periodic ($\kPer$), which on their own encode for uncorrelated noise, constant functions, linear functions, smooth functions and periodic functions respectively.
-
-There are several ways to obtain new kernels from old. %TODO:cite
-In this chapter, we'll focus on two methods for combining two kernels: addition and multiplication.
 \begin{align}
-k_1 + k_2 =& \,\, k_1(x,x') + k_2(x,x')\\
-k_1 \times k_2 =& \,\, k_1(x,x') \times k_2(x,x')
+\textrm{Cov}\left(f(\inputVar), f(\inputVar') \right) = \kernel(\inputVar,\inputVar')
 \end{align}
+%
+Colloquially, kernels are often said to specify the similarity between two objects.
+This is slightly misleading, since what is actually being specified is the similarity between a \emph{function} of two objects.
+The kernel specifies which structures are likely under the \gp{} prior, which in turn determines the generalization properties of the model.
 
-Combining kernels using these operations can yield kernels encoding for richer structures than are encoded in the original kernels.
- such as approximate periodicity ($\kSE \times \kPer$) or smooth functions with linear trends ($\kSE + \kLin$).
+%The kernel, $\kernel$, must define a valid covariance function\fTBD{expand me}; when this is the case $\kernel$ is said to be positive semi-definite (PSD).
 
+%In this section, we review the ways in which kernel families\footnotemark can be composed to express diverse priors over functions. 
+%\footnotetext{When unclear from context, we use `kernel family' to refer to the parametric forms of the functions given in the appendix. A kernel is a kernel family with all of the parameters specified.}  
+
+
+\section{Base kernels}
+Commonly used kernels families include the squared exponential (\kSE), periodic (\kPer), linear (\kLin), and rational quadratic (\kRQ).
+These kernels are defined in figure~\ref{fig:basic_kernels}.
+%
 \newcommand{\fhbig}{2cm}
 \newcommand{\fwbig}{3cm}
 \newcommand{\kernpic}[1]{\includegraphics[height=\fhbig,width=\fwbig]{\grammarfiguresdir/structure_examples/#1}}
@@ -70,16 +38,22 @@ Combining kernels using these operations can yield kernels encoding for richer s
 \newcommand{\largeplus}{\tabbox{{\Large+}}}
 \newcommand{\largeeq}{\tabbox{{\Large=}}}
 \newcommand{\largetimes}{\tabbox{{\Large$\times$}}}
-
+\newcommand{\fixedx}{$x$ with $(x' = 1)$}
+%
 \begin{figure}[h]
 \centering
 \begin{tabular}{cccc}
+Squared-exp (\kSE)  & Periodic (\kPer) & Linear (\kLin) & Rational quadratic (\kRQ) \\[6pt]
+$\exp\left(-\frac{(\inputVar - \inputVar')^2}{2\ell^2}\right)$ &
+$\exp\left(-\frac{2}{\ell^2} \sin^2 \left( \pi \frac{\inputVar - \inputVar'}{p} \right)\right)$ &
+$(\inputVar - c)(\inputVar' - c)$ &
+$\left( 1 + \frac{(\inputVar - \inputVar')^2}{2 \alpha \ell^2} \right)^{-\alpha}$ \\[14pt]
 \kernpic{se_kernel} & \kernpic{per_kernel} & \kernpic{lin_kernel} & \kernpic{rq_kernel}\\
-Squared-exp (\kSE)  & Periodic (\kPer) & Linear (\kLin) & Rational quadratic (\kRQ) \\
+$x -x'$ & $x -x'$ & \fixedx & $x -x'$ \\
 %& & & \\
 \large $\downarrow$ & \large $\downarrow$ & \large $\downarrow$ & \large $\downarrow$  \\
 \kernpic{se_kernel_draws} & \kernpic{per_kernel_draws_s2} & \kernpic{lin_kernel_draws} & \kernpic{rq_kernel_draws}\\
-local variation           & repeating structure   & linear functions        & multi-scale variation \\
+local variation & repeating structure & linear functions & multi-scale variation \\[10pt]
 \end{tabular}
 \caption[Examples of structures expressible by base kernels]
 {Examples of structures expressible by base kernels.
@@ -88,13 +62,45 @@ Second and fourth columns: draws from a \sgp{} with each repective kernel.
 The x-axis has the same range on all plots.}
 \label{fig:basic_kernels}
 \end{figure}
+%
+There is nothing special, or exhaustive about these kernels in particular, except that they represent a diverse set.
+
+Each covariance function corresponds to a different set of assumptions made about the function we wish to model.
+For example, using a squared-exp ($\kSE$) kernel implies that the function we are modeling has infinitely many derivatives.
 
 
+\subsection{Definition of a Kernel}
 
-%\vspace{-0.5cm}
-\paragraph{Composing Kernels}
-Positive semidefinite kernels (\ie those which define valid covariance functions) are closed under addition and multiplication.
-% \ie any algebraic composition of PSD kernels will define a PSD kernel.\fTBD{Cite theorem}
+A covariance function $\kernel(x, x') : \InputSpace \times \InputSpace \to \Reals$ can be used to define a measure of similarity between two points $\inputVar, \inputVar'$ in some space $\InputSpace$.
+
+\subsubsection{Feature representation}
+%
+By Mercer's theorem,
+%(TODO:cite)
+any positive-definite kernel can be represented as the inner product between a fixed set of features, evaluated at $x$ and at $x'$:
+%
+\begin{align}
+k(x,x') = \feat(x)\tra \feat(x')
+\end{align}
+
+\gp{} regression is actually equivalent to performing Bayesian linear regression on the features $\feat(x)$.
+The link between Gaussian processes, linear regression, and neural networks is explored further in chapter~\ref{ch:deep-limits}.
+
+
+\section{Combining Kernels}
+
+There are several ways to combine existing kernels to create new ones with different properties.
+For an overview, see \cite[Chapter~4]{rasmussen38gaussian}. 
+In this chapter, we'll focus on two methods for combining kernels: addition and multiplication.
+\begin{align}
+k_1 + k_2 =& \,\, k_1(x,x') + k_2(x,x')\\
+k_1 \times k_2 =& \,\, k_1(x,x') \times k_2(x,x')
+\end{align}
+
+Combining kernels using these operations can yield kernels encoding for richer structures than are encoded in the original kernels.
+% such as approximate periodicity ($\kSE \times \kPer$) or smooth functions with linear trends ($\kSE + \kLin$).
+
+
 This allows one to create richly structured and interpretable kernels from well understood base components.
 %Figure \ref{fig:kernels} shows several examples of structured kernels that can be constructed by adding or multiplying standard base kernels.
 
@@ -104,12 +110,13 @@ These dimensions are represented using subscripts, e.g. $\SE_2$ represents an \k
 \begin{figure}[h]
 \centering
 \begin{tabular}{cccc}
-\kernpic{lin_times_lin} & \kernpic{se_times_per} & \kernpic{se_times_lin} & \kernpic{lin_times_per}\\
 $\kLin \times \kLin$ & $\kSE \times \kPer$ & $\kLin \times \kSE$ & $\kLin \times \kPer$ \\
+\kernpic{lin_times_lin} & \kernpic{se_times_per} & \kernpic{se_times_lin} & \kernpic{lin_times_per}\\
+\fixedx & $x -x'$ & \fixedx & \fixedx\\
 %& & & \\
 \large $\downarrow$ & \large $\downarrow$ & \large $\downarrow$ & \large $\downarrow$  \\
 \kernpic{lin_times_lin_draws}  & \kernpic{se_times_per_draws_s7} & \kernpic{se_times_lin_draws_s2} & \kernpic{lin_times_per_draws_s2} \\
-quadratic functions & locally \newline periodic & increasing variation       & growing amplitude \\
+quadratic functions & locally \newline periodic & increasing variation  & growing amplitude \\[10pt]
 \end{tabular}
 \caption[Examples of one-dimensional structures expressible by multiplying kernels]
 { Examples of one-dimensional structures expressible by multiplying kernels.  
@@ -126,12 +133,13 @@ Plots have same meaning as in figure \ref{fig:basic_kernels}.}
 \centering
 \begin{tabular}{cccc}
 %Composite & Draws from \gp{} & \gp{} posterior \\ \toprule
+$\kLin + \kPer$ & $\kSE + \kPer$ & $\kSE + \kLin$ & $\kSE^{(\textnormal{long})} + \kSE^{(\textnormal{short})}$ \\
 \kernpic{lin_plus_per} & \kernpic{se_plus_per} & \kernpic{se_plus_lin} & \kernpic{longse_plus_se}\\
-$\kLin + \kPer$ & $\kSE + \kPer$ & $\kSE + \kLin$ & $\kSE^{(\textnormal{long})} + \kSE$ \\
+\fixedx & $x -x'$ & \fixedx & $x -x'$\\
 %& & & \\
 \large $\downarrow$ & \large $\downarrow$ & \large $\downarrow$ & \large $\downarrow$  \\
-\kernpic{lin_plus_per_draws} & \kernpic{se_plus_per_draws_s7} & \kernpic{se_plus_lin_draws_s5} & \kernpic{rq_kernel_draws}\\
-periodic plus trend & periodic plus noise & linear plus variation & slow \& fast variation \\
+\kernpic{lin_plus_per_draws} & \kernpic{se_plus_per_draws_s7} & \kernpic{se_plus_lin_draws_s5} & \kernpic{longse_plus_se_draws_s7}\\
+periodic plus trend & periodic plus noise & linear plus variation & slow \& fast variation \\[10pt]
 \end{tabular}
 \caption[Examples of one-dimensional structures expressible by adding kernels]
 { Examples of one-dimensional structures expressible by adding kernels.  
@@ -144,23 +152,14 @@ Plots have same meaning as in figure \ref{fig:basic_kernels}.}
 
 
 By summing kernels, we can model the data as a sum of independent functions, possibly representing different structures.
-Suppose functions ${\function_1, \function_2}$ are draw from independent \gp{} priors, ${\function_1 \dist \GP(\mu_1, \kernel_1)}$, ${\function_2 \dist \GP(\mu_2, \kernel_2)}$.
+Suppose functions ${\function_1, \function_2}$ are drawn independently, ${\function_1 \dist \GP(\mu_1, \kernel_1)}$, ${\function_2 \dist \GP(\mu_2, \kernel_2)}$.
 Then 
 %
 \begin{align}
-\function := \function_1 + \function_2 \dist \GP(\mu_1 + \mu_2, \kernel_1 + \kernel_2).
+%\function := 
+\function_1 + \function_2 \dist \GP(\mu_1 + \mu_2, \kernel_1 + \kernel_2).
 \end{align}
 
-From a kernel point of view,
-
-if $k_1(\vx, \vx') = \phi_1(\vx)\tra \phi_1(\vx')$ and $k_2 = \phi_2(\vx)\tra \phi_2(\vx')$
-then
-%
-\begin{align}
-k_1(\vx, \vx') + k_2(\vx, \vx') = \phi_1(\vx)\tra \phi_1(\vx') + \phi_2(\vx)\tra \phi_2(\vx')
-\end{align}
-
-In other words, the features of $k_1 + k_2$ are the concatenation of the two sets of features.
 
 
 In time series models, sums of kernels can express superposition of different processes, possibly operating at different scales.
@@ -172,7 +171,7 @@ These two kinds of structure are demonstrated in rows 2 and 4 of figure~\ref{fig
 A theme throughout this thesis is exploring the idea that a lot of the expressivity of \gp{} models comes from the fact that these models can be combined and decomposed additively.
 
 
-\subsection{Derivation of Component Marginal Variance}
+\subsection{Component Marginal Variance}
 
 In this section, we derive the posterior marginal variance and covariance of the additive components of a \gp{}.  These formulas let us plot the marginal variance of each component separately.  These formulas can also be used to examine the posterior covariance between pairs of components.
 
@@ -233,81 +232,16 @@ We can even compute the posterior covariance between two components, conditioned
 \label{eq:post-component-cov}
 \end{align}
 %
-We conjecture that \ref{eq:post-component-cov} is always negative.
+\ref{eq:post-component-cov} is not always negative.
 
 These formulae express the posterior model uncertainty about different components of the signal, integrating over the possible configurations of the other components.
 
 
 
 
-\subsection{Interpretability in High Dimensions}
-%As noted by \citet{plate1999accuracy}, o
-One of the chief advantages of additive models such as \GAM{}s is their interpretability.
-% since a high-dimensional function is decomposed into a series of one- or two-dimensional functions.  
-\citet{plate1999accuracy} demonstrated that by allowing high-order interactions as well as low-order interactions, one can trade off interpretability with predictive accuracy.  In the case where the hyperparameters indicate that most of the variance in a function can be explained by low-order interactions, it is informative to plot the corresponding low-order functions, as in Figure \ref{fig:interpretable functions}. 
 
 
-\newcommand{\concretepic}[1]{\includegraphics[width=0.31\columnwidth]{\decompfigsdir/concrete-component-#1}}
-\newcommand{\concretelegend}[0]{\raisebox{5mm}{\includegraphics[trim=56mm 1mm 6mm 33mm, clip, width=0.2\columnwidth]{\decompfigsdir/concrete-component-1-legend}}}
-
-\begin{figure}[h]
-\centering
-\begin{tabular}{ccc}
-%\includegraphics[width=0.3\textwidth]{\additivefigsdir/interpretable_1st_order1.pdf} &
-%\includegraphics[width=0.3\textwidth]{\additivefigsdir/interpretable_1st_order2.pdf}& 
-Cement & Slag & Fly Ash\\
-\concretepic{1} & \concretepic{2} & \concretepic{3} \\
- Water & Plasticizer & Coarse\\
-\concretepic{4} & \concretepic{5} & \concretepic{6} \\
- Fine & Age \\
- \concretepic{7} & \concretepic{8} & \concretelegend \\
-\end{tabular}
-\caption[Decomposition of posterior into interpretable one-dimensional functions]
-{By considering only one-dimensional terms of the additive kernel, we recover a form of Generalized Additive Model, and can plot the corresponding 1-dimensional functions.
-Blue points indicate the original data, green points are data after the contribution from all other terms has been subtracted.
-The vertical axis is the same for all plots.
-%The black line is the posterior mean of a \sgp{} with only one term in its kernel.
-%Right:  the posterior mean of a \sgp{} with only one second-order term in its kernel.
-}
-\label{fig:interpretable functions}
-\end{figure}
-
-%rs = 1 - var(complete_mean - y)/ var(y)
-
-R-squared = 0.9094
-
-\begin{figure}[h!]
-\centering
-%
-%
-%
-\renewcommand{\tabcolsep}{1mm}
-\def\incpic#1{\includegraphics[width=0.143\columnwidth]{../figures/decomp/concrete-#1}}
-\begin{tabular}{p{2mm}*{6}{c}}
- & {Cement} & {Slag} & {Fly Ash} & {Water} & {Plasticizer} & {Age} \\ 
- \rotatebox{90}{{Cement}} & \incpic{Cement-Cement} & \incpic{Cement-Slag} & \incpic{Cement-Fly-Ash} & \incpic{Cement-Water} & \incpic{Cement-Plasticizer} & \incpic{Cement-Age} \\ 
- \rotatebox{90}{{Slag}} & \incpic{Slag-Cement} & \incpic{Slag-Slag} & \incpic{Slag-Fly-Ash} & \incpic{Slag-Water} & \incpic{Slag-Plasticizer} & \incpic{Slag-Age} \\ 
- \rotatebox{90}{{Fly Ash}} & \incpic{Fly-Ash-Cement} & \incpic{Fly-Ash-Slag} & \incpic{Fly-Ash-Fly-Ash} & \incpic{Fly-Ash-Water} & \incpic{Fly-Ash-Plasticizer} & \incpic{Fly-Ash-Age} \\ 
- \rotatebox{90}{{Water}} & \incpic{Water-Cement} & \incpic{Water-Slag} & \incpic{Water-Fly-Ash} & \incpic{Water-Water} & \incpic{Water-Plasticizer} & \incpic{Water-Age} \\ 
- \rotatebox{90}{{Plasticizer}} & \incpic{Plasticizer-Cement} & \incpic{Plasticizer-Slag} & \incpic{Plasticizer-Fly-Ash} & \incpic{Plasticizer-Water} & \incpic{Plasticizer-Plasticizer} & \incpic{Plasticizer-Age} \\ 
- \rotatebox{90}{{Age}} & \incpic{Age-Cement} & \incpic{Age-Slag} & \incpic{Age-Fly-Ash} & \incpic{Age-Water} & \incpic{Age-Plasticizer} & \incpic{Age-Age} \\ 
- \end{tabular}
-%
-%
-%
-\caption[Visualizing two-way interactions]
-{two-way interactions on the concrete dataset.
-Plots on the diagonal show the posterior covariance of each function.
-Red indicates high covariance, blue indicates low.
-Off-diagonal plots show posterior covariance between each pair of functions, as a function of both inputs.
-Because each
-The `Coarse' and `Fine' dimensions are not shown here because their variance was zero.
-}
-\label{fig:interpretable interactions}
-\end{figure}
-
-
-\paragraph{Additivity in multiple dimensions}
+\subsection{Additivity in multiple dimensions}
   
 
 %\subsection{Additivity in a GP}
@@ -379,6 +313,78 @@ Figure \ref{fig:synth2d} shows a dataset which demonstrates this feature of addi
 
 
 
+\subsection{Interpretability in High Dimensions}
+%As noted by \citet{plate1999accuracy}, o
+One of the chief advantages of additive models such as \GAM{}s is their interpretability.
+% since a high-dimensional function is decomposed into a series of one- or two-dimensional functions.  
+\citet{plate1999accuracy} demonstrated that by allowing high-order interactions as well as low-order interactions, one can trade off interpretability with predictive accuracy.  In the case where the hyperparameters indicate that most of the variance in a function can be explained by low-order interactions, it is informative to plot the corresponding low-order functions, as in Figure \ref{fig:interpretable functions}. 
+
+
+\newcommand{\concretepic}[1]{\includegraphics[width=0.31\columnwidth]{\decompfigsdir/concrete-component-#1}}
+\newcommand{\concretelegend}[0]{\raisebox{5mm}{\includegraphics[trim=56mm 1mm 6mm 33mm, clip, width=0.2\columnwidth]{\decompfigsdir/concrete-component-1-legend}}}
+
+\begin{figure}[h]
+\centering
+\begin{tabular}{ccc}
+%\includegraphics[width=0.3\textwidth]{\additivefigsdir/interpretable_1st_order1.pdf} &
+%\includegraphics[width=0.3\textwidth]{\additivefigsdir/interpretable_1st_order2.pdf}& 
+Cement & Slag & Fly Ash\\
+\concretepic{1} & \concretepic{2} & \concretepic{3} \\
+ Water & Plasticizer & Coarse\\
+\concretepic{4} & \concretepic{5} & \concretepic{6} \\
+ Fine & Age \\
+ \concretepic{7} & \concretepic{8} & \concretelegend \\
+\end{tabular}
+\caption[Decomposition of posterior into interpretable one-dimensional functions]
+{By considering only one-dimensional terms of the additive kernel, we recover a form of Generalized Additive Model, and can plot the corresponding 1-dimensional functions.
+Blue points indicate the original data, green points are data after the contribution from all other terms has been subtracted.
+The vertical axis is the same for all plots.
+%The black line is the posterior mean of a \sgp{} with only one term in its kernel.
+%Right:  the posterior mean of a \sgp{} with only one second-order term in its kernel.
+}
+\label{fig:interpretable functions}
+\end{figure}
+
+%rs = 1 - var(complete_mean - y)/ var(y)
+
+R-squared = 0.9094
+
+\begin{figure}[h!]
+\centering
+%
+%
+%
+\renewcommand{\tabcolsep}{1mm}
+\def\incpic#1{\includegraphics[width=0.1\columnwidth]{../figures/decomp/concrete-#1}}
+\begin{tabular}{p{2mm}*{6}{c}}
+ & {Cement} & {Slag} & {Fly Ash} & {Water} & \parbox{0.1\columnwidth}{Plasticizer} & {Age} \\ 
+ \rotatebox{90}{{Cement}} & \incpic{Cement-Cement} & \incpic{Cement-Slag} & \incpic{Cement-Fly-Ash} & \incpic{Cement-Water} & \incpic{Cement-Plasticizer} & \incpic{Cement-Age} \\ 
+ \rotatebox{90}{{Slag}} & \incpic{Slag-Cement} & \incpic{Slag-Slag} & \incpic{Slag-Fly-Ash} & \incpic{Slag-Water} & \incpic{Slag-Plasticizer} & \incpic{Slag-Age} \\ 
+ \rotatebox{90}{{Fly Ash}} & \incpic{Fly-Ash-Cement} & \incpic{Fly-Ash-Slag} & \incpic{Fly-Ash-Fly-Ash} & \incpic{Fly-Ash-Water} & \incpic{Fly-Ash-Plasticizer} & \incpic{Fly-Ash-Age} \\ 
+ \rotatebox{90}{{$\quad$Water}} & \incpic{Water-Cement} & \incpic{Water-Slag} & \incpic{Water-Fly-Ash} & \incpic{Water-Water} & \incpic{Water-Plasticizer} & \incpic{Water-Age} \\ 
+ \rotatebox{90}{\parbox{0.1\columnwidth}{Plasticizer}} & \incpic{Plasticizer-Cement} & \incpic{Plasticizer-Slag} & \incpic{Plasticizer-Fly-Ash} & \incpic{Plasticizer-Water} & \incpic{Plasticizer-Plasticizer} & \incpic{Plasticizer-Age} \\ 
+ \rotatebox{90}{{Age}} & \incpic{Age-Cement} & \incpic{Age-Slag} & \incpic{Age-Fly-Ash} & \incpic{Age-Water} & \incpic{Age-Plasticizer} & \incpic{Age-Age} \\
+ \end{tabular}
+\includegraphics[width=0.1\columnwidth, clip, trim=6.25cm 0cm 0cm 0cm]{../figures/decomp/concrete-colorbar}
+%
+%
+%
+\caption[Visualizing posterior correlations between components]
+{Visualizing posterior correlations between the components explaining the concrete dataset.
+%Plots on the diagonal show the posterior correlation of each function.
+Each plot shows the posterior correlation between two components.
+Within each plot, color indicates the amount of correlation between the function value of the two components.
+Red indicates high correlation, teal indicates no correlation, and blue indicates negative correlation.
+%Off-diagonal plots show posterior covariance between each pair of functions, as a function of both inputs.
+%Because each
+We can see that there is negative correlation between the ``Cement'' and ``Slag'' variables.  This reflects a degeneracy in the model.
+%TODO: explain the degeneracy.
+The `Coarse' and `Fine' dimensions are not shown here because their variance was zero.
+}
+\label{fig:interpretable interactions}
+\end{figure}
+
+
 
 
 \section{Structure through Multiplication}
@@ -393,16 +399,7 @@ Composite kernels can be viewed in this way too. A sum of kernels can be underst
 Similarly, multiplying kernels is an AND-like operation, since two points are considered similar only if both kernels have high values.
 Since we are applying these operations to the similarity functions rather than the regression functions themselves, compositions of even a few base kernels are able to capture complex relationships in data which do not have a simple parametric form.
 
-From a kernel point of view,
 
-if $k_1(\vx, \vx') = \phi_1(\vx)\tra \phi_1(\vx')$ and $k_2 = \phi_2(\vx)\tra \phi_2(\vx')$
-then
-%
-\begin{align}
-k_1(\vx, \vx') \times k_2(\vx, \vx') = \left[\phi_1(\vx) + \phi_2(\vx)\right]\tra \left[ \phi_1(\vx') + \phi_2(\vx') \right]
-\end{align}
-
-In other words, the features of $k_1 \times k_2$ are the cartesian product (all possible combinations) of the original sets of features.
 
 
 \subsection{Multiplying with constant functions}
@@ -412,13 +409,53 @@ If we wish to model a function that's been multiplied by some fixed function $a(
 This is why it is common practice to assume zero mean, since marginalizing over an unknown mean function can be equivalently expressed as a zero-mean \gp{} with a new kernel.
 
 
+\section{Feature-space view of combining kernels}
+
+We can also view kernel addition and multiplication as a combination of the features of the original kernels.
+
+Viewing kernel addition from this point of view, if
+%
+\begin{align}
+k_1(\iva, \iva') & = \feat_1(\iva)\tra \feat_1(\iva')\\
+k_2(\iva, \iva') & = \feat_2(\iva)\tra \feat_2(\iva')
+\end{align}
+%
+then
+%
+\begin{align}
+k_1(\iva, \iva') + k_2(\iva, \iva)
+& = \feat_1(\iva)\tra \feat_2(\iva') + \feat_1(\iva)\tra \feat_2(\iva') \\
+& = \colvec{\feat_1(\iva)}{\feat_2(\iva)}^\tra \colvec{\feat_1(\iva')}{\feat_2(\iva')}
+\end{align}
+
+In other words, the features of $k_1 + k_2$ are the concatenation of the features of each kernel.
+
+We can examine kernel multiplication in a similar way:
+%
+\begin{align}
+k_1(\iva, \iva') + k_2(\iva, \iva')
+& = \left[ \feat_1(\iva)\tra \feat_1(\iva') \right] \times \left[ \feat_2(\iva)\tra \feat_2(\iva') \right] \\
+%& = \left[ \begin{array}{c} \feat_1(\iva) \\ \feat_2(\iva) \end{array} \right]^\tra \left[ \begin{array}{c} \feat_1(\iva') \\ \feat_2(\iva') \end{array} \right]
+& = \sum_i h_i(\iva) h_i(\iva') \times \sum_j h_j(\iva) h_j(\iva') \\
+& = \sum_i \sum_j h_i(\iva) h_i(\iva') h_j(\iva) h_j(\iva') \\
+& = \sum_{i,j} \left[ h_i(\iva) h_j(\iva) \right] \left[ h_i(\iva') h_j(\iva') \right] \\
+& = \vecop{ \feat(\iva) \otimes \feat(\iva') } \tra \vecop{ \feat(\iva) \otimes \feat(\iva')} 
+\end{align}
+
+In other words, the features of $k_1 \times k_2$ are the cartesian product (all possible combinations) of the original sets of features.
+For example, one set of features $\feat(\iva)$ corresponding to a one-dimensional $\kSE$ kernel is a set of infinitely many Gaussian bumps spread along the real line.
+Multiplied by an $\kSE$ kernel in another dimension, the resulting features are a set of two-dimensional Gaussian bumps, covering the plane.
 
 
 \subsection{Signal versus noise}
 
-In most derivations of Gaussian processes, the model is given as $y = f + \epsilon$, where $\epsilon \simiid \Nt{0}{\sigma^2_{\textnormal{noise}}}$.
+In most derivations of Gaussian processes, the model is given as
+%
+\begin{align}
+y = f(\inputVar) + \epsilon, \quad \textnormal{where} \quad \epsilon \simiid \Nt{0}{\sigma^2_{\textnormal{noise}}}
+\end{align}
 
-However, $\epsilon$ can equivalently be thought of as another Gaussian process, and so this model can be written as $f \sim \GP\left(0, k + \delta \right)$.  The lack of a hard distinction between the noise model and the signal model raises the larger question:  Which part of a model represents signal, and which represents noise?
+However, $\epsilon$ can equivalently be thought of as another Gaussian process, and so this model can be written as $y(\inputVar) \sim \GP\left(0, k + \delta \right)$.  The lack of a hard distinction between the noise model and the signal model raises the larger question:  Which part of a model represents signal, and which represents noise?
 
 Our answer is: \emph{it depends on what you want to do with the model}.  For example: often, we don't care about the short-term variations in a function, and only in the long-term trend.  However, in many other cases, we with to de-trend our data to see more clearly how much a particular part of the signal deviated from normal.
 
@@ -454,7 +491,8 @@ given a symmetry $\Phi$, and $f \sim \GPt{0}{k(\vx,\vx')}$, $f$ is invariant und
 
 In this section, we give recipes for expressing several classes of symmetries.  Later, we will show how these can be combined to produce more interesting structures.
 
-\paragraph{Periodicity}
+
+\subsection{Periodicity}
 Given $D$ dimensions, we can enforce rotational symmetry on any subset of the dimensions:
 %
 \begin{align}
@@ -470,7 +508,8 @@ k_{\textnormal{periodic}}(x, x') = k(\sin(x), \cos(x), \sin(x'), \cos(x'))
 %
 We can also apply rotational symmetry repeatedy to a single dimension.
 
-\paragraph{Reflective Symmetry along an axis}
+
+\subsection{Reflective Symmetry along an axis}
 we can enforce the symmetry
 \begin{align}
 f(x) = f( -x)
@@ -484,7 +523,8 @@ k_{\textnormal{symm arg1}}(x, x') & = k(x, x') + k(x, -x') + k(-x, x') + k(-x, -
 %
 Note that, because $k(\vx, \vx') = k(\vx', \vx')$ for any PSD kernel, so we don't need to include the corresponding terms $k(-x, x')$ and $k(-x, -x')$.
 
-\paragraph{Reflective Symmetry along a diagonal}
+
+\subsection{Reflective Symmetry along a diagonal}
 We can enforce symmetry between any two dimensions:
 %
 \begin{align}
@@ -556,9 +596,9 @@ All three methods introduce a different type of nonstationarity.
 
 %\cite{flanders1989}
 
-\subsection{Parametric embeddings}
+%\subsection{Parametric embeddings}
 
-In general, we can always enforce the symmetries obeyed by a given surface by finding a parametric embedding to that surface.  However, it is not clear how to do this in general without introducing unnecessary 
+%In general, we can always enforce the symmetries obeyed by a given surface by finding a parametric embedding to that surface.  However, it is not clear how to do this in general without introducing unnecessary 
 
 
 %It is possible to construct
@@ -778,8 +818,7 @@ where $T_{ij}(\vx)$ is the operator which replaces each $x_{mn}$ with $x_{m+i, n
 
 
 
-
-
+\iffalse
 
 \section{Worked example: building a structured kernel for a time-series}
 
@@ -818,7 +857,7 @@ Long-term trend & Weekly periodicity &Yearly periodicity \\
 %\subsection{Incoportating discrete covariates}
 
 %\subsection{Breaking down the predictions, examining different parts of the model}
-
+\fi
 
 \section{Conclusion}
 
