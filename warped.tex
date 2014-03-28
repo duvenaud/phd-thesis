@@ -344,12 +344,12 @@ The second term can be calculated as follows:
 = -\nu_{z_{n}}\bm{S}_{z_{n}}^{-1}(\vx_{n}-\vu_{z_{n}}).
 \end{align}
 We also infer kernel hyperparameters $\bm{\theta}=\{\alpha,\beta,\ell\}$ via HMC, using the gradient of the log unnormalized posterior with respect to the kernel hyperparameters.
-The complexity of each iteration of HMC is dominated by the $\mathcal{O}(N^3)$ computation of $\vK\inv$
-\footnote{This complexity could be improved by making use of an inducing point approximation such as \cite{quinonero2005unifying,snelson2006sparse}}.
+The complexity of each iteration of HMC is dominated by the $\mathcal{O}(N^3)$ computation of $\vK\inv$.
+This complexity could be improved by making use of an inducing-point approximation such as \citep{quinonero2005unifying,snelson2006sparse}.
 
 
 In summary, we obtain samples from the posterior $p(\vX,\vZ|\vY,\bm{\theta},\vS,\nu,\vu,r,\eta)$ 
-by iterating the following procedures:
+by iterating the following steps:
 \begin{enumerate}
 \item For each observation $n=1,\cdots,N$,
 %\begin{enumerate}

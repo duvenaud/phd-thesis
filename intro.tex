@@ -12,11 +12,16 @@
 \end{quotation}
 
 
-\section{Regression}
+\nomenclature[g-pi]{$\pi$}{ $\simeq 3.14\ldots$}
+
+%\section{Regression}
 
 % These two paras written with James L and Zoubin
-The general problem of regression consists of learning a function $f$ mapping from some input space $\mathcal{X}$ to some output space $\mathcal{Y}$.
-We would like an expressive language which can represent both simple parametric forms of $f$ such as linear, polynomial, \etc and also complex nonparametric functions specified in terms of properties such as smoothness, periodicity, \etc~ 
+Regression is usually stated mathematically as the problem learning a function $f(\iva)$ mapping from some inputs to some outputs.
+From a human's point of view, the problem is closer to: Which method should I use?  What model class or software will probably work well?  Is my current method silently failing?
+
+
+We would like an expressive language which can represent both simple parametric forms of $f(\iva)$ such as linear, polynomial, \etc and also complex nonparametric functions specified in terms of properties such as smoothness, periodicity, \etc~ 
 Fortunately, Gaussian processes (\gp{}s) provide a very general and analytically tractable way of capturing both simple and complex functions. 
 
 \section{Gaussian process models}
