@@ -394,12 +394,20 @@ Since this dataset was analyzed in detail by \citet{rasmussen38gaussian}, we can
 \newcommand{\hmgd}{3.51cm}  % height mauna decomp
 \newcommand{\mdrd}{\grammarfiguresdir/decomposition/11-Feb-03-mauna2003-s}  % mauna decomp results dir
 \newcommand{\mbm}{\hspace{-0.2cm}}  % move back
+\newcommand{\maunadgfx}[1]{\mbm \includegraphics[width=\wmgd,height=\hmgd, clip, trim=0mm 0mm 0mm 6mm]{\mdrd/03-mauna2003-s_#1}}
 \begin{tabular}{cc}
-\mbm \includegraphics[width=\wmgd,height=\hmgd]{\mdrd/03-mauna2003-s_all} = \\
-\mbm \includegraphics[width=\wmgd,height=\hmgd]{\mdrd/03-mauna2003-s_1} + 
-\mbm \includegraphics[width=\wmgd,height=\hmgd]{\mdrd/03-mauna2003-s_2_zoom} \\ + 
-\mbm \includegraphics[width=\wmgd,height=\hmgd]{\mdrd/03-mauna2003-s_3} + 
-\mbm \includegraphics[width=\wmgd,height=\hmgd]{\mdrd/03-mauna2003-s_resid}
+\multicolumn{2}{c}{
+\begin{tabular}{c}
+Complete Model: 
+$\kLin \times \kSE + \kSE \times ( \kPer + \RQ ) + \kWN$ \\
+\maunadgfx{all}
+\end{tabular}
+} \\\\
+%\multicolumn{2}{c}{Decomposition} \\
+Long-term trend: $\Lin \times \SE$ & Yearly Periodic: $\SE \times \Per$ \\
+\maunadgfx{1} & \maunadgfx{2_zoom} \\[1em]
+Short-term deviation: $\SE \times \RQ$ & Noise: \kWN \\
+\maunadgfx{3} & \maunadgfx{resid}
 \end{tabular}
 \caption[Model decomposition of the Mauna-Loa time-series]
 {First row: The posterior on the Mauna Loa dataset, after a search of depth 10.  Subsequent rows show the automatic decomposition of the time series.  The decompositions shows long-term, yearly periodic, medium-term anomaly components, and residuals, respectively.  In the third row, the scale has been changed in order to clearly show the yearly periodic structure.}
@@ -507,7 +515,34 @@ Level 1: & Level 2: & Level 3: \\
 
 \paragraph{Airline passenger data}
 
-
+\begin{figure}[H]
+\centering
+\newcommand{\wagd}{0.48\columnwidth}  % width airline decomp
+\newcommand{\hagd}{4cm}  % height airline decomp
+\newcommand{\mb}{\hspace{-0.2cm}}  % move back
+%\newcommand{\ard}{../figures/decomposition/11-Feb-01-airline-s}  % airline results dir
+%\newcommand{\ard}{\grammarfiguresdir/decomposition/31-Jan-v301-airline-months}  % airline results dir
+\newcommand{\ard}{\grammarfiguresdir/decomposition/19-Jan-2014-airline-months}  % airline results dir
+\newcommand{\airdgfx}[1]{\mb \includegraphics[width=\wagd,height=\hagd, clip, trim=10mm 0mm 14mm 8mm]{\ard/#1} }
+%
+\begin{tabular}{cc}
+\multicolumn{2}{c}{
+\begin{tabular}{c}
+Complete Model \\
+\airdgfx{01-airline_all}
+\end{tabular}
+} \\
+%\multicolumn{2}{c}{Decomposition} \\
+Long-term trend & Yearly Periodic \\
+ \airdgfx{01-airline_1_extrap} & \airdgfx{01-airline_2_extrap}\\
+ Short-term deviation & Noise \\
+ \airdgfx{01-airline_3_extrap} & \airdgfx{01-airline_4_extrap}
+\end{tabular}
+\caption[Decomposition of model discovered on airline dataset]
+{First row:  The airline dataset and posterior after a search of depth 10.  Subsequent rows: Additive decomposition of posterior into long-term smooth trend, yearly variation, and short-term deviations.  Due to the linear kernel, the marginal variance grows over time, making this a heteroskedastic model. 
+}
+\label{fig:airline_decomp}
+\end{figure}
 
 Figure \ref{fig:airline_decomp} shows the decomposition produced by applying our method to monthly totals of international airline passengers~\citep{box2011time}.
 We observe similar components to the previous dataset: a long term trend, annual periodicity and medium-term deviations.
@@ -1075,35 +1110,6 @@ The posterior and residuals of the learned kernel are shown in figure \ref{fig:s
 %The composite kernel captures the periodic structure in the data, but does not capture the flat structure from 1645 to 1715 during which sunspots were extremely rare.
 %but it misses out on another aspect of the data: the flat period from 1645 to 1715 which contains no periodicity and has much smaller variance than the rest of the dataset.
 %This corresponds to the Maunder minimum, a period in which sunspots were extremely rare.
-\begin{figure}[H]
-\centering
-\newcommand{\wagd}{0.48\columnwidth}  % width airline decomp
-\newcommand{\hagd}{4cm}  % height airline decomp
-\newcommand{\mb}{\hspace{-0.2cm}}  % move back
-%\newcommand{\ard}{../figures/decomposition/11-Feb-01-airline-s}  % airline results dir
-%\newcommand{\ard}{\grammarfiguresdir/decomposition/31-Jan-v301-airline-months}  % airline results dir
-\newcommand{\ard}{\grammarfiguresdir/decomposition/19-Jan-2014-airline-months}  % airline results dir
-\newcommand{\airdgfx}[1]{\mb \includegraphics[width=\wagd,height=\hagd, clip, trim=10mm 0mm 14mm 8mm]{\ard/#1} }
-\newcommand{\raiseplus}[1]{ \raisebox{1.7cm} {\large #1}}
-\begin{tabular}{cc}
-\multicolumn{2}{c}{
-\begin{tabular}{c}
-Complete Model \\
-\airdgfx{01-airline_all}
-\end{tabular}
-} \\
-%\multicolumn{2}{c}{Decomposition} \\
-Long-term trend & Yearly Periodic \\
- \airdgfx{01-airline_1_extrap} & \airdgfx{01-airline_2_extrap}\\
- Short-term deviation & Noise \\
- \airdgfx{01-airline_3_extrap} & \airdgfx{01-airline_4_extrap}
-\end{tabular}
-\caption[Decomposition of model discovered on airline dataset]
-{First row:  The airline dataset and posterior after a search of depth 10.  Subsequent rows: Additive decomposition of posterior into long-term smooth trend, yearly variation, and short-term deviations.  Due to the linear kernel, the marginal variance grows over time, making this a heteroskedastic model. 
-%\TBD{RBG: We allow heteroskedastic noise in our models?}
-}
-\label{fig:airline_decomp}
-\end{figure}
 %
 None of the models in our search space are capable of parsimoniously representing the lack of variation from 1645 to 1715. %, since all of the base kernels apart from \kLin{} are stationary.
 %, and it is hard to see how Lin would help in modeling this structure.
