@@ -133,6 +133,6 @@ end
 
 
 function nice_figure_save(filename) 
-    myaa('publish');
-    savepng(gcf, ['../figures/additive/', filename]);
+    myaa('mypublish', ['../figures/additive/', filename]);
+    %savepng(gcf, ['../figures/additive/', filename]);
 end

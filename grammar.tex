@@ -581,21 +581,26 @@ The posterior and residuals of the learned kernel are shown in figure \ref{fig:s
 %This corresponds to the Maunder minimum, a period in which sunspots were extremely rare.
 \begin{figure}[H]
 \centering
-\newcommand{\wagd}{0.5\columnwidth}  % width airline decomp
-\newcommand{\hagd}{3.6cm}  % height airline decomp
+\newcommand{\wagd}{0.48\columnwidth}  % width airline decomp
+\newcommand{\hagd}{4cm}  % height airline decomp
 \newcommand{\mb}{\hspace{-0.2cm}}  % move back
 %\newcommand{\ard}{../figures/decomposition/11-Feb-01-airline-s}  % airline results dir
-\newcommand{\ard}{\grammarfiguresdir/decomposition/31-Jan-v301-airline-months}  % airline results dir
+%\newcommand{\ard}{\grammarfiguresdir/decomposition/31-Jan-v301-airline-months}  % airline results dir
+\newcommand{\ard}{\grammarfiguresdir/decomposition/19-Jan-2014-airline-months}  % airline results dir
+\newcommand{\airdgfx}[1]{\mb \includegraphics[width=\wagd,height=\hagd, clip, trim=10mm 0mm 14mm 8mm]{\ard/#1} }
+\newcommand{\raiseplus}[1]{ \raisebox{1.7cm} {\large #1}}
 \begin{tabular}{cc}
-\mb \includegraphics[width=\wagd,height=\hagd]{\ard/01-airline-months_all} 
- = & \\ 
-\mb \includegraphics[width=\wagd,height=\hagd]{\ard/01-airline-months_1} 
- + 
-\mb \includegraphics[width=\wagd,height=\hagd]{\ard/01-airline-months_2} 
- + \\
-\mb \includegraphics[width=\wagd,height=\hagd]{\ard/01-airline-months_3} 
- + 
-\mb \includegraphics[width=\wagd,height=\hagd]{\ard/01-airline-months_resid}
+\multicolumn{2}{c}{
+\begin{tabular}{c}
+Complete Model \\
+\airdgfx{01-airline_all}
+\end{tabular}
+} \\
+%\multicolumn{2}{c}{Decomposition} \\
+Long-term trend & Yearly Periodic \\
+ \airdgfx{01-airline_1_extrap} & \airdgfx{01-airline_2_extrap}\\
+ Short-term deviation & Noise \\
+ \airdgfx{01-airline_3_extrap} & \airdgfx{01-airline_4_extrap}
 \end{tabular}
 \caption[Decomposition of model discovered on airline dataset]
 {First row:  The airline dataset and posterior after a search of depth 10.  Subsequent rows: Additive decomposition of posterior into long-term smooth trend, yearly variation, and short-term deviations.  Due to the linear kernel, the marginal variance grows over time, making this a heteroskedastic model. 
@@ -915,7 +920,7 @@ We believe this procedure has the potential to make powerful statistical model-b
 \begin{table*}[ht!]
 \caption[Kernels chosen on synthetic data generated using known kernel structures]
 {%Kernels used to generate synthetic data, dimensionality, $D$, of the input space, and the estimated kernels.% at different signal to noise ratios (SNR).
-Kernels chosen by our method on synthetic data generated using known kernel structures. $D$ denotes the dimension of the functions being modeled.  SNR indicates the signal-to-noise ratio. Dashes - indicate no structure.
+Kernels chosen by our method on synthetic data generated using known kernel structures. $D$ denotes the dimension of the functions being modeled.  SNR indicates the signal-to-noise ratio. Dashes - indicate no structure was found.
 %The two kernels marked with an asterisk * indicate when the search procedure inferred extraneous structure.
 }
 \label{tbl:synthetic}
