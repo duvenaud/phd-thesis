@@ -386,20 +386,6 @@ Since this dataset was analyzed in detail by \citet{rasmussen38gaussian}, we can
 %First, we revisit a dataset explored in \mbox{\cite{rasmussen38gaussian}}%, pages 120-126
 %, where a kernel was hand-tailored to fit a \gp{} model to the dataset.
 
-\begin{figure}
-\centering
-\newcommand{\wmg}{0.34\columnwidth}  % width maunu growth
-\newcommand{\hmg}{3.2cm}  % height maunu growth
-\begin{tabular}{c}
-\hspace{-0.3cm} \includegraphics[width=\wmg,height=\hmg]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_0/03-mauna2003-s_all_small} 
-\hspace{-0.3cm} \includegraphics[width=\wmg,height=\hmg]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_1/03-mauna2003-s_all_small}
-\hspace{-0.3cm} \includegraphics[width=\wmg,height=\hmg]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_2/03-mauna2003-s_all_small}
-\end{tabular}
-\caption[Comparison of models found at different deptsh of the kernel search]
-{Posterior mean and variance for different depths of kernel search.  The dashed line marks the extent of the dataset.  In the first column, the function is only modeled as a locally smooth function, and the extrapolation is poor.  Next, a periodic component is added, and the extrapolation improves.  At depth 3, the kernel can capture most of the relevant structure, and is able to extrapolate reasonably. %\TBD{RBG: (1) I think we somehow need to visualize the lengthscales, to make it obvious that the SE kernels really mean different things. (2) Why isn't SE + PE the correct answer?}
-}
-\label{fig:mauna_grow}
-\end{figure}
 
 
 
@@ -503,12 +489,14 @@ We also plot the residuals, observing that there is little obvious structure lef
 
 \begin{figure}[h]
 \centering
-\newcommand{\wmg}{0.34\columnwidth}  % width maunu growth
+\newcommand{\wmg}{0.31\columnwidth}  % width maunu growth
 \newcommand{\hmg}{3.2cm}  % height maunu growth
-\begin{tabular}{c}
-\hspace{-0.3cm} \includegraphics[width=\wmg,height=\hmg]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_0/03-mauna2003-s_all_small} 
-\hspace{-0.3cm} \includegraphics[width=\wmg,height=\hmg]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_1/03-mauna2003-s_all_small}
-\hspace{-0.3cm} \includegraphics[width=\wmg,height=\hmg]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_2/03-mauna2003-s_all_small}
+\newcommand{\maunadecomp}[1]{\hspace{-0.3cm}
+\includegraphics[width=\wmg,height=\hmg, clip,trim=0mm 0mm 0mm 7mm]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_#1/03-mauna2003-s_all_small}}
+\begin{tabular}{ccc}
+Level 1: & Level 2: & Level 3: \\
+\RQ & $\SE \times (\Per + \RQ )$ & $ \SE + \SE \times (\Per + \RQ )$ \\[0.5em]
+\maunadecomp{0} & \maunadecomp{2} & \maunadecomp{3} \\[0.5em]
 \end{tabular}
 \caption[Progression of models as the search depth increases]
 {Posterior mean and variance for different depths of kernel search.  The dashed line marks the extent of the dataset.  In the first column, the function is only modeled as a locally smooth function, and the extrapolation is poor.  Next, a periodic component is added, and the extrapolation improves.  At depth 3, the kernel can capture most of the relevant structure, and is able to extrapolate reasonably. %\TBD{RBG: (1) I think we somehow need to visualize the lengthscales, to make it obvious that the SE kernels really mean different things. (2) Why isn't SE + PE the correct answer?}
@@ -556,64 +544,6 @@ In addition, the composite kernel captures the near-linearity of the long-term t
 %The accuracy experiments show that our method consistently matches or beats previous state of the art regression methods (\TBD{not yet statistically significantly within each experiment - more experiments currently running\ldots}).
 %The decomposition experiments produce highly interpretable decompositions of time series data and highly plausible extrapolations; a particularly rare property of naively applied (linear) smoothers (\TBD{justify comment - e.g.~local linear is just linear, GP Sq-Exp nose dives towards the mean}).
 
-
-
-\paragraph{Solar irradiance Data} 
-Finally, we analyzed annual solar irradiation data from 1610 to 2011 \citep{lean1995reconstruction}.
-%
-\begin{figure}
-\newcommand{\wsd}{0.5\columnwidth}  % width solar decomp
-\newcommand{\hsd}{4cm}  % height solar decomp
-\newcommand{\srd}{\grammarfiguresdir/decomposition/11-Feb-02-solar-s}  % solar decomp results dir
-\newcommand{\mbs}{\hspace{-0.3cm}}  % move back
-\begin{tabular}{cc}
-\mbs \includegraphics[width=\wsd,height=\hsd]{\srd/02-solar-s_all} &
-\mbs \includegraphics[width=\wsd,height=\hsd]{\srd/02-solar-s_resid}
-\end{tabular}
-\caption[Decomposition of model discovered on solar irradiance dataset]
-{Full posterior and residuals on the solar irradiance dataset.}
-\label{fig:solar_decomp}
-\end{figure}
-%
-The posterior and residuals of the learned kernel are shown in figure \ref{fig:solar_decomp}.
-%The composite kernel captures the periodic structure in the data, but does not capture the flat structure from 1645 to 1715 during which sunspots were extremely rare.
-%but it misses out on another aspect of the data: the flat period from 1645 to 1715 which contains no periodicity and has much smaller variance than the rest of the dataset.
-%This corresponds to the Maunder minimum, a period in which sunspots were extremely rare.
-\begin{figure}[H]
-\centering
-\newcommand{\wagd}{0.48\columnwidth}  % width airline decomp
-\newcommand{\hagd}{4cm}  % height airline decomp
-\newcommand{\mb}{\hspace{-0.2cm}}  % move back
-%\newcommand{\ard}{../figures/decomposition/11-Feb-01-airline-s}  % airline results dir
-%\newcommand{\ard}{\grammarfiguresdir/decomposition/31-Jan-v301-airline-months}  % airline results dir
-\newcommand{\ard}{\grammarfiguresdir/decomposition/19-Jan-2014-airline-months}  % airline results dir
-\newcommand{\airdgfx}[1]{\mb \includegraphics[width=\wagd,height=\hagd, clip, trim=10mm 0mm 14mm 8mm]{\ard/#1} }
-\newcommand{\raiseplus}[1]{ \raisebox{1.7cm} {\large #1}}
-\begin{tabular}{cc}
-\multicolumn{2}{c}{
-\begin{tabular}{c}
-Complete Model \\
-\airdgfx{01-airline_all}
-\end{tabular}
-} \\
-%\multicolumn{2}{c}{Decomposition} \\
-Long-term trend & Yearly Periodic \\
- \airdgfx{01-airline_1_extrap} & \airdgfx{01-airline_2_extrap}\\
- Short-term deviation & Noise \\
- \airdgfx{01-airline_3_extrap} & \airdgfx{01-airline_4_extrap}
-\end{tabular}
-\caption[Decomposition of model discovered on airline dataset]
-{First row:  The airline dataset and posterior after a search of depth 10.  Subsequent rows: Additive decomposition of posterior into long-term smooth trend, yearly variation, and short-term deviations.  Due to the linear kernel, the marginal variance grows over time, making this a heteroskedastic model. 
-%\TBD{RBG: We allow heteroskedastic noise in our models?}
-}
-\label{fig:airline_decomp}
-\end{figure}
-%
-None of the models in our search space are capable of parsimoniously representing the lack of variation from 1645 to 1715. %, since all of the base kernels apart from \kLin{} are stationary.
-%, and it is hard to see how Lin would help in modeling this structure.
-%
-%
-Despite this, our approach fails gracefully: the learned kernel still captures the periodic structure, and the quickly growing posterior variance demonstrates that the model is uncertain about long term structure.
 
 
 
@@ -1116,5 +1046,72 @@ All \gp{} parameter optimisation was performed by automated calls to the GPML to
 \bibliographystyle{plainnat}
 \bibliography{references.bib}
 }
+
+
+
+
+
+\iffalse
+
+
+\paragraph{Solar irradiance Data} 
+Finally, we analyzed annual solar irradiation data from 1610 to 2011 \citep{lean1995reconstruction}.
+%
+\begin{figure}
+\newcommand{\wsd}{0.5\columnwidth}  % width solar decomp
+\newcommand{\hsd}{4cm}  % height solar decomp
+\newcommand{\srd}{\grammarfiguresdir/decomposition/11-Feb-02-solar-s}  % solar decomp results dir
+\newcommand{\mbs}{\hspace{-0.3cm}}  % move back
+\begin{tabular}{cc}
+\mbs \includegraphics[width=\wsd,height=\hsd]{\srd/02-solar-s_all} &
+\mbs \includegraphics[width=\wsd,height=\hsd]{\srd/02-solar-s_resid}
+\end{tabular}
+\caption[Decomposition of model discovered on solar irradiance dataset]
+{Full posterior and residuals on the solar irradiance dataset.}
+\label{fig:solar_decomp}
+\end{figure}
+%
+The posterior and residuals of the learned kernel are shown in figure \ref{fig:solar_decomp}.
+%The composite kernel captures the periodic structure in the data, but does not capture the flat structure from 1645 to 1715 during which sunspots were extremely rare.
+%but it misses out on another aspect of the data: the flat period from 1645 to 1715 which contains no periodicity and has much smaller variance than the rest of the dataset.
+%This corresponds to the Maunder minimum, a period in which sunspots were extremely rare.
+\begin{figure}[H]
+\centering
+\newcommand{\wagd}{0.48\columnwidth}  % width airline decomp
+\newcommand{\hagd}{4cm}  % height airline decomp
+\newcommand{\mb}{\hspace{-0.2cm}}  % move back
+%\newcommand{\ard}{../figures/decomposition/11-Feb-01-airline-s}  % airline results dir
+%\newcommand{\ard}{\grammarfiguresdir/decomposition/31-Jan-v301-airline-months}  % airline results dir
+\newcommand{\ard}{\grammarfiguresdir/decomposition/19-Jan-2014-airline-months}  % airline results dir
+\newcommand{\airdgfx}[1]{\mb \includegraphics[width=\wagd,height=\hagd, clip, trim=10mm 0mm 14mm 8mm]{\ard/#1} }
+\newcommand{\raiseplus}[1]{ \raisebox{1.7cm} {\large #1}}
+\begin{tabular}{cc}
+\multicolumn{2}{c}{
+\begin{tabular}{c}
+Complete Model \\
+\airdgfx{01-airline_all}
+\end{tabular}
+} \\
+%\multicolumn{2}{c}{Decomposition} \\
+Long-term trend & Yearly Periodic \\
+ \airdgfx{01-airline_1_extrap} & \airdgfx{01-airline_2_extrap}\\
+ Short-term deviation & Noise \\
+ \airdgfx{01-airline_3_extrap} & \airdgfx{01-airline_4_extrap}
+\end{tabular}
+\caption[Decomposition of model discovered on airline dataset]
+{First row:  The airline dataset and posterior after a search of depth 10.  Subsequent rows: Additive decomposition of posterior into long-term smooth trend, yearly variation, and short-term deviations.  Due to the linear kernel, the marginal variance grows over time, making this a heteroskedastic model. 
+%\TBD{RBG: We allow heteroskedastic noise in our models?}
+}
+\label{fig:airline_decomp}
+\end{figure}
+%
+None of the models in our search space are capable of parsimoniously representing the lack of variation from 1645 to 1715. %, since all of the base kernels apart from \kLin{} are stationary.
+%, and it is hard to see how Lin would help in modeling this structure.
+%
+%
+Despite this, our approach fails gracefully: the learned kernel still captures the periodic structure, and the quickly growing posterior variance demonstrates that the model is uncertain about long term structure.
+
+
+\fi
 
 
