@@ -9,7 +9,7 @@ By combining a few simple base kernels, we'll be able to create many different k
 
 
 %\fTBD{Define $\GP\sim\dots$ here?}
-Gaussian process models use a kernel to define the covariance between any two function values:
+Gaussian process models use a kernel to define the prior covariance between any two function values:
 %${\textrm{Cov}(\outputVar, \outputVar') = \kernel(\inputVar,\inputVar')}$
 %
 \begin{align}
@@ -290,17 +290,11 @@ Because additive kernels can discover non-local structure in data, they are exce
 %[Would this make them good for nonstationary noise?]
 \begin{figure}[h]
 \centering
-\begin{tabular}{cccc}
-\hspace{-0.1in}\includegraphics[width=0.24\textwidth]{\additivefigsdir/1st_order_censored_truth.pdf} &
-\hspace{-0.1in}\includegraphics[width=0.24\textwidth]{\additivefigsdir/1st_order_censored_ard.pdf}&
-\hspace{-0.1in}\includegraphics[width=0.24\textwidth]{\additivefigsdir/1st_order_censored_add.pdf}& 
-\hspace{-0.1in}\includegraphics[width=0.24\textwidth]{\additivefigsdir/1st_order_censored_d1d2.pdf}\\ 
-True Function & Squared-exp GP & Additive GP & Additive GP \\
- \& data locations & posterior mean & posterior mean & 1st-order functions\\
-%\includegraphics[width=0.3\textwidth]{\additivefigsdir/1st_order_censored_data.pdf} &
-%\includegraphics[width=0.3\textwidth]{\additivefigsdir/1st_order_censored_d1.pdf}&
-%\includegraphics[width=0.3\textwidth]{\additivefigsdir/1st_order_censored_d2.pdf}\\
-%Training Data Locations & Estimated 1D $f(x_1)$ & Estimated 1D $f(x_2)$ \\
+\begin{tabular}{ccc}
+True function & Squared-exp \gp{} & Additive \gp{} \\
+\hspace{-0.1in}\includegraphics[width=0.33\textwidth]{\additivefigsdir/1st_order_censored_truth} &
+\hspace{-0.1in}\includegraphics[width=0.33\textwidth]{\additivefigsdir/1st_order_censored_ard}&
+\hspace{-0.1in}\includegraphics[width=0.33\textwidth]{\additivefigsdir/1st_order_censored_add}
 \end{tabular}
 \caption[Long-range inference in functions with additive structure]
 {Long-range inference in functions with additive structure.%  The additive GP is able to discover the additive pattern, and use it to fill in a distant mode.  The ARD kernel can only interpolate, and thus predicts the mean in locations missing data.
