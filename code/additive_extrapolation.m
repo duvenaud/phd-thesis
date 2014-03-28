@@ -100,9 +100,9 @@ function nice_plot_surface(a,b,X,Y,l, xlims, ylims)
     xlim(xlims); ylim(xlims); zlim(ylims);
     
     set(gcf, 'color', 'white');
-    set(get(gca,'XLabel'),'Rotation',0,'Interpreter','tex', 'Fontsize', 12);
-    set(get(gca,'YLabel'),'Rotation',0,'Interpreter','tex', 'Fontsize', 12);
-    set(get(gca,'ZLabel'),'Rotation',0,'Interpreter','tex', 'Fontsize', 12);      
+    set(get(gca,'XLabel'),'Rotation',0,'Interpreter','tex', 'Fontsize', 12, 'FontName','Times New Roman');
+    set(get(gca,'YLabel'),'Rotation',0,'Interpreter','tex', 'Fontsize', 12, 'FontName','Times New Roman');
+    set(get(gca,'ZLabel'),'Rotation',0,'Interpreter','tex', 'Fontsize', 12, 'FontName','Times New Roman');
     set( gca, 'xTickLabel', '' );
     set( gca, 'yTickLabel', '' );    
     set( gca, 'zTickLabel', '' );    

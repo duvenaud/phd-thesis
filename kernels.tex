@@ -291,27 +291,34 @@ Because additive kernels can discover non-local structure in data, they are exce
 \begin{figure}[h]
 \centering
 \begin{tabular}{ccc}
-True function & Squared-exp \gp{} & Additive \gp{} \\
+True function: & Squared-exp \gp{} model: & Additive \gp{} model: \\
+\parbox{0.33\columnwidth}{$f(x_1, x_2) = \sin(x_1) + \sin(x_2)$} & $k(x_1, x_1') \times k(x_2, x_2')$ & $k(x_1, x_1') + k(x_2, x_2')$ \\
 \hspace{-0.1in}\includegraphics[width=0.33\textwidth]{\additivefigsdir/1st_order_censored_truth} &
 \hspace{-0.1in}\includegraphics[width=0.33\textwidth]{\additivefigsdir/1st_order_censored_ard}&
-\hspace{-0.1in}\includegraphics[width=0.33\textwidth]{\additivefigsdir/1st_order_censored_add}
+\hspace{-0.1in}\includegraphics[width=0.33\textwidth]{\additivefigsdir/1st_order_censored_add} \\[1em]
 \end{tabular}
 \caption[Long-range inference in functions with additive structure]
-{Long-range inference in functions with additive structure.%  The additive GP is able to discover the additive pattern, and use it to fill in a distant mode.  The ARD kernel can only interpolate, and thus predicts the mean in locations missing data.
+{Inference in functions with additive structure.
+When the function we're modeling has additive structure, we can epxloit this fact to extrapolate far from the training data.
+
+%  The additive GP is able to discover the additive pattern, and use it to fill in a distant mode.  The ARD kernel can only interpolate, and thus predicts the mean in locations missing data.
 }
 \label{fig:synth2d}
 \end{figure}
 %Figure \ref{fig:synth2d} shows a simple experiment demonstrating the ability of additive kernels to discover low-order structure, and to exploit that structure to make predictions about unseen combinations of inputs.
-Figure \ref{fig:synth2d} shows a dataset which demonstrates this feature of additive GPs, consisting of data drawn from a sum of two axis-aligned sine functions.  The training set is restricted to a small, L-shaped area; the test set contains a peak far from the training set locations.  The additive GP recovered both of the original sine functions (shown in green), and inferred correctly that most of the variance in the function comes from first-order interactions.  The ability of additive GPs to discover long-range structure suggests that this model may be well-suited to deal with covariate-shift problems.
+Figure \ref{fig:synth2d} shows the very different extrapolations made by different \gp{} models.
+We constructed a training set by evaluating a sum of two axis-aligned sine functions in a a small, L-shaped area.
+%The ability of additive GPs to discover long-range structure suggests that this model may be well-suited to deal with covariate-shift problems.
 
 
 
 
 \subsection{Interpretability in High Dimensions}
 %As noted by \citet{plate1999accuracy}, o
-One of the chief advantages of additive models such as \GAM{}s is their interpretability.
+One advantage of additive models is their interpretability.
 % since a high-dimensional function is decomposed into a series of one- or two-dimensional functions.  
-\citet{plate1999accuracy} demonstrated that by allowing high-order interactions as well as low-order interactions, one can trade off interpretability with predictive accuracy.  In the case where the hyperparameters indicate that most of the variance in a function can be explained by low-order interactions, it is informative to plot the corresponding low-order functions, as in Figure \ref{fig:interpretable functions}. 
+\citet{plate1999accuracy} demonstrated that by allowing high-order interactions as well as low-order interactions, one can trade off interpretability with predictive accuracy.
+In the case where the hyperparameters indicate that most of the variance in a function can be explained by low-order interactions, it is informative to plot the corresponding low-order functions, as in Figure \ref{fig:interpretable functions}. 
 
 
 \newcommand{\concretepic}[1]{\includegraphics[width=0.31\columnwidth]{\decompfigsdir/concrete-component-#1}}
@@ -341,7 +348,7 @@ The vertical axis is the same for all plots.
 
 %rs = 1 - var(complete_mean - y)/ var(y)
 
-R-squared = 0.9094
+%R-squared = 0.9094
 
 \begin{figure}[h!]
 \centering
@@ -432,13 +439,13 @@ In other words, the features of $k_1 + k_2$ are the concatenation of the feature
 We can examine kernel multiplication in a similar way:
 %
 \begin{align}
-k_1(\iva, \iva') + k_2(\iva, \iva')
+k_1(\iva, \iva') \times k_2(\iva, \iva')
 & = \left[ \feat_1(\iva)\tra \feat_1(\iva') \right] \times \left[ \feat_2(\iva)\tra \feat_2(\iva') \right] \\
 %& = \left[ \begin{array}{c} \feat_1(\iva) \\ \feat_2(\iva) \end{array} \right]^\tra \left[ \begin{array}{c} \feat_1(\iva') \\ \feat_2(\iva') \end{array} \right]
 & = \sum_i h_i(\iva) h_i(\iva') \times \sum_j h_j(\iva) h_j(\iva') \\
 & = \sum_i \sum_j h_i(\iva) h_i(\iva') h_j(\iva) h_j(\iva') \\
 & = \sum_{i,j} \left[ h_i(\iva) h_j(\iva) \right] \left[ h_i(\iva') h_j(\iva') \right] \\
-& = \vecop{ \feat(\iva) \otimes \feat(\iva') } \tra \vecop{ \feat(\iva) \otimes \feat(\iva')} 
+& = \vecop{ \feat_1(\iva) \otimes \feat_2(\iva') } \tra \vecop{ \feat_1(\iva) \otimes \feat_2(\iva')} 
 \end{align}
 
 In other words, the features of $k_1 \times k_2$ are the cartesian product (all possible combinations) of the original sets of features.
