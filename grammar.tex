@@ -14,6 +14,25 @@
 \end{quotation}
 
 
+
+Applying \gp{} regression as a non-expert is a daunting task.
+The first problem one encounters when attempting to apply \gp{}s to a particular task is that the choice of kernel is very important, but it's usually not clear which covariance function is appropriate.
+
+\subsection{Why does everyone use squared-exp?}
+In some instances, using a 'default' kernel yields acceptable performance.
+Many frequentist methods assume a characteristic kernel, such as the squared-exp.
+This choice is motivated by the fact that, in the limit of infinite data, and a shrinking lengthscale, the estimate of the function will converge asymptotically to the truth. [citation needed]
+
+As we shall see in this thesis, in the small-to-medium data range, the choice of of kernel is extremely important.
+This is especially true when one wishes to do extrapolation.
+
+%When I first used the GPML package, I was stymied by the lack of a default kernel.
+%Faced with a bewildering array of possible kernels to try, I simply tried each one, and chose the one with the best predictive performance on a held-out test set.
+%Why not simply automate this process as part of the software package?
+%After starting my Ph.D., 
+
+
+
 Despite its importance, choosing the structural form of the kernel in nonparametric regression remains a black art.
 We define a space of kernel structures which are built compositionally by adding and multiplying a small number of base kernels.
 We present a method for searching over this space of structures which mirrors the scientific discovery process.
@@ -314,7 +333,7 @@ We evaluate each optimized model, $M$, using the Bayesian Information Criterion 
 \textrm{BIC}(M) = -2 \log p(D\given M) + p \log n
 \end{equation}
 where $p$ is the number of kernel parameters, $\log p(D|M)$ is the marginal likelihood of the data, $D$, and $n$ is the number of data points.
-BIC trades off model fit and complexity and implements what is known as ``Bayesian Occam's Razor'' \citep[e.g.][]{rasmussen2001occam,mackay2003information}.
+BIC trades off model fit against model complexity and implements what is known as ``Bayesian Occam's Razor'' \citep{rasmussen2001occam,mackay2003information}.
 
 
 
@@ -686,7 +705,16 @@ We compare to a Bayesian variant of MKL in section~\ref{sec:numerical} which is 
 \cite{todorovski1997declarative}, \cite{washio1999discovering} and \cite{schmidt2009distilling} learn parametric forms of functions specifying time series, or relations between quantities.
 In contrast, \procedurename{} learns a parametric form for the covariance, allowing it to model functions without a simple parametric form.
 
-%TODO: Add a lit review of nonparametric nonstationary covariance learning.
+
+
+\subsection{nonparametric nonstationary covariance learning}
+
+TODO: Add a lit review of nonparametric nonstationary covariance learning.
+
+\paragraph{Discovering interpretable structure}
+Besides allowing faster learning and extrapolation, learning a more structured kernel sometimes has the added benefit of making the resulting model more intepretable.
+This is a similar motivation as for the use of sparsity-inducing methods:  on many real datasets, the signal can be well-predicted by some small subset of the inputs.  Identifying this subset allows both better generalization, and a more interpretable model.
+
 
 \subsection{Searching over open-ended model spaces}
 

@@ -28,7 +28,7 @@ X = rand(n,2) * 4 - 2;
 noiseless_Y = truefunc(X);
 Y =  noiseless_Y + randn(n,1) * noise_std;   % add some noise with known standard deviation
 
-xlims = [-2.3, 3.5];
+xlims = [-2.3, 6];
 ylims = [-2.3, 2];
 
 % Censor data.

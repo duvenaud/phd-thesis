@@ -104,7 +104,7 @@ for N = 0:max_N
         end
     end
     
-    h2 = plot( x(1:N), y(1:N), 'kx', 'Linewidth', 1.5, 'Markersize', 10); hold on;
+    h2 = plot( x(1:N), y(1:N), 'k+', 'Linewidth', 1.5, 'Markersize', 10); hold on;
 
     
     ylim( ylimits);

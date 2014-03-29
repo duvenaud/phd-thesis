@@ -3,68 +3,14 @@
 
 
 
-\chapter{Dropout in Gaussian processes}
+%\chapter{Dropout in Gaussian processes}
+\chapter{Higher-order Additive \sgp{}s}
 \label{ch:additive}
 
 
 
 
 
-\section{Dropout in Gaussian processes}
-
-
-
-Dropout is a method for regularizing neural networks \citep{hinton2012improving, srivastava2013improving}.
-Training with dropout entails randomly and independently ``dropping'' (setting to zero) some proportion $p$ of features or inputs, in order to improve the robustness of the resulting network by reducing co-dependence between neurons.
-To maintain similar overall activation levels, weights are multiplied by $\nicefrac{1}{p}$ at test time. Alternatively, feature activations are multiplied by $\nicefrac{1}{p}$ during training.
-At test time, the set of models defined by all possible ways of dropping-out neurons is averaged over, usually in an approximate way.
-
-\citet{baldi2013understanding} and \citet{wang2013fast} analyzed dropout in terms of the effective prior induced by this procedure in several models, such as linear and logistic regression.
-In this section, we examine the priors on functions that result from performing dropout in the one-hidden-layer neural network implicitly defined by a \gp{} (equation \eqref{eq:one-layer-nn}).
-
-
-\subsection{Dropout on feature activations}
-
-First, we examine the prior that results from randomly dropping features from $\hPhi(\vx)$ with probability $p$.
-If these features have a weight distribution with finite moments
-$\expectargs{}{ \alpha_i} = \mu, \varianceargs{}{\alpha_i} = \sigma^2$,
-then the distribution of weights after each one has been dropped out with probability $p$ is:
-\begin{align}
-r_i \simiid \textnormal{Ber}(p)
-\qquad
-\expectargs{}{ r_i \alpha_i} = p\mu, \varianceargs{}{r_i \alpha_i} = p^2 \sigma^2 \;.
-\end{align}
-However, after we increase the remaining activations to maintain the same expected activation by multiplying them by $\nicefrac{1}{p}$, the resulting moments are again:
-\begin{align}
-\expectargs{}{ \frac{1}{p} r_i \alpha_i } = \frac{p}{p}\mu = \mu, \quad \varianceargs{}{ \frac{1}{p} r_i \alpha_i} = \frac{p^2}{p^2} \sigma^2 = \sigma^2 \;.
-\end{align}
-%Since only the first two moments of the weight variance matter, the resulting \gp{} remain
-Thus, dropping out features of an infinitely-wide MLP does not change the model at all, since no individual feature can have more than infinitesimal contribution to the network output.
-%Is there a better way to drop out features that would lead to robustness?
-
-\subsection{Dropping out inputs}
-
-In a \gp{} with kernel ${k(\vx, \vx') = \prod_{d=1}^D k_d(\vx_d, \vx_d')}$, exact averaging over all possible ways of dropping out inputs with probability $\nicefrac{1}{2}$ results in a mixture of \gp{}s, each depending on only a subset of the inputs:
-\begin{align}
-p \left( f(\vx) \right)= \frac{1}{2^D} \sum_{\vr \in \{0,1\}^D}  \textnormal{\gp} \left(0, \prod_{d=1}^D k_d(\vx_d, \vx_d')^{r_d} \right)
-\label{eq:dropout-mixture}
-\end{align}
-We present two results ways to gain intuition about this model.
-
-First, if the kernel on each dimension has the form ${k_d(\vx_d, \vx_d') = g \left( \frac{\vx_d - \vx_d'}{\lengthscale_d} \right)}$, as does the \humble{SE} kernel \eqref{eq:se_kernel}, then any input dimension can be dropped out by setting its lengthscale $\lengthscale_d$ to $\infty$.
-Thus, dropout on the inputs of a \gp{} corresponds to a spike-and-slab prior on lengthscales, with each dimension independently having $w_d = \infty$ with probability $\nicefrac{1}{2}$.
-
-
-
-Another way to understand the resulting prior is to note that the dropout mixture \eqref{eq:dropout-mixture} has the same covariance as
-\begin{align}
-f(\vx) \sim \textnormal{\gp} \left(0, \frac{1}{2^{-2D}} \sum_{\vr \in \{0,1\}^D}  \prod_{d=1}^D k_d(\vx_d, \vx_d')^{r_d} \right)
-\label{eq:additive-gps}
-\end{align}
-
-A \gp{} whose covariance is a sum of kernels corresponds to a sum of functions, each distributed according to a \gp{}.  Therefore, \eqref{eq:additive-gps} describes a sum of $2^D$ functions, each depending on a different subset of the inputs.
-%This model class was studied by \citet{duvenaud2011additive11}, who showed that exact inference in these models can be performed in $\mathcal{O}(N^2 D^2 + N^3)$.
-%Thus, the dropout prior is closely related to a model which learns many functions, each of which only depends on a subset of the inputs.
 
 
 
@@ -268,17 +214,74 @@ Additive Gaussian processes are particularly appealing in practice because their
 code to perform all experiments is available at the author's website.\footnote{Example code available at: \texttt{http://mlg.eng.cam.ac.uk/duvenaud/}}
 
 
+\section{Dropout in Gaussian processes}
+
+Dropout is a method for regularizing neural networks \citep{hinton2012improving, srivastava2013improving}.
+Training with dropout entails randomly and independently ``dropping'' (setting to zero) some proportion $p$ of features or inputs, in order to improve the robustness of the resulting network by reducing co-dependence between neurons.
+To maintain similar overall activation levels, weights are multiplied by $\nicefrac{1}{p}$ at test time. Alternatively, feature activations are multiplied by $\nicefrac{1}{p}$ during training.
+At test time, the set of models defined by all possible ways of dropping-out neurons is averaged over, usually in an approximate way.
+
+\citet{baldi2013understanding} and \citet{wang2013fast} analyzed dropout in terms of the effective prior induced by this procedure in several models, such as linear and logistic regression.
+In this section, we examine the priors on functions that result from performing dropout in the one-hidden-layer neural network implicitly defined by a \gp{} (equation \eqref{eq:one-layer-nn}).
+
+\subsection{Dropout on feature activations}
+
+First, we examine the prior that results from randomly dropping features from $\hPhi(\vx)$ with probability $p$.
+If these features have a weight distribution with finite moments
+$\expectargs{}{ \alpha_i} = \mu, \varianceargs{}{\alpha_i} = \sigma^2$,
+then the distribution of weights after each one has been dropped out with probability $p$ is:
+\begin{align}
+r_i \simiid \textnormal{Ber}(p)
+\qquad
+\expectargs{}{ r_i \alpha_i} = p\mu, \quad \varianceargs{}{r_i \alpha_i} = p^2 \sigma^2 \;.
+\end{align}
+However, after we increase the remaining activations to maintain the same expected activation by multiplying them by $\nicefrac{1}{p}$, the resulting moments are again:
+\begin{align}
+\expectargs{}{ \frac{1}{p} r_i \alpha_i } = \frac{p}{p}\mu = \mu, \quad \varianceargs{}{ \frac{1}{p} r_i \alpha_i} = \frac{p^2}{p^2} \sigma^2 = \sigma^2 \;.
+\end{align}
+%Since only the first two moments of the weight variance matter, the resulting \gp{} remain
+Thus, dropping out features of an infinitely-wide MLP does not change the model at all, since no individual feature can have more than infinitesimal contribution to the network output.
+%Is there a better way to drop out features that would lead to robustness?
+
+\subsection{Dropping out inputs}
+
+In a \gp{} with kernel ${k(\vx, \vx') = \prod_{d=1}^D k_d(\vx_d, \vx_d')}$, exact averaging over all possible ways of dropping out inputs with probability $\nicefrac{1}{2}$ results in a mixture of \gp{}s, each depending on only a subset of the inputs:
+\begin{align}
+p \left( f(\vx) \right)= \frac{1}{2^D} \sum_{\vr \in \{0,1\}^D}  \textnormal{\gp} \left(0, \prod_{d=1}^D k_d(\vx_d, \vx_d')^{r_d} \right)
+\label{eq:dropout-mixture}
+\end{align}
+We present two results ways to gain intuition about this model.
+
+First, if the kernel on each dimension has the form ${k_d(\vx_d, \vx_d') = g \left( \frac{\vx_d - \vx_d'}{\lengthscale_d} \right)}$, as does the \humble{SE} kernel \eqref{eq:se_kernel}, then any input dimension can be dropped out by setting its lengthscale $\lengthscale_d$ to $\infty$.
+Thus, dropout on the inputs of a \gp{} corresponds to a spike-and-slab prior on lengthscales, with each dimension independently having $w_d = \infty$ with probability $\nicefrac{1}{2}$.
+
+
+
+Another way to understand the resulting prior is to note that the dropout mixture \eqref{eq:dropout-mixture} has the same covariance as
+\begin{align}
+f(\vx) \sim \textnormal{\gp} \left(0, \frac{1}{2^{-2D}} \sum_{\vr \in \{0,1\}^D}  \prod_{d=1}^D k_d(\vx_d, \vx_d')^{r_d} \right)
+\label{eq:additive-gps}
+\end{align}
+
+A \gp{} whose covariance is a sum of kernels corresponds to a sum of functions, each distributed according to a \gp{}.  Therefore, \eqref{eq:additive-gps} describes a sum of $2^D$ functions, each depending on a different subset of the inputs.
+%This model class was studied by \citet{duvenaud2011additive11}, who showed that exact inference in these models can be performed in $\mathcal{O}(N^2 D^2 + N^3)$.
+%Thus, the dropout prior is closely related to a model which learns many functions, each of which only depends on a subset of the inputs.
+
+
+
 \section{Related Work}
 
-Plate\cite{plate1999accuracy} constructs a form of additive GP, but using only the first-order and $D$th order terms.  This model is motivated by the desire to trade off the interpretability of first-order models, with the flexibility of full-order models.  Our experiments show that often, the intermediate degrees of interaction contribute most of the variance.
+\citet{plate1999accuracy} constructs a form of additive GP, but using only the first-order and $D$th order terms.  This model is motivated by the desire to trade off the interpretability of first-order models, with the flexibility of full-order models.  Our experiments show that often, the intermediate degrees of interaction contribute most of the variance.
 
-A related functional ANOVA GP model\cite{kaufman2010bayesian} decomposes the \emph{mean} function into a weighted sum of GPs. However, the effect of a particular degree of interaction cannot be quantified by that approach. Also, computationally, the Gibbs sampling approach used in \cite{kaufman2010bayesian} is disadvantageous.
+A related functional ANOVA GP model \citep{kaufman2010bayesian} decomposes the \emph{mean} function into a weighted sum of GPs.
+However, the effect of a particular degree of interaction cannot be quantified by that approach.
+Also, computationally, the Gibbs sampling approach used in \cite{kaufman2010bayesian} is disadvantageous.
 %[Todo:  read and mention  and \cite{friedman1981projection} from Hannes]
 
 %\subsection{Multiple Kernel Learning}
 
 %Our current framework relates to Multiple Kernel Learning in that we are learning the weights in a certain mixture of kernels.  
-Christoudias et al.\cite{christoudias2009bayesian} previously showed how mixtures of kernels can be learnt by gradient descent in the Gaussian process framework.  They call this \emph{Bayesian localized multiple kernel learning}.
+\citet{christoudias2009bayesian} previously showed how mixtures of kernels can be learnt by gradient descent in the Gaussian process framework.  They call this \emph{Bayesian localized multiple kernel learning}.
 However, their approach learns a mixture over a small, fixed set of kernels, while our method learns a mixture over all possible products of those kernels.
 
 \subsection{Hierarchical Kernel Learning}
@@ -332,9 +335,9 @@ In contrast, our method optimizes the hyperparameters of each dimension's base k
 
 \subsection{ANOVA Procedures}
 
-Vapnik \cite{vapnik1998statistical} introduces the support vector \ANOVA{} decomposition, which has the same form as our additive kernel.
+\citet{vapnik1998statistical} introduced the support vector \ANOVA{} decomposition, which has the same form as our additive kernel.
 However, they recommend approximating the sum over all $D$ orders with only one term ``of appropriate order'', presumably because of the difficulty of setting the hyperparameters of an \SVM{}.
-Stitson et al.\cite{stitson1999support} performed experiments which favourably compared the support vector \ANOVA{} decomposition to polynomial and spline kernels.
+\citet{stitson1999support} performed experiments which favourably compared the support vector \ANOVA{} decomposition to polynomial and spline kernels.
 They too allowed only one order to be active, and set hyperparameters by cross-validation.
 %
 %  The order of the kernel, kernel hyperparameters, the allowable regression error $\epsilon$, and the cost hyperparameter $c$ were all set by a lengthy cross-validation process.
@@ -361,7 +364,7 @@ As well, we can learn kernel hyperparameters individually per input dimension, a
 By far the most popular kernels for regression and classification tasks on continuous data are the squared exponential (Gaussian) kernel, and the Mat\'{e}rn kernels.
 These kernels depend only on the scaled Euclidean distance between two points, both having the form:
 \begin{align}
-k({\bf x, x'}) = f(\sum_{d=1}^D \left( x_{d} - x_{d}' \right)^2 / l_d^2)
+k({\bf x, x'}) = g \!\left( \; \sum_{d=1}^D \left( \frac{  x_{d} - x_{d}' }{ l_d } \right)^2 \right)
 \end{align}
 %\begin{eqnarray}
 %k_{se}({\bf x, x'}) & = & v_D^2  \exp \left( -\frac{r^2}{2} \right) \\
@@ -408,14 +411,16 @@ Figure \ref{fig:kernels3d} provides a geometric comparison between squared-expon
 %\subsection{Experimental Setup}
 %\subsubsection{Learning}
 
-\subsubsection{Overfitting}
-A multivariate squared exponential kernel has $D + 1$ hyperparameters, while an additive function with one hyperparameter per dimension (e.g., a scale parameter) on each dimension's covariance function will have $D \times 2$ hyperparameters.  Because each additional hyperparameter increases the tendency to overfit, we recommend allowing only one hyperparameter per input dimension. 
-
+\subsubsection{Overfitting and Parameterization}
+A $D$-dimensional \kSE-\ARD{} kernel has $D +1$ parameters (lengthscales plus output variance). 
+An first-order additive $\kSE$ model has $2 \times D$ parameters.
+A fully-parametrized model including all orders of interaction, with a seperate output variance for each scale will have $3 \times D$ parameters.
+Because each additional parameter increases the tendency to overfit, we recommend allowing only one hyperparameter per input dimension. 
+%
 %
 %Since there always exists a parameterization of the additive function corresponding to the product kernel, we initialize the hyperparameter search for the additive kernel by first learning hyperparameters for the equivalent product kernel.  This ensures that we start our search in a reasonable area of hyperparameter space.
 %
-Results were averaged over 10 cross-validation folds.
-To limit the possibility of overfitting, we parametrized each of our one-dimensional kernel functions with only the lengthscale.  
+In our experiments, we parametrized each one-dimensional kernel with only the lengthscale, fixing the output variance to be 1.
 %Note that this parameterization is still more flexible than previous methods (HKL, SS-ANOVA).  % This needs to be double-checked.
 
 %\subsubsection{Initialization}
@@ -424,20 +429,22 @@ To limit the possibility of overfitting, we parametrized each of our one-dimensi
 
 On a diverse collection of datasets, we compared five different models.
 In the results tables below, \gp{} Additive refers to a \gp{} using the additive kernel with squared-exp base kernels.
-For speed, we limited the maximum order of interaction in the additive kernels to 10.  \gp{}-\GAM{} denotes an additive \gp{} model with only first-order interactions.  \gp{} Squared-Exp is a \gp{} model with a squared-exponential \ARD{} kernel.  \HKL{}\footnote{Code for HKL available at \texttt{http://www.di.ens.fr/\textasciitilde fbach/hkl/}}
+For speed, we limited the maximum order of interaction in the additive kernels to 10.  \gp{}-\GAM{} denotes an additive \gp{} model with only first-order interactions.  \gp{} Squared-Exp is a \gp{} model with a squared-exponential \ARD{} kernel.  \HKL{}
+%\footnote{Code for HKL available at \texttt{http://www.di.ens.fr/\textasciitilde fbach/hkl/}}
 was run using the all-subsets kernel, which corresponds to the same set of kernels as considered by the additive GP with a squared-exp base kernel.     
 
 %For all 3 GP models, we allowed 5 multiple restarts for all of our hyperparameter maximization steps, choosing the set of hyperparameters with the highest training-set marginal likelihood.  We ran each hyperparameter search for 500 function evaluations by the usual method of maximizing marginal likelihood, using L-BFGS \cite{nocedal1980updating}.  In addition to kernel hyperparameters, we fit a constant mean function to the data.
-For all GP models, we fit hyperparameters by the standard method of maximizing training-set marginal likelihood, using L-BFGS \cite{nocedal1980updating} for 500 iterations, allowing five random restarts.  In addition to learning kernel hyperparameters, we fit a constant mean function to the data.
+For all GP models, we fit hyperparameters by the standard method of maximizing training-set marginal likelihood, using L-BFGS \citep{nocedal1980updating} for 500 iterations, allowing five random restarts.
+In addition to learning kernel hyperparameters, we fit a constant mean function to the data.
 %
-In the classification experiments, GP inference was done using Expectation Propagation \cite{minka2001expectation}.
+In the classification experiments, approximate \gp{} inference was done using Expectation Propagation \citep{minka2001expectation}.
 
 \subsection{Bach Synthetic Dataset}
 In addition to standard UCI repository datasets, we generated a synthetic dataset following the same recipe as \cite{DBLP:journals/corr/abs-0909-0844}.
 This dataset was designed by \cite{DBLP:journals/corr/abs-0909-0844} to demonstrate the advantages of \HKL{} over \gp{}-\ARD{}.
 From a covariance matrix drawn from a Wishart distribution with 1024 degrees of freedom, we select 8 variables.
 We then construct the non-linear function $f(X) = \sum_{i=1}^4 \sum_{j=1+1}^4 X_i X_j + \epsilon$, which sums all 2-way products of the first 4 variables, and adds Gaussian noise $\epsilon$.
-This dataset is one which can be predicted well by a kernel which is a sum of two-way interactions over the first 4 variables, ignoring the extra 4 noisy copies.
+This dataset is one which can be predicted well by a kernel which is a sum of two-way interactions over the first 4 variables, ignoring the extra 4 noisy copies.%, as well as the higher-order interactions.
 %TODO: Move description to grammar experiments?
 
 If the dataset is large enough, \HKL{} can construct a hull around only those subsets of cross terms that are optimal for predicting the output.

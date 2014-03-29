@@ -26,6 +26,62 @@ The kernel specifies which structures are likely under the \gp{} prior, which in
 %\footnotetext{When unclear from context, we use `kernel family' to refer to the parametric forms of the functions given in the appendix. A kernel is a kernel family with all of the parameters specified.}  
 
 
+
+\subsection{Why assume zero mean?}
+
+In literature, as well as in practice, it is common to construct \gp{} priors with a zero mean function.
+This might seem strange, since it is presumably a good place to put prior information, or if we are comparing models, to express  since marginalizing over an unknown mean function can be equivalently expressed as a different \gp{} with zero-mean, and another term added to the kernel.
+
+\paragraph{A known mean function can be moved into the covariance function}
+Specifically, if we wish to model an unknown function $f(\vx)$ with known mean $m(\vx)$, (with unknown magnitude $c \sim \Nt{0}{\sigma^2_c}$), we can equivalently express this model using another \gp{} with zero mean:
+%$related modelquivalently (\vx) a(\vx)$ with $f \sim \GPt{0}{k(\vx,\vx')}$, then this 
+%
+\begin{align}
+f \sim \GPt{c m(\vx)}{k(\vx,\vx')}, \quad c \sim \Nt{0}{\sigma^2_c}
+\iff f \sim \GPt{ \vzero }{ c^2 m(\vx) m(\vx') + k(\vx,\vx')}
+\end{align}
+
+%This correspondence means that, b
+By moving the mean function into the covariance function, we get the same model, but we can integrate over the magnitude of the mean function at no additional cost.
+This is one advantage of moving as much structure as possible into the covariance function.
+In fact, we can view \gp{} regression as simply implicitly integrating over the magnitudes of (possibly uncountably many) different mean functions all summed together.
+%TODO: provide a link to the GPs as neural nets discussion.
+
+\paragraph{An unknown mean function can be moved into the covariance function}
+
+If we wish to express our ignorance about the mean function, one way would be by putting a \gp{} prior on it.
+%
+\begin{align}
+m \sim \GPt{\vzero}{k_1(\vx,\vx')}, \quad
+f \sim \GPt{m(\vx)}{k_2(\vx,\vx')}
+\iff 
+f \sim \GPt{\vzero}{k_1(\vx,\vx') + k_2(\vx,\vx')}
+\end{align}
+
+
+\subsection{Why not simply learn the mean function?}
+One might ask: besides integrating over the magnitude, what is the advantage of moving the mean function into the covariance function?
+After all, mean functions are certainly more interpretable than a posterior distribution over functions.
+
+Instead of searching over a large class of covariance functions, which seems strange and unnatural, we might consider simply searching over a large class of structured mean functions, assuming a simple \iid noise model.
+This is the approach taken by practically every other regression technique: neural networks, decision trees, boosting, \etc.
+If we could integrate over a wide class of possible mean functions, we would have a very powerful learning an inference method.
+The problem faced by all of these methods is the well-known problem \emph{overfitting}.
+If we are forced to choose just a single function with which to make predictions, we must carefully control the flexibility of the model we learn, generally prefering ``simple'' functions, or to choose a function from a restricted set.
+
+If, on the other hand, we are allowed to keep in mind many possible explanations of the data, \emph{there is no need to penalize complexity}. [cite Occam's razor paper?]
+The power of putting structure into the covariance function is that doing so allows us to implictly integrate over many functions, maintaining a posterior distribution over infinitely many functions, instead of choosing just one.
+In fact, each of the functions being considered can be infinitely complex, without causing any form of overfitting.
+For example, each of the samples shown in figure \ref{fig:gp-post} varies randomly over the whole real line, never repeating, each one requiring an infinite amount of information to describe.
+Choosing the one function which best fits the data will almost certainly cause overfitting.
+However, if we integrate over many such functions, we will end up with a posterior putting mass on only those functions which are compatible with the data.
+In other words, the parts of the function that we can determine from the data will be predicted with certainty, but the parts which are still uncertain will give rise to a wide range of predictions.
+
+To repeat: \emph{there is no need to assume that the function being modeled is simple, or to prefer simple explanations} in order to avoid overfitting, if we integrate over many possible explanations rather than choosing just the one.
+
+
+
+
 \section{Base kernels}
 Commonly used kernels families include the squared exponential (\kSE), periodic (\kPer), linear (\kLin), and rational quadratic (\kRQ).
 These kernels are defined in figure~\ref{fig:basic_kernels}.
