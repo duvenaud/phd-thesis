@@ -22,8 +22,8 @@ in state-of-the-art extrapolation performance evaluated over 13 real time
 series data sets from various domains.
 
 
-\subsection{Attribution}
-Joint work with James Robert Lloyd, Roger Grosse, Joshua B. Tenenbaum and Zoubin Ghahramani.
+%\subsection{Attribution}
+%Joint work with James Robert Lloyd, Roger Grosse, Joshua B. Tenenbaum and Zoubin Ghahramani.
 
 
 
@@ -353,13 +353,6 @@ However, systems with natural language output have been built in the areas of vi
 
 
 
-\subsection{Interpretability versus accuracy}
-
-BIC trades off model fit and complexity by penalizing the number of parameters in a kernel expression.
-This can result in \procedurename{} favoring kernel expressions with nested products of sums, producing descriptions involving many additive components.
-While these models have good predictive performance the large number of components can make them less interpretable.
-We experimented with distributing all products over addition during the search, causing models with many additive components to be more heavily penalized by BIC.
-We call this procedure \procedurename{}-interpretability, in contrast to the unrestricted version of the search, \procedurename{}-accuracy.
 
 
 %\fTBD{Josh: Can you write about the Blessing of abstraction, and doing lots with a small amount of data?  This might become apparent from plotting the extraplolations.}
@@ -374,17 +367,6 @@ Towards the goal of automating statistical modeling we have presented a system w
 We have demonstrated that our procedure can discover and describe a variety of patterns on several time series.
 Our procedure's extrapolation and interpolation performance on time-series are state-of-the-art compared to existing model construction techniques.
 We believe this procedure has the potential to make powerful statistical model-building techniques accessible to non-experts.
-
-
-
-
-
-
-
-
-
-
-\section{Discussion}
 
 
 %There has developed a large and mature literature on automatic structure discovery in unsupervised settings \fTBD{citations including Josh}.  

@@ -754,6 +754,16 @@ However, the annual cycle is heavily approximated by a sinusoid and the model do
 \section{Predictive Accuracy}
 \label{sec:numerical}
 
+
+\subsection{Interpretability versus accuracy}
+
+BIC trades off model fit and complexity by penalizing the number of parameters in a kernel expression.
+This can result in \procedurename{} favoring kernel expressions with nested products of sums, producing descriptions involving many additive components.
+While these models have good predictive performance the large number of components can make them less interpretable.
+We experimented with distributing all products over addition during the search, causing models with many additive components to be more heavily penalized by BIC.
+We call this procedure \procedurename{}-interpretability, in contrast to the unrestricted version of the search, \procedurename{}-accuracy.
+
+
 \begin{figure*}[ht]
 \centering
 \includegraphics[width=\textwidth]{\grammarfiguresdir/comparison/box_extrap_wide}

@@ -27,59 +27,6 @@ The kernel specifies which structures are likely under the \gp{} prior, which in
 
 
 
-\subsection{Why assume zero mean?}
-
-In literature, as well as in practice, it is common to construct \gp{} priors with a zero mean function.
-This might seem strange, since it is presumably a good place to put prior information, or if we are comparing models, to express  since marginalizing over an unknown mean function can be equivalently expressed as a different \gp{} with zero-mean, and another term added to the kernel.
-
-\paragraph{A known mean function can be moved into the covariance function}
-Specifically, if we wish to model an unknown function $f(\vx)$ with known mean $m(\vx)$, (with unknown magnitude $c \sim \Nt{0}{\sigma^2_c}$), we can equivalently express this model using another \gp{} with zero mean:
-%$related modelquivalently (\vx) a(\vx)$ with $f \sim \GPt{0}{k(\vx,\vx')}$, then this 
-%
-\begin{align}
-f \sim \GPt{c m(\vx)}{k(\vx,\vx')}, \quad c \sim \Nt{0}{\sigma^2_c}
-\iff f \sim \GPt{ \vzero }{ c^2 m(\vx) m(\vx') + k(\vx,\vx')}
-\end{align}
-
-%This correspondence means that, b
-By moving the mean function into the covariance function, we get the same model, but we can integrate over the magnitude of the mean function at no additional cost.
-This is one advantage of moving as much structure as possible into the covariance function.
-In fact, we can view \gp{} regression as simply implicitly integrating over the magnitudes of (possibly uncountably many) different mean functions all summed together.
-%TODO: provide a link to the GPs as neural nets discussion.
-
-\paragraph{An unknown mean function can be moved into the covariance function}
-
-If we wish to express our ignorance about the mean function, one way would be by putting a \gp{} prior on it.
-%
-\begin{align}
-m \sim \GPt{\vzero}{k_1(\vx,\vx')}, \quad
-f \sim \GPt{m(\vx)}{k_2(\vx,\vx')}
-\iff 
-f \sim \GPt{\vzero}{k_1(\vx,\vx') + k_2(\vx,\vx')}
-\end{align}
-
-
-\subsection{Why not simply learn the mean function?}
-One might ask: besides integrating over the magnitude, what is the advantage of moving the mean function into the covariance function?
-After all, mean functions are certainly more interpretable than a posterior distribution over functions.
-
-Instead of searching over a large class of covariance functions, which seems strange and unnatural, we might consider simply searching over a large class of structured mean functions, assuming a simple \iid noise model.
-This is the approach taken by practically every other regression technique: neural networks, decision trees, boosting, \etc.
-If we could integrate over a wide class of possible mean functions, we would have a very powerful learning an inference method.
-The problem faced by all of these methods is the well-known problem \emph{overfitting}.
-If we are forced to choose just a single function with which to make predictions, we must carefully control the flexibility of the model we learn, generally prefering ``simple'' functions, or to choose a function from a restricted set.
-
-If, on the other hand, we are allowed to keep in mind many possible explanations of the data, \emph{there is no need to penalize complexity}. [cite Occam's razor paper?]
-The power of putting structure into the covariance function is that doing so allows us to implictly integrate over many functions, maintaining a posterior distribution over infinitely many functions, instead of choosing just one.
-In fact, each of the functions being considered can be infinitely complex, without causing any form of overfitting.
-For example, each of the samples shown in figure \ref{fig:gp-post} varies randomly over the whole real line, never repeating, each one requiring an infinite amount of information to describe.
-Choosing the one function which best fits the data will almost certainly cause overfitting.
-However, if we integrate over many such functions, we will end up with a posterior putting mass on only those functions which are compatible with the data.
-In other words, the parts of the function that we can determine from the data will be predicted with certainty, but the parts which are still uncertain will give rise to a wide range of predictions.
-
-To repeat: \emph{there is no need to assume that the function being modeled is simple, or to prefer simple explanations} in order to avoid overfitting, if we integrate over many possible explanations rather than choosing just the one.
-
-
 
 
 \section{Base kernels}
@@ -125,7 +72,7 @@ Each covariance function corresponds to a different set of assumptions made abou
 For example, using a squared-exp ($\kSE$) kernel implies that the function we are modeling has infinitely many derivatives.
 
 
-\subsection{Definition of a Kernel}
+\subsection{Definition}
 
 A covariance function $\kernel(x, x') : \InputSpace \times \InputSpace \to \Reals$ can be used to define a measure of similarity between two points $\inputVar, \inputVar'$ in some space $\InputSpace$.
 
@@ -204,7 +151,7 @@ Plots have same meaning as in figure \ref{fig:basic_kernels}.}
 \label{fig:kernels_plus}
 \end{figure}
 
-\section{Structure through additivity}
+\section{Structure through Additivity}
 
 
 By summing kernels, we can model the data as a sum of independent functions, possibly representing different structures.
@@ -227,7 +174,7 @@ These two kinds of structure are demonstrated in rows 2 and 4 of figure~\ref{fig
 A theme throughout this thesis is exploring the idea that a lot of the expressivity of \gp{} models comes from the fact that these models can be combined and decomposed additively.
 
 
-\subsection{Component Marginal Variance}
+\subsection{Marginal Variance and Covariance of Components}
 
 In this section, we derive the posterior marginal variance and covariance of the additive components of a \gp{}.  These formulas let us plot the marginal variance of each component separately.  These formulas can also be used to examine the posterior covariance between pairs of components.
 
@@ -297,7 +244,7 @@ These formulae express the posterior model uncertainty about different component
 
 
 
-\subsection{Additivity in multiple dimensions}
+\subsection{Additivity Across Multiple Dimensions}
   
 
 %\subsection{Additivity in a GP}
@@ -340,7 +287,7 @@ Figure \ref{fig:kernels} compares, for two-dimensional functions, a first-order 
 
 
 
-\subsubsection{Long-range extrapolation through additivity}
+\subsubsection{Long-range Extrapolation Through Additivity}
 
 Because additive kernels can discover non-local structure in data, they are exceptionally well-suited to problems where local interpolation fails.  
 %[Would this make them good for nonstationary noise?]
@@ -369,7 +316,7 @@ We constructed a training set by evaluating a sum of two axis-aligned sine funct
 
 
 
-\subsection{Interpretability in High Dimensions}
+\subsection{Interpreting Additive Models in High Dimensions}
 %As noted by \citet{plate1999accuracy}, o
 One advantage of additive models is their interpretability.
 % since a high-dimensional function is decomposed into a series of one- or two-dimensional functions.  
@@ -464,7 +411,7 @@ Since we are applying these operations to the similarity functions rather than t
 
 
 
-\subsection{Multiplying with constant functions}
+\subsection{Multiplying by a constant function}
 
 If we wish to model a function that's been multiplied by some fixed function $a(x)$, this can be easily achieved by multiplying the kernel by $a(\vx) a(\vx')$.
 
@@ -509,21 +456,6 @@ For example, one set of features $\feat(\iva)$ corresponding to a one-dimensiona
 Multiplied by an $\kSE$ kernel in another dimension, the resulting features are a set of two-dimensional Gaussian bumps, covering the plane.
 
 
-\subsection{Signal versus noise}
-
-In most derivations of Gaussian processes, the model is given as
-%
-\begin{align}
-y = f(\inputVar) + \epsilon, \quad \textnormal{where} \quad \epsilon \simiid \Nt{0}{\sigma^2_{\textnormal{noise}}}
-\end{align}
-
-However, $\epsilon$ can equivalently be thought of as another Gaussian process, and so this model can be written as $y(\inputVar) \sim \GP\left(0, k + \delta \right)$.  The lack of a hard distinction between the noise model and the signal model raises the larger question:  Which part of a model represents signal, and which represents noise?
-
-Our answer is: \emph{it depends on what you want to do with the model}.  For example: often, we don't care about the short-term variations in a function, and only in the long-term trend.  However, in many other cases, we with to de-trend our data to see more clearly how much a particular part of the signal deviated from normal.
-
-%\subsubsection{Student's $t$ processes}
-
-%One shortcoming of the
 
 
 
@@ -571,7 +503,7 @@ k_{\textnormal{periodic}}(x, x') = k(\sin(x), \cos(x), \sin(x'), \cos(x'))
 We can also apply rotational symmetry repeatedy to a single dimension.
 
 
-\subsection{Reflective Symmetry along an axis}
+\subsection{Reflective Symmetry Along an Axis}
 we can enforce the symmetry
 \begin{align}
 f(x) = f( -x)
@@ -586,7 +518,7 @@ k_{\textnormal{symm arg1}}(x, x') & = k(x, x') + k(x, -x') + k(-x, x') + k(-x, -
 Note that, because $k(\vx, \vx') = k(\vx', \vx')$ for any PSD kernel, so we don't need to include the corresponding terms $k(-x, x')$ and $k(-x, -x')$.
 
 
-\subsection{Reflective Symmetry along a diagonal}
+\subsection{Reflective Symmetry Along a Diagonal}
 We can enforce symmetry between any two dimensions:
 %
 \begin{align}
@@ -677,98 +609,7 @@ We demonstrate that marginal likeihood an be used to automatically search over s
 
 
 
-
-
-
-
-
-\section{Generating shapes with a given topology}
-
-In this section, we give a geometric illustration of the symmetries encoded by \gp{}s with different sorts of kernels.
-The language of models of functions exhibiting symmetries, can be used to create a prior on surfaces, by warping a latent surface $\vx$ to an observed surface $\vy = \vf(\vx)$.
-The distribution on $\vf$ allows us to put mass on 
-
-%If we set the input $\vx$ to be a 2-dimensional plane, intro 3 dimensions using a \gp{} encoding certain symmetries, the resulting surfaces will correspon
-First create a mesh in 2d.  Then draw 3 independent functions from a GP prior with the relevant symmetries encoded in the kernel.  Then, map the 2d points making up the mesh through those 3 functions to get the 3D  coordinates of each point on the mesh.
-
-This is similar in spirit to the GP-LVM model \cite{lawrence2005probabilistic}, which learns an embedding of the data into a low-dimensional space, and constructs a fixed kernel structure over that space.
-%The GP-LVM will be discussed in further detail in chapter ...
-
-
-\begin{figure}
-\begin{tabular}{ccc}
-Manifold $( \SE_1 \times \SE_2 )$  & Cylinder $( \SE_1 \times \Per_2 )$ & Toroid $( \Per_1 \times \Per_2 )$\\
-\includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/manifold} &
-\includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/cylinder} &
-\includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/torus} \\
-\end{tabular}
-\caption[Generating 2D manifolds with different topological structures]{Generating 2D manifolds with different topological structures.  By enforcing that the functions mapping from $\mathbb{R}^2$ to $\mathbb{R}^3$ obey the appropriate symmetries, the surfaces created have the corresponding topologies, ignoring self-intersections.}
-\label{fig:gen_surf}
-\end{figure}
-
-
-
-\subsection{M\"{o}bius strips}
-
-A prior on functions on M\"{o}bius strips can be achieved by enforcing the symmetries:
-%
-\begin{align}
-f(x, y) & = f( x, y + \tau_y) \\
-f(x, y) & = f( x + \tau_x, y)  \\
-f(x, y) & = f( y, x )
-\end{align}
-
-If we imagine moving along the edge of a M\"{o}bius strip, that is equivalent to moving along a diagonal in the function generated.
-Figure \ref{fig:mobius} shows this.
-%
-\begin{figure}
-\begin{tabular}[t]{c|c}
-%\begin{columns}
-\centering
-M\"{o}bius manifold & 
-Sudanese M\"{o}bius strip \\
-$( \Per_1 \times \Per_2 )$ and $f(x,y) = f(y,x)$ & generated parametrically\\
-%\includegraphics[width=0.45\columnwidth, height=0.45\columnwidth, clip=true,trim=2cm 2cm 2cm 1cm]{\topologyfiguresdir/mobius_regression} \\
-\includegraphics[width=0.3\columnwidth]{\topologyfiguresdir/mobius} &
-%\includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/mobius} 
-%\begin{minipage}{0.33\columnwidth}
-%{\begin{tabular}[t]{p{.3\columnwidth}}
-%\includegraphics[width=0.3\columnwidth,clip=true,trim=0cm 0cm 10cm 0cm]{\topologyfiguresdir/sudanese-wikipedia}
-%\\
-%\includegraphics[width=0.3\columnwidth,clip=true,trim=10.55cm 0cm 0cm 0cm]{\topologyfiguresdir/sudanese-wikipedia}
-%\end{tabular}}
-%\end{minipage}
-\raisebox{1cm}{\includegraphics[width=0.4\columnwidth,clip=true,trim=0cm 0cm 10cm 0cm]{\topologyfiguresdir/sudanese-wikipedia}}
-\end{tabular}
-\caption[Generating M\"{o}bius strips]{Generating M\"{o}bius strips.
-Left: By enforcing that the functions mapping from $\mathbb{R}^2$ to $\mathbb{R}^3$ obey the appropriate symmetries, surfaces sampled from the prior have topology corresponding to a M\"{o}bius strip.
-M\"{o}bius strips generated this way do not have the familiar shape of a circular flat surface with a half-twist; rather they tend to look like \emph{Sudanese} M\"{o}bius strips \citep{sudanese1984}, whose edge has a circular shape.
-Right: A Sudanese projection of a M\"{o}bius strip.
-Image adapted from \citep{sudanesepict}.
-}
-\label{fig:mobius}
-\end{figure}
-%
-The second example is doesn't resemble a typical M\"{o}bius strip because the edge of the mobius strip is in a geometric circle.  This kind of embedding is resembles the Sudanese M\"{o}bius strip [cite].
-
-Another classic example of a function living on a Mobius strip is the auditory quality of 2-note intervals.  The harmony of a pair of notes is periodic (over octaves) for each note, and the 
-
-
-\section{Discrete data}
-
-Kernels can be defined over all types of data structures: Text, images, matrices, and even kernels . Coming up with a kernel on a new type of data used to be an easy way to get a NIPS paper.
-
-\subsection{Categorical variables}
-
-There is a simple way to do GP regression over categorical variables. Simply represent your categorical variable as a by a one-of-k encoding. This means that if your number ranges from 1 to 5, represent that as 5 different data dimensions, only one of which is on at a time. 
-
-Then, simply put a product of SE kernels on those dimensions. This is the same as putting one SE ARD kernel on all of them. The lengthscale hyperparameter will now encode whether, when that coding is active, the rest of the function changes. If you notice that the estimated lengthscales for your categorical variables is short, your model is saying that it's not sharing any information between data of different categories. 
-
-
-
-\section{Examples}
-
-\subsection{Computing molecular energies}
+\subsection{Example: Computing Molecular Energies}
 
 \begin{figure}
 \begin{center}
@@ -827,7 +668,8 @@ Function on M\"{o}bius strip & \\
 Figure \ref{fig:molecule} gives one example of a function which obeys the same symmetries as a M\"{o}bius strip, in some subsets of its arguments.
 
 
-\subsection{Translation invariance in images}
+
+\subsection{Example: Translation Invariance in Images}
 
 Most models of images are invariant to spatial translations [cite convolution nets].  Similarily, most models of sounds are also invariant to translation through time.
 
@@ -881,6 +723,105 @@ where $T_{ij}(\vx)$ is the operator which replaces each $x_{mn}$ with $x_{m+i, n
 
 
 
+\section{Generating Topological Manifolds}
+
+In this section, we give a geometric illustration of the symmetries encoded by \gp{}s with different sorts of kernels.
+The language of models of functions exhibiting symmetries, can be used to create a prior on surfaces, by warping a latent surface $\vx$ to an observed surface $\vy = \vf(\vx)$.
+The distribution on $\vf$ allows us to put mass on 
+
+%If we set the input $\vx$ to be a 2-dimensional plane, intro 3 dimensions using a \gp{} encoding certain symmetries, the resulting surfaces will correspon
+First create a mesh in 2d.  Then draw 3 independent functions from a GP prior with the relevant symmetries encoded in the kernel.  Then, map the 2d points making up the mesh through those 3 functions to get the 3D  coordinates of each point on the mesh.
+
+This is similar in spirit to the GP-LVM model \cite{lawrence2005probabilistic}, which learns an embedding of the data into a low-dimensional space, and constructs a fixed kernel structure over that space.
+%The GP-LVM will be discussed in further detail in chapter ...
+
+\subsection{Surfaces, Cylinders and Torii}
+
+\begin{figure}
+\begin{tabular}{ccc}
+Manifold $( \SE_1 \times \SE_2 )$  & Cylinder $( \SE_1 \times \Per_2 )$ & Toroid $( \Per_1 \times \Per_2 )$\\
+\includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/manifold} &
+\includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/cylinder} &
+\includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/torus} \\
+\end{tabular}
+\caption[Generating 2D manifolds with different topological structures]{
+Generating 2D manifolds with different topological structures.
+By enforcing that the functions mapping from $\mathbb{R}^2$ to $\mathbb{R}^3$ obey the appropriate symmetries, the surfaces created have the corresponding topologies, ignoring self-intersections.
+}
+\label{fig:gen_surf}
+\end{figure}
+
+Figure \ref{fig:gen_surf} shows...
+
+
+\subsection{M\"{o}bius Strips}
+
+A prior on functions on M\"{o}bius strips can be achieved by enforcing the symmetries:
+%
+\begin{align}
+f(x, y) & = f( x, y + \tau_y) \\
+f(x, y) & = f( x + \tau_x, y)  \\
+f(x, y) & = f( y, x )
+\end{align}
+
+If we imagine moving along the edge of a M\"{o}bius strip, that is equivalent to moving along a diagonal in the function generated.
+Figure \ref{fig:mobius} shows this.
+%
+\begin{figure}
+\begin{tabular}[t]{c|c}
+%\begin{columns}
+\centering
+M\"{o}bius manifold & 
+Sudanese M\"{o}bius strip \\
+%$( \Per_1 \times \Per_2 )$ and $f(x,y) = f(y,x)$ & generated parametrically\\
+$ \Per(x_1, x_1') \times \Per(x_2, x_2') + \Per(x_1, x_2') \times \Per(x_2, x_1')$ & generated parametrically\\
+%$ + \Per(x_1, x_2') \times \Per(x_2, x_1')$ & \\
+%\includegraphics[width=0.45\columnwidth, height=0.45\columnwidth, clip=true,trim=2cm 2cm 2cm 1cm]{\topologyfiguresdir/mobius_regression} \\
+\includegraphics[width=0.3\columnwidth]{\topologyfiguresdir/mobius} &
+%\includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/mobius} 
+%\begin{minipage}{0.33\columnwidth}
+%{\begin{tabular}[t]{p{.3\columnwidth}}
+%\includegraphics[width=0.3\columnwidth,clip=true,trim=0cm 0cm 10cm 0cm]{\topologyfiguresdir/sudanese-wikipedia}
+%\\
+%\includegraphics[width=0.3\columnwidth,clip=true,trim=10.55cm 0cm 0cm 0cm]{\topologyfiguresdir/sudanese-wikipedia}
+%\end{tabular}}
+%\end{minipage}
+\raisebox{1cm}{\includegraphics[width=0.4\columnwidth,clip=true,trim=0cm 0cm 10cm 0cm]{\topologyfiguresdir/sudanese-wikipedia}}
+\end{tabular}
+\caption[Generating M\"{o}bius strips]{Generating M\"{o}bius strips.
+Left: By enforcing that the functions mapping from $\mathbb{R}^2$ to $\mathbb{R}^3$ obey the appropriate symmetries, surfaces sampled from the prior have topology corresponding to a M\"{o}bius strip.
+M\"{o}bius strips generated this way do not have the familiar shape of a circular flat surface with a half-twist; rather they tend to look like \emph{Sudanese} M\"{o}bius strips \citep{sudanese1984}, whose edge has a circular shape.
+Right: A Sudanese projection of a M\"{o}bius strip.
+Image adapted from \citep{sudanesepict}.
+}
+\label{fig:mobius}
+\end{figure}
+%
+The second example is doesn't resemble a typical M\"{o}bius strip because the edge of the mobius strip is in a geometric circle.  This kind of embedding is resembles the Sudanese M\"{o}bius strip [cite].
+
+Another classic example of a function living on a Mobius strip is the auditory quality of 2-note intervals.  The harmony of a pair of notes is periodic (over octaves) for each note, and the 
+
+
+
+
+
+
+\section{Kernels on Discrete Data}
+
+Kernels can be defined over all types of data structures: Text, images, matrices, and even kernels . Coming up with a kernel on a new type of data used to be an easy way to get a NIPS paper.
+
+\subsection{Categorical Variables}
+
+There is a simple way to do GP regression over categorical variables. Simply represent your categorical variable as a by a one-of-k encoding. This means that if your number ranges from 1 to 5, represent that as 5 different data dimensions, only one of which is on at a time. 
+
+Then, simply put a product of SE kernels on those dimensions. This is the same as putting one SE ARD kernel on all of them. The lengthscale hyperparameter will now encode whether, when that coding is active, the rest of the function changes. If you notice that the estimated lengthscales for your categorical variables is short, your model is saying that it's not sharing any information between data of different categories. 
+
+
+
+
+
+
+
 \iffalse
 
 \section{Worked example: building a structured kernel for a time-series}
@@ -921,6 +862,80 @@ Long-term trend & Weekly periodicity &Yearly periodicity \\
 
 %\subsection{Breaking down the predictions, examining different parts of the model}
 \fi
+
+
+
+\section{Why assume zero mean?}
+
+In literature, as well as in practice, it is common to construct \gp{} priors with a zero mean function.
+This might seem strange, since it is presumably a good place to put prior information, or if we are comparing models, to express  since marginalizing over an unknown mean function can be equivalently expressed as a different \gp{} with zero-mean, and another term added to the kernel.
+
+\paragraph{A known mean function can be moved into the covariance function}
+Specifically, if we wish to model an unknown function $f(\vx)$ with known mean $m(\vx)$, (with unknown magnitude $c \sim \Nt{0}{\sigma^2_c}$), we can equivalently express this model using another \gp{} with zero mean:
+%$related modelquivalently (\vx) a(\vx)$ with $f \sim \GPt{0}{k(\vx,\vx')}$, then this 
+%
+\begin{align}
+f \sim \GPt{c m(\vx)}{k(\vx,\vx')}, \quad c \sim \Nt{0}{\sigma^2_c}
+\iff f \sim \GPt{ \vzero }{ c^2 m(\vx) m(\vx') + k(\vx,\vx')}
+\end{align}
+
+%This correspondence means that, b
+By moving the mean function into the covariance function, we get the same model, but we can integrate over the magnitude of the mean function at no additional cost.
+This is one advantage of moving as much structure as possible into the covariance function.
+%In fact, we can view \gp{} regression as simply implicitly integrating over the magnitudes of (possibly uncountably many) different mean functions all summed together.
+%TODO: provide a link to the GPs as neural nets discussion.
+
+\paragraph{An unknown mean function can be moved into the covariance function}
+
+If we wish to express our ignorance about the mean function, one way would be by putting a \gp{} prior on it.
+%
+\begin{align}
+m \sim \GPt{\vzero}{k_1(\vx,\vx')}, \quad
+f \sim \GPt{m(\vx)}{k_2(\vx,\vx')}
+\iff 
+f \sim \GPt{\vzero}{k_1(\vx,\vx') + k_2(\vx,\vx')}
+\end{align}
+
+
+\subsection{Why not simply learn the mean function?}
+One might ask: besides integrating over the magnitude, what is the advantage of moving the mean function into the covariance function?
+After all, mean functions are certainly more interpretable than a posterior distribution over functions.
+
+Instead of searching over a large class of covariance functions, which seems strange and unnatural, we might consider simply searching over a large class of structured mean functions, assuming a simple \iid noise model.
+This is the approach taken by practically every other regression technique: neural networks, decision trees, boosting, \etc.
+If we could integrate over a wide class of possible mean functions, we would have a very powerful learning an inference method.
+The problem faced by all of these methods is the well-known problem \emph{overfitting}.
+If we are forced to choose just a single function with which to make predictions, we must carefully control the flexibility of the model we learn, generally prefering ``simple'' functions, or to choose a function from a restricted set.
+
+If, on the other hand, we are allowed to keep in mind many possible explanations of the data, \emph{there is no need to penalize complexity}. [cite Occam's razor paper?]
+The power of putting structure into the covariance function is that doing so allows us to implictly integrate over many functions, maintaining a posterior distribution over infinitely many functions, instead of choosing just one.
+In fact, each of the functions being considered can be infinitely complex, without causing any form of overfitting.
+For example, each of the samples shown in figure \ref{fig:gp-post} varies randomly over the whole real line, never repeating, each one requiring an infinite amount of information to describe.
+Choosing the one function which best fits the data will almost certainly cause overfitting.
+However, if we integrate over many such functions, we will end up with a posterior putting mass on only those functions which are compatible with the data.
+In other words, the parts of the function that we can determine from the data will be predicted with certainty, but the parts which are still uncertain will give rise to a wide range of predictions.
+
+To repeat: \emph{there is no need to assume that the function being modeled is simple, or to prefer simple explanations} in order to avoid overfitting, if we integrate over many possible explanations rather than choosing just the one.
+
+
+
+\section{Signal versus Noise}
+
+In most derivations of Gaussian processes, the model is given as
+%
+\begin{align}
+y = f(\inputVar) + \epsilon, \quad \textnormal{where} \quad \epsilon \simiid \Nt{0}{\sigma^2_{\textnormal{noise}}}
+\end{align}
+
+However, $\epsilon$ can equivalently be thought of as another Gaussian process, and so this model can be written as $y(\inputVar) \sim \GP\left(0, k + \delta \right)$.  The lack of a hard distinction between the noise model and the signal model raises the larger question:  Which part of a model represents signal, and which represents noise?
+
+Our answer is: \emph{it depends on what you want to do with the model}.  For example: often, we don't care about the short-term variations in a function, and only in the long-term trend.  However, in many other cases, we with to de-trend our data to see more clearly how much a particular part of the signal deviated from normal.
+
+%\subsubsection{Student's $t$ processes}
+
+%One shortcoming of the
+
+
 
 \section{Conclusion}
 
