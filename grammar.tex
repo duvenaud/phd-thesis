@@ -130,6 +130,52 @@ In this paper we conjecture that the following ingredients may be useful for bui
 
 
 
+
+
+\section{Ingredients of an automatic statistician}
+\label{sec:ingredients}
+%\fTBD{JL: Has RG written anything on this?}
+\citet{gelman2013philblogpost} asks ``How can an artificial intelligence do statistics? ... It needs not just an inference engine, but also a way to construct new models and a way to check models. Currently, those steps are performed by humans, but the AI would have to do it itself.''
+
+%In this section, we discuss in more detail the elements required to build a system that can automatically construct and then describe complex nonparametric models.
+
+In this section, we discuss in more detail the elements we believe are required to build an artificial intelligence that can do statistics.
+
+\paragraph{1. An open-ended language of models}
+Many statistical procedures consider all models in a class of fixed size - for example, graphical model construction algorithms\fTBD{Cite} search over connectivity graphs for a given set of nodes.
+While these methods can be powerful, human statisticians are capable of deriving novel model classes when required by the modelling task.
+%An open ended language can 
+An automatic search through an open-ended class of models can achieve some of this flexibility, growing the complexity of the model to fit the task at hand, and possibly combining existing structures in novel ways.
+%However, in order for a procedure to be as powerful as a human statistician, it must be able to add to a model in a wide variety of ways, building arbitrarily complex models if the data demands it.
+
+\paragraph{2. Searching through model space}
+An open-ended space of models cannot be searched exhaustively.
+Just as human researchers iteratively refine their models, search procedures can propose new search directions based on the results of previous model fits.
+Because any search in an open-ended space must start with relatively simple models before moving on to more complex ones, any model search in an open-ended space will likely resemble a model-building procedure.% based 
+
+\paragraph{3. Model comparison and checking model fit}
+\fTBD{JL: Two sections perhaps - or are they completely intertwined?}
+An automatic statistician should be able to question the models it has constructed, and formal procedures from model checking provide a way for it to do this.
+%A practically and philsophically interesting question is how to compare models, and how to check whether there is statistical structure not being captured by a given model. 
+%\fTBD{Struggling with this section - do we need to defend marginal likelihood or discuss the options}
+\citet{gelman2012philosophy} review the literature on model checking.
+\TBD{In this work, we use approximate marginal likelihood to compare models, penalizing complexity using the Bayesian Information Criterion as a heuristic.}
+
+\paragraph{4. Describing models}
+
+%Capturing statistical structure helps to provide good predictions. 
+Part of the value of statistical models comes from enabling humans to understand a dataset or a phenomenon.
+Furthermore, a clear description of the statistical structure found in a dataset helps a user to notice when the dataset has errors, the wrong question was asked, the model-building procedure failed to capture known structure, a relevant piece of data or constraint is missing, or when a novel statistical structure has been found.
+
+%It is not clear\fTBD{JL: Weak} what obstacles there are to building a system capable of explaining novel statistical structures.
+In this work, we 
+%attempted to build such an automatic summarization procedure, and 
+demonstrate that the properties of Gaussian processes allow for a modular description generation procedure.
+%This modularity means that a large class of statistical structures can explained, without resorting to writing a special case for every possible structure in our open-ended set of models.
+Whether or not such modularity and interpretability is present in other open-ended model classes is an open question.
+
+
+
 In this paper,  we introduce a system for modeling time-series data
  containing the above ingredients which we call the Automatic
 Bayesian Covariance Discovery (\procedurename{}) system. The system defines an open-ended
@@ -831,36 +877,7 @@ The results are similar to those for extrapolation and are included in the suppl
 %In addition to producing highly interpretable decompositions of regression functions, our method also produces state of the art predictions in both extrapolation and interpolation tasks.
 In addition to the qualitative evaluation in section \ref{sec:time_series}, we investigated quantitatively how our method performs on both extrapolation and interpolation tasks.
 
-\subsection{Extrapolation}
 
-
-\begin{figure}
-\centering
-\begin{tabular}{c}
-\hspace{-0.5cm}
-\includegraphics[width=0.5\columnwidth,height=7cm]{\grammarfiguresdir/extrapolation_curves/01-airline-s-ex-curve_hint.pdf}
-\end{tabular}
-\caption[Comparison of extrapolation performance]
-{Extrapolation performance on the airline dataset.  We plot test-set MSE as a function of the fraction of the dataset used for training. 
-%\TBD{RBG: Are we using a fixed test set, or the complement of the training set?  It seems like we should do the former, so that the results are less noisy.}
-}
-\label{fig:extrapolation}
-\end{figure}
-
-We compared the extrapolation capabilities of our model against standard baselines\footnotemark.
-Dividing the airline dataset into contiguous training and test sets, we computed the predictive mean-squared-error (MSE) of each method.
-We varied the size of the training set from the first 10\% to the first 90\% of the data.
-
-Figure \ref{fig:extrapolation} shows the learning curves of linear regression, a variety of fixed kernel family \gp{} models, and our method.  
-\gp{} models with only \kSE{} and \kPer{} kernels did not capture the long-term trends, since the best parameter values in terms of \gp{} marginal likelihood only capture short term structure. 
-Linear regression approximately captured the long-term trend, but quickly plateaued in predictive performance.
-The more richly structured \gp{} models (${\kSE + \kPer}$ and ${\kSE \times \kPer}$) eventually captured more structure and performed better, but the full structures discovered by our search outperformed the other approaches in terms of predictive performance for all data amounts.
-%In contrast, a \gp{} with an SE or RQ kernel has unbounded capacity.  However, simply having unbounded capacity does not necessarily translate into the ability to extrapolate, as demonstrate in Figure \ref{fig:extrapolation}.  Only by increasing the amount of structure expressible in a model can we capture the regularities in the data that allow long-range extrapolation.
-
-\footnotetext{
-%\NA{
-In one dimension, the predictive means of all baseline methods in table \ref{tbl:Regression Mean Squared Error} are identical to that of a \gp{} with an $\kSE{}$ kernel.}
-%}
 
 %\fTBD{Josh: Can you write about the Blessing of abstraction, and doing lots with a small amount of data?  This might become apparent from plotting the extraplolations.}
 %\fTBD{RBG: We could make this point as part of the learning curves for extrapolation by marking the points at which each additional aspect of the structure is found.}
@@ -915,17 +932,6 @@ Results are presented in table \ref{tbl:Regression Mean Squared Error}.  Our met
 
 
 
-
-
-
-
-
-\section{Conclusion}
-
-Towards the goal of automating statistical modeling we have presented a system which constructs an appropriate model from an open-ended language and automatically generates detailed reports that describe patterns in the data captured by the model.
-We have demonstrated that our procedure can discover and describe a variety of patterns on several time series.
-Our procedure's extrapolation and interpolation performance on time-series are state-of-the-art compared to existing model construction techniques.
-We believe this procedure has the potential to make powerful statistical model-building techniques accessible to non-experts.
 
 
 
@@ -1091,13 +1097,14 @@ Search - All kernels%$\SE{}, \RQ{}, \Lin{}, \Per{}$
 
 
 
-
-
-
-
-
 \section{Discussion}
 
+
+
+Towards the goal of automating statistical modeling we have presented a system which constructs an appropriate model from an open-ended language and automatically generates detailed reports that describe patterns in the data captured by the model.
+We have demonstrated that our procedure can discover and describe a variety of patterns on several time series.
+Our procedure's extrapolation and interpolation performance on time-series are state-of-the-art compared to existing model construction techniques.
+We believe this procedure has the potential to make powerful statistical model-building techniques accessible to non-experts.
 
 %There has developed a large and mature literature on automatic structure discovery in unsupervised settings \fTBD{citations including Josh}.  
 %For example, searches over large model classes have been succesfully used in machine vision \cite{pinto2009high}, analogous to high-throughput methods used in biology.
@@ -1174,7 +1181,40 @@ None of the models in our search space are capable of parsimoniously representin
 %
 %
 Despite this, our approach fails gracefully: the learned kernel still captures the periodic structure, and the quickly growing posterior variance demonstrates that the model is uncertain about long term structure.
+\fi
 
+
+\iffalse
+
+\subsection{Extrapolation}
+
+\begin{figure}
+\centering
+\begin{tabular}{c}
+\hspace{-0.5cm}
+\includegraphics[width=0.5\columnwidth,height=7cm]{\grammarfiguresdir/extrapolation_curves/01-airline-s-ex-curve_hint.pdf}
+\end{tabular}
+\caption[Comparison of extrapolation performance]
+{Extrapolation performance on the airline dataset.  We plot test-set MSE as a function of the fraction of the dataset used for training. 
+%\TBD{RBG: Are we using a fixed test set, or the complement of the training set?  It seems like we should do the former, so that the results are less noisy.}
+}
+\label{fig:extrapolation}
+\end{figure}
+
+We compared the extrapolation capabilities of our model against standard baselines\footnotemark.
+Dividing the airline dataset into contiguous training and test sets, we computed the predictive mean-squared-error (MSE) of each method.
+We varied the size of the training set from the first 10\% to the first 90\% of the data.
+
+Figure \ref{fig:extrapolation} shows the learning curves of linear regression, a variety of fixed kernel family \gp{} models, and our method.  
+\gp{} models with only \kSE{} and \kPer{} kernels did not capture the long-term trends, since the best parameter values in terms of \gp{} marginal likelihood only capture short term structure. 
+Linear regression approximately captured the long-term trend, but quickly plateaued in predictive performance.
+The more richly structured \gp{} models (${\kSE + \kPer}$ and ${\kSE \times \kPer}$) eventually captured more structure and performed better, but the full structures discovered by our search outperformed the other approaches in terms of predictive performance for all data amounts.
+%In contrast, a \gp{} with an SE or RQ kernel has unbounded capacity.  However, simply having unbounded capacity does not necessarily translate into the ability to extrapolate, as demonstrate in Figure \ref{fig:extrapolation}.  Only by increasing the amount of structure expressible in a model can we capture the regularities in the data that allow long-range extrapolation.
+
+\footnotetext{
+%\NA{
+In one dimension, the predictive means of all baseline methods in table \ref{tbl:Regression Mean Squared Error} are identical to that of a \gp{} with an $\kSE{}$ kernel.}
+%}
 
 \fi
 

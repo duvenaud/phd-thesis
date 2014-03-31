@@ -4,9 +4,17 @@
 \chapter{Expressing Structure with Kernels}
 \label{ch:kernels}
 
-In this chapter, we'll show how to use kernels (also called \emph{covariance functions}) to express many different kinds of priors on functions.
-By combining a few simple base kernels, we'll be able to create many different kinds of structured priors.
+In this chapter, we'll show how to use kernels (also called \emph{covariance functions}) to build many different kinds of models of functions.
+By combining a few simple kernels through addition and multiplication, we'll be able to express many different kinds of structure: additivity, symmetry, periodicity, interactions between variables, and many types of invariances.
+Combining kernels in a few simple ways gives us a rich language with which to build appropriate models.
 
+
+\section{Definition}
+
+Since we'll be discussing covariance functions at length, we now give a precise definition.
+A kernel $\kernel(x, x') : \InputSpace \times \InputSpace \to \Reals$ is any positive-definite function between two points $\inputVar, \inputVar'$ in some space $\InputSpace$.
+In this chapter, $\InputSpace$ is usually taken to be Euclidian space, but it doesn't have to be.
+As we shall see, $\InputSpace$ can also be the space of images, documents, categories or points on a sphere, for example.
 
 %\fTBD{Define $\GP\sim\dots$ here?}
 Gaussian process models use a kernel to define the prior covariance between any two function values:
@@ -17,7 +25,7 @@ Gaussian process models use a kernel to define the prior covariance between any 
 \end{align}
 %
 Colloquially, kernels are often said to specify the similarity between two objects.
-This is slightly misleading, since what is actually being specified is the similarity between a \emph{function} of two objects.
+This is slightly misleading, since what is actually being specified is the similarity between the values of a \emph{function} of two objects.
 The kernel specifies which structures are likely under the \gp{} prior, which in turn determines the generalization properties of the model.
 
 %The kernel, $\kernel$, must define a valid covariance function\fTBD{expand me}; when this is the case $\kernel$ is said to be positive semi-definite (PSD).
@@ -29,7 +37,7 @@ The kernel specifies which structures are likely under the \gp{} prior, which in
 
 
 
-\section{Base kernels}
+\section{Basic Kernels}
 Commonly used kernels families include the squared exponential (\kSE), periodic (\kPer), linear (\kLin), and rational quadratic (\kRQ).
 These kernels are defined in figure~\ref{fig:basic_kernels}.
 %
@@ -66,48 +74,43 @@ The x-axis has the same range on all plots.}
 \label{fig:basic_kernels}
 \end{figure}
 %
-There is nothing special, or exhaustive about these kernels in particular, except that they represent a diverse set.
+There is nothing special about these kernels in particular, except that they represent a diverse set.
 
 Each covariance function corresponds to a different set of assumptions made about the function we wish to model.
 For example, using a squared-exp ($\kSE$) kernel implies that the function we are modeling has infinitely many derivatives.
 
 
-\subsection{Definition}
-
-A covariance function $\kernel(x, x') : \InputSpace \times \InputSpace \to \Reals$ can be used to define a measure of similarity between two points $\inputVar, \inputVar'$ in some space $\InputSpace$.
-
-\subsubsection{Feature representation}
-%
-By Mercer's theorem,
-%(TODO:cite)
-any positive-definite kernel can be represented as the inner product between a fixed set of features, evaluated at $x$ and at $x'$:
-%
-\begin{align}
-k(x,x') = \feat(x)\tra \feat(x')
-\end{align}
-
-\gp{} regression is actually equivalent to performing Bayesian linear regression on the features $\feat(x)$.
-The links between Gaussian processes, linear regression, and neural networks is explored further in chapter~\ref{ch:deep-limits}.
-
 
 \section{Combining Kernels}
 
-There are several ways to combine existing kernels to create new ones with different properties.
-For an overview, see \cite[Chapter~4]{rasmussen38gaussian}. 
-In this chapter, we'll focus on two methods for combining kernels: addition and multiplication.
+The rest of this chapter will explore ways in which kernels can be combined to create new ones with different properties.
+Using a few simple base kernels and operations for combining them will give us a rich language with which to build models with diverse sorts of properties.
+%For an overview, see \cite[Chapter~4]{rasmussen38gaussian}.
+
+%In this chapter, we'll focus on two methods for combining kernels: addition and multiplication.
+%\begin{align}
+%k_1 + k_2 =& \,\, k_1(x,x') + k_2(x,x')\\
+%k_1 \times k_2 =& \,\, k_1(x,x') \times k_2(x,x')
+%\end{align}
+
+%Combining kernels using these operations can yield kernels encoding for richer structures than are encoded in the original kernels.
+% such as approximate periodicity ($\kSE \times \kPer$) or smooth functions with linear trends ($\kSE + \kLin$).
+
+
+%This allows one to create richly structured and interpretable kernels from well-understood base components.
+%Figure \ref{fig:kernels} shows several examples of structured kernels that can be constructed by adding or multiplying standard base kernels.
+
+\subsection{Notation}
+
+In this chapter, we'll focus on two ways of combining kernels: addition and multiplication, which we'll often write in shorthand without arguments:
 \begin{align}
 k_1 + k_2 =& \,\, k_1(x,x') + k_2(x,x')\\
 k_1 \times k_2 =& \,\, k_1(x,x') \times k_2(x,x')
 \end{align}
 
-Combining kernels using these operations can yield kernels encoding for richer structures than are encoded in the original kernels.
-% such as approximate periodicity ($\kSE \times \kPer$) or smooth functions with linear trends ($\kSE + \kLin$).
 
-
-This allows one to create richly structured and interpretable kernels from well understood base components.
-%Figure \ref{fig:kernels} shows several examples of structured kernels that can be constructed by adding or multiplying standard base kernels.
-
-All of the base kernels we use are one-dimensional; kernels over multidimensional inputs are constructed by adding and multiplying kernels over individual dimensions.
+All of the base kernels we'll consider in this chapter are one-dimensional.
+Kernels over multidimensional inputs are constructed by adding and multiplying kernels over individual dimensions.
 These dimensions are represented using subscripts, e.g. $\SE_2$ represents an \kSE{} kernel over the second dimension of $\inputVar$.
 %
 \begin{figure}[h]
@@ -151,27 +154,125 @@ Plots have same meaning as in figure \ref{fig:basic_kernels}.}
 \label{fig:kernels_plus}
 \end{figure}
 
-\section{Structure through Additivity}
 
 
-By summing kernels, we can model the data as a sum of independent functions, possibly representing different structures.
-Suppose functions ${\function_1, \function_2}$ are drawn independently, ${\function_1 \dist \GP(\mu_1, \kernel_1)}$, ${\function_2 \dist \GP(\mu_2, \kernel_2)}$.
-Then 
+
+
+\section{Expressing Additivity}
+
+Additivity is a very useful modeling assumption in a wide variety of contexts.  It often aids in building interpretable models, as well as enabling extrapolation in high-dimensional settings.
+Fortunately, this assumption is easy to encode in \gp{} models.
+By summing kernels, we can model the data as a sum of independent functions, each possibly representing a different type of structure.
+Suppose functions ${\function_1, \function_2}$ are drawn independently fpr \gp{} priors:
+%
+\begin{align}
+\function_1 \dist \GP(\mu_1, \kernel_1)\\
+\function_2 \dist \GP(\mu_2, \kernel_2)
+\end{align}
+%
+Then we can model the sum of those functions through another \gp{}:
 %
 \begin{align}
 %\function := 
 \function_1 + \function_2 \dist \GP(\mu_1 + \mu_2, \kernel_1 + \kernel_2).
 \end{align}
 
+%In time-series models, sums of kernels can express superposition of different processes, possibly operating at different scales.
 
-
-In time series models, sums of kernels can express superposition of different processes, possibly operating at different scales.
-In multiple dimensions, summing kernels gives additive structure over different dimensions, similar to generalized additive models~\citep{hastie1990generalized}.
-These two kinds of structure are demonstrated in rows 2 and 4 of figure~\ref{fig:kernels}, respectively.
+%A theme throughout this thesis is exploring the idea that a lot of the expressivity of \gp{} models comes from the fact that these models can be combined and decomposed additively.
 
 
 
-A theme throughout this thesis is exploring the idea that a lot of the expressivity of \gp{} models comes from the fact that these models can be combined and decomposed additively.
+\subsection{Additivity Across Multiple Dimensions}
+
+In multiple dimensions, summing kernels can give rise to additive structure over different dimensions.
+If the kernels being added together are functions only of a subset of input dimensions, then the implied prior over functions decomposes in the same way.
+For example, if
+%
+\begin{align}
+%\function := 
+f(x_1, x_2) \dist \GP(\vzero, \kernel_1(x_1, x_1') + \kernel_2(x_2, x_2'))
+\end{align}
+%
+Then this is equivalent to the model
+%
+\begin{align}
+\function_1(x_1) & \dist \GP(\vzero, \kernel_1(x_1, x_1'))\\
+\function_2(x_2) & \dist \GP(\vzero, \kernel_2(x_2, x_2'))\\
+f(x_1, x_2) & = f_1(x_1) + f_2(x_2)
+\end{align}
+%
+%Then we can model the sum of those functions through another \gp{}:
+%
+
+%\subsection{Additivity in a GP}
+\begin{figure}
+\centering
+\begin{tabular}{ccccc|c}
+\multicolumn{5}{c|}{Kernels constructed through addition} & \multicolumn{1}{c}{Mutliplicative} \\
+\multicolumn{5}{c|}{of orthogonal one-dimensional components} & \multicolumn{1}{c}{kernels} \\
+%\hline \\
+\hspace{-0.2cm}\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel_sum_p2} 
+& \hspace{-0.4cm} \raisebox{1cm}{+} \hspace{-0.4cm} & 
+\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel_sum_p1} 
+& \hspace{-0.4cm} \raisebox{1cm}{=} \hspace{-0.4cm} & 
+\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel} &
+\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/sqexp_kernel} \\
+$k_1(x_1, x_1')$ & & $k_2(x_2, x_2')$ & & $k_1(x_1,x_1') + k_2(x_2,x_2')$ &$k_1(x_1,x_1')k_2(x_2,x_2')$ \\[1em]
+%1D kernel & & 1D kernel & & 1st order kernel & 2nd order kernel \\ 
+%& & & & & \\
+%(Second Order) & & & & & Additive Kernel \\
+%&&&&& \\
+\large $\downarrow$ & & \large $\downarrow$ & & \large $\downarrow$ & \large $\downarrow$  \\[-0.2em]
+\hspace{-0.2cm}\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel_draw_sum_p1}
+& \hspace{-0.4cm} \raisebox{1cm}{+} \hspace{-0.4cm} & 
+\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel_draw_sum_p2}
+& \hspace{-0.4cm} \raisebox{1cm}{=} \hspace{-0.4cm} &
+\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel_draw_sum} &
+\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/sqexp_draw} \\
+$f_1 \sim \GP\left(0, k_1\right)$ & & $f_2 \sim \GP\left(0, k_2\right)$ & & $f_1(x_1) + f_2(x_2)$ & $f(x_1, x_2)$ \\
+%draw from & & draw from & & draw from & draw from\\
+%1D GP prior & & 1D GP prior & & 1st order GP prior & 2nd order GP prior\\
+%Draw from product kernel GP prior & Draw from additive kernel GP prior\\
+\end{tabular}
+\caption[Additive kernels correspond to additive functions]{Top left: An additive kernel is simply a sum of kernels.  Bottom left:  A draw from an additive kernel corresponds to a sum of draws from \gp{}s with the corresponding kernels.  Top right: a product kernel is a product of kernels.  Bottom right:  A draw from a product kernel does not correspond to a product of draws from the corresponding kernels.
+%In this example, both kernels are composed of one dimensional squared-exponential kernels, but this need not be the case in general.
+}
+\label{fig:kernels}
+\end{figure}
+
+Figure \ref{fig:kernels} illustrates this decomposition.%, for two-dimensional functions, a first-order additive kernel with a second-order kernel.
+Note that the product of two kernels does not have an analogous interpretation as the product of two functions.
+
+\subsection{Long-range Extrapolation Through Additivity}
+
+Because additive kernels can discover non-local structure in data, they are exceptionally well-suited to problems where local interpolation fails.  
+%[Would this make them good for nonstationary noise?]
+\begin{figure}[h]
+\centering
+\begin{tabular}{ccc}
+True function: & Squared-exp \gp{} model: & Additive \gp{} model: \\
+\parbox{0.33\columnwidth}{$f(x_1, x_2) = \sin(x_1) + \sin(x_2)$} & $k(x_1, x_1') \times k(x_2, x_2')$ & $k(x_1, x_1') + k(x_2, x_2')$ \\
+\hspace{-0.1in}\includegraphics[width=0.33\textwidth]{\additivefigsdir/1st_order_censored_truth} &
+\hspace{-0.1in}\includegraphics[width=0.33\textwidth]{\additivefigsdir/1st_order_censored_ard}&
+\hspace{-0.1in}\includegraphics[width=0.33\textwidth]{\additivefigsdir/1st_order_censored_add} \\[1em]
+\end{tabular}
+\caption[Long-range inference in functions with additive structure]
+{Inference in functions with additive structure.
+When the function we're modeling has additive structure, we can epxloit this fact to extrapolate far from the training data.
+
+%  The additive GP is able to discover the additive pattern, and use it to fill in a distant mode.  The ARD kernel can only interpolate, and thus predicts the mean in locations missing data.
+}
+\label{fig:synth2d}
+\end{figure}
+%Figure \ref{fig:synth2d} shows a simple experiment demonstrating the ability of additive kernels to discover low-order structure, and to exploit that structure to make predictions about unseen combinations of inputs.
+Figure \ref{fig:synth2d} shows the very different extrapolations made by different \gp{} models.
+We constructed a training set by evaluating a sum of two axis-aligned sine functions in a a small, L-shaped area.
+%The ability of additive GPs to discover long-range structure suggests that this model may be well-suited to deal with covariate-shift problems.
+
+These types of additive models have been well-explored in the statistics literature.  For example, generalized additive models~\citep{hastie1990generalized} have seen wide adoption.
+
+
 
 
 \subsection{Marginal Variance and Covariance of Components}
@@ -242,76 +343,6 @@ These formulae express the posterior model uncertainty about different component
 
 
 
-
-
-\subsection{Additivity Across Multiple Dimensions}
-  
-
-%\subsection{Additivity in a GP}
-\begin{figure}
-\centering
-\begin{tabular}{ccccc|c}
-\multicolumn{5}{c|}{Kernels constructed through addition} & \multicolumn{1}{c}{Mutliplicative} \\
-\multicolumn{5}{c|}{of orthogonal one-dimensional components} & \multicolumn{1}{c}{kernels} \\
-%\hline \\
-\hspace{-0.2cm}\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel_sum_p2} 
-& \hspace{-0.4cm} \raisebox{1cm}{+} \hspace{-0.4cm} & 
-\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel_sum_p1} 
-& \hspace{-0.4cm} \raisebox{1cm}{=} \hspace{-0.4cm} & 
-\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel} &
-\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/sqexp_kernel} \\
-$k_1(x_1, x_1')$ & & $k_2(x_2, x_2')$ & & $k_1(x_1,x_1') + k_2(x_2,x_2')$ &$k_1(x_1,x_1')k_2(x_2,x_2')$ \\
-%1D kernel & & 1D kernel & & 1st order kernel & 2nd order kernel \\ 
-%& & & & & \\
-%(Second Order) & & & & & Additive Kernel \\
-&&&&& \\
-\large $\downarrow$ & & \large $\downarrow$ & & \large $\downarrow$ & \large $\downarrow$  \\
-\hspace{-0.2cm}\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel_draw_sum_p1}
-& \hspace{-0.4cm} \raisebox{1cm}{+} \hspace{-0.4cm} & 
-\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel_draw_sum_p2}
-& \hspace{-0.4cm} \raisebox{1cm}{=} \hspace{-0.4cm} &
-\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel_draw_sum} &
-\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/sqexp_draw} \\
-$f_1 \sim \GP\left(0, k_1\right)$ & & $f_2 \sim \GP\left(0, k_2\right)$ & & $f_1(x_1) + f_2(x_2)$ & $f(x_1, x_2)$ \\
-%draw from & & draw from & & draw from & draw from\\
-%1D GP prior & & 1D GP prior & & 1st order GP prior & 2nd order GP prior\\
-%Draw from product kernel GP prior & Draw from additive kernel GP prior\\
-\end{tabular}
-\caption[Additive kernels correspond to additive functions]{Top left: An additive kernel is simply a sum of kernels.  Bottom left:  A draw from an additive kernel corresponds to a sum of draws from \gp{}s with the corresponding kernels.  Top right: a product kernel is a product of kernels.  Bottom right:  A draw from a product kernel does not correspond to a product of draws from the corresponding kernels.
-%In this example, both kernels are composed of one dimensional squared-exponential kernels, but this need not be the case in general.
-}
-\label{fig:kernels}
-\end{figure}
-
-Figure \ref{fig:kernels} compares, for two-dimensional functions, a first-order additive kernel with a second-order kernel.
-
-
-
-\subsubsection{Long-range Extrapolation Through Additivity}
-
-Because additive kernels can discover non-local structure in data, they are exceptionally well-suited to problems where local interpolation fails.  
-%[Would this make them good for nonstationary noise?]
-\begin{figure}[h]
-\centering
-\begin{tabular}{ccc}
-True function: & Squared-exp \gp{} model: & Additive \gp{} model: \\
-\parbox{0.33\columnwidth}{$f(x_1, x_2) = \sin(x_1) + \sin(x_2)$} & $k(x_1, x_1') \times k(x_2, x_2')$ & $k(x_1, x_1') + k(x_2, x_2')$ \\
-\hspace{-0.1in}\includegraphics[width=0.33\textwidth]{\additivefigsdir/1st_order_censored_truth} &
-\hspace{-0.1in}\includegraphics[width=0.33\textwidth]{\additivefigsdir/1st_order_censored_ard}&
-\hspace{-0.1in}\includegraphics[width=0.33\textwidth]{\additivefigsdir/1st_order_censored_add} \\[1em]
-\end{tabular}
-\caption[Long-range inference in functions with additive structure]
-{Inference in functions with additive structure.
-When the function we're modeling has additive structure, we can epxloit this fact to extrapolate far from the training data.
-
-%  The additive GP is able to discover the additive pattern, and use it to fill in a distant mode.  The ARD kernel can only interpolate, and thus predicts the mean in locations missing data.
-}
-\label{fig:synth2d}
-\end{figure}
-%Figure \ref{fig:synth2d} shows a simple experiment demonstrating the ability of additive kernels to discover low-order structure, and to exploit that structure to make predictions about unseen combinations of inputs.
-Figure \ref{fig:synth2d} shows the very different extrapolations made by different \gp{} models.
-We constructed a training set by evaluating a sum of two axis-aligned sine functions in a a small, L-shaped area.
-%The ability of additive GPs to discover long-range structure suggests that this model may be well-suited to deal with covariate-shift problems.
 
 
 
@@ -396,7 +427,7 @@ The `Coarse' and `Fine' dimensions are not shown here because their variance was
 
 
 
-\section{Structure through Multiplication}
+\section{Expressing Interactions}
 
 Multiplying kernels allows us to account for interactions between different input dimensions or different notions of similarity. 
 For instance, in multidimensional data, the multiplicative kernel $\SE_1 \times \SE_3$ represents a smoothly varying function of dimensions 1 and 3 which is not constrained to be additive.
@@ -411,14 +442,48 @@ Since we are applying these operations to the similarity functions rather than t
 
 
 
-\subsection{Multiplying by a constant function}
+\subsection{Expressing Multiplication with a Known Function}
 
-If we wish to model a function that's been multiplied by some fixed function $a(x)$, this can be easily achieved by multiplying the kernel by $a(\vx) a(\vx')$.
+If we wish to model a function that's been multiplied by some fixed, known function $a(x)$, this can be easily achieved by multiplying the kernel by $a(\vx) a(\vx')$.
 
 This is why it is common practice to assume zero mean, since marginalizing over an unknown mean function can be equivalently expressed as a zero-mean \gp{} with a new kernel.
 
 
-\section{Feature-space view of combining kernels}
+
+
+
+\section{Feature Representation}
+%
+By Mercer's theorem \citep{mercer1909functions},
+%(TODO:cite)
+any positive-definite kernel can be represented as the inner product between a fixed set of features, evaluated at $x$ and at $x'$:
+%
+\begin{align}
+k(x,x') = \feat(x)\tra \feat(x')
+\end{align}
+
+As a simple example, the squared-exponential kernel ($\kSE$) on the real line has a representation in terms of infinitely many radial-basis functions.
+Any stationary kernel (one which only depends on the distance between its inputs) on the real line can be represented by a set of sines and cosines - a Fourier representation \citep{bochner1959lectures}.
+In general, the feature representation of a kernel is not unique, and depends on which space $\InputSpace$ is being considered \citep{minh2006mercer}.
+
+In some cases, $\InputSpace$ can even be the infinite-dimensional feature mapping of another kernel.  Composing feature maps in this way leads to \emph{deep kernels}, a topic explored in chapter~\ref{ch:deep-limits}.
+
+
+
+\subsection{Relation to Linear Regression}
+
+Suprisingly, \gp{} regression is equivalent to Bayesian linear regression on $\feat(x)$:
+%
+\begin{align}
+f(\iva) = \vw\tra \feat(\iva), \quad \vw \sim \N{\vw}{\vzero}{\Sigma} \quad
+\iff
+\quad f \sim \GPdist{f}{\vzero}{\feat(\iva) \tra \Sigma \feat(\iva)}
+\end{align}
+%
+The link between Gaussian processes, linear regression, and neural networks is explored further in chapter~\ref{ch:deep-limits}.
+
+
+\subsection{Feature-space view of combining kernels}
 
 We can also view kernel addition and multiplication as a combination of the features of the original kernels.
 
@@ -462,17 +527,9 @@ Multiplied by an $\kSE$ kernel in another dimension, the resulting features are 
 
 \section{Expressing Symmetries}
 
-
-
 When modeling functions, encoding known symmetries greatly aids learning and prediction.  We demonstrate that in nonparametric regression, many types of symmetry can be enforced through operations on the covariance function.  These symmetries can be composed to produce nonparametric priors on functions whose domains have interesting topological structure such as spheres, torii, and M\"{o}bius strips.
 
-%Joint work with David Reshef, Roger Grosse, Joshua B. Tenenbaum
-
 % I would cite Pierre Chiche but he hasn't actually published his damn papers.
-
-%connected Riemannian manifold
-
-%It is well-known that the properties of the functions we wish to model can be expressed mainly through the covariance function \cite{rasmussen38gaussian}.
 
 \citet{ginsbourger2012argumentwise} and \citet{Invariances13} characterized \gp{} priors on functions invariant to transformations.
 They showed that the only way to construct a prior on functions which respect a given invariance, is to construct a kernel which is invariant to the same invariance.
@@ -503,8 +560,12 @@ k_{\textnormal{periodic}}(x, x') = k(\sin(x), \cos(x), \sin(x'), \cos(x'))
 We can also apply rotational symmetry repeatedy to a single dimension.
 
 
-\subsection{Reflective Symmetry Along an Axis}
-we can enforce the symmetry
+\subsection{Reflective Symmetry}
+
+\subsubsection{Reflective Symmetry Along an Axis}
+W
+e can enforce the symmetry
+%
 \begin{align}
 f(x) = f( -x)
 \end{align}
@@ -518,8 +579,9 @@ k_{\textnormal{symm arg1}}(x, x') & = k(x, x') + k(x, -x') + k(-x, x') + k(-x, -
 Note that, because $k(\vx, \vx') = k(\vx', \vx')$ for any PSD kernel, so we don't need to include the corresponding terms $k(-x, x')$ and $k(-x, -x')$.
 
 
-\subsection{Reflective Symmetry Along a Diagonal}
-We can enforce symmetry between any two dimensions:
+\subsubsection{Reflective Symmetry Along a Diagonal}
+We can enforce that a function is invariant to the order of two of its arguments:
+%symmetry between any two dimensions:
 %
 \begin{align}
 f(x, y) = f( y, x)
@@ -598,15 +660,6 @@ All three methods introduce a different type of nonstationarity.
 %It is possible to construct
 
 %Because then one dimension would be special.
-
-
-\subsection{Checking for Symmetries}
-In some situations, we might not know \emph{a priori} whether a particular symmetry is present in a function.
-%Again, the fact that we can compare marginal likelihoods in \gp{}s means that we can 
-Because \gp{}s let us build models both with and without certain symmetries, we can compute the amount of evidence that the data provide for each of these possibilities.
-To do so, we simple need to compare the marginal likelihood of the data
-We demonstrate that marginal likeihood an be used to automatically search over such structures.
-
 
 
 \subsection{Example: Computing Molecular Energies}
@@ -865,7 +918,7 @@ Long-term trend & Weekly periodicity &Yearly periodicity \\
 
 
 
-\section{Why assume zero mean?}
+\section{Why Assume Zero Mean?}
 
 In literature, as well as in practice, it is common to construct \gp{} priors with a zero mean function.
 This might seem strange, since it is presumably a good place to put prior information, or if we are comparing models, to express  since marginalizing over an unknown mean function can be equivalently expressed as a different \gp{} with zero-mean, and another term added to the kernel.
@@ -897,7 +950,7 @@ f \sim \GPt{\vzero}{k_1(\vx,\vx') + k_2(\vx,\vx')}
 \end{align}
 
 
-\subsection{Why not simply learn the mean function?}
+\section{Why Not Learn the Mean Function Instead?}
 One might ask: besides integrating over the magnitude, what is the advantage of moving the mean function into the covariance function?
 After all, mean functions are certainly more interpretable than a posterior distribution over functions.
 
@@ -917,6 +970,7 @@ In other words, the parts of the function that we can determine from the data wi
 
 To repeat: \emph{there is no need to assume that the function being modeled is simple, or to prefer simple explanations} in order to avoid overfitting, if we integrate over many possible explanations rather than choosing just the one.
 
+In Chapter~\ref{ch:grammar}, we will compare a system which estimates a parametric covariance function against one which estimates a parametric mean function.
 
 
 \section{Signal versus Noise}
@@ -929,11 +983,28 @@ y = f(\inputVar) + \epsilon, \quad \textnormal{where} \quad \epsilon \simiid \Nt
 
 However, $\epsilon$ can equivalently be thought of as another Gaussian process, and so this model can be written as $y(\inputVar) \sim \GP\left(0, k + \delta \right)$.  The lack of a hard distinction between the noise model and the signal model raises the larger question:  Which part of a model represents signal, and which represents noise?
 
-Our answer is: \emph{it depends on what you want to do with the model}.  For example: often, we don't care about the short-term variations in a function, and only in the long-term trend.  However, in many other cases, we with to de-trend our data to see more clearly how much a particular part of the signal deviated from normal.
+We believe that it depends on what you want to do with the model - there is no hard distinction between signal and noise in general.
+
+For example: often, we don't care about the short-term variations in a function, and only in the long-term trend.
+However, in many other cases, we with to de-trend our data to see more clearly how much a particular part of the signal deviated from normal.
 
 %\subsubsection{Student's $t$ processes}
 
 %One shortcoming of the
+
+
+
+\section{Learning Hyperparameters}
+
+
+\section{Learning Structure}
+In some situations, we might not know \emph{a priori} whether a particular structure or symmetry is present in the function we are trying to model.
+%Again, the fact that we can compare marginal likelihoods in \gp{}s means that we can 
+%Because \gp{}s let us build models both with and without certain symmetries, 
+By building kernels with and without such structure, we can compute the marginal likelihoods of the corresponding \gp{} models.
+The quantities represent the relative amount of evidence that the data provide for each of these possibilities, providing the assumptions of the model are correect.
+%To do so, we simple need to compare the marginal likelihood of the data
+%We demonstrate that marginal likeihood an be used to automatically search over such structures.
 
 
 

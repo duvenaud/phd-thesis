@@ -12,12 +12,16 @@
 \end{quotation}
 
 
+\begin{quotation}
+``All models are wrong, but yours are stupid too.''
+
+\hspace*{\fill} \citet{mlhipster} %@ML\_Hipster
+\end{quotation}
+
 \nomenclature[g-pi]{$\pi$}{ $\simeq 3.14\ldots$}
 
-%\section{Regression}
 
-% These two paras written with James L and Zoubin
-Regression is usually stated as the problem of learning some function $f(\iva)$.
+Regression is usually stated as the problem of learning a function.
 %
 From a human's point of view, the problem is closer to: Which method should I use?  What model will work well on my problem?  Is my current method silently failing?
 
@@ -56,7 +60,8 @@ Gaussian processes are distributions over functions such that any finite subset 
 A \gp{} is completely specified by its mean function,
 %
 \begin{align}
-\mathbb{E}(f(x)) = \mu(x)
+%\mathbb{E}(f(x)) = \mu(x)
+\expectargs{}{f(x)} = \mu(x)
 \end{align}
 %
 and its covariance function, also called the \emph{kernel}:
@@ -112,7 +117,7 @@ Figure~\ref{fig:gp-post} shows prior and posterior samples from a \gp{}.
 %[explain how that works]
 % Insert neural net stuff here?
 
-\subsection{Useful properties of Gaussian process models}
+\subsection{Useful properties of Gaussian processes}
 
 \begin{itemize}
 
@@ -137,29 +142,8 @@ The posterior predictive distribution of a \gp{} is another \gp{}.
 This means that \gp{}s can easily be composed with other models or decision procedures.
 For example, in reinforcement learning applications, 
 
-\end{itemize}
-
-
-
-
-\subsection{Limitations of Gaussian process models}
-
-\begin{itemize}
-\item {\bf Slow inference}
-Computing the matrix inverse in \eqref{eq:gp_marg_lik} and \eqref{eq:predictive} takes $\mathcal{O}(N^3)$ time.
-%and $\mathcal{O}(N^2)$ memory.  
-Fortunately, this problem can be addressed by approximate inference schemes, and most \gp{} software packages implement several of these.
-\item {\bf Gaussian likelihoods}
-Another limitation in practice is that we may wish to consider noise models other than Gaussian, in order to be robust to noise.
-When making predictions, we might also want a heavy-tailed predictive distribution, to ensure our decisions take into account the possibility of extreme events.
-Using non-Gaussian noise models requires approximate inference schemes; fortunately, mature software packages exist which can automatically perform approximate inference for a wide variety of likelihoods.
-\item {\bf Symmetric}
-The predictive distribution of a \gp{} is always symmetric about its mean function.
-This means that \gp{} models are inappropriate for modeling non-negative functions, such as likelihoods.
-However, this problem can be addressed by simply exponentiating a \gp{} model, giving rise to a \emph{log-Gaussian process}.
-\end{itemize}
-
-\subsection{Why stick to such a limited model class?}
+\item {\bf Easy to Analyze}
+%\subsection{Why stick to such a limited model class?}
 It may seem unsatisfying to restrict ourselves to a limited model class.
 Shouldn't we instead learn to use some more flexible model class, such as the set of all computible functions?
 The answer is: simple models can be used as well-understood building blocks for constructing more interesting models in diverse settings.
@@ -169,9 +153,42 @@ Although they form an extremely limited model class, they are fast, simple, and 
 This makes them easy to incorporate into other models or procedures.
 Linear models may seem like a hopelessly simple model class, but they're arguably the most useful modeling tools in existence.
 
+\end{itemize}
 
 
-\section{Outline and Contributions}
+
+
+\subsection{Limitations of Gaussian processes}
+
+\begin{itemize}
+
+\item {\bf Slow inference}
+Computing the matrix inverse in \eqref{eq:gp_marg_lik} and \eqref{eq:predictive} takes $\mathcal{O}(N^3)$ time.
+%and $\mathcal{O}(N^2)$ memory.  
+Fortunately, this problem can be addressed by approximate inference schemes, and most \gp{} software packages implement several of these.
+
+\item {\bf Light tails}
+We may wish to use non-Gaussian noise models, for instance in order to be robust to outliers, or to perform classification, or some other form of structured prediction.
+Using non-Gaussian noise models requires approximate inference schemes; fortunately, mature software packages exist which can automatically perform approximate inference for a wide variety of likelihoods.
+%\item {\bf Symmetric}
+%The predictive distribution of a \gp{} is always symmetric about its mean function.
+%This means that \gp{} models are inappropriate for modeling non-negative functions, such as likelihoods.
+%However, this problem can be addressed by simply exponentiating a \gp{} model, giving rise to a \emph{log-Gaussian process}.
+
+\item {\bf The need to choose a kernel}
+In practice, the extreme flexibility of \gp{} models means that we are also faced with the difficult task of choosing a kernel.
+In fact, 
+%because the model only depends on the inputs through the kernel, 
+choosing a useful kernel is equivalent to the problem of learning good features for the data.
+Typically, human experts choose from among a small set of standard kernels.
+In this thesis, we hope to go some way towards automating the construction and selection of useful kernels.
+\end{itemize}
+
+
+
+
+
+\section{Outline and Contributions of this Thesis}
 
 This thesis presents a set of related results about how the probabilistic nature of Gaussian process models allows them to be easily extended or composed with other models.
 Furthermore, the fact that the marginal likelihood is often available (or easily approximable) means that we can evaluate how much evidence the data provides for one structure over another.
@@ -198,7 +215,9 @@ We discuss the advantages and potential pitfalls of automating the modeling proc
 
 {\bf Chapter \ref{ch:warped}} develops an extension of the \gplvm{} in which the latent distribution is a mixture of Gaussians.  This model gives rise to a Bayesian clustering model in the clusters have nonparametric shapes.  Like the density manifolds learned by the \gplvm{}, the shapes of the clusters learned by the \iwmm{} follow the contours of the data density.
 
-{\bf Chapter \ref{ch:deep-limits}} examines the prior over functions obtained by composing \gp{} priors to form \emph{deep Gaussian processes}, and relates them to existing neep neural network architecures.
+Besides having a dual representation as linear regression, \gp{}s can also be derived as the limit of an infinitely-wide neural network.
+As an example of using \gp{}s as a simple-to-understand building block, {\bf Chapter \ref{ch:deep-limits}} analyzes deep network models by characterizing the prior over functions obtained by composing \gp{} priors to form \emph{deep Gaussian processes}.
+%, and relates them to existing neep neural network architecures.
 We find that, as the number of layers in such models increases, the amount of information retained about the original input diminshes to a single degree of freedom.
 We show that a simple change to the network architecture fixes this pathology.
 
