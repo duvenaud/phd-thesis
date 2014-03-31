@@ -158,7 +158,7 @@ Plots have same meaning as in figure \ref{fig:basic_kernels}.}
 
 
 
-\section{Expressing Additivity}
+\section{Modeling Additive Functions}
 
 Additivity is a very useful modeling assumption in a wide variety of contexts.  It often aids in building interpretable models, as well as enabling extrapolation in high-dimensional settings.
 Fortunately, this assumption is easy to encode in \gp{} models.
@@ -176,6 +176,8 @@ Then we can model the sum of those functions through another \gp{}:
 %\function := 
 \function_1 + \function_2 \dist \GP(\mu_1 + \mu_2, \kernel_1 + \kernel_2).
 \end{align}
+%
+Kernels $\kernel_1$ and $\kernel_2$ can be kernels of any type, and we can sum up any number of kernels this way.
 
 %In time-series models, sums of kernels can express superposition of different processes, possibly operating at different scales.
 
@@ -185,8 +187,8 @@ Then we can model the sum of those functions through another \gp{}:
 
 \subsection{Additivity Across Multiple Dimensions}
 
-In multiple dimensions, summing kernels can give rise to additive structure over different dimensions.
-If the kernels being added together are functions only of a subset of input dimensions, then the implied prior over functions decomposes in the same way.
+When modeling functions of multiple dimensions, summing kernels can give rise to additive structure across different dimensions.
+To be more precise, if the kernels being added together are functions only of a subset of input dimensions, then the implied prior over functions decomposes in the same way.
 For example, if
 %
 \begin{align}
@@ -255,9 +257,9 @@ Note that the product of two kernels does not have an analogous interpretation a
 \subsection{Example: Additive model of Concrete Compressive Strength}
 
 We now give an example of how additive kernels give rise to interpetable models.
-We model a dataset measuring the compressive strength of concrete, as a function of the concentration of 7 ingredients, plus the age of the concrete \citep{yeh1998modeling}.
+We model measurements of the compressive strength of concrete, as a function of the concentration of 7 ingredients, plus the age of the concrete \citep{yeh1998modeling}.
 
-We build a model
+We build an additive model
 %
 \begin{align}
 f(\vx) & = 
@@ -306,31 +308,26 @@ The vertical axis is the same for all plots.
 %
 
 Figure~\ref{fig:interpretable functions} shows the marginal posterior distribution of each of the 8 components in Equation~\eqref{eq:concrete}.
-We can see that two of the components
+We can see that the hyperparameters controlling the variance of two of the components, Coarse and Fine, were set to zero, meaning that the marginal likelihood preferred a parsimonious model which did not depend on these dimensions.
+This is an example of the automatic sparsity that arises by maximizing marginal likelihood in \gp{} models.
 
 
 
 \subsection{Marginal Variance of Components}
 
-
-For example: given an additive model
-%
-\begin{align}
-f(x) & = f^{(\textnormal{long})}(x) + f^{(\textnormal{short})}(x) \\
-f^{(\textnormal{long})} & \sim \GP( \vzero, \kSE^{(\textnormal{long})} ) \\
-f^{(\textnormal{short})} & \sim \GP( \vzero, \kSE^{(\textnormal{short})} )
-\end{align}
-%
-we may be uncertain about which 
-
-In this section, we derive the posterior marginal variance and covariance of the additive components of a \gp{}.  These formulas let us plot the marginal variance of each component separately.  These formulas can also be used to examine the posterior covariance between pairs of components.
+How to compute the posterior distributions shown in Figure~\ref{fig:interpretable functions}?
+%The derivation is actually quite straightforward, but in this
+Here we derive the posterior marginal variance and covariance of each of the additive components of a \gp{}.
+%These formulas let us plot the marginal variance of each component separately.  These formulas can also be used to examine the posterior covariance between pairs of components.
 
 %Let us assume that our function $\vf$ is a sum of two functions, $\vf_1$ and $\vf_2$, where $\vf = \vf_1 + \vf_2$.  
 
-Let's examine the joint prior over the sum of two functions.
-We'll distinguish between $f(\vx)$ (the function values at the training locations) and  $f(\vx^\star)$ (the function values at some other, query locations) so that it's clear which matrices to use to extrapolate.
+%Let's examine the 
+First, we'll write down the joint prior over the sum of two functions.
+We'll distinguish between $\vecf(\vX)$ (the function values at the training locations) and  $\vecf(\vX^\star)$ (the function values at some set of query locations).
+% so that it's clear which matrices to use to extrapolate.
 
-If $\vf_1$ and $\vf_2$ are \emph{a priori} independent, and $\vf_1 \sim \gp( \vmu_1, k_1)$ and $\vf_2 \sim \gp( \vmu_2, k_2)$, then
+If $f_1$ and $f_2$ are \emph{a priori} independent, and $f_1 \sim \gp( \mu_1, k_1)$ and $f_2 \sim \gp( \mu_2, k_2)$, then
 %
 \begin{align}
 \left[ \begin{array}{l} 
@@ -356,23 +353,37 @@ If $\vf_1$ and $\vf_2$ are \emph{a priori} independent, and $\vf_1 \sim \gp( \vm
 }
 \end{align}
 %
-where $\vk_1 = k_1( \vX, \vX )$ and $\vk_1^\star = k_1( \vX^\star, \vX )$. 
+where we represent the Gram matrices, evaluated at all pairs of vectors in bold capitals as ${\vK_{i,j} = k(\vx_i, \vx_j)}$.  So 
+%
+\begin{align}
+\vK_1 & = k_1( \vX, \vX ) \\
+\vK_1^\star & = k_1( \vX^\star, \vX ) \\
+\vK_1^{\star\star} & = k_1( \vX^\star, \vX^\star )
+\end{align}
 
 By the formula for Gaussian conditionals:
+%
 \begin{align}
 \vx_A | \vx_B \sim \Nt{\vmu_A + \vSigma_{AB} \vSigma_{BB}\inv \left( \vx_B - \vmu_B \right) }
 {\vSigma_{AA} - \vSigma_{AB} \vSigma_{BB}\inv \vSigma_{BA} },
 \end{align}
-we get that the conditional variance of a Gaussian conditioned on its sum with another Gaussian is given by
+%
+we get that the conditional distribution of a \gp{}-distributed function conditioned on its sum with another \gp{}-distributed function is given by
+%
 \begin{align}
-\vf_1^\star | \vf \sim \Nt{\vmu_1^\star + \vk_1^{\star\tra} (\vK_1 + \vK_2)\inv \left( \vf - \vmu_1 - \vmu_2 \right) } { \vk_1^{\star\star} - \vk_1^{\star\tra} (\vK_1 + \vK_2)\inv \vk_1^{\star}}
+\vf_1^\star | \vf \sim \Normal \Big( 
+\vmu_1^\star + \vK_1^{\star\tra} & (\vK_1 + \vK_2)\inv \left( \vf - \vmu_1 - \vmu_2 \right) \nonumber \\
+\vK_1^{\star\star} - \vK_1^{\star\tra} & (\vK_1 + \vK_2)\inv \vK_1^{\star} \Big)
 %\vf_1(\vx^\star) | \vf(\vx) \sim \mathcal{N}\big( 
 %& \vmu_1(\vx^\star) + \vk_1(\vx^{\star}, \vx)  \left[ \vK_1(\vx, \vx) + \vK_2(\vx, \vx) \right]\inv \left( \vf(\vx) - \vmu_1(\vx) - \vmu_2(\vx) \right) , \nonumber \\
 %& \vk_1(\vx^{\star}, \vx^{\star}) - \vk_1(\vx^{\star}, \vx)  \left[ \vK_1(\vx, \vx) + \vK_2(\vx, \vx) \right] \inv \vk_1(\vx, \vx^{\star}) 
 %\big).
 \end{align}
-
+%
 These formulae express the posterior model uncertainty about different components of the signal, integrating over the possible configurations of the other components.
+In the case where we condition on the sum of more than two functions, the term $\vK_1 + \vK_2$ can simply be replaced by $\sum_i \vK_i$ everywhere.
+
+
 
 
 \subsection{Marginal Covariance of Components}
@@ -381,16 +392,16 @@ For instance, we can compute the posterior covariance between any two components
 %
 \begin{align}
 \covargs{ \vf_1^\star}{\vf_2^\star | \vf } 
-& = - \vk_1^{\star\tra} (\vK_1 + \vK_2)\inv \vk_2^\star
+& = - \vK_1^{\star\tra} (\vK_1 + \vK_2)\inv \vK_2^\star
 %\covargs{\vf_1(\vx^\star)}{\vf_2(\vx^\star) | \vf(\vx) }
 %& = - \vk_1(\vx^{\star}, \vx)  \left[ \vK_1(\vx, \vx) + \vK_2(\vx, \vx) \right] \inv \vk_1(\vx, \vx^{\star}) 
 \label{eq:post-component-cov}
 \end{align}
 %
 If this quantity is negative, it means that there is ambiguity about which of the two components explains the data at that location.
-
-
-\begin{figure}[h!]
+%
+%
+\begin{figure}[h]
 \centering
 %
 %
@@ -429,10 +440,10 @@ Dimensions `Coarse' and `Fine' are not shown here because their variance was zer
 }
 \label{fig:interpretable interactions}
 \end{figure}
-
+%
 For example, Figure~\ref{fig:interpretable interactions} plots the posterior correlation between all non-zero components of the concrete model.
 We can see that there is negative correlation between the ``Cement'' and ``Slag'' variables.
-This reflects an ambiguiuty in the model about which one of these functions is high and the other low.
+This reflects an ambiguity in the model about which one of these functions is high and the other low.
 
 
 
@@ -442,10 +453,6 @@ This reflects an ambiguiuty in the model about which one of these functions is h
 % since a high-dimensional function is decomposed into a series of one- or two-dimensional functions.  
 %\citet{plate1999accuracy} demonstrated that by allowing high-order interactions as well as low-order interactions, one can trade off interpretability with predictive accuracy.
 %In the case where the hyperparameters indicate that most of the variance in a function can be explained by low-order interactions, it is informative to plot the corresponding low-order functions, as in Figure \ref{fig:interpretable functions}. 
-
-
-
-
 
 
 
@@ -474,18 +481,19 @@ The product kernel allows a different function value for every combination of in
 \label{fig:synth2d}
 \end{figure}
 %Figure \ref{fig:synth2d} shows a simple experiment demonstrating the ability of additive kernels to discover low-order structure, and to exploit that structure to make predictions about unseen combinations of inputs.
-Figure \ref{fig:synth2d} compares the extrapolations made by additive versus non-additive \gp{} models.
-We constructed a training set by evaluating a sum of two axis-aligned sine functions in a small, L-shaped area.
-In this example, the additive model is able to correctly predict the value of the function for unseen combinations of inputs.
-The model using a product kernel is more flexible, and so remains uncertain about the function value at unseen combinations of inputs.
+Figure \ref{fig:synth2d} compares the extrapolations made by additive versus non-additive \gp{} models, conditioned on data from a sum of two axis-aligned sine functions, evaluated in a small, L-shaped area.
+In this example, the additive model is able to correctly predict the value of the function at unseen combinations of inputs.
+The product-kernel model is more flexible, and so remains uncertain about the function value at unseen combinations of inputs.
 %The ability of additive GPs to discover long-range structure suggests that this model may be well-suited to deal with covariate-shift problems.
 
 These types of additive models have been well-explored in the statistics literature.  For example, generalized additive models~\citep{hastie1990generalized} have seen wide adoption.
+In high dimensions, we can also consider sums of functions of more than one dimension.
+Chapter~\ref{ch:additive} considers this model class in more detail.
 
 
 
 
-\section{Expressing Interactions}
+\section{Modeling Interactions}
 
 Multiplying kernels allows us to account for interactions between different input dimensions or different notions of similarity. 
 For instance, in multidimensional data, the multiplicative kernel $\SE_1 \times \SE_3$ represents a smoothly varying function of dimensions 1 and 3 which is not constrained to be additive.
@@ -506,6 +514,8 @@ If we wish to model a function that's been multiplied by some fixed, known funct
 
 This is why it is common practice to assume zero mean, since marginalizing over an unknown mean function can be equivalently expressed as a zero-mean \gp{} with a new kernel.
 
+
+%d\subsection{Multiplyingication with a Known Function}
 
 
 
