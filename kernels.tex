@@ -25,8 +25,8 @@ Gaussian process models use a kernel to define the prior covariance between any 
 \end{align}
 %
 Colloquially, kernels are often said to specify the similarity between two objects.
-This is slightly misleading, since what is actually being specified is the similarity between the values of a \emph{function} of two objects.
-The kernel specifies which structures are likely under the \gp{} prior, which in turn determines the generalization properties of the model.
+This is slightly misleading in the context of \gp{}, since what is actually being specified is the similarity between two values of a \emph{function} of an object.
+The kernel specifies which functions are likely under the \gp{} prior, which in turn determines the generalization properties of the model.
 
 %The kernel, $\kernel$, must define a valid covariance function\fTBD{expand me}; when this is the case $\kernel$ is said to be positive semi-definite (PSD).
 
@@ -112,30 +112,15 @@ k_1 \times k_2 =& \,\, k_1(x,x') \times k_2(x,x')
 All of the base kernels we'll consider in this chapter are one-dimensional.
 Kernels over multidimensional inputs are constructed by adding and multiplying kernels over individual dimensions.
 These dimensions are represented using subscripts, e.g. $\SE_2$ represents an \kSE{} kernel over the second dimension of $\inputVar$.
-%
-\begin{figure}[h]
-\centering
-\begin{tabular}{cccc}
-$\kLin \times \kLin$ & $\kSE \times \kPer$ & $\kLin \times \kSE$ & $\kLin \times \kPer$ \\
-\kernpic{lin_times_lin} & \kernpic{se_times_per} & \kernpic{se_times_lin} & \kernpic{lin_times_per}\\
-\fixedx & $x -x'$ & \fixedx & \fixedx\\
-%& & & \\
-\large $\downarrow$ & \large $\downarrow$ & \large $\downarrow$ & \large $\downarrow$  \\
-\kernpic{lin_times_lin_draws}  & \kernpic{se_times_per_draws_s7} & \kernpic{se_times_lin_draws_s2} & \kernpic{lin_times_per_draws_s2} \\
-quadratic functions & locally \newline periodic & increasing variation  & growing amplitude \\[10pt]
-\end{tabular}
-\caption[Examples of one-dimensional structures expressible by multiplying kernels]
-{ Examples of one-dimensional structures expressible by multiplying kernels.  
-%The x-axis has the same scale for all plots.
-Plots have same meaning as in figure \ref{fig:basic_kernels}.}
-\label{fig:kernels_times}
-\end{figure}
+
+Each kernel has a number of parameters (sometimes called \emph{hyperparameters}) which specify the precise shape of the covariance function.
+To remove clutter, we'll usually refer to a kernel without specifying these parameters.
 
 
 
+\section{Modeling Additive Functions}
 
-
-\begin{figure}[h]
+\begin{figure}
 \centering
 \begin{tabular}{cccc}
 %Composite & Draws from \gp{} & \gp{} posterior \\ \toprule
@@ -156,14 +141,10 @@ Plots have same meaning as in figure \ref{fig:basic_kernels}.}
 
 
 
-
-
-\section{Modeling Additive Functions}
-
 Additivity is a very useful modeling assumption in a wide variety of contexts.  It often aids in building interpretable models, as well as enabling extrapolation in high-dimensional settings.
 Fortunately, this assumption is easy to encode in \gp{} models.
 By summing kernels, we can model the data as a sum of independent functions, each possibly representing a different type of structure.
-Suppose functions ${\function_1, \function_2}$ are drawn independently fpr \gp{} priors:
+Suppose functions ${\function_1, \function_2}$ are drawn independently from \gp{} priors:
 %
 \begin{align}
 \function_1 \dist \GP(\mu_1, \kernel_1)\\
@@ -186,26 +167,6 @@ Kernels $\kernel_1$ and $\kernel_2$ can be kernels of any type, and we can sum u
 
 
 \subsection{Additivity Across Multiple Dimensions}
-
-When modeling functions of multiple dimensions, summing kernels can give rise to additive structure across different dimensions.
-To be more precise, if the kernels being added together are functions only of a subset of input dimensions, then the implied prior over functions decomposes in the same way.
-For example, if
-%
-\begin{align}
-%\function := 
-f(x_1, x_2) \dist \GP(\vzero, \kernel_1(x_1, x_1') + \kernel_2(x_2, x_2'))
-\end{align}
-%
-Then this is equivalent to the model
-%
-\begin{align}
-\function_1(x_1) & \dist \GP(\vzero, \kernel_1(x_1, x_1'))\\
-\function_2(x_2) & \dist \GP(\vzero, \kernel_2(x_2, x_2'))\\
-f(x_1, x_2) & = f_1(x_1) + f_2(x_2)
-\end{align}
-%
-%Then we can model the sum of those functions through another \gp{}:
-%
 
 %\subsection{Additivity in a GP}
 \begin{figure}
@@ -238,14 +199,36 @@ $f_1 \sim \GP\left(0, k_1\right)$ & & $f_2 \sim \GP\left(0, k_2\right)$ & & $f_1
 %Draw from product kernel GP prior & Draw from additive kernel GP prior\\
 \end{tabular}
 \caption[Additive kernels correspond to additive functions]{
-Top left: An additive kernel is simply a sum of kernels.
+Top left: An additive kernel is a sum of kernels.
 Bottom left:  A draw from an additive kernel corresponds to a sum of draws from independent \gp{} priors with the corresponding kernels.
-Top right: a product kernel is a product of kernels.
-Bottom right:  A draw from a \gp{} prior with a product of kernels does not correspond to a product of draws from \gp{}s.
+Top right: A product kernel.
+Bottom right:  A \gp{} prior with a product of kernels does not correspond to a product of draws from \gp{}s.
 %In this example, both kernels are composed of one dimensional squared-exponential kernels, but this need not be the case in general.
 }
 \label{fig:kernels}
 \end{figure}
+
+When modeling functions of multiple dimensions, summing kernels can give rise to additive structure across different dimensions.
+To be more precise, if the kernels being added together are functions only of a subset of input dimensions, then the implied prior over functions decomposes in the same way.
+For example, if
+%
+\begin{align}
+%\function := 
+f(x_1, x_2) \dist \GP(\vzero, \kernel_1(x_1, x_1') + \kernel_2(x_2, x_2'))
+\end{align}
+%
+Then this is equivalent to the model
+%
+\begin{align}
+\function_1(x_1) & \dist \GP(\vzero, \kernel_1(x_1, x_1'))\\
+\function_2(x_2) & \dist \GP(\vzero, \kernel_2(x_2, x_2'))\\
+f(x_1, x_2) & = f_1(x_1) + f_2(x_2)
+\end{align}
+%
+%Then we can model the sum of those functions through another \gp{}:
+%
+
+
 
 Figure \ref{fig:kernels} illustrates this decomposition.
 %, for two-dimensional functions, a first-order additive kernel with a second-order kernel.
@@ -263,15 +246,8 @@ We build an additive model
 %
 \begin{align}
 f(\vx) & = 
-f_1(\textnormal{cement})
-+ f_2(\textnormal{slag})
-+ f_3(\textnormal{fly ash})
-+ f_4(\textnormal{water}) \\
-& + f_5(\textnormal{plasticizer})
-+ f_6(\textnormal{coarse})
-+ f_7(\textnormal{fine})
-+ f_8(\textnormal{age})
-+ \epsilon
+f_1(\textnormal{cement}) + f_2(\textnormal{slag}) + f_3(\textnormal{fly ash}) + f_4(\textnormal{water}) \nonumber \\
+& + f_5(\textnormal{plasticizer}) + f_6(\textnormal{coarse}) + f_7(\textnormal{fine}) + f_8(\textnormal{age}) + \epsilon
 \label{eq:concrete}
 \end{align}
 %
@@ -387,21 +363,10 @@ In the case where we condition on the sum of more than two functions, the term $
 
 
 \subsection{Marginal Covariance of Components}
-One of the advantages of using a generative, model-based approach is that we can examine any aspect of the model we wish to.
-For instance, we can compute the posterior covariance between any two components, conditioned on their sum:
-%
-\begin{align}
-\covargs{ \vf_1^\star}{\vf_2^\star | \vf } 
-& = - \vK_1^{\star\tra} (\vK_1 + \vK_2)\inv \vK_2^\star
-%\covargs{\vf_1(\vx^\star)}{\vf_2(\vx^\star) | \vf(\vx) }
-%& = - \vk_1(\vx^{\star}, \vx)  \left[ \vK_1(\vx, \vx) + \vK_2(\vx, \vx) \right] \inv \vk_1(\vx, \vx^{\star}) 
-\label{eq:post-component-cov}
-\end{align}
-%
-If this quantity is negative, it means that there is ambiguity about which of the two components explains the data at that location.
+
 %
 %
-\begin{figure}[h]
+\begin{figure}
 \centering
 %
 %
@@ -429,18 +394,32 @@ If this quantity is negative, it means that there is ambiguity about which of th
 \caption[Visualizing posterior correlations between components]
 {Visualizing posterior correlations between the components explaining the concrete dataset.
 %Plots on the diagonal show the posterior correlation of each function.
-Each plot shows the posterior correlation between two components.
-Within each plot, color indicates the amount of correlation between the function value of the two components.
+Each plot shows the additive model's posterior correlation between two components, plotted over the domain of the data $\pm 5\%$.
+%Color indicates the amount of correlation between the function value of the two components.
 Red indicates high correlation, teal indicates no correlation, and blue indicates negative correlation.
 %Off-diagonal plots show posterior covariance between each pair of functions, as a function of both inputs.
 %Because each
-We can see that there is negative correlation between the ``Cement'' and ``Slag'' variables.
-This reflects an ambiguiuty in the model - one of these functions is high and the other low, but which one is uncertain.
-Dimensions `Coarse' and `Fine' are not shown here because their variance was zero.
+%We can see that t
+There is negative correlation between the ``Cement'' and ``Slag'' variables, meaning that - one of these functions is high and the other low, but which one is uncertain under the model.
+Dimensions `Coarse' and `Fine' are not shown, because their variance was zero.
 }
 \label{fig:interpretable interactions}
 \end{figure}
 %
+
+One of the advantages of using a generative, model-based approach is that we can examine any aspect of the model we wish to.
+For instance, we can compute the posterior covariance between any two components, conditioned on their sum:
+%
+\begin{align}
+\covargs{ \vf_1^\star}{\vf_2^\star | \vf } 
+& = - \vK_1^{\star\tra} (\vK_1 + \vK_2)\inv \vK_2^\star
+%\covargs{\vf_1(\vx^\star)}{\vf_2(\vx^\star) | \vf(\vx) }
+%& = - \vk_1(\vx^{\star}, \vx)  \left[ \vK_1(\vx, \vx) + \vK_2(\vx, \vx) \right] \inv \vk_1(\vx, \vx^{\star}) 
+\label{eq:post-component-cov}
+\end{align}
+%
+If this quantity is negative, it means that there is ambiguity about which of the two components explains the data at that location.
+
 For example, Figure~\ref{fig:interpretable interactions} plots the posterior correlation between all non-zero components of the concrete model.
 We can see that there is negative correlation between the ``Cement'' and ``Slag'' variables.
 This reflects an ambiguity in the model about which one of these functions is high and the other low.
@@ -459,10 +438,7 @@ This reflects an ambiguity in the model about which one of these functions is hi
 
 \subsection{Long-range Extrapolation Through Additivity}
 
-Finding additive structure is useful, because it allows us to make predictions far from the training data.
-%additive models imply non-local structure, so they are exceptionally well-suited to problems where local interpolation fails.  
-%[Would this make them good for nonstationary noise?]
-\begin{figure}[h]
+\begin{figure}
 \centering
 \begin{tabular}{ccc}
  & \gp{} mean using & \gp{} mean using \\
@@ -480,6 +456,10 @@ The product kernel allows a different function value for every combination of in
 }
 \label{fig:synth2d}
 \end{figure}
+
+Finding additive structure is useful, because it allows us to make predictions far from the training data.
+%additive models imply non-local structure, so they are exceptionally well-suited to problems where local interpolation fails.  
+%[Would this make them good for nonstationary noise?]
 %Figure \ref{fig:synth2d} shows a simple experiment demonstrating the ability of additive kernels to discover low-order structure, and to exploit that structure to make predictions about unseen combinations of inputs.
 Figure \ref{fig:synth2d} compares the extrapolations made by additive versus non-additive \gp{} models, conditioned on data from a sum of two axis-aligned sine functions, evaluated in a small, L-shaped area.
 In this example, the additive model is able to correctly predict the value of the function at unseen combinations of inputs.
@@ -493,7 +473,28 @@ Chapter~\ref{ch:additive} considers this model class in more detail.
 
 
 
+
+
 \section{Modeling Interactions}
+
+%
+\begin{figure}
+\centering
+\begin{tabular}{cccc}
+$\kLin \times \kLin$ & $\kSE \times \kPer$ & $\kLin \times \kSE$ & $\kLin \times \kPer$ \\
+\kernpic{lin_times_lin} & \kernpic{se_times_per} & \kernpic{se_times_lin} & \kernpic{lin_times_per}\\
+\fixedx & $x -x'$ & \fixedx & \fixedx\\
+%& & & \\
+\large $\downarrow$ & \large $\downarrow$ & \large $\downarrow$ & \large $\downarrow$  \\
+\kernpic{lin_times_lin_draws}  & \kernpic{se_times_per_draws_s7} & \kernpic{se_times_lin_draws_s2} & \kernpic{lin_times_per_draws_s2} \\
+quadratic functions & locally \newline periodic & increasing variation  & growing amplitude \\[10pt]
+\end{tabular}
+\caption[Examples of one-dimensional structures expressible by multiplying kernels]
+{ Examples of one-dimensional structures expressible by multiplying kernels.  
+%The x-axis has the same scale for all plots.
+Plots have same meaning as in figure \ref{fig:basic_kernels}.}
+\label{fig:kernels_times}
+\end{figure}
 
 Multiplying kernels allows us to account for interactions between different input dimensions or different notions of similarity. 
 For instance, in multidimensional data, the multiplicative kernel $\SE_1 \times \SE_3$ represents a smoothly varying function of dimensions 1 and 3 which is not constrained to be additive.
@@ -553,38 +554,41 @@ The link between Gaussian processes, linear regression, and neural networks is e
 
 \subsection{Feature-space view of combining kernels}
 
+\def\feata{\va}
+\def\featb{\vb}
+
 We can also view kernel addition and multiplication as a combination of the features of the original kernels.
 
 Viewing kernel addition from this point of view, if
 %
 \begin{align}
-k_1(\iva, \iva') & = \feat_1(\iva)\tra \feat_1(\iva')\\
-k_2(\iva, \iva') & = \feat_2(\iva)\tra \feat_2(\iva')
+k_a(\iva, \iva') & = \feata(\iva)\tra \feata(\iva')\\
+k_b(\iva, \iva') & = \featb(\iva)\tra \featb(\iva')
 \end{align}
 %
 then
 %
 \begin{align}
-k_1(\iva, \iva') + k_2(\iva, \iva)
-& = \feat_1(\iva)\tra \feat_2(\iva') + \feat_1(\iva)\tra \feat_2(\iva') \\
-& = \colvec{\feat_1(\iva)}{\feat_2(\iva)}^\tra \colvec{\feat_1(\iva')}{\feat_2(\iva')}
+k_a(\iva, \iva') + k_b(\iva, \iva)
+& = \feata(\iva)\tra \featb(\iva') + \feata(\iva)\tra \featb(\iva') \\
+& = \colvec{\feata(\iva)}{\featb(\iva)}^\tra \colvec{\feata(\iva')}{\featb(\iva')}
 \end{align}
-
-In other words, the features of $k_1 + k_2$ are the concatenation of the features of each kernel.
+%
+meaning that the features of $k_a + k_b$ are the concatenation of the features of each kernel.
 
 We can examine kernel multiplication in a similar way:
 %
 \begin{align}
-k_1(\iva, \iva') \times k_2(\iva, \iva')
-& = \left[ \feat_1(\iva)\tra \feat_1(\iva') \right] \times \left[ \feat_2(\iva)\tra \feat_2(\iva') \right] \\
+k_a(\iva, \iva') \times k_b(\iva, \iva')
+& = \left[ \feata(\iva)\tra \feata(\iva') \right] \times \left[ \featb(\iva)\tra \featb(\iva') \right] \\
 %& = \left[ \begin{array}{c} \feat_1(\iva) \\ \feat_2(\iva) \end{array} \right]^\tra \left[ \begin{array}{c} \feat_1(\iva') \\ \feat_2(\iva') \end{array} \right]
-& = \sum_i h_i(\iva) h_i(\iva') \times \sum_j h_j(\iva) h_j(\iva') \\
-& = \sum_i \sum_j h_i(\iva) h_i(\iva') h_j(\iva) h_j(\iva') \\
-& = \sum_{i,j} \left[ h_i(\iva) h_j(\iva) \right] \left[ h_i(\iva') h_j(\iva') \right] \\
-& = \vecop{ \feat_1(\iva) \otimes \feat_2(\iva') } \tra \vecop{ \feat_1(\iva) \otimes \feat_2(\iva')} 
+& = \sum_i a_i(\iva) a_i(\iva') \times \sum_j b_j(\iva) b_j(\iva') \\
+& = \sum_i \sum_j a_i(\iva) a_i(\iva') b_j(\iva) b_j(\iva') \\
+& = \sum_{i,j} \big[ a_i(\iva) b_j(\iva) \big] \big[ a_i(\iva') b_j(\iva') \big] \\
+& = \vecop{ \feata(\iva) \otimes \featb(\iva') } \tra \vecop{ \feata(\iva) \otimes \featb(\iva')} 
 \end{align}
 
-In other words, the features of $k_1 \times k_2$ are the cartesian product (all possible combinations) of the original sets of features.
+In other words, the features of $k_a \times k_b$ are the cartesian product (all possible combinations) of the original sets of features.
 For example, one set of features $\feat(\iva)$ corresponding to a one-dimensional $\kSE$ kernel is a set of infinitely many Gaussian bumps spread along the real line.
 Multiplied by an $\kSE$ kernel in another dimension, the resulting features are a set of two-dimensional Gaussian bumps, covering the plane.
 
@@ -595,11 +599,17 @@ Multiplied by an $\kSE$ kernel in another dimension, the resulting features are 
 
 \section{Expressing Symmetries}
 
-When modeling functions, encoding known symmetries greatly aids learning and prediction.  We demonstrate that in nonparametric regression, many types of symmetry can be enforced through operations on the covariance function.  These symmetries can be composed to produce nonparametric priors on functions whose domains have interesting topological structure such as spheres, torii, and M\"{o}bius strips.
+When modeling functions, encoding known symmetries improves both learning and prediction. 
+Many types of symmetry can be enforced through operations on the covariance function.
+In this section, we'll look at the different ways in which we can encode a given symmetry in a our prior on functions.
+
+We'll demonstrate the properties of the resulting models by sampling functions from their priors.
+By using these priors to define warpings from $\Reals^2 \to \Reals^3$, we'll also show how to build a nonparametric prior on an open-ended family of topological manifolds, such as cylinders, torii, and M\"{o}bius strips.
+% These symmetries can be composed to produce nonparametric priors on functions whose domains have interesting topological structure such as spheres, torii, and M\"{o}bius strips.
 
 % I would cite Pierre Chiche but he hasn't actually published his damn papers.
 
-\citet{ginsbourger2012argumentwise} and \citet{Invariances13} characterized \gp{} priors on functions invariant to transformations.
+\citet{ginsbourger2012argumentwise} and \citet{Invariances13} characterized the set of \gp{} priors on functions invariant to given transformations.
 They showed that the only way to construct a prior on functions which respect a given invariance, is to construct a kernel which is invariant to the same invariance.
 Formally,
 given a symmetry $\Phi$, and $f \sim \GPt{0}{k(\vx,\vx')}$, $f$ is invariant under the action of a finite group $\Phi$ if and only if k is argumentwise invariant:
@@ -608,24 +618,57 @@ given a symmetry $\Phi$, and $f \sim \GPt{0}{k(\vx,\vx')}$, $f$ is invariant und
 \forall \vx, \forall g \in G, \quad k( g(\vx), x') = k(\vx, \vx')
 \end{align}
 
-In this section, we give recipes for expressing several classes of symmetries.  Later, we will show how these can be combined to produce more interesting structures.
+Knowing the orbit of a symmetry group and an existing kernel, there are a few simple ways to transform that kernel into one which is argumentwise invariant, and thus obeys the group's symmetries:
+%
+\begin{itemize}
+
+\item {\bf Sum over the Orbit} 
+\citet{ginsbourger2012argumentwise} and \citet{kondor2008group} suggest simply summing over the orbit:
+%
+\begin{align}
+k_\textnormal{sum}(\vx, \vx') = \sum_{g \in G} k( \vx, T( \vx') )
+\end{align}
+
+\item {\bf Product over the Orbit}
+( Ryan P. Adams, personal communication ) suggests a similar construction using a product over the orbit:
+%
+\begin{align}
+k_\textnormal{prod}(\vx, \vx') = \prod_{g \in G} k( \vx, T( \vx') )
+\end{align}
+\item {\bf Project to a Representer}
+\citet{Invariances13} also explore the possibility of projecting each datapoint into a representer $A$ of the group:
+\begin{align}
+k_\textnormal{rep}(\vx, \vx') = k( A_G(\vx), A_G( \vx') )
+\end{align}
+\end{itemize}
+
+There are presumably many possible ways to achive a given symmetry, but we must be careful to do so without compromising other qualities of the model we are constructing.
+For example, simply setting $k(\vx, \vx') = 0$ gives rise to a \gp{} prior which obeys \emph{all possible} symmetries, but this is presumably not a model we wish to use.
+
+%In this section, we give recipes for expressing several classes of symmetries.  Later, we will show how these can be combined to produce more interesting structures.
 
 
 \subsection{Periodicity}
-Given $D$ dimensions, we can enforce rotational symmetry on any subset of the dimensions:
+
+%We can enforce periodicity on any subset of the dimensions:
+Periodicity in a one-dimensional function corresponds to the invariance
 %
 \begin{align}
-f(x) = f( x_i + \tau_i)% \quad \forall k \in \mathbb{Z}
+f(x) = f( x + \tau)% \quad \forall k \in \mathbb{Z}
 \end{align}
 % TODO: Generalize this to multiple dimensions.
 %
-by the applying a kernel between pairs transformed coordinates $\sin(x), \cos(x)$:
+where $\tau$ is the period.
+
+The most popular method for building a periodic kernel is due to \citet{mackay1998introduction}, who used the representer method in combination with a squared-exp kernel.
+
+The representer transformation for periodicity is simply $A(x) = [\sin(x), \cos(x)]$:
 %
 \begin{align}
-k_{\textnormal{periodic}}(x, x') = k(\sin(x), \cos(x), \sin(x'), \cos(x'))
+k_{\textnormal{periodic}}(x, x') = \kSE( [\sin(x), \cos(x)], [\sin(x'), \cos(x')])
 \end{align}
 %
-We can also apply rotational symmetry repeatedy to a single dimension.
+%We can also apply rotational symmetry repeatedy to a single dimension.
 
 
 \subsection{Reflective Symmetry}
