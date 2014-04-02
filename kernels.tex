@@ -39,7 +39,7 @@ The kernel specifies which functions are likely under the \gp{} prior, which in 
 
 \section{Basic Kernels}
 Commonly used kernels families include the squared exponential (\kSE), periodic (\kPer), linear (\kLin), and rational quadratic (\kRQ).
-These kernels are defined in figure~\ref{fig:basic_kernels}.
+These kernels are defined in Table~\ref{fig:basic_kernels}.
 %
 \newcommand{\fhbig}{2cm}
 \newcommand{\fwbig}{3cm}
@@ -51,7 +51,7 @@ These kernels are defined in figure~\ref{fig:basic_kernels}.
 \newcommand{\largetimes}{\tabbox{{\Large$\times$}}}
 \newcommand{\fixedx}{$x$ with $(x' = 1)$}
 %
-\begin{figure}[h]
+\begin{table}[h]
 \centering
 \begin{tabular}{cccc}
 Squared-exp (\kSE)  & Periodic (\kPer) & Linear (\kLin) & Rational quadratic (\kRQ) \\[6pt]
@@ -72,7 +72,7 @@ Left and third columns: base kernels $k(\cdot,0)$.
 Second and fourth columns: draws from a \sgp{} with each repective kernel.
 The x-axis has the same range on all plots.}
 \label{fig:basic_kernels}
-\end{figure}
+\end{table}
 %
 There is nothing special about these kernels in particular, except that they represent a diverse set.
 
@@ -611,35 +611,39 @@ By using these priors to define warpings from $\Reals^2 \to \Reals^3$, we'll als
 
 \citet{ginsbourger2012argumentwise} and \citet{Invariances13} characterized the set of \gp{} priors on functions invariant to given transformations.
 They showed that the only way to construct a prior on functions which respect a given invariance, is to construct a kernel which is invariant to the same invariance.
-Formally,
-given a symmetry $\Phi$, and $f \sim \GPt{0}{k(\vx,\vx')}$, $f$ is invariant under the action of a finite group $\Phi$ if and only if k is argumentwise invariant:
+Formally, given a finite group of operations $G$ to which we wish our function to remain invariant, and $f \sim \GPt{0}{k(\vx,\vx')}$, $f$ is invariant under G if and only if $k(\cdot, \cdot)$ is argumentwise invariant:
 %
 \begin{align}
-\forall \vx, \forall g \in G, \quad k( g(\vx), x') = k(\vx, \vx')
+\forall \vx, \vx', \forall g, g' \in G, \quad k( g(\vx), g(\vx')) = k(\vx, \vx')
 \end{align}
 
-Knowing the orbit of a symmetry group and an existing kernel, there are a few simple ways to transform that kernel into one which is argumentwise invariant, and thus obeys the group's symmetries:
+For finite groups, there are a few simple ways to transform an existing kernel into one which is argumentwise invariant to actions under the group:
 %
 \begin{itemize}
 
 \item {\bf Sum over the Orbit} 
-\citet{ginsbourger2012argumentwise} and \citet{kondor2008group} suggest simply summing over the orbit:
+\citet{ginsbourger2012argumentwise} and \citet{kondor2008group} suggest a double sum over the orbits of $\vx$ and $\vx'$ w.r.t. G:
 %
 \begin{align}
-k_\textnormal{sum}(\vx, \vx') = \sum_{g \in G} k( \vx, T( \vx') )
+k_\textnormal{sum}(\vx, \vx') = \sum_{g, \in G} \sum_{g' \in G} k( g( \vx ), g'( \vx') )
 \end{align}
+%
+
 
 \item {\bf Product over the Orbit}
-( Ryan P. Adams, personal communication ) suggests a similar construction using a product over the orbit:
+(Ryan P. Adams, personal communication) suggests an analogous construction using products:
 %
 \begin{align}
-k_\textnormal{prod}(\vx, \vx') = \prod_{g \in G} k( \vx, T( \vx') )
+k_\textnormal{sum}(\vx, \vx') = \prod_{g, \in G} \prod_{g' \in G} k( g( \vx ), g'( \vx') )
 \end{align}
-\item {\bf Project to a Representer}
-\citet{Invariances13} also explore the possibility of projecting each datapoint into a representer $A$ of the group:
+\item {\bf Projection to a Fundamental Domain}
+\citet{Invariances13} also explore the possibility of projecting each datapoint into a fundamental domain of the group:
+%
 \begin{align}
 k_\textnormal{rep}(\vx, \vx') = k( A_G(\vx), A_G( \vx') )
 \end{align}
+%
+This method also works for infinite groups.
 \end{itemize}
 
 There are presumably many possible ways to achive a given symmetry, but we must be careful to do so without compromising other qualities of the model we are constructing.
@@ -655,21 +659,24 @@ Periodicity in a one-dimensional function corresponds to the invariance
 %
 \begin{align}
 f(x) = f( x + \tau)% \quad \forall k \in \mathbb{Z}
+\label{eq:periodic_invariance}
 \end{align}
 % TODO: Generalize this to multiple dimensions.
 %
 where $\tau$ is the period.
 
-The most popular method for building a periodic kernel is due to \citet{mackay1998introduction}, who used the representer method in combination with a squared-exp kernel.
-
-The representer transformation for periodicity is simply $A(x) = [\sin(x), \cos(x)]$:
+The most popular method for building a periodic kernel is due to \citet{mackay1998introduction}, who used the projection method in combination with an $\kSE$ kernel.
+A fundamental domain of the symmetry group is a circle, so the kernel
+%
+%The representer transformation for periodicity is simply $A(x) = [\sin(x), \cos(x)]$:
 %
 \begin{align}
-k_{\textnormal{periodic}}(x, x') = \kSE( [\sin(x), \cos(x)], [\sin(x'), \cos(x')])
+\kPer(x, x') = \kSE( [\sin(x), \cos(x)], [\sin(x'), \cos(x')])
 \end{align}
 %
 %We can also apply rotational symmetry repeatedy to a single dimension.
-
+achieves the invariance in Equation~\eqref{eq:periodic_invariance}.
+Some simple algebra reduces this kernel to the form shown in Table~\ref{fig:basic_kernels}.
 
 \subsection{Reflective Symmetry}
 
@@ -715,11 +722,12 @@ k_{\textnormal{reflect min}}(x, y, x', y') = k( & \min(x, y), \max(x,y), % \nonu
 however, the second method will in general lead to non-differentiability along $x = y$.  Figure \ref{fig:add_vs_min} shows the difference.
 
 \begin{figure}
+\renewcommand{\tabcolsep}{1.5mm}
 \begin{tabular}{ccc}
 \includegraphics[width=0.3\columnwidth]{\symmetryfigsdir/symmetric-xy-naive-sample} &
 \includegraphics[width=0.3\columnwidth]{\symmetryfigsdir/symmetric-xy-prod-sample} &
 \includegraphics[width=0.3\columnwidth]{\symmetryfigsdir/symmetric-xy-projection-sample} \\
-Additive method & Product method & Representer method \\[0.5ex]
+Additive method & Product method & Projection method \\[0.5ex]
 %$k(x, y, x', y') + k(x, y, y', x')$ & $k(x, y, x', y') \times k(x, y, y', x')$ & $k( \min(x, y), \max(x,y),$ \\
 % $+ k(y, x, x', y') + k(y, x, y', x')$ & $\times k(y, x, x', y') \times k(y, x, y', x')$ & $\min(x', y'), \max(x',y') )$
 $\begin{array}{r@{}l@{}}
@@ -740,7 +748,7 @@ k( &{}\min(x, y), \max(x,y), \\
 \caption[Three ways to introduce symmetry]{An illustration of three methods of introducing symmetry.
 Left:  The additive method.
 Center: The product method.
-Right: The representer method.
+Right: The projection method.
 %The additive method has half the marginal variance away from $y = x$, but the min method introduces a non-differentiable seam along $y = x$.
 All three methods introduce a different type of nonstationarity.
 }
@@ -902,9 +910,10 @@ This is similar in spirit to the GP-LVM model \cite{lawrence2005probabilistic}, 
 \subsection{Surfaces, Cylinders and Torii}
 
 \begin{figure}
+\renewcommand{\tabcolsep}{1mm}
 \begin{tabular}{ccc}
 Manifold $( \SE_1 \times \SE_2 )$  & Cylinder $( \SE_1 \times \Per_2 )$ & Toroid $( \Per_1 \times \Per_2 )$\\
-\includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/manifold} &
+\hspace{-0.5cm}\includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/manifold} &
 \includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/cylinder} &
 \includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/torus} \\
 \end{tabular}
