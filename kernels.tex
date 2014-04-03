@@ -523,6 +523,16 @@ This is why it is common practice to assume zero mean, since marginalizing over 
 
 %d\subsection{Multiplyingication with a Known Function}
 
+\subsection{Changepoints}
+Changepoints can be defined through addition and multiplication with sigmoidal functions:
+\begin{align}
+\kCP(\kernel_1, \kernel_2) = \kernel_1 \times \boldsymbol\sigma + \kernel_2 \times \boldsymbol{\bar\sigma}
+\label{eq:cp}
+\end{align}
+where $\boldsymbol\sigma = \sigma(x)\sigma(x')$ and $\boldsymbol{\bar\sigma} = (1-\sigma(x))(1-\sigma(x'))$.
+
+Change windows can be defined similarly by replacing $\sigma(x)$ with a product of two sigmoids, one increasing and one decreasing.
+
 
 
 
@@ -615,11 +625,12 @@ By using these priors to define warpings from $\Reals^2 \to \Reals^3$, we'll als
 % I would cite Pierre Chiche but he hasn't actually published his damn papers.
 
 \citet{ginsbourger2012argumentwise} and \citet{Invariances13} characterized the set of \gp{} priors on functions invariant to given transformations.
-They showed that the only way to construct a prior on functions which respect a given invariance, is to construct a kernel which is invariant to the same invariance.
+They showed that the only way to construct a prior on functions which respect a given invariance is to construct a kernel which respects the same invariance w.r.t. each of its two inputs.
+
 Formally, given a finite group of operations $G$ to which we wish our function to remain invariant, and $f \sim \GPt{0}{k(\vx,\vx')}$, $f$ is invariant under G if and only if $k(\cdot, \cdot)$ is argumentwise invariant:
 %
 \begin{align}
-\forall \vx, \vx', \forall g, g' \in G, \quad k( g(\vx), g(\vx')) = k(\vx, \vx')
+\forall \vx, \vx' \in \InputSpace, \forall g, g' \in G, \quad k( g(\vx), g(\vx')) = k(\vx, \vx')
 \end{align}
 
 \def\gswitch{G_\textnormal{switch}}
@@ -628,11 +639,11 @@ As a simple example, consider the symmetry $f(x, y) = f(y,x)$, or the set of fun
 The elements of the group $\gswitch$ are
 %
 \begin{align}
-g_1(f(x,y)) & = f(x,y) \\
-g_2(f(x,y)) & = f(y,x)
+g_1(f(x,y)) & = f(x,y) \qquad \textnormal{(identity)}\\
+g_2(f(x,y)) & = f(y,x) \qquad \textnormal{(swap)}
 \end{align}
 
-For finite groups, there are a few simple ways to transform an existing kernel into one which is argumentwise invariant to actions under the group:
+It might not be clear how to come up with a kernel obeying these symmetries.  Fortunately, for finite groups, there are a few simple ways to transform any kernel into one which is argumentwise invariant to actions under the group:
 %
 %
 \begin{figure}
@@ -676,7 +687,7 @@ All three methods introduce a different type of nonstationarity.
 k_\textnormal{sum}(\vx, \vx') = \sum_{g, \in G} \sum_{g' \in G} k( g( \vx ), g'( \vx') )
 \end{align}
 
-For the group $\gswitch$, we have that
+For our example group $\gswitch$, this operation results in:
 %
 \begin{align}
 k_\textnormal{switch}(\vx, \vx')
@@ -686,7 +697,7 @@ k_\textnormal{switch}(\vx, \vx')
 %
 For stationary kernels, some pairs of elements in this sum will be identical, and can be ignored.
 Figure~\ref{fig:add_vs_min}a shows a draw from this prior using the $\kSE$ kernel.
-This construction has the property that the marginal variance is doubled near $x = y$.
+This construction has the property that the marginal variance is doubled near $x = y$, which may or may not be desirable.
 
 
 
@@ -698,23 +709,23 @@ k_\textnormal{rep}(\vx, \vx') = k( A_G(\vx), A_G( \vx') )
 \end{align}
 %
 
-For example, a fundamental domain of $\gswitch$ is $\{x, y : x < y\}$, which can be mapped to using $A_{\gswitch}( x, y ) = \big[ \min(x,y), \max(x,y) \big]$.
+For our example group $\gswitch$, a fundamental domain is $\{x, y : x < y\}$, which can be mapped to using $A_{\gswitch}( x, y ) = \big[ \min(x,y), \max(x,y) \big]$.
 Constructing a kernel using this method introduces a non-differentiable  ``seam'' along $x = y$.
 
-This method also works for infinite groups, as we shall see below.
+The projection method also works for infinite groups, as we shall see below.
 
 \item {\bf Product over the Orbit}
-Ryan P. Adams (personal communication) suggests an analogous construction using products:
+Ryan P. Adams (personal communication) suggests a construction using products over the orbits:
 %
 \begin{align}
 k_\textnormal{sum}(\vx, \vx') = \prod_{g, \in G} \prod_{g' \in G} k( g( \vx ), g'( \vx') )
 \end{align}
 %
-This method is not recommended, since it will often produce \gp{} priors with zero variance in some regions of the space, as in Figure~\ref{fig:add_vs_min}.
+This method is not recommended, since it will often produce \gp{} priors with zero variance in some regions of the space, as in Figure~\ref{fig:add_vs_min}c.
 %We include it here to show that each of these methods for enforcing symmetries modifies the resulting model in other ways as well.
 \end{enumerate}
 
-There are presumably many possible ways to achive a given symmetry, but we must be careful to do so without compromising other qualities of the model we are constructing.
+There are many possible ways to achive a given symmetry, but we must be careful to do so without compromising other qualities of the model we are constructing.
 For example, simply setting $k(\vx, \vx') = 0$ gives rise to a \gp{} prior which obeys \emph{all possible} symmetries, but this is presumably not a model we wish to use.
 
 
@@ -754,13 +765,13 @@ However, samples from this prior would be discontinuous at every multiple of $\t
 
 \subsection{Example: Reflective Symmetry Along an Axis}
 
-We can enforce the symmetry
+We can enforce symmetry about zero
 %
 \begin{align}
 f(x) = f( -x)
 \end{align}
 %
-using the sum method with any kernel, by the transform
+using the sum over orbits method, by the transform
 %
 \begin{align}
 k_{\textnormal{symm axis}}(x, x') & = k(x, x') + k(x, -x') + k(-x, x') + k(-x, -x')
@@ -825,10 +836,10 @@ k_{\textnormal{symm axis}}(x, x') & = k(x, x') + k(x, -x') + k(-x, x') + k(-x, -
 Most models of images are invariant to spatial translations \citep{lecun1995convolutional}.
 Similarily, most models of sounds are also invariant to translation through time.
 
-Note that this sort of translational invariance is completely distinct from the stationarity properties of kernels used in \gp{} priors.
+Note that this sort of translational invariance is completely distinct from the stationarity of kernels such as $\kSE$ or $\kPer$.
 A stationary kernel implies that the prior is invariant to translations of the entire training and test set.
 
-We are discussing here a discretized input space (into pixels or the audio equivalent), where the input vectors have one dimension for every pixel.
+In contrast, we are discussing here a discretized input space (into pixels or the audio equivalent), where the input vectors have one dimension for every pixel.
 We are interested in creating priors on functions that are invariant to shifting a signal along its pixels:
 %
 \begin{align}
