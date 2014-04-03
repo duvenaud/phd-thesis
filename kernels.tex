@@ -13,8 +13,9 @@ Combining kernels in a few simple ways gives us a rich language with which to bu
 
 Since we'll be discussing covariance functions at length, we now give a precise definition.
 A kernel $\kernel(x, x') : \InputSpace \times \InputSpace \to \Reals$ is any positive-definite function between two points $\inputVar, \inputVar'$ in some space $\InputSpace$.
-In this chapter, $\InputSpace$ is usually taken to be Euclidian space, but it doesn't have to be.
-As we shall see, $\InputSpace$ can also be the space of images, documents, categories or points on a sphere, for example.
+In this chapter, $\InputSpace$ is usually taken to be Euclidian space, %but it doesn't have to be.
+%As we shall see, $\InputSpace$ 
+it can also be the space of images, documents, categories or points on a sphere, for example.
 
 %\fTBD{Define $\GP\sim\dots$ here?}
 Gaussian process models use a kernel to define the prior covariance between any two function values:
@@ -25,7 +26,7 @@ Gaussian process models use a kernel to define the prior covariance between any 
 \end{align}
 %
 Colloquially, kernels are often said to specify the similarity between two objects.
-This is slightly misleading in the context of \gp{}, since what is actually being specified is the similarity between two values of a \emph{function} of an object.
+This is slightly misleading in the context of \gp{}s, since what is actually being specified is the similarity between two values of a \emph{function} over objects.
 The kernel specifies which functions are likely under the \gp{} prior, which in turn determines the generalization properties of the model.
 
 %The kernel, $\kernel$, must define a valid covariance function\fTBD{expand me}; when this is the case $\kernel$ is said to be positive semi-definite (PSD).
@@ -252,7 +253,7 @@ f_1(\textnormal{cement}) + f_2(\textnormal{slag}) + f_3(\textnormal{fly ash}) + 
 \end{align}
 %
 where $\epsilon \simiid \Nt{0}{\sigma_n}$.
-After learning the hyperparameters of the model by maximizing the marginal likelihood conditioned on the data, we can visualize the posterior distribution of each component of the model.
+After learning the kernel parameters by maximizing the marginal likelihood of the data, we can visualize the posterior distribution of each component of the model.
 %
 %
 \newcommand{\concretepic}[1]{\includegraphics[width=0.31\columnwidth]{\decompfigsdir/concrete-component-#1}}
@@ -284,8 +285,8 @@ The vertical axis is the same for all plots.
 %
 
 Figure~\ref{fig:interpretable functions} shows the marginal posterior distribution of each of the 8 components in Equation~\eqref{eq:concrete}.
-We can see that the hyperparameters controlling the variance of two of the components, Coarse and Fine, were set to zero, meaning that the marginal likelihood preferred a parsimonious model which did not depend on these dimensions.
-This is an example of the automatic sparsity that arises by maximizing marginal likelihood in \gp{} models.
+We can see that the parameters controlling the variance of two of the components, Coarse and Fine, were set to zero, meaning that the marginal likelihood preferred a parsimonious model which did not depend on these dimensions.
+This is an example of the automatic sparsity that arises by maximizing marginal likelihood in \gp{} models, also known as automatic relevance determination (\ARD) \citep{neal1995bayesian}.
 
 
 
@@ -364,13 +365,8 @@ In the case where we condition on the sum of more than two functions, the term $
 
 \subsection{Marginal Covariance of Components}
 
-%
-%
 \begin{figure}
 \centering
-%
-%
-%
 \renewcommand{\tabcolsep}{1mm}
 \def\incpic#1{\includegraphics[width=0.1\columnwidth]{../figures/decomp/concrete-#1}}
 \begin{tabular}{p{2mm}*{6}{c}}
@@ -431,7 +427,7 @@ This reflects an ambiguity in the model about which one of these functions is hi
 %One advantage of additive models is their interpretability.
 % since a high-dimensional function is decomposed into a series of one- or two-dimensional functions.  
 %\citet{plate1999accuracy} demonstrated that by allowing high-order interactions as well as low-order interactions, one can trade off interpretability with predictive accuracy.
-%In the case where the hyperparameters indicate that most of the variance in a function can be explained by low-order interactions, it is informative to plot the corresponding low-order functions, as in Figure \ref{fig:interpretable functions}. 
+%In the case where the kernel parameters indicate that most of the variance in a function can be explained by low-order interactions, it is informative to plot the corresponding low-order functions, as in Figure \ref{fig:interpretable functions}. 
 
 
 
@@ -497,7 +493,16 @@ Plots have same meaning as in figure \ref{fig:basic_kernels}.}
 \end{figure}
 
 Multiplying kernels allows us to account for interactions between different input dimensions or different notions of similarity. 
-For instance, in multidimensional data, the multiplicative kernel $\SE_1 \times \SE_3$ represents a smoothly varying function of dimensions 1 and 3 which is not constrained to be additive.
+For instance, in multidimensional data, the multiplicative kernel $\SE_1 \times \SE_2$ represents a smoothly varying function of dimensions 1 and 2 which is not constrained to be additive.
+
+Products of $\kSE$ kernels, having a different lengthscale parameter for each dimension, are equivalent to the $\seard$ kernel:
+%
+\begin{align}
+\seard( \vx, \vx') = \exp \left( -\frac{1}{2} \sum_{d=1}^D \frac{x_d x'_d}{\ell_d^2} \right)
+\end{align}
+%
+Where \ARD{} stands for Automatic Relevance Determination .
+
 In univariate data, multiplying a kernel by \kSE{} gives a way of converting global structure to local structure. 
 For example, $\Per$ corresponds to globally periodic structure, whereas $\Per \times \SE$ corresponds to locally periodic structure, as shown in row 1 of figure~\ref{fig:kernels}.
 
@@ -552,7 +557,7 @@ f(\iva) = \vw\tra \feat(\iva), \quad \vw \sim \N{\vw}{\vzero}{\Sigma} \quad
 The link between Gaussian processes, linear regression, and neural networks is explored further in chapter~\ref{ch:deep-limits}.
 
 
-\subsection{Feature-space view of combining kernels}
+\subsection{Feature-space view of Combining Kernels}
 
 \def\feata{\va}
 \def\featb{\vb}
@@ -597,11 +602,11 @@ Multiplied by an $\kSE$ kernel in another dimension, the resulting features are 
 
 
 
-\section{Expressing Symmetries}
+\section{Expressing Symmetries and Invariances}
 
 When modeling functions, encoding known symmetries improves both learning and prediction. 
 Many types of symmetry can be enforced through operations on the covariance function.
-In this section, we'll look at the different ways in which we can encode a given symmetry in a our prior on functions.
+In this section, we'll look at different ways in which we can encode a given symmetry into a prior on functions.
 
 We'll demonstrate the properties of the resulting models by sampling functions from their priors.
 By using these priors to define warpings from $\Reals^2 \to \Reals^3$, we'll also show how to build a nonparametric prior on an open-ended family of topological manifolds, such as cylinders, torii, and M\"{o}bius strips.
@@ -617,9 +622,52 @@ Formally, given a finite group of operations $G$ to which we wish our function t
 \forall \vx, \vx', \forall g, g' \in G, \quad k( g(\vx), g(\vx')) = k(\vx, \vx')
 \end{align}
 
+\def\gswitch{G_\textnormal{switch}}
+
+As a simple example, consider the symmetry $f(x, y) = f(y,x)$, or the set of functions invariant to switching their two arguments.
+The elements of the group $\gswitch$ are
+%
+\begin{align}
+g_1(f(x,y)) & = f(x,y) \\
+g_2(f(x,y)) & = f(y,x)
+\end{align}
+
 For finite groups, there are a few simple ways to transform an existing kernel into one which is argumentwise invariant to actions under the group:
 %
-\begin{itemize}
+%
+\begin{figure}
+\renewcommand{\tabcolsep}{1.5mm}
+\begin{tabular}{ccc}
+Additive method & Projection method & Product method \\[0.5ex]
+\includegraphics[width=0.3\columnwidth]{\symmetryfigsdir/symmetric-xy-naive-sample} &
+\includegraphics[width=0.3\columnwidth]{\symmetryfigsdir/symmetric-xy-projection-sample} &
+\includegraphics[width=0.3\columnwidth]{\symmetryfigsdir/symmetric-xy-prod-sample}\\
+%$k(x, y, x', y') + k(x, y, y', x')$ & $k(x, y, x', y') \times k(x, y, y', x')$ & $k( \min(x, y), \max(x,y),$ \\
+% $+ k(y, x, x', y') + k(y, x, y', x')$ & $\times k(y, x, x', y') \times k(y, x, y', x')$ & $\min(x', y'), \max(x',y') )$
+$\begin{array}{r@{}l@{}}
+& \kSE(x, y, x', y') \\ + & \kSE(x, y, y', x')
+\end{array}$
+&
+$\begin{array}{r@{}l@{}}
+\kSE( \!\! &{}\min(x, y), \max(x,y), \\
+           &{}\min(x', y'), \max(x',y') )
+\end{array}$
+&
+$\begin{array}{r@{}l@{}}
+& \kSE(x, y, x', y') \\ \times & \kSE(x, y, y', x') 
+\end{array}$
+\end{tabular}
+\caption[Three ways to introduce symmetry]{Three methods of introducing symmetry, illustrated through draws from the corresponding priors.
+%Left:  The additive method.
+%Center: The product method.
+%Right: The projection method.
+%The additive method has half the marginal variance away from $y = x$, but the min method introduces a non-differentiable seam along $y = x$.
+All three methods introduce a different type of nonstationarity.
+}
+\label{fig:add_vs_min}
+\end{figure}
+%
+\begin{enumerate}
 
 \item {\bf Sum over the Orbit} 
 \citet{ginsbourger2012argumentwise} and \citet{kondor2008group} suggest a double sum over the orbits of $\vx$ and $\vx'$ w.r.t. G:
@@ -627,15 +675,21 @@ For finite groups, there are a few simple ways to transform an existing kernel i
 \begin{align}
 k_\textnormal{sum}(\vx, \vx') = \sum_{g, \in G} \sum_{g' \in G} k( g( \vx ), g'( \vx') )
 \end{align}
-%
 
-
-\item {\bf Product over the Orbit}
-(Ryan P. Adams, personal communication) suggests an analogous construction using products:
+For the group $\gswitch$, we have that
 %
 \begin{align}
-k_\textnormal{sum}(\vx, \vx') = \prod_{g, \in G} \prod_{g' \in G} k( g( \vx ), g'( \vx') )
+k_\textnormal{switch}(\vx, \vx')
+& = \sum_{g, \in \gswitch} \sum_{g' \in \gswitch} k( g( \vx ), g'( \vx') ) \\
+& = k(x, y, x', y') + k(x, y, y', x') + k(y, x, x', y') + k(y, x, y', x')
 \end{align}
+%
+For stationary kernels, some pairs of elements in this sum will be identical, and can be ignored.
+Figure~\ref{fig:add_vs_min}a shows a draw from this prior using the $\kSE$ kernel.
+This construction has the property that the marginal variance is doubled near $x = y$.
+
+
+
 \item {\bf Projection to a Fundamental Domain}
 \citet{Invariances13} also explore the possibility of projecting each datapoint into a fundamental domain of the group:
 %
@@ -643,16 +697,33 @@ k_\textnormal{sum}(\vx, \vx') = \prod_{g, \in G} \prod_{g' \in G} k( g( \vx ), g
 k_\textnormal{rep}(\vx, \vx') = k( A_G(\vx), A_G( \vx') )
 \end{align}
 %
-This method also works for infinite groups.
-\end{itemize}
+
+For example, a fundamental domain of $\gswitch$ is $\{x, y : x < y\}$, which can be mapped to using $A_{\gswitch}( x, y ) = \big[ \min(x,y), \max(x,y) \big]$.
+Constructing a kernel using this method introduces a non-differentiable  ``seam'' along $x = y$.
+
+This method also works for infinite groups, as we shall see below.
+
+\item {\bf Product over the Orbit}
+Ryan P. Adams (personal communication) suggests an analogous construction using products:
+%
+\begin{align}
+k_\textnormal{sum}(\vx, \vx') = \prod_{g, \in G} \prod_{g' \in G} k( g( \vx ), g'( \vx') )
+\end{align}
+%
+This method is not recommended, since it will often produce \gp{} priors with zero variance in some regions of the space, as in Figure~\ref{fig:add_vs_min}.
+%We include it here to show that each of these methods for enforcing symmetries modifies the resulting model in other ways as well.
+\end{enumerate}
 
 There are presumably many possible ways to achive a given symmetry, but we must be careful to do so without compromising other qualities of the model we are constructing.
 For example, simply setting $k(\vx, \vx') = 0$ gives rise to a \gp{} prior which obeys \emph{all possible} symmetries, but this is presumably not a model we wish to use.
 
+
+
+
 %In this section, we give recipes for expressing several classes of symmetries.  Later, we will show how these can be combined to produce more interesting structures.
 
 
-\subsection{Periodicity}
+\subsection{Example: Periodicity}
 
 %We can enforce periodicity on any subset of the dimensions:
 Periodicity in a one-dimensional function corresponds to the invariance
@@ -671,89 +742,54 @@ A fundamental domain of the symmetry group is a circle, so the kernel
 %The representer transformation for periodicity is simply $A(x) = [\sin(x), \cos(x)]$:
 %
 \begin{align}
-\kPer(x, x') = \kSE( [\sin(x), \cos(x)], [\sin(x'), \cos(x')])
+\kPer(x, x') = \kSE( \big[ \sin(x), \cos(x) \big], \big[ \sin(x'), \cos(x') \big])
 \end{align}
 %
 %We can also apply rotational symmetry repeatedy to a single dimension.
 achieves the invariance in Equation~\eqref{eq:periodic_invariance}.
 Some simple algebra reduces this kernel to the form shown in Table~\ref{fig:basic_kernels}.
 
-\subsection{Reflective Symmetry}
+We could also build a periodic kernel by the mapping $A(x) = \mod(x, \tau)$.
+However, samples from this prior would be discontinuous at every multiple of $\tau$.
 
-\subsubsection{Reflective Symmetry Along an Axis}
-W
-e can enforce the symmetry
+\subsection{Example: Reflective Symmetry Along an Axis}
+
+We can enforce the symmetry
 %
 \begin{align}
 f(x) = f( -x)
 \end{align}
 %
-by the kernel transform
+using the sum method with any kernel, by the transform
 %
 \begin{align}
-k_{\textnormal{symm arg1}}(x, x') & = k(x, x') + k(x, -x') + k(-x, x') + k(-x, -x')
+k_{\textnormal{symm axis}}(x, x') & = k(x, x') + k(x, -x') + k(-x, x') + k(-x, -x')
 \end{align}
 %
-Note that, because $k(\vx, \vx') = k(\vx', \vx')$ for any PSD kernel, so we don't need to include the corresponding terms $k(-x, x')$ and $k(-x, -x')$.
+%Note that, because $k(\vx, \vx') = k(\vx', \vx')$ for any PSD kernel, so we don't need to include the corresponding terms $k(-x, x')$ and $k(-x, -x')$.
 
 
-\subsubsection{Reflective Symmetry Along a Diagonal}
-We can enforce that a function is invariant to the order of two of its arguments:
+%\subsubsection{Reflective Symmetry Along a Diagonal}
+%We can enforce that a function is invariant to the order of two of its arguments:
 %symmetry between any two dimensions:
 %
-\begin{align}
-f(x, y) = f( y, x)
-\end{align}
+%\begin{align}
+%f(x, y) = f( y, x)
+%\end{align}
 %
-by two methods:  In the additive method, we transform the kernel by:
+%by two methods:  In the additive method, we transform the kernel by:
 %
-\begin{align}
-k_{\textnormal{reflect add}}(x, y, x', y') 
- = k(x, y, x', y') + k(x, y, y', x')
- + k(y, x, x', y') + k(y, x, y', x')
-\end{align}
-%
-or by
-%
-\begin{align}
-k_{\textnormal{reflect min}}(x, y, x', y') = k( & \min(x, y), \max(x,y), % \nonumber \\ & 
-\min(x', y'), \max(x',y') )
-\end{align}
-however, the second method will in general lead to non-differentiability along $x = y$.  Figure \ref{fig:add_vs_min} shows the difference.
 
-\begin{figure}
-\renewcommand{\tabcolsep}{1.5mm}
-\begin{tabular}{ccc}
-\includegraphics[width=0.3\columnwidth]{\symmetryfigsdir/symmetric-xy-naive-sample} &
-\includegraphics[width=0.3\columnwidth]{\symmetryfigsdir/symmetric-xy-prod-sample} &
-\includegraphics[width=0.3\columnwidth]{\symmetryfigsdir/symmetric-xy-projection-sample} \\
-Additive method & Product method & Projection method \\[0.5ex]
-%$k(x, y, x', y') + k(x, y, y', x')$ & $k(x, y, x', y') \times k(x, y, y', x')$ & $k( \min(x, y), \max(x,y),$ \\
-% $+ k(y, x, x', y') + k(y, x, y', x')$ & $\times k(y, x, x', y') \times k(y, x, y', x')$ & $\min(x', y'), \max(x',y') )$
-$\begin{array}{r@{}l@{}}
-k(x, y, x', y') & {}+ k(x, y, y', x') 
-% \\ {}+ k(y, x, x', y') & {}+ k(y, x, y', x')
-\end{array}$
-&
-$\begin{array}{r@{}l@{}}
-k(x, y, x', y') & {}\times k(x, y, y', x') \\
-% {}\times k(y, x, x', y') & {}\times k(y, x, y', x')
-\end{array}$
-&
-$\begin{array}{r@{}l@{}}
-k( &{}\min(x, y), \max(x,y), \\
-&{}\min(x', y'), \max(x',y') )
-\end{array}$
-\end{tabular}
-\caption[Three ways to introduce symmetry]{An illustration of three methods of introducing symmetry.
-Left:  The additive method.
-Center: The product method.
-Right: The projection method.
-%The additive method has half the marginal variance away from $y = x$, but the min method introduces a non-differentiable seam along $y = x$.
-All three methods introduce a different type of nonstationarity.
-}
-\label{fig:add_vs_min}
-\end{figure}
+%
+%or by
+%
+%\begin{align}
+%k_{\textnormal{reflect min}}(x, y, x', y') = k( & \min(x, y), \max(x,y), % \nonumber \\ & 
+%\min(x', y'), \max(x',y') )
+%\end{align}
+%however, the second method will in general lead to non-differentiability along $x = y$.  Figure \ref{fig:add_vs_min} shows the difference.
+
+
 
 
 %\paragraph{Spherical Symmetry}
@@ -779,6 +815,300 @@ All three methods introduce a different type of nonstationarity.
 %It is possible to construct
 
 %Because then one dimension would be special.
+
+
+
+
+
+\subsection{Example: Translation Invariance in Images}
+
+Most models of images are invariant to spatial translations \citep{lecun1995convolutional}.
+Similarily, most models of sounds are also invariant to translation through time.
+
+Note that this sort of translational invariance is completely distinct from the stationarity properties of kernels used in \gp{} priors.
+A stationary kernel implies that the prior is invariant to translations of the entire training and test set.
+
+We are discussing here a discretized input space (into pixels or the audio equivalent), where the input vectors have one dimension for every pixel.
+We are interested in creating priors on functions that are invariant to shifting a signal along its pixels:
+%
+\begin{align}
+f \Bigg( \raisebox{-2.5ex}{ \includegraphics[width=1cm]{\topologyfiguresdir/grid2} } \Bigg) 
+= f \Bigg( \raisebox{-2.5ex}{ \includegraphics[width=1cm]{\topologyfiguresdir/grid3} } \Bigg)
+\end{align}
+%
+Translational invariance in this setting is equivalent to invariance two swapping sets of dimensions in the input space.
+
+This invariance can be achieved in one dimension by using the transformation
+%
+\begin{align}
+%k \left( (x_1, x_2, \dots, x_D ), (x_1', x_2', \dots, x_D' ) \right) & = %\nonumber \\
+%\sum_{i=1}^D \prod_{j=1}^D k( x_j, x_{ i + j \textnormal{mod $D$} }' )
+k_\textnormal{invariant} \left( \vx, \vx' \right) = %\nonumber \\
+\sum_{i=1}^D \sum_{j=1}^D k( \shift(\vx, i), \shift(\vx, j) )
+\end{align}
+%
+where
+%
+\begin{align}
+\shift(\vx, i) = \big[ x_{\mod( i + 1, D )}, x_{\mod( i + 2, D )}, \dots, x_{\mod( D + i, D )} \big]
+\end{align}
+%
+%Edge effects can be handled either by wrapping the image around, or by padding it with zeros.
+%
+%\paragraph{Convolution} The resulting kernel could be called a \emph{discrete convolution kernel}.  For an image with $R, C$ rows and columns, it can also be written as:
+%
+%\begin{align}
+%k_{\textnormal{conv}} \left( (x_{11}, x_{12}, \dots, x_{RC} ), (x_{11}', x_{12}', \dots, x_{RC}' ) \right) = % \nonumber \\
+%\sum_{i=-L}^L \sum_{j=-L}^L k\left( (x_{1+i,1+j}, x_{1+i,2+j} , \dots, x_{R+i,C+j} ), (x_{1+i,1+j}', x_{1+i,2+j}' , \dots, x_{R+i,C+j}' ) \right)
+%\sum_{i=-L}^L \sum_{j=-L}^L k\left( \vx, T_{ij}(\vx') \right)
+%\end{align}
+%
+%where $T_{ij}(\vx)$ is the operator which replaces each $x_{mn}$ with $x_{m+i, n+j}$.
+The extension to two dimensions is straightforward, but notationally cumbersome.
+We are simply defining the covariance between two images to be the sum of all covariances between all translations of the two images.
+
+\citet{kondor2008group} built a kernel between images approximately invariant to translation and rotation by using the projection method.
+%; his kernels depend only of functions of images% projecting the images onto a sphere, then using as features the eigenvalues of the Laplacian
+%We can also normalize the kernel by pre-multiplying it with $\sqrt{k_{\textnormal{conv}}(\vx, \vx) k_{\textnormal{conv}}(\vx', \vx') }$.
+
+%$f \left( \begin{tikzpicture} \draw[step=0.1,black,thin] (0.3,0.3) grid (1,1); \end{tikzpicture} \right)$
+
+
+
+%Is there a pathology of the additive construction that appears in the limit?
+
+%\subsection{Max-pooling}
+%What we'd really like to do is a max-pooling operation.  However, in general, a kernel which is the max of other kernels is not PSD [put counterexample here?].  Is the max over co-ordinate switching PSD?
+
+%\section{Related Work}
+%\label{sec:related_work}
+
+%\paragraph{Invariances in Gaussian processes}
+%\cite{Invariances13} show that, for Gaussian processes, with probability one, $f(\vx) = f(T(\vx))$ if and only if $k(x, x') = k(x, T(x'))$.
+
+
+
+
+
+\section{Generating Topological Manifolds}
+
+We now give a geometric illustration of the symmetries encoded by \gp{}s with different sorts of kernels.
+%The language of models of
+
+Priors on functions exhibiting symmetries can be used to create a prior on topological manifolds, by warping a latent surface $\vx$ to an observed surface $\vy = f(\vx)$.
+%The distribution on $\vf$ allows us to put mass on 
+%If we set the input $\vx$ to be a 2-dimensional plane, intro 3 dimensions using a \gp{} encoding certain symmetries, the resulting surfaces will correspon
+To doso, first create a mesh in 2D.  Next, draw 3 independent functions from a \gp{} prior.
+% with the relevant symmetries encoded in the kernel.  
+Then, map the 2D mesh through those functions to get 3D coordinates of each point on the mesh.
+
+This construction is similar in spirit to the \gp{} latent variable model (\gplvm{}) \citep{lawrence2005probabilistic}, which learns a latent embedding of the data into a low-dimensional space, given a \gp{} prior on the mapping from the latent space to the observed space.%and constructs a fixed kernel structure over that space.
+%The GP-LVM will be discussed in further detail in chapter ...
+
+\subsection{Surfaces, Cylinders and Torii}
+
+\begin{figure}
+\renewcommand{\tabcolsep}{1mm}
+\begin{tabular}{ccc}
+Manifold $( \SE_1 \times \SE_2 )$  & Cylinder $( \SE_1 \times \Per_2 )$ & Toroid $( \Per_1 \times \Per_2 )$\\
+\hspace{-0.5cm}\includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/manifold} &
+\includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/cylinder} &
+\includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/torus} \\
+\end{tabular}
+\caption[Generating 2D manifolds with different topological structures]{
+Generating 2D manifolds with different topological structures.
+By enforcing that the functions mapping from $\mathbb{R}^2$ to $\mathbb{R}^3$ obey the appropriate symmetries, the surfaces created have the corresponding topologies (ignoring self-intersections).
+}
+\label{fig:gen_surf}
+\end{figure}
+
+Figure \ref{fig:gen_surf} shows 2D meshes warped into 3D by functions drawn from \gp{} priors with different kernels.
+The different kernels give rise to different topologies.
+
+
+\subsection{M\"{o}bius Strips}
+
+A prior on functions on M\"{o}bius strips can be achieved by enforcing the symmetries:
+%
+\begin{align}
+f(x, y) & = f( x, y + \tau_y) \\
+f(x, y) & = f( x + \tau_x, y)  \\
+f(x, y) & = f( y, x )
+\end{align}
+
+If we imagine moving along the edge of a M\"{o}bius strip, that is equivalent to moving along a diagonal in the function generated.
+Figure~\ref{fig:mobius}a shows an example of a function drawn from such a prior.
+%
+\begin{figure}
+\begin{tabular}[t]{c|c|c}
+%\begin{columns}
+\centering
+Draw from \gp{} prior: &  M\"{o}bius manifold & Sudanese M\"{o}bius strip \\
+%$( \Per_1 \times \Per_2 )$ and $f(x,y) = f(y,x)$ & generated parametrically\\
+$\begin{array}{r@{}l@{}}
+&\Per(x_1, x_1') \times \Per(x_2, x_2') \\
+          + & \Per(x_1, x_2') \times \Per(x_2, x_1')
+\end{array}$
+& & generated parametrically\\
+%$ + \Per(x_1, x_2') \times \Per(x_2, x_1')$ & \\
+%\includegraphics[width=0.45\columnwidth, height=0.45\columnwidth, clip=true,trim=2cm 2cm 2cm 1cm]{\topologyfiguresdir/mobius_regression} \\
+\includegraphics[width=0.3\columnwidth, height=0.3\columnwidth, clip=true,trim=3cm 2cm 2cm 2cm]{\topologyfiguresdir/mobius_field} & 
+\includegraphics[width=0.3\columnwidth,clip=true,trim=1cm 0cm 0cm 0cm]{\topologyfiguresdir/mobius} &
+%\includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/mobius} 
+%\begin{minipage}{0.33\columnwidth}
+%{\begin{tabular}[t]{p{.3\columnwidth}}
+%\includegraphics[width=0.3\columnwidth,clip=true,trim=0cm 0cm 10cm 0cm]{\topologyfiguresdir/sudanese-wikipedia}
+%\\
+%\includegraphics[width=0.3\columnwidth,clip=true,trim=10.55cm 0cm 0cm 0cm]{\topologyfiguresdir/sudanese-wikipedia}
+%\end{tabular}}
+%\end{minipage}
+\raisebox{1cm}{\includegraphics[width=0.4\columnwidth,clip=true,trim=0cm 0cm 10cm 0cm]{\topologyfiguresdir/sudanese-wikipedia}}
+\end{tabular}
+\caption[Generating M\"{o}bius strips]{Generating M\"{o}bius strips.
+Left: By enforcing that the functions mapping from $\mathbb{R}^2$ to $\mathbb{R}^3$ obey the appropriate symmetries, surfaces sampled from the prior have topology corresponding to a M\"{o}bius strip.
+M\"{o}bius strips generated this way do not have the familiar shape of a circular flat surface with a half-twist; rather they tend to look like \emph{Sudanese} M\"{o}bius strips \citep{sudanese1984}, whose edge has a circular shape.
+Right: A Sudanese projection of a M\"{o}bius strip.
+Image adapted from \citep{sudanesepict}.
+}
+\label{fig:mobius}
+\end{figure}
+%
+Figure~\ref{fig:mobius}b shows an example of a 2D mesh mapped to 3D by functions drawn from such a prior.
+This surface doesn't resemble a typical M\"{o}bius strip, because the edge of the mobius strip is in roughly circular shape, as opposed to the double-loop that one obtains by gluing a strip of paper with a single twist.
+The surface shown resembles the Sudanese M\"{o}bius strip \citep{sudanese1984}, shown in Figure~\ref{fig:mobius}c.
+
+%Another classic example of a function living on a Mobius strip is the auditory quality of 2-note intervals.  The harmony of a pair of notes is periodic (over octaves) for each note, and the 
+
+
+
+\section{Kernels on Categorical Variables}
+
+%Kernels can be defined over all types of data structures: Text, images, matrices, and even kernels . Coming up with a kernel on a new type of data used to be an easy way to get a NIPS paper.
+
+%\subsection{}
+
+%There is a simple way to do \gp{} regression over categorical variables:
+One flexible way to build a kernel over categorical variables is simply to represent your categorical variable by a one-of-k encoding.
+For example, if $x \in \{ 1, 2, 3, 4, 5 \}$, $\oneofk(3) = [0, 0, 1, 0, 0]$.
+%For example, if your number ranges from 1 to 5, represent that as 5 different data dimensions, only one of which is on at a time. 
+%
+\begin{align}
+k_{\textnormal{categorical}}( x, x') = \seard( \oneofk(x), \oneofk(x') )
+\end{align}
+%
+Short lengthscales for any particular dimension in the $\seard$ kernel indicate that that category is dissimilar to all others.
+
+A more flexible parameterization suggested by Kevin Swersky (personal communication) allows complete flexibility about which pairs of categories are similar to one another, replacing the $\seard$ kernel with the fully-parameterized $\sefull$:
+%
+\begin{align}
+\sefull( \vx, \vx') = \exp \left( -\frac{1}{2} \vx\tra \vL \vx' \right)
+\end{align}
+%
+where $L$ is symmetric.  This kernel individually parameterizes the covariance between each pair of categories.
+
+%Then, simply put a product of kernels on those dimensions.
+%This is the same as putting one SE ARD kernel on all of them.
+%Learning the lengthscale on each dimension of the $\kSE$ kernel will now encode how similar the value of the different categories are to one another.
+%The lengthscale hyperparameter will now encode whether, when that coding is active, the rest of the function changes.
+%If you notice that the estimated lengthscales for your categorical variables is short, your model is saying that it's not sharing any information between data of different categories. 
+
+
+
+
+
+
+
+
+
+\iffalse
+
+\section{Worked example: building a structured kernel for a time-series}
+
+%\subsection{Modeling multiple periodicities}
+
+\begin{figure}[h]
+\begin{tabular}{ccc}
+Long-term trend & Weekly periodicity &Yearly periodicity \\
+\includegraphics[width=0.31\columnwidth]{\examplefigsdir/births-component-1} &
+\includegraphics[width=0.31\columnwidth]{\examplefigsdir/births-component-3} & 
+\includegraphics[width=0.31\columnwidth]{\examplefigsdir/births-component-2-zoom} 
+\end{tabular}
+\caption[Composite model of births data]{A composite \gp{} model of births data. (blue)}
+\label{fig:quebec-decomp}
+\end{figure}
+
+
+
+
+
+\iffalse
+\begin{figure}
+\renewcommand{\tabcolsep}{1mm}
+\def \incpic#1{\includegraphics[width=0.200\columnwidth]{../figures/worked-example/births-#1}}
+\begin{tabular}{*{5}{c}}
+ & {Long-term} & {Weekly} & {Yearly} & {Short-term} \\ 
+ \rotatebox{90}{{Long-term}} & \incpic{Long-term-Long-term} & \incpic{Long-term-Weekly} & \incpic{Long-term-Yearly} & \incpic{Long-term-Short-term} \\ 
+ \rotatebox{90}{{Weekly}} & \incpic{Weekly-Long-term} & \incpic{Weekly-Weekly} & \incpic{Weekly-Yearly} & \incpic{Weekly-Short-term} \\ 
+ \rotatebox{90}{{Yearly}} & \incpic{Yearly-Long-term} & \incpic{Yearly-Weekly} & \incpic{Yearly-Yearly} & \incpic{Yearly-Short-term} \\ 
+ \rotatebox{90}{{Short-term}} & \incpic{Short-term-Long-term} & \incpic{Short-term-Weekly} & \incpic{Short-term-Yearly} & \incpic{Short-term-Short-term} \\ 
+ \end{tabular}
+\caption[Two-way interactions in births data]{Two-way interactions in births data}
+\label{fig:quebec-decomp}
+\end{figure}
+\fi
+%\subsection{Incoportating discrete covariates}
+
+%\subsection{Breaking down the predictions, examining different parts of the model}
+\fi
+
+
+
+
+
+
+\section{Learning Kernel Parameters}
+
+One difficulty in building \gp{} models is choosing, or integrating over, the kernel parameters.
+Fortunately, typical kernels only have $\mathcal{O}(D)$ parameters, meaning that if $N$ is reasonably large, these parameters can be estimated by maximum marginal likelihood.
+For a fixed kernel form, these parameters can be optimized by gradient-based methods.
+
+
+\section{Automatically Choosing a Kernel}
+
+%The marginal likelihood of a model is useful for choosing among parameters.
+The marginal likelihood can also be used to select the form of the kernel.
+
+For example, we might not know whether a particular structure or symmetry is present in the function we are trying to model.
+%Again, the fact that we can compare marginal likelihoods in \gp{}s means that we can 
+%Because \gp{}s let us build models both with and without certain symmetries, 
+By building kernels with and without such structure, we can compute the marginal likelihoods of the corresponding \gp{} models.
+The quantities represent the relative amount of evidence that the data provide for each of these possibilities, providing the assumptions of the model are correct.
+%To do so, we simple need to compare the marginal likelihood of the data
+%We demonstrate that marginal likeihood an be used to automatically search over such structures.
+
+
+
+\section{Conclusion}
+
+We've seen that kernels are a flexible and powerful language for building models of different types of functions.
+However, for a given problem, it can difficult to specify an appropriate kernel, even after looking at the data.
+A better procedure would be to compare the predictive performance, or marginal likelihood, of a few different kernels.
+However, it might be difficult to enumerate all plausible kernels, and tedious to search over them.
+%In fact, choosing the kernel can be considered one of the main difficulties in doing inference.
+
+Analogously, we usually don't expect to simply guess the best value of some parameter.
+Rather, we specify a search space and an objective, and ask the computer to the search this space for us. 
+In the next chapter, we'll see how to perform such a search an automatic search over the open-ended, discrete space of kernel expressions.
+
+
+\outbpdocument{
+\bibliographystyle{plainnat}
+\bibliography{references.bib}
+}
+
+
+
+\iffalse
 
 
 \subsection{Example: Computing Molecular Energies}
@@ -839,311 +1169,4 @@ Function on M\"{o}bius strip & \\
 
 Figure \ref{fig:molecule} gives one example of a function which obeys the same symmetries as a M\"{o}bius strip, in some subsets of its arguments.
 
-
-
-\subsection{Example: Translation Invariance in Images}
-
-Most models of images are invariant to spatial translations [cite convolution nets].  Similarily, most models of sounds are also invariant to translation through time.
-
-Note that this sort of translational invariance is completely distinct from the stationarity properties of kernels used in Gaussian process priors.  A stationary kernel implies that the prior is invariant to translations of the entire training and test set.
-
-We are discussing here a discretized input space (into pixels or the audio equivalent), where the input vectors have one dimension for every pixel.  We are interested in creating priors on functions that are invariant to shifting a signal along its pixels:
-%
-\begin{align}
-f \Bigg( \raisebox{-2.5ex}{ \includegraphics[width=1cm]{\topologyfiguresdir/grid2} } \Bigg) 
-= f \Bigg( \raisebox{-2.5ex}{ \includegraphics[width=1cm]{\topologyfiguresdir/grid3} } \Bigg)
-\end{align}
-
-Translational invariance in this setting is equivalent to symmetries between dimensions in the input space.
-
-This prior can be achieved in one dimension by using the following kernel transformation:
-%
-\begin{align}
-k \left( (x_1, x_2, \dots, x_D ), (x_1', x_2', \dots, x_D' ) \right) & = %\nonumber \\
-\sum_{i=1}^D \prod_{j=1}^D k( x_j, x_{ i + j \textnormal{mod $D$} }' )
-\end{align}
-%
-Edge effects can be handled either by wrapping the image around, or by padding it with zeros.
-
-\paragraph{Convolution} The resulting kernel could be called a \emph{discrete convolution kernel}.  For an image with $R, C$ rows and columns, it can also be written as:
-%
-\begin{align}
-k_{\textnormal{conv}} \left( (x_{11}, x_{12}, \dots, x_{RC} ), (x_{11}', x_{12}', \dots, x_{RC}' ) \right) = % \nonumber \\
-%\sum_{i=-L}^L \sum_{j=-L}^L k\left( (x_{1+i,1+j}, x_{1+i,2+j} , \dots, x_{R+i,C+j} ), (x_{1+i,1+j}', x_{1+i,2+j}' , \dots, x_{R+i,C+j}' ) \right)
-\sum_{i=-L}^L \sum_{j=-L}^L k\left( \vx, T_{ij}(\vx') \right)
-\end{align}
-%
-where $T_{ij}(\vx)$ is the operator which replaces each $x_{mn}$ with $x_{m+i, n+j}$.  Thus we are simply defining the covariance between two images to be the sum of all covariances between all relative translations of the two images.
-%We can also normalize the kernel by pre-multiplying it with $\sqrt{k_{\textnormal{conv}}(\vx, \vx) k_{\textnormal{conv}}(\vx', \vx') }$.
-
-%$f \left( \begin{tikzpicture} \draw[step=0.1,black,thin] (0.3,0.3) grid (1,1); \end{tikzpicture} \right)$
-
-
-
-%Is there a pathology of the additive construction that appears in the limit?
-
-%\subsection{Max-pooling}
-%What we'd really like to do is a max-pooling operation.  However, in general, a kernel which is the max of other kernels is not PSD [put counterexample here?].  Is the max over co-ordinate switching PSD?
-
-%\section{Related Work}
-%\label{sec:related_work}
-
-%\paragraph{Invariances in Gaussian processes}
-%\cite{Invariances13} show that, for Gaussian processes, with probability one, $f(\vx) = f(T(\vx))$ if and only if $k(x, x') = k(x, T(x'))$.
-
-
-
-
-
-\section{Generating Topological Manifolds}
-
-In this section, we give a geometric illustration of the symmetries encoded by \gp{}s with different sorts of kernels.
-The language of models of functions exhibiting symmetries, can be used to create a prior on surfaces, by warping a latent surface $\vx$ to an observed surface $\vy = \vf(\vx)$.
-The distribution on $\vf$ allows us to put mass on 
-
-%If we set the input $\vx$ to be a 2-dimensional plane, intro 3 dimensions using a \gp{} encoding certain symmetries, the resulting surfaces will correspon
-First create a mesh in 2d.  Then draw 3 independent functions from a GP prior with the relevant symmetries encoded in the kernel.  Then, map the 2d points making up the mesh through those 3 functions to get the 3D  coordinates of each point on the mesh.
-
-This is similar in spirit to the GP-LVM model \cite{lawrence2005probabilistic}, which learns an embedding of the data into a low-dimensional space, and constructs a fixed kernel structure over that space.
-%The GP-LVM will be discussed in further detail in chapter ...
-
-\subsection{Surfaces, Cylinders and Torii}
-
-\begin{figure}
-\renewcommand{\tabcolsep}{1mm}
-\begin{tabular}{ccc}
-Manifold $( \SE_1 \times \SE_2 )$  & Cylinder $( \SE_1 \times \Per_2 )$ & Toroid $( \Per_1 \times \Per_2 )$\\
-\hspace{-0.5cm}\includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/manifold} &
-\includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/cylinder} &
-\includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/torus} \\
-\end{tabular}
-\caption[Generating 2D manifolds with different topological structures]{
-Generating 2D manifolds with different topological structures.
-By enforcing that the functions mapping from $\mathbb{R}^2$ to $\mathbb{R}^3$ obey the appropriate symmetries, the surfaces created have the corresponding topologies, ignoring self-intersections.
-}
-\label{fig:gen_surf}
-\end{figure}
-
-Figure \ref{fig:gen_surf} shows...
-
-
-\subsection{M\"{o}bius Strips}
-
-A prior on functions on M\"{o}bius strips can be achieved by enforcing the symmetries:
-%
-\begin{align}
-f(x, y) & = f( x, y + \tau_y) \\
-f(x, y) & = f( x + \tau_x, y)  \\
-f(x, y) & = f( y, x )
-\end{align}
-
-If we imagine moving along the edge of a M\"{o}bius strip, that is equivalent to moving along a diagonal in the function generated.
-Figure \ref{fig:mobius} shows this.
-%
-\begin{figure}
-\begin{tabular}[t]{c|c}
-%\begin{columns}
-\centering
-M\"{o}bius manifold & 
-Sudanese M\"{o}bius strip \\
-%$( \Per_1 \times \Per_2 )$ and $f(x,y) = f(y,x)$ & generated parametrically\\
-$ \Per(x_1, x_1') \times \Per(x_2, x_2') + \Per(x_1, x_2') \times \Per(x_2, x_1')$ & generated parametrically\\
-%$ + \Per(x_1, x_2') \times \Per(x_2, x_1')$ & \\
-%\includegraphics[width=0.45\columnwidth, height=0.45\columnwidth, clip=true,trim=2cm 2cm 2cm 1cm]{\topologyfiguresdir/mobius_regression} \\
-\includegraphics[width=0.3\columnwidth]{\topologyfiguresdir/mobius} &
-%\includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/mobius} 
-%\begin{minipage}{0.33\columnwidth}
-%{\begin{tabular}[t]{p{.3\columnwidth}}
-%\includegraphics[width=0.3\columnwidth,clip=true,trim=0cm 0cm 10cm 0cm]{\topologyfiguresdir/sudanese-wikipedia}
-%\\
-%\includegraphics[width=0.3\columnwidth,clip=true,trim=10.55cm 0cm 0cm 0cm]{\topologyfiguresdir/sudanese-wikipedia}
-%\end{tabular}}
-%\end{minipage}
-\raisebox{1cm}{\includegraphics[width=0.4\columnwidth,clip=true,trim=0cm 0cm 10cm 0cm]{\topologyfiguresdir/sudanese-wikipedia}}
-\end{tabular}
-\caption[Generating M\"{o}bius strips]{Generating M\"{o}bius strips.
-Left: By enforcing that the functions mapping from $\mathbb{R}^2$ to $\mathbb{R}^3$ obey the appropriate symmetries, surfaces sampled from the prior have topology corresponding to a M\"{o}bius strip.
-M\"{o}bius strips generated this way do not have the familiar shape of a circular flat surface with a half-twist; rather they tend to look like \emph{Sudanese} M\"{o}bius strips \citep{sudanese1984}, whose edge has a circular shape.
-Right: A Sudanese projection of a M\"{o}bius strip.
-Image adapted from \citep{sudanesepict}.
-}
-\label{fig:mobius}
-\end{figure}
-%
-The second example is doesn't resemble a typical M\"{o}bius strip because the edge of the mobius strip is in a geometric circle.  This kind of embedding is resembles the Sudanese M\"{o}bius strip [cite].
-
-Another classic example of a function living on a Mobius strip is the auditory quality of 2-note intervals.  The harmony of a pair of notes is periodic (over octaves) for each note, and the 
-
-
-
-
-
-
-\section{Kernels on Discrete Data}
-
-Kernels can be defined over all types of data structures: Text, images, matrices, and even kernels . Coming up with a kernel on a new type of data used to be an easy way to get a NIPS paper.
-
-\subsection{Categorical Variables}
-
-There is a simple way to do GP regression over categorical variables. Simply represent your categorical variable as a by a one-of-k encoding. This means that if your number ranges from 1 to 5, represent that as 5 different data dimensions, only one of which is on at a time. 
-
-Then, simply put a product of SE kernels on those dimensions. This is the same as putting one SE ARD kernel on all of them. The lengthscale hyperparameter will now encode whether, when that coding is active, the rest of the function changes. If you notice that the estimated lengthscales for your categorical variables is short, your model is saying that it's not sharing any information between data of different categories. 
-
-
-
-
-
-
-
-\iffalse
-
-\section{Worked example: building a structured kernel for a time-series}
-
-%\subsection{Modeling multiple periodicities}
-
-\begin{figure}[h]
-\begin{tabular}{ccc}
-Long-term trend & Weekly periodicity &Yearly periodicity \\
-\includegraphics[width=0.31\columnwidth]{\examplefigsdir/births-component-1} &
-\includegraphics[width=0.31\columnwidth]{\examplefigsdir/births-component-3} & 
-\includegraphics[width=0.31\columnwidth]{\examplefigsdir/births-component-2-zoom} 
-\end{tabular}
-\caption[Composite model of births data]{A composite \gp{} model of births data. (blue)}
-\label{fig:quebec-decomp}
-\end{figure}
-
-
-
-
-
-\iffalse
-\begin{figure}
-\renewcommand{\tabcolsep}{1mm}
-\def \incpic#1{\includegraphics[width=0.200\columnwidth]{../figures/worked-example/births-#1}}
-\begin{tabular}{*{5}{c}}
- & {Long-term} & {Weekly} & {Yearly} & {Short-term} \\ 
- \rotatebox{90}{{Long-term}} & \incpic{Long-term-Long-term} & \incpic{Long-term-Weekly} & \incpic{Long-term-Yearly} & \incpic{Long-term-Short-term} \\ 
- \rotatebox{90}{{Weekly}} & \incpic{Weekly-Long-term} & \incpic{Weekly-Weekly} & \incpic{Weekly-Yearly} & \incpic{Weekly-Short-term} \\ 
- \rotatebox{90}{{Yearly}} & \incpic{Yearly-Long-term} & \incpic{Yearly-Weekly} & \incpic{Yearly-Yearly} & \incpic{Yearly-Short-term} \\ 
- \rotatebox{90}{{Short-term}} & \incpic{Short-term-Long-term} & \incpic{Short-term-Weekly} & \incpic{Short-term-Yearly} & \incpic{Short-term-Short-term} \\ 
- \end{tabular}
-\caption[Two-way interactions in births data]{Two-way interactions in births data}
-\label{fig:quebec-decomp}
-\end{figure}
 \fi
-%\subsection{Incoportating discrete covariates}
-
-%\subsection{Breaking down the predictions, examining different parts of the model}
-\fi
-
-
-
-\section{Why Assume Zero Mean?}
-
-In literature, as well as in practice, it is common to construct \gp{} priors with a zero mean function.
-This might seem strange, since it is presumably a good place to put prior information, or if we are comparing models, to express  since marginalizing over an unknown mean function can be equivalently expressed as a different \gp{} with zero-mean, and another term added to the kernel.
-
-\paragraph{A known mean function can be moved into the covariance function}
-Specifically, if we wish to model an unknown function $f(\vx)$ with known mean $m(\vx)$, (with unknown magnitude $c \sim \Nt{0}{\sigma^2_c}$), we can equivalently express this model using another \gp{} with zero mean:
-%$related modelquivalently (\vx) a(\vx)$ with $f \sim \GPt{0}{k(\vx,\vx')}$, then this 
-%
-\begin{align}
-f \sim \GPt{c m(\vx)}{k(\vx,\vx')}, \quad c \sim \Nt{0}{\sigma^2_c}
-\iff f \sim \GPt{ \vzero }{ c^2 m(\vx) m(\vx') + k(\vx,\vx')}
-\end{align}
-
-%This correspondence means that, b
-By moving the mean function into the covariance function, we get the same model, but we can integrate over the magnitude of the mean function at no additional cost.
-This is one advantage of moving as much structure as possible into the covariance function.
-%In fact, we can view \gp{} regression as simply implicitly integrating over the magnitudes of (possibly uncountably many) different mean functions all summed together.
-%TODO: provide a link to the GPs as neural nets discussion.
-
-\paragraph{An unknown mean function can be moved into the covariance function}
-
-If we wish to express our ignorance about the mean function, one way would be by putting a \gp{} prior on it.
-%
-\begin{align}
-m \sim \GPt{\vzero}{k_1(\vx,\vx')}, \quad
-f \sim \GPt{m(\vx)}{k_2(\vx,\vx')}
-\iff 
-f \sim \GPt{\vzero}{k_1(\vx,\vx') + k_2(\vx,\vx')}
-\end{align}
-
-
-\section{Why Not Learn the Mean Function Instead?}
-One might ask: besides integrating over the magnitude, what is the advantage of moving the mean function into the covariance function?
-After all, mean functions are certainly more interpretable than a posterior distribution over functions.
-
-Instead of searching over a large class of covariance functions, which seems strange and unnatural, we might consider simply searching over a large class of structured mean functions, assuming a simple \iid noise model.
-This is the approach taken by practically every other regression technique: neural networks, decision trees, boosting, \etc.
-If we could integrate over a wide class of possible mean functions, we would have a very powerful learning an inference method.
-The problem faced by all of these methods is the well-known problem \emph{overfitting}.
-If we are forced to choose just a single function with which to make predictions, we must carefully control the flexibility of the model we learn, generally prefering ``simple'' functions, or to choose a function from a restricted set.
-
-If, on the other hand, we are allowed to keep in mind many possible explanations of the data, \emph{there is no need to penalize complexity}. [cite Occam's razor paper?]
-The power of putting structure into the covariance function is that doing so allows us to implictly integrate over many functions, maintaining a posterior distribution over infinitely many functions, instead of choosing just one.
-In fact, each of the functions being considered can be infinitely complex, without causing any form of overfitting.
-For example, each of the samples shown in figure \ref{fig:gp-post} varies randomly over the whole real line, never repeating, each one requiring an infinite amount of information to describe.
-Choosing the one function which best fits the data will almost certainly cause overfitting.
-However, if we integrate over many such functions, we will end up with a posterior putting mass on only those functions which are compatible with the data.
-In other words, the parts of the function that we can determine from the data will be predicted with certainty, but the parts which are still uncertain will give rise to a wide range of predictions.
-
-To repeat: \emph{there is no need to assume that the function being modeled is simple, or to prefer simple explanations} in order to avoid overfitting, if we integrate over many possible explanations rather than choosing just the one.
-
-In Chapter~\ref{ch:grammar}, we will compare a system which estimates a parametric covariance function against one which estimates a parametric mean function.
-
-
-\section{Signal versus Noise}
-
-In most derivations of Gaussian processes, the model is given as
-%
-\begin{align}
-y = f(\inputVar) + \epsilon, \quad \textnormal{where} \quad \epsilon \simiid \Nt{0}{\sigma^2_{\textnormal{noise}}}
-\end{align}
-
-However, $\epsilon$ can equivalently be thought of as another Gaussian process, and so this model can be written as $y(\inputVar) \sim \GP\left(0, k + \delta \right)$.  The lack of a hard distinction between the noise model and the signal model raises the larger question:  Which part of a model represents signal, and which represents noise?
-
-We believe that it depends on what you want to do with the model - there is no hard distinction between signal and noise in general.
-
-For example: often, we don't care about the short-term variations in a function, and only in the long-term trend.
-However, in many other cases, we with to de-trend our data to see more clearly how much a particular part of the signal deviated from normal.
-
-%\subsubsection{Student's $t$ processes}
-
-%One shortcoming of the
-
-
-
-\section{Learning Hyperparameters}
-
-
-\section{Learning Structure}
-In some situations, we might not know \emph{a priori} whether a particular structure or symmetry is present in the function we are trying to model.
-%Again, the fact that we can compare marginal likelihoods in \gp{}s means that we can 
-%Because \gp{}s let us build models both with and without certain symmetries, 
-By building kernels with and without such structure, we can compute the marginal likelihoods of the corresponding \gp{} models.
-The quantities represent the relative amount of evidence that the data provide for each of these possibilities, providing the assumptions of the model are correect.
-%To do so, we simple need to compare the marginal likelihood of the data
-%We demonstrate that marginal likeihood an be used to automatically search over such structures.
-
-
-
-\section{Conclusion}
-
-We've seen that kernels are a flexible and powerful language for building models of different types of functions.
-However, for a given problem, it can difficult to specify an appropriate kernel, even after looking at the data.
-Rather than choosing one kernel \emph{a priori}, one should at least try out a few different kernels.
-However, it might be difficult to enumerate all plausible kernels, and tedious to search over them.
-%In fact, choosing the kernel can be considered one of the main difficulties in doing inference.
-
-Analogously, we usually don't expect to simply guess the best value of some parameter.
-Rather, we specify a search space and an objective, and ask the computer to the search this space for us. 
-In the next chapter, we'll see how to perform such a search over the discrete space of kernel expressions.
-
-
-\outbpdocument{
-\bibliographystyle{plainnat}
-\bibliography{references.bib}
-}
-
-

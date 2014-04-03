@@ -82,6 +82,7 @@
 \declareHumble{RQ}{RQ}
 \declareHumble{Lin}{Lin}
 \declareHumble{kSE}{SE}
+\declareHumble{seard}{SE-ARD}
 \declareHumble{kPer}{Per}
 \declareHumble{kRQ}{RQ}
 \declareHumble{kLin}{Lin}
@@ -92,6 +93,7 @@
 \declareHumble{GAM}{GAM}
 \declareHumble{HKL}{HKL}
 \declareHumble{SEGP}{SE-GP}
+\declareHumble{sefull}{SE-\textnormal{full}}
 \declareHumble{GPML}{GPML}
 \declareHumble{SVM}{SVM}
 \declareHumble{ANOVA}{ANOVA}
@@ -193,6 +195,7 @@
 \newcommand{\vY}{\mat{Y}}
 \newcommand{\vZ}{\mat{Z}}
 \newcommand{\vK}{\mat{K}}
+\newcommand{\vL}{\mat{L}}
 \newcommand{\vs}{\vect{s}}
 \newcommand{\va}{\vect{a}}
 \newcommand{\vr}{\vect{r}}
@@ -260,7 +263,10 @@
 \newcommand{\eye}[1]{\mat{E}_{#1}}
 \newcommand{\tra}{{^\ensuremath{\mathsf{T}}}}
 \newcommand{\trace}{\operatorname{tr}}
+\newcommand{\shift}{\operatorname{shift}}
+\renewcommand{\mod}{\operatorname{mod}}
 \newcommand{\deq}{:=}
+\newcommand{\oneofk}{\operatorname{one-of-k}}
 %\newcommand{\degree}{^\circ}
 
 \newcommand{\GPt}[2]{\mathcal{GP}\!\left(#1,#2\right)}
