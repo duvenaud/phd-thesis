@@ -176,7 +176,7 @@ We compare \procedurename{} against existing model construction techniques in te
 
 
 
-\section{A language of regression models}
+\section{A Language of Regression Models}
 \label{sec:improvements}
 
 
@@ -276,6 +276,14 @@ We allow the following search operators over our set of expressions:
 \item[(2)] Any subexpression $\subexpr$ can be replaced with $\subexpr \times \baseker$, where $\baseker$ is any base kernel family.
 \item[(3)] Any base kernel $\baseker$ may be replaced with any other base kernel family $\baseker^\prime$.
 \end{itemize}
+
+\begin{center}
+\begin{tabular}{rccc}
+\textrm{Replacement} & $\kernel_i$ & $\to$ & $\kernel'_i$\\% & $\forall\, \kernel' $\\
+\textrm{Addition} & $\kernel_i$ & $\to$ & $\kernel_i + \kernel'_j$\\% & $\forall\, j,\kernel' $\\
+\textrm{Multiplication} & $\kernel_i$ &  $\to$ & $\kernel_i \times \kernel'_j$\\% & $\forall\, j,\kernel'$\\
+\end{tabular}
+\end{center}
 
 These operators can generate all possible algebraic expressions.
 To see this, observe that if we restricted the $+$ and $\times$ rules to only apply to base kernel families, we would obtain a context-free grammar which generates the set of algebraic expressions.
@@ -382,8 +390,8 @@ In a fully Bayesian approach, we would put priors over the parameters and comput
 However, as this would be difficult to do across our space of models, we approximate this integral by choosing the parameters to optimize the marginal likelihood, and then apply the Bayesian information criterion (BIC) to penalize model complexity.
 %To avoid an expensive integration over kernel parameters, we used the Bayesian information criterion \citep{schwarz1978estimating} as an approximation.
 
-Other model selection criteria could be used with our search procedure.
-For instance, random cross-validation could be used when the goal is interpolation.
+Of course, other model selection criteria could be used with our search procedure.
+For instance, cross-validation could be used when the goal is interpolation.
 
 
 %\footnotetext{This is the heuristic used in chapter 5 of \citet{rasmussen38gaussian} when constructing a kernel to analyse the Mauna Loa dataset.}
@@ -395,27 +403,14 @@ For instance, random cross-validation could be used when the goal is interpolati
 
 
 
-We optimized kernel parameters at each step using conjugate gradients, randomly restarting any newly introduced kernel parameters.  To approximate the marginal likelihood of a kernel without integrating over parameters, used the Bayesian Information Criterion (BIC)\footnotemark \TBD{cite}.
+We optimized kernel parameters at each step using conjugate gradients, randomly restarting any newly introduced kernel parameters.  To approximate the marginal likelihood of a kernel without integrating over parameters, used the Bayesian Information Criterion (\BIC{}) \citep{schwarz1978estimating}.
 We also experimented with using the Laplace approximation to the marginal likelihood, but this was found to be less numerically stable and was not meaningful in cases when the optimiser failed to reach an optimum.
 Because BIC is a function of the number of parameters in a model, we adjusted for cases where two parameters were only serving the role of one.  \eg when two kernels are multiplied, one of the variance parameters becomes redundant.
 
-\begin{center}
-\begin{tabular}{rccc}
-\textrm{Replacement} & $\kernel_i$ & $\to$ & $\kernel'_i$\\% & $\forall\, \kernel' $\\
-\textrm{Addition} & $\kernel_i$ & $\to$ & $\kernel_i + \kernel'_j$\\% & $\forall\, j,\kernel' $\\
-\textrm{Multiplication} & $\kernel_i$ &  $\to$ & $\kernel_i \times \kernel'_j$\\% & $\forall\, j,\kernel'$\\
-\end{tabular}
-\end{center}
-
-
-
-
-
-
 After each model is proposed its kernel parameters are optimised by conjugate gradient descent.
-We evaluate each optimized model, $M$, using the Bayesian Information Criterion (BIC) \citep{schwarz1978estimating}:
+We evaluate each optimized model, $M$, using the Bayesian Information Criterion (\BIC{}) \citep{schwarz1978estimating}:
 \begin{equation}
-\textrm{BIC}(M) = -2 \log p(D\given M) + p \log n
+\textnormal{BIC}(M) = -2 \log p(D\given M) + p \log n
 \end{equation}
 where $p$ is the number of kernel parameters, $\log p(D|M)$ is the marginal likelihood of the data, $D$, and $n$ is the number of data points.
 BIC trades off model fit against model complexity and implements what is known as ``Bayesian Occam's Razor'' \citep{rasmussen2001occam,mackay2003information}.
@@ -424,12 +419,7 @@ BIC trades off model fit against model complexity and implements what is known a
 
 
 
-
-
-%\section{Example descriptions of time series}
-%\label{sec:examples}
-
-\section{Structure discovery in time series}
+\section{Structure Discovery in Time Series}
 \label{sec:time_series}
 
 %In this section, we show on several time series datasets both the kernel expression found by our search, and the complete \gp{} posterior distribution implied by that kernel and the data.  
@@ -447,7 +437,7 @@ To investigate our method's ability to discover structure, we ran the kernel sea
 %We further demonstrate that the discovered structures can be decomposed into sums of interpretrable components.  
 %All kernels in our search space can equivalently be written as sums of products of base kernels by applying distributivity.
 %For example,
-As discussed in section 2, a \gp{} whose kernel is a sum of kernels can be viewed as a sum of functions drawn from component \gp{}s.
+As discussed in \Cref{ch:kernels}, a \gp{} whose kernel is a sum of kernels can be viewed as a sum of functions drawn from component \gp{}s.
 This provides another method of visualizing the learned structures.
 In particular, all kernels in our search space can be equivalently written as sums of products of base kernels by applying distributivity. For example,
 %
@@ -636,7 +626,7 @@ In addition, the composite kernel captures the near-linearity of the long-term t
 
 
 
-\section{Related work}
+\section{Related Work}
 \label{sec:related-work}
 
 \def\rwsheader{\subsubsection}
@@ -854,21 +844,23 @@ The results are similar to those for extrapolation and are included in the appen
 
 
 
-\section{Quantitative evaluation}
-\label{sec:quantitative}
+%\section{Quantitative evaluation}
+%\label{sec:quantitative}
 
 %In addition to producing highly interpretable decompositions of regression functions, our method also produces state of the art predictions in both extrapolation and interpolation tasks.
-In addition to the qualitative evaluation in section \ref{sec:time_series}, we investigated quantitatively how our method performs on both extrapolation and interpolation tasks.
+%In addition to the qualitative evaluation in section \ref{sec:time_series}, we investigated quantitatively how our method performs on both extrapolation and interpolation tasks.
 
 
 
 %\fTBD{Josh: Can you write about the Blessing of abstraction, and doing lots with a small amount of data?  This might become apparent from plotting the extraplolations.}
 %\fTBD{RBG: We could make this point as part of the learning curves for extrapolation by marking the points at which each additional aspect of the structure is found.}
 
-\subsection{High-dimensional prediction}
+\section{High-dimensional Prediction}
 
+\procedurename{} can also be applied to multidimensional regression problems.
+%
 To evaluate the predictive accuracy of our method in a high-dimensional setting, we extended the comparison of \cite{duvenaud2011additive11} to include our method.
-We performed 10 fold cross validation on 5 datasets
+We performed 10-fold cross validation on 5 datasets,
 \footnote{The data sets had dimensionalities ranging from 4 to 13, and the number of data points ranged from 150 to 450.} comparing 5 methods in terms of \MSE{} and predictive likelihood.
 %\NA{
 Our structure search was run up to depth 10, using the \SE{} and \RQ{} base kernel families.
@@ -969,10 +961,12 @@ Our method with all base kernels was always the best performing method, or the d
 
 
 
-\section{Validation on synthetic data}
+\subsection{Validation on Synthetic Data}
 \label{sec:synthetic}
 
-We validated our method's ability to recover known structure on a set of synthetic datasets.
+Because it is difficult to visualize the structures discovered in multiple dimensions, it is difficult to tell from predictive accuracy alone if the search procedure is finding all structure present.
+To address this questions, we validated our method's ability to recover known structure on a set of synthetic datasets.
+
 For several composite kernel expressions, we constructed synthetic data by first sampling 300 points uniformly at random, then sampling function values at those points from a \gp{} prior.
 %We then added \iid Gaussian noise to the function values, with variance chosen such that the standard deviation of the noise $\sigma_n$ relative to the sample variance of the function was 0.1.
 We then added \iid Gaussian noise to the functions, at various signal-to-noise ratios (\SNR{}).
