@@ -14,12 +14,12 @@
 \end{quotation}
 
 
-In \cref{ch:kernels}, we saw that the choice of kernel determines the type of structure that can be learnt by a \gp{} model.
-We also saw that a wide variety of models could be constructed through simply adding and multiplying a few base kernels together.
+In \cref{ch:kernels}, we saw that the choice of kernel determines the type of structure that can be learnt by a \gp{} model, and that a wide variety of models could be constructed through simply adding and multiplying a few base kernels together.
 %Applying \gp{} regression as a non-expert is a daunting task.
-However, when facing a new problem, it is sometimes difficult to construct an appropriate kernel by hand.
+We didn't answer the question, however, of how to tell which kernel to use for a given problem.
+%However, when facing a new problem, it is sometimes difficult to construct an appropriate kernel by hand.
 %The first problem one encounters when attempting to apply \gp{}s to a particular task is that the choice of kernel is very important, but it's usually not clear which covariance function is appropriate.
-Even for experts, choosing the kernel in nonparametric regression remains something of a black art.
+Even for experts, choosing the kernel in nonparametric regression remains a black art.
 
 %As we shall see in this thesis, in the small-to-medium data range, the choice of of kernel is extremely important.
 %This is especially true when one wishes to do extrapolation.
@@ -29,23 +29,32 @@ Even for experts, choosing the kernel in nonparametric regression remains someth
 %Why not simply automate this process as part of the software package?
 %After starting my Ph.D., 
 
-In this chapter, we'll automate this process.
-
+In this chapter, we'll automate the process of building kernels for \gp{} models.
+%
 %e define a space of kernel structures which are built compositionally by adding and multiplying a small number of base kernels.
-We present a method for searching over this space of structures which mirrors the scientific discovery process.
-The learned structures can often decompose functions into interpretable components and enable long-range extrapolation on time-series datasets.
-Our structure search method outperforms many widely used kernels and kernel combination methods on a variety of prediction tasks.
+To do so, all we need to do is define an open-ended space of kernels, which we can do by simply adding and multiplying together simple kernels from a fixed set.
+%We present a method for searching over this space of structures which mirrors the scientific discovery process.
+We can then simply search over this space to find a kernel which captures as much structure in the data as possible.
+%The learned structures can often decompose functions into interpretable components and enable long-range extrapolation on time-series datasets.
+
+%Our structure search method outperforms many widely used kernels and kernel combination methods on a variety of prediction tasks.
+%Because we're searching over a large model class, this procedure w
+
+Searching over such a large, structured model class has two benefits.
+First, this method has very good predictive accuracy, since it effectively tries out a huge number of different regression models.
+Second, we end up discovering interpretable structure in our dataset.
+Because \gp{} posteriors can easily be decomposed (as in \cref{sec:concrete}), we can examine the resulting structures graphically.
+In \cref{ch:description}, we'll even show how to automatically generate english-language descriptions of the resulting models.
+%Second, because so many regression techniques are a special case of this method, if we spend enough time searching over kernel structures, we'll often be able to discover the
 
 
+%This paper presents the beginnings of an automatic statistician, focusing on regression problems.
+%Our system explores an open-ended space of possible statistical models to discover a good explanation of the data, and then produces a detailed report with figures and natural-language text.
 
-This paper presents the beginnings of an automatic statistician, focusing on regression problems.
-Our system explores an open-ended space of possible statistical models to discover a good explanation of the data, and then produces a detailed report with figures and natural-language text.
-
-Our approach treats unknown functions nonparametrically using Gaussian processes, which has two important consequences.
-First, Gaussian processes model functions in terms of high-level properties (e.g.\ smoothness, trends, periodicity,
-changepoints).
-Taken together with the compositional structure of our language of models, this allows us to automatically describe functions through a decomposition into additive parts.
-Second, the use of flexible nonparametric models and a rich language for composing them in an open-ended manner also results in state-of-the-art extrapolation performance evaluated over 13 real time series data sets from various domains.
+%Our approach treats unknown functions nonparametrically using Gaussian processes, which has two important consequences.
+%First, Gaussian processes model functions in terms of high-level properties (e.g.\ smoothness, trends, periodicity, changepoints).
+%Taken together with the compositional structure of our language of models, this allows us to automatically describe functions through a decomposition into additive parts.
+%Second, the use of flexible nonparametric models and a rich language for composing them in an open-ended manner also results in state-of-the-art extrapolation performance evaluated over 13 real time series data sets from various domains.
 
 
 %\subsection{Attribution}
@@ -58,24 +67,24 @@ Second, the use of flexible nonparametric models and a rich language for composi
 %Supervised learning problems, such as classification and regression, learn a function $\function$ from some input (predictor) variables, $\InputVar$, to some output (response) variables, $\outputVar$.
 %Kernel-based nonparametric models, such as support vector machines and Gaussian processes (\gp{}s), have been one of the dominant paradigms for supervised machine learning over the last 20 years.
 %These methods depend on defining a kernel function, $\kernel(\inputVar,\inputVar')$, which specifies how similar or correlated outputs $\outputVar$ and $\outputVar'$ are expected to be at two inputs $\inputVar$ and $\inputVar'$.
-By defining the measure of similarity between inputs, the kernel determines the pattern of inductive generalization.
+%By defining the measure of similarity between inputs, the kernel determines the pattern of inductive generalization.
 %The kernel function gives a measure of similarity between inputs and determines the pattern of inductive generalizations that are made. 
 
-Most existing techniques pose kernel learning as a (possibly high-dimensional) parameter estimation problem.
+%Most existing techniques pose kernel learning as a (possibly high-dimensional) parameter estimation problem.
 %The ability to learn kernels automatically has helped greatly in making kernel methods accessible to non-experts.
-Examples include learning hyperparameters \citep{rasmussen38gaussian}, linear combinations of fixed kernels \cite{Bach_HKL}, and mappings from the input space to an embedding space \cite{salakhutdinov2008using}.
+%Examples include learning hyperparameters \citep{rasmussen38gaussian}, linear combinations of fixed kernels \cite{Bach_HKL}, and mappings from the input space to an embedding space \cite{salakhutdinov2008using}.
 
-However, to apply existing kernel learning algorithms, the user must specify the parametric form of the kernel, and this can require considerable expertise, as well as trial and error.
+%However, to apply existing kernel learning algorithms, the user must specify the parametric form of the kernel, and this can require considerable expertise, as well as trial and error.
 
-To make kernel learning more generally applicable, we reframe the kernel learning problem as one of structure discovery, and automate the choice of kernel form.
-In particular, we formulate a space of kernel structures defined compositionally in terms of sums and products of a small number of base kernel structures.
-This provides an expressive modeling language which concisely captures many widely used techniques for constructing kernels.
+%To make kernel learning more generally applicable, we reframe the kernel learning problem as one of structure discovery, and automate the choice of kernel form.
+%In particular, we formulate a space of kernel structures defined compositionally in terms of sums and products of a small number of base kernel structures.
+%This provides an expressive modeling language which concisely captures many widely used techniques for constructing kernels.
 %We focus on Gaussian process regression, where the kernel specifies a covariance function, because the Bayesian framework is a convenient way to formalize structure discovery.
-Borrowing discrete search techniques which have proved successful in equation discovery \cite{todorovski1997declarative} and unsupervised learning \cite{grosse2012exploiting}, we automatically search over this space of kernel structures using marginal likelihood as the search criterion.
+%Borrowing discrete search techniques which have proved successful in equation discovery \cite{todorovski1997declarative} and unsupervised learning \cite{grosse2012exploiting}, we automatically search over this space of kernel structures using marginal likelihood as the search criterion.
 
-This simple structure discovery algorithm is able to automatically recover known structures from synthetic data as well as plausible structures for a variety of real-world datasets. 
-On a variety of time series datasets, the learned kernels yield decompositions of the unknown function into interpretable components that enable accurate extrapolation beyond the range of the observations.
-Furthermore, the automatically discovered kernels outperform a variety of widely used kernel classes and kernel combination methods on supervised prediction tasks.
+%This simple structure discovery algorithm is able to automatically recover known structures from synthetic data as well as plausible structures for a variety of real-world datasets. 
+%On a variety of time series datasets, the learned kernels yield decompositions of the unknown function into interpretable components that enable accurate extrapolation beyond the range of the observations.
+%Furthermore, the automatically discovered kernels outperform a variety of widely used kernel classes and kernel combination methods on supervised prediction tasks.
 
 %\fTBD{I hate these paragraphs, but they seem to be required...} 
 %Section \ref{sec:Structure} outlines some commonly used kernel families as well as ways in which they can be composed. 
@@ -151,26 +160,21 @@ In this work, we use approximate marginal likelihood to compare models, penalizi
 Part of the value of statistical models comes from enabling humans to understand a dataset or a phenomenon.
 Furthermore, a clear description of the statistical structure found in a dataset helps a user to notice when the dataset has errors, the wrong question was asked, the model-building procedure failed to capture known structure, a relevant piece of data or constraint is missing, or when a novel statistical structure has been found.
 
-%It is not clear\fTBD{JL: Weak} what obstacles there are to building a system capable of explaining novel statistical structures.
-We
-%attempted to build such an automatic summarization procedure, and 
-demonstrate that the properties of Gaussian processes allow for an automatic, modular description generation procedure, trhough both graphs illustrating interpretable decomposition of the posterior, and in terms of English-language descriptions of properties of the discovered models.
-%This modularity means that a large class of statistical structures can explained, without resorting to writing a special case for every possible structure in our open-ended set of models.
-
-Whether or not such modularity and interpretability is present in other open-ended model classes is an open question.
 
 
 
-In this chapter, we introduce a system for modeling time-series data containing the above ingredients which we call the Automatic Bayesian Covariance Discovery (\procedurename{}) system.
-The system defines an open-ended language of Gaussian process models via a compositional grammar.
-The space is searched greedily, using marginal likelihood and the Bayesian Information Criterion (BIC) to evaluate models.
-The compositional structure of the language allows us to develop a method for automatically translating components of the model into natural-language descriptions of patterns in the data.
 
-We show examples of automatically generated reports which highlight interpretable features discovered in a variety of data sets (e.g.\ Figure~\ref{fig:periodic}).
+In this chapter, we introduce a system containing all the above ingredients.
+We call this system the Automatic Bayesian Covariance Discovery (\procedurename{}) system.
+%The system defines an open-ended language of Gaussian process models via a compositional grammar.
+%The space is searched greedily, using marginal likelihood and the Bayesian Information Criterion (BIC) to evaluate models.
+%The compositional structure of the language allows us to develop a method for automatically translating components of the model into natural-language descriptions of patterns in the data.
+
+%We show examples of automatically generated reports which highlight interpretable features discovered in a variety of data sets (e.g.\ Figure~\ref{fig:periodic}).
 %The supplementary material to this paper includes 13 complete reports automatically generated by \procedurename{}.
 
-Good statistical modeling requires not only interpretability but predictive accuracy.
-We compare \procedurename{} against existing model construction techniques in terms of predictive performance at extrapolation, and we find state-of-the-art performance on 13 time series.
+%Good statistical modeling requires not only interpretability but predictive accuracy.
+%We compare \procedurename{} against existing model construction techniques in terms of predictive performance at extrapolation, and we find state-of-the-art performance on 13 time series.
 
 
 
@@ -1072,6 +1076,14 @@ We believe that a data-driven approach to choosing kernel structures automatical
 
 
 We hope that the \procedurename{} algorithm will help replace the current and often opaque art of kernel engineering with a more transparent science of automated kernel construction.
+
+
+We demonstrate that the properties of Gaussian processes allow for an automatic, modular description generation procedure, trhough both graphs illustrating interpretable decomposition of the posterior, and in terms of English-language descriptions of properties of the discovered models.
+%This modularity means that a large class of statistical structures can explained, without resorting to writing a special case for every possible structure in our open-ended set of models.
+
+Whether or not such modularity and interpretability is present in other open-ended model classes is an open question.
+
+
 
 \section{Future work}
 
