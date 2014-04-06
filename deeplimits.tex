@@ -60,7 +60,7 @@ We also present two related analyses:  first, we examine the properties of a arb
 
 
 
-\section{Relating deep neural nets and deep Gaussian processes}
+\section{Relating Deep Neural Nets and Deep Gaussian Processes}
 \label{sec:relating}
 %There are two ways to view deep Gaussian processes as neural networks.  First, we can
 %We introduce a generative non-parametric model to address this problem.  Our approach is based on the GP-LVM ~\cite{lawrence2004gaussian,salzmann2008local,lawrence2009non}, a flexible nonparametric density model.  
@@ -69,7 +69,7 @@ We also present two related analyses:  first, we examine the properties of a arb
 
 %\subsection{A neural net with one hidden layer}
 %\vspace{-0.05in}
-\subsection{Single-layer models}
+\subsection{Single-layer Models}
 
 \def\layersep{1.75cm}
 \def\nodesep{.75cm}
@@ -288,7 +288,7 @@ Thus in the one-hidden-layer case, the correspondence between \MLP{}s and \gp{}s
 the features $\hPhi(\vx)$ of the kernel correspond to the hidden units of the \MLP{}.
 
 
-\subsection{Multiple hidden layers}
+\subsection{Multiple Hidden Layers}
 
 %\paragraph{Fixed nonlinearities}
 In an \MLP{}, the $\layerindex$th layer units are given by the recurrence
@@ -373,7 +373,7 @@ This second view lets us compare deep \gp{} models to standard neural net archit
 
 
 
-\section{Characterizing deep Gaussian processes}
+\section{Characterizing Deep Gaussian Processes}
 \label{sec:characterizing-deep-gps}
 
 In this section, we develop several theoretical results that explore the behavior of deep \gp{}s as a function of their depth.  This will allow us in section \ref{sec:formalizing-pathology} to formally identify a pathology that emerges in very deep networks.
@@ -381,7 +381,7 @@ In this section, we develop several theoretical results that explore the behavio
 Specifically, we will show that the size of the derivative of a one-dimensional deep \gp{} becomes log-normal distributed as the network becomes deeper.  We'll also show that the Jacobian of a multivariate deep \gp{} is a product of independent Gaussian matrices with independent entries.
 
 
-\subsection{One-dimensional asymptotics}
+\subsection{One-dimensional Asymptotics}
 \label{sec:1d}
 
 %One way to understand the properties of functions drawn from deep \gp{}s and deep networks is by looking at the distribution of the derivative of these functions. We first focus on the one-dimensional case.
@@ -563,7 +563,7 @@ Theorem \ref{thm:prodjacob} allows us to analyze the representational properties
 
 
 
-\section{Formalizing a pathology}
+\section{Formalizing a Pathology}
 \label{sec:formalizing-pathology}
 %\subsection{Jacobian Singular Value Spectrum}
 
@@ -689,7 +689,7 @@ To what extent are these pathologies present in nets being used today?  In simul
 
 
 
-\section{Fixing the pathology}
+\section{Fixing the Pathology}
 \label{sec:fix}
 
 \begin{figure}[h!]
@@ -920,7 +920,7 @@ Figure \ref{fig:good_spectrum} shows that with this architecture, even 50-layer 
 
 
 
-\section{Deep kernels}
+\section{Deep Kernels}
 \label{sec:deep_kernels}
 
 
@@ -976,7 +976,7 @@ k_{L+1} \left( \vx, \vx' \right) & = k_{SE} \left( \hPhi(\vx), \hPhi(\vx') \righ
 %  Because this is true for $k_2$ as well, this recursion holds in general, and we have that $k_{n+1}(x,y) = e^{k_n(x, y) - 1}$.  
 Thus, we can express $k_{L+1}$ exactly in terms of $k_L$.
 
-\paragraph{Infinitely deep kernels}
+\subsection{Infinitely Deep Kernels}
 What happens when we repeat this composition of feature maps many times, starting with the squared-exp kernel?  In the infinite limit, this recursion converges to $k(\vx,\vx') = 1$ for all pairs of inputs, which corresponds to a prior on constant functions $f(\vx) = c$.
 
 %Figure \ref{fig:deep_kernel_connected} shows this kernel at different depths, including the degenerate limit.  
@@ -1063,7 +1063,7 @@ Right: GP draws using deep input-connected kernels.  }
 %Which also has the solution $k_\infty = \delta( \vx = \vx' )$, a white noise kernel.
 
 
-\subsection{When are deep kernels useful models?}
+\subsection{When are Deep Kernels Useful Models?}
 
 Kernels correspond to fixed feature maps, and so kernel learning is an example of implicit representation learning. %can compute %useful representations.
 Such feature maps can capture rich structure \citep{DuvLloGroetal13}, and can enable many types of generalization, such as translation and rotation invariance in images \citep{kondor2008group}.
@@ -1076,7 +1076,7 @@ The relatively uninteresting properties of the kernels derived in this section s
 
 
 
-\section{Related work}
+\section{Related Work}
 
 Deep \gp{}s were first proposed by \cite{lawrence2007hierarchical}. Variational inference in deep \gp{}s was developed by \cite{damianou2012deep}, who also analyzed the effect of automatic relevance determination in that model.
 
@@ -1124,7 +1124,7 @@ Finally, we showed that this problem could be alleviated by connecting the input
 %proposed a way to alleviate this problem: connecting the input to each layer of a deep representation allows us to construct priors on deep functions that do not exhibit the information-capacity pathology.
 
 We also examined properties of deep kernels, corresponding to arbitrarily many compositions of fixed features.
-Finally, we derived models obtained by performing dropout on Gaussian processes, finding a tractable approximation to exact dropout in \gp{}s.
+%Finally, we derived models obtained by performing dropout on Gaussian processes, finding a tractable approximation to exact dropout in \gp{}s.
 
 
 

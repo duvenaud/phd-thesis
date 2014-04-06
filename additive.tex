@@ -226,7 +226,10 @@ Additive Gaussian processes are particularly appealing in practice because their
 code to perform all experiments is available at the author's website.\footnote{Example code available at: \texttt{http://mlg.eng.cam.ac.uk/duvenaud/}}
 
 
-\section{Dropout in Gaussian processes}
+
+
+
+\section{Dropout in Gaussian Processes}
 
 Dropout is a method for regularizing neural networks \citep{hinton2012improving, srivastava2013improving}.
 Training with dropout entails randomly and independently ``dropping'' (setting to zero) some proportion $p$ of features or inputs, in order to improve the robustness of the resulting network by reducing co-dependence between neurons.
@@ -236,7 +239,9 @@ At test time, the set of models defined by all possible ways of dropping-out neu
 \citet{baldi2013understanding} and \citet{wang2013fast} analyzed dropout in terms of the effective prior induced by this procedure in several models, such as linear and logistic regression.
 In this section, we examine the priors on functions that result from performing dropout in the one-hidden-layer neural network implicitly defined by a \gp{} (equation \eqref{eq:one-layer-nn}).
 
-\subsection{Dropout on feature activations}
+
+
+\subsection{Dropout on Feature Activations}
 
 First, we examine the prior that results from randomly dropping features from $\hPhi(\vx)$ with probability $p$.
 If these features have a weight distribution with finite moments
@@ -255,7 +260,9 @@ However, after we increase the remaining activations to maintain the same expect
 Thus, dropping out features of an infinitely-wide MLP does not change the model at all, since no individual feature can have more than infinitesimal contribution to the network output.
 %Is there a better way to drop out features that would lead to robustness?
 
-\subsection{Dropping out inputs}
+
+
+\subsection{Dropping Out Inputs}
 
 In a \gp{} with kernel ${k(\vx, \vx') = \prod_{d=1}^D k_d(\vx_d, \vx_d')}$, exact averaging over all possible ways of dropping out inputs with probability $\nicefrac{1}{2}$ results in a mixture of \gp{}s, each depending on only a subset of the inputs:
 \begin{align}
@@ -266,8 +273,6 @@ We present two results ways to gain intuition about this model.
 
 First, if the kernel on each dimension has the form ${k_d(\vx_d, \vx_d') = g \left( \frac{\vx_d - \vx_d'}{\lengthscale_d} \right)}$, as does the \humble{SE} kernel \eqref{eq:se_kernel}, then any input dimension can be dropped out by setting its lengthscale $\lengthscale_d$ to $\infty$.
 Thus, dropout on the inputs of a \gp{} corresponds to a spike-and-slab prior on lengthscales, with each dimension independently having $w_d = \infty$ with probability $\nicefrac{1}{2}$.
-
-
 
 Another way to understand the resulting prior is to note that the dropout mixture \eqref{eq:dropout-mixture} has the same covariance as
 \begin{align}
