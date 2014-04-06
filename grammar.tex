@@ -487,7 +487,7 @@ Since this dataset was analyzed in detail by \citet{rasmussen38gaussian}, we can
 
 
 
-\begin{figure}
+\begin{figure}[ht!]
 \newcommand{\wmgd}{0.5\columnwidth}  % width mauna decomp
 \newcommand{\hmgd}{3.51cm}  % height mauna decomp
 \newcommand{\mdrd}{\grammarfiguresdir/decomposition/11-Feb-03-mauna2003-s}  % mauna decomp results dir
@@ -532,7 +532,7 @@ We also plot the residuals, showing that there is little obvious structure left 
 %}
 
 
-\begin{figure}[h]
+\begin{figure}[ht!]
 \centering
 \newcommand{\wmg}{0.31\columnwidth}  % width maunu growth
 \newcommand{\hmg}{3.2cm}  % height maunu growth
@@ -552,7 +552,7 @@ Level 1: & Level 2: & Level 3: \\
 
 \paragraph{Airline passenger data}
 
-\begin{figure}[H]
+\begin{figure}[ht!]
 \centering
 \newcommand{\wagd}{0.48\columnwidth}  % width airline decomp
 \newcommand{\hagd}{4cm}  % height airline decomp
@@ -1081,7 +1081,8 @@ We believe that a data-driven approach to choosing kernel structures automatical
 We hope that the \procedurename{} algorithm will help replace the current and often opaque art of kernel engineering with a more transparent science of automated kernel construction.
 
 
-We demonstrate that the properties of Gaussian processes allow for an automatic, modular description generation procedure, trhough both graphs illustrating interpretable decomposition of the posterior, and in terms of English-language descriptions of properties of the discovered models.
+We demonstrate that the properties of Gaussian processes allow for an automatic, modular description generation procedure, through graphs illustrating interpretable decomposition of the posterior.
+%, and in terms of English-language descriptions of properties of the discovered models.
 %This modularity means that a large class of statistical structures can explained, without resorting to writing a special case for every possible structure in our open-ended set of models.
 
 Whether or not such modularity and interpretability is present in other open-ended model classes is an open question.
@@ -1095,9 +1096,9 @@ While we focus on Gaussian process regression, we believe our kernel search meth
 
 %\paragraph{Source Code}
 %Source code to perform all experiments is available on github\footnotemark.
-\footnote{
+%\footnote{
 %\url{http://www.github.com/jamesrobertlloyd/gpss-research}. 
-All \gp{} parameter optimisation was performed by automated calls to the GPML toolbox available at \url{http://www.gaussianprocess.org/gpml/code/}.}
+%All \gp{} parameter optimisation was performed by automated calls to the GPML toolbox available at \url{http://%www.gaussianprocess.org/gpml/code/}.}
 
 
 
