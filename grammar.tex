@@ -864,10 +864,13 @@ The results are similar to those for extrapolation and are included in the appen
 \procedurename{} can also be applied to multidimensional regression problems.
 %
 To evaluate the predictive accuracy of our method in a high-dimensional setting, we extended the comparison of \cite{duvenaud2011additive11} to include our method.
-We performed 10-fold cross validation on 5 datasets,
-\footnote{The data sets had dimensionalities ranging from 4 to 13, and the number of data points ranged from 150 to 450.} comparing 5 methods in terms of \MSE{} and predictive likelihood.
+We performed 10-fold cross validation on 5 datasets, comparing 5 methods in terms of \MSE{} and predictive likelihood.
+The data sets had dimensionalities ranging from 4 to 13, and the number of data points ranged from 150 to 450.
 %\NA{
 Our structure search was run up to depth 10, using the \SE{} and \RQ{} base kernel families.
+%\url{http://www.github.com/jamesrobertlloyd/gpss-research}. 
+All \gp{} parameter optimisation was performed by automated calls to the \gpml{} toolbox available at \url{http://www.gaussianprocess.org/gpml/code/}.
+
 %different subsets of the base kernel families.
 %}
 

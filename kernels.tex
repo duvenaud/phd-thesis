@@ -173,8 +173,8 @@ Kernels $\kernel_1$ and $\kernel_2$ can be kernels of any type, and we can sum u
 \begin{figure}
 \centering
 \begin{tabular}{ccccc|c}
-\multicolumn{5}{c|}{Kernels constructed through addition} & \multicolumn{1}{c}{Mutliplicative} \\
-\multicolumn{5}{c|}{of orthogonal one-dimensional components} & \multicolumn{1}{c}{kernels} \\
+\multicolumn{5}{c|}{A sum of two orthogonal} & \multicolumn{1}{c}{Mutliplicative} \\
+\multicolumn{5}{c|}{ one-dimensional kernels} & \multicolumn{1}{c}{kernels} \\
 %\hline \\
 \hspace{-0.2cm}\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel_sum_p2} 
 & \hspace{-0.4cm} \raisebox{1cm}{+} \hspace{-0.4cm} & 
@@ -291,7 +291,7 @@ This is an example of the automatic sparsity that arises by maximizing marginal 
 
 
 
-\subsection{Marginal Variance of Components}
+\subsection{Marginal Covariance of Components}
 
 How to compute the posterior distributions shown in Figure~\ref{fig:interpretable functions}?
 %The derivation is actually quite straightforward, but in this
@@ -339,14 +339,7 @@ where we represent the Gram matrices, evaluated at all pairs of vectors in bold 
 \vK_1^{\star\star} & = k_1( \vX^\star, \vX^\star )
 \end{align}
 
-By the formula for Gaussian conditionals:
-%
-\begin{align}
-\vx_A | \vx_B \sim \Nt{\vmu_A + \vSigma_{AB} \vSigma_{BB}\inv \left( \vx_B - \vmu_B \right) }
-{\vSigma_{AA} - \vSigma_{AB} \vSigma_{BB}\inv \vSigma_{BA} },
-\end{align}
-%
-we get that the conditional distribution of a \gp{}-distributed function conditioned on its sum with another \gp{}-distributed function is given by
+By the formula for Gaussian conditionals: \cref{eq:gauss_conditional}, we get that the conditional distribution of a \gp{}-distributed function conditioned on its sum with another \gp{}-distributed function is given by
 %
 \begin{align}
 \vf_1^\star | \vf \sim \Normal \Big( 
@@ -359,14 +352,14 @@ we get that the conditional distribution of a \gp{}-distributed function conditi
 \end{align}
 %
 These formulae express the posterior model uncertainty about different components of the signal, integrating over the possible configurations of the other components.
-In the case where we condition on the sum of more than two functions, the term $\vK_1 + \vK_2$ can simply be replaced by $\sum_i \vK_i$ everywhere.
+If we wish to condition on the sum of more than two functions, the term $\vK_1 + \vK_2$ can simply be replaced by $\sum_i \vK_i$ everywhere.
 
 
 
 
-\subsection{Marginal Covariance of Components}
+\subsubsection{Posterior Covariance of Components}
 
-\begin{figure}
+\begin{figure}[t]
 \centering
 \renewcommand{\tabcolsep}{1mm}
 \def\incpic#1{\includegraphics[width=0.1\columnwidth]{../figures/decomp/concrete-#1}}
@@ -472,7 +465,7 @@ Chapter~\ref{ch:additive} considers this model class in more detail.
 
 
 
-\section{Modeling Interactions}
+\section{Modifying Kernels through Multiplication}
 
 %
 \begin{figure}
@@ -494,45 +487,51 @@ Plots have same meaning as in figure \ref{fig:basic_kernels}.}
 \end{figure}
 
 Multiplying kernels allows us to account for interactions between different input dimensions or different notions of similarity. 
-For instance, in multidimensional data, the multiplicative kernel $\SE_1 \times \SE_2$ represents a smoothly varying function of dimensions 1 and 2 which is not constrained to be additive.
+%For instance, in multidimensional data, the multiplicative kernel $\SE_1 \times \SE_2$ represents a smoothly varying function of dimensions 1 and 2 which is not constrained to be additive.
+In univariate data, multiplying a kernel by \kSE{} gives a way of converting global structure to local structure. 
+For example, $\Per$ corresponds to globally periodic structure, whereas $\Per \times \SE$ corresponds to locally periodic structure, as shown in row 1 of figure~\ref{fig:kernels}.
+
 
 Products of $\kSE$ kernels, having a different lengthscale parameter for each dimension, are equivalent to the $\seard$ kernel:
 %
 \begin{align}
-\seard( \vx, \vx') = \exp \left( -\frac{1}{2} \sum_{d=1}^D \frac{x_d x'_d}{\ell_d^2} \right)
+\seard( \vx, \vx') = \exp \left( -\frac{1}{2} \sum_{d=1}^D \frac{\left( x_d - x'_d \right)^2}{\ell_d^2} \right)
 \end{align}
 %
 Where \ARD{} stands for Automatic Relevance Determination .
 
-In univariate data, multiplying a kernel by \kSE{} gives a way of converting global structure to local structure. 
-For example, $\Per$ corresponds to globally periodic structure, whereas $\Per \times \SE$ corresponds to locally periodic structure, as shown in row 1 of figure~\ref{fig:kernels}.
-
-Many architectures for learning complex functions, such as convolutional networks \cite{lecun1989backpropagation} and sum-product networks \cite{poon2011sum}, include units which compute AND-like and OR-like operations.
-Composite kernels can be viewed in this way too. A sum of kernels can be understood as an OR-like operation: two points are considered similar if either kernel has a high value.
-Similarly, multiplying kernels is an AND-like operation, since two points are considered similar only if both kernels have high values.
 Since we are applying these operations to the similarity functions rather than the regression functions themselves, compositions of even a few base kernels are able to capture complex relationships in data which do not have a simple parametric form.
+[TODO: flesh this section out]
 
 
-
-
-\subsection{Expressing Multiplication with a Known Function}
-
-If we wish to model a function that's been multiplied by some fixed, known function $a(x)$, this can be easily achieved by multiplying the kernel by $a(\vx) a(\vx')$.
-
-This is why it is common practice to assume zero mean, since marginalizing over an unknown mean function can be equivalently expressed as a zero-mean \gp{} with a new kernel.
+%This is why it is common practice to assume zero mean, since marginalizing over an unknown mean function can be equivalently expressed as a zero-mean \gp{} with a new kernel.
 
 
 %d\subsection{Multiplyingication with a Known Function}
 
-\subsection{Changepoints}
-Changepoints can be defined through addition and multiplication with sigmoidal functions:
+\section{Changepoints}
+An example of aChangepoints can be defined through addition and multiplication with sigmoidal functions:
+%
 \begin{align}
 \kCP(\kernel_1, \kernel_2) = \kernel_1 \times \boldsymbol\sigma + \kernel_2 \times \boldsymbol{\bar\sigma}
 \label{eq:cp}
 \end{align}
 where $\boldsymbol\sigma = \sigma(x)\sigma(x')$ and $\boldsymbol{\bar\sigma} = (1-\sigma(x))(1-\sigma(x'))$.
+%
+This compound kernel expresses a change from one kernel to another.
+The parameters of the sigmoid determine where, and how rapidly, this change occurs.
+We can also express a function which changes structure within some interval - a change window - by replacing $\sigma(x)$ with a product of two sigmoids, one increasing and one decreasing.
 
-Change windows can be defined similarly by replacing $\sigma(x)$ with a product of two sigmoids, one increasing and one decreasing.
+\subsection{Multiplication by a Known Function}
+
+More generally, we can model an unkown function that's been multiplied by some fixed, known function $a(x)$, by multiplying the kernel by $a(\vx) a(\vx')$.
+Formally,
+%
+\begin{align}
+f(\iva) = a(\iva) g(\iva), \quad g \sim \GPdist{g}{\vzero}{k(\iva, \iva')} \quad
+\iff
+\quad f \sim \GPdist{f}{\vzero}{ a(\iva) k(\iva, \iva') a(\iva')}
+\end{align}
 
 
 
@@ -540,7 +539,7 @@ Change windows can be defined similarly by replacing $\sigma(x)$ with a product 
 \section{Feature Representation}
 %
 By Mercer's theorem \citep{mercer1909functions},
-%(TODO:cite)
+%Due to \citet{mercer1909functions}, we know that
 any positive-definite kernel can be represented as the inner product between a fixed set of features, evaluated at $x$ and at $x'$:
 %
 \begin{align}
@@ -573,16 +572,22 @@ The link between Gaussian processes, linear regression, and neural networks is e
 \def\feata{\va}
 \def\featb{\vb}
 
-We can also view kernel addition and multiplication as a combination of the features of the original kernels.
+Many architectures for learning complex functions, such as convolutional networks \cite{lecun1989backpropagation} and sum-product networks \cite{poon2011sum}, include units which compute \texttt{and}-like and \texttt{or}-like operations.
+Composite kernels can be viewed in this way too.
+A sum of kernels can be understood as an \texttt{or}-like operation: two points are considered similar if either kernel has a high value.
+Similarly, multiplying kernels is an \texttt{and}-like operation, since two points are considered similar only if both kernels have high values.
 
-Viewing kernel addition from this point of view, if
+
+We can also view kernel addition and multiplication as a combination of the features of the original kernels.
+%Viewing kernel addition from this point of view, if
+For example, if we have two kernels
 %
 \begin{align}
 k_a(\iva, \iva') & = \feata(\iva)\tra \feata(\iva')\\
 k_b(\iva, \iva') & = \featb(\iva)\tra \featb(\iva')
 \end{align}
 %
-then
+and we consider their addition, then
 %
 \begin{align}
 k_a(\iva, \iva') + k_b(\iva, \iva)
@@ -603,10 +608,11 @@ k_a(\iva, \iva') \times k_b(\iva, \iva')
 & = \sum_{i,j} \big[ a_i(\iva) b_j(\iva) \big] \big[ a_i(\iva') b_j(\iva') \big] \\
 & = \vecop{ \feata(\iva) \otimes \featb(\iva') } \tra \vecop{ \feata(\iva) \otimes \featb(\iva')} 
 \end{align}
-
-In other words, the features of $k_a \times k_b$ are the cartesian product (all possible combinations) of the original sets of features.
-For example, one set of features $\feat(\iva)$ corresponding to a one-dimensional $\kSE$ kernel is a set of infinitely many Gaussian bumps spread along the real line.
-Multiplied by an $\kSE$ kernel in another dimension, the resulting features are a set of two-dimensional Gaussian bumps, covering the plane.
+%
+In other words, the features of $k_a \times k_b$ are just the cartesian product (all possible combinations) of the original two sets of features.
+For example, a set of infinitely many Gaussian bumps spread evenly along the real line gives rise to one-dimensional $\kSE$ kernel.
+The cartesian product of these features with another set spread along a different dimension gives a tiling of the plane with two-dimensional Gaussian bumps.
+This tiling corresponds to a two-dimensional $\kSE$ kernel.
 
 
 

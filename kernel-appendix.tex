@@ -1,0 +1,19 @@
+\input{common/header.tex}
+\inbpdocument
+
+\chapter{Appendix for Kernels}
+
+
+\section{Gaussian Conditionals}
+%
+\begin{align}
+\vx_A | \vx_B \sim \Nt{\vmu_A + \vSigma_{AB} \vSigma_{BB}\inv \left( \vx_B - \vmu_B \right) }
+{\vSigma_{AA} - \vSigma_{AB} \vSigma_{BB}\inv \vSigma_{BA} },
+\label{eq:gauss_conditional}
+\end{align}
+%
+
+\outbpdocument{
+\bibliographystyle{plainnat}
+\bibliography{references.bib}
+}
