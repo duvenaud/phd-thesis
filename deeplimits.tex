@@ -484,6 +484,7 @@ Because differentiation is a linear operator, the derivatives of a function draw
 \begin{align}
 \cov \left( \frac{\partial f(\vx)}{\partial x_{d_1}}, \frac{\partial f(\vx)}{\partial x_{d_2}} \right) 
 = \frac{\partial^2 k(\vx, \vx')}{\partial x_{d_1} \partial x_{d_2}'} \bigg|_{\vx=\vx'}
+\label{eq:deriv-kernel}
 \end{align}
 %
 If our kernel is a product over individual dimensions $k(\vx, \vx') = \prod_d^D k_d(x_d, x_d')$, as in the case of the squared-exp kernel, then the off-diagonal entries are zero, implying that all elements are independent.
@@ -608,12 +609,13 @@ We follow \cite{rifai2011contractive} in characterizing the representational pro
 \begin{figure}[t]
 \centering
 \begin{tabular}{ccc}
-& 2 layers & 6 layers \\
-\hspace{-0.3cm} \begin{sideways} {\scriptsize \quad Normalized singular value} \end{sideways} & \hspace{-0.2in} \spectrumpic{2} & \hspace{-0.2in} \spectrumpic{6} \\
- & {\footnotesize Singular value index} & {\footnotesize Singular value}
+& 2 Layers & 6 Layers \\
+\hspace{-0.3cm} \begin{sideways} { \quad Normalized singular value} \end{sideways} & \hspace{-0.2in} \spectrumpic{2} & \hspace{-0.2in} \spectrumpic{6} \\
+ & { Singular value index} & { Singular value index}
 \end{tabular}
-\caption[Singular value spectrum of the Jacobian of a deep GP]
-{The normalized singular value spectrum of the Jacobian of a deep GP.  As the net gets deeper, the largest singular value dominates.
+\caption[Singular value spectrum of the Jacobian of a deep \sgp{}]
+{The normalized singular value spectrum of the Jacobian of a deep \gp{} warping $\Reals^5 \to \Reals^5$.
+As the net gets deeper, the largest singular value dominates.
 This implies that with high probability, there is only one effective degree of freedom in the representation being computed.
 %As depth increases, the distribution on singular values also becomes heavy-tailed.
 }
@@ -1014,7 +1016,7 @@ Samples from a \gp{} prior with this kernel are not differentiable, and are loca
 \begin{figure}
 \centering
 \begin{tabular}{cc}
-Kernel functions & Draws from corresponding \gp{}s \\
+Input-connected deep kernels & Draws from corresponding \gp{}s \\
 \hspace{-0.3cm}
 \rotatebox{90}{$\qquad \cov(f(x), f(x'))$}
 \includegraphics[width=0.465\columnwidth, clip, trim = 1.3cm 0.4cm 0.9cm 0.3cm]{\deeplimitsfiguresdir/deep_kernel_connected} &
@@ -1062,10 +1064,10 @@ Right: GP draws using deep input-connected kernels.  }
 \subsection{When are Deep Kernels Useful Models?}
 
 Kernels correspond to fixed feature maps, and so kernel learning is an example of implicit representation learning. %can compute %useful representations.
-Such feature maps can capture rich structure \citep{DuvLloGroetal13}, and can enable many types of generalization, such as translation and rotation invariance in images \citep{kondor2008group}.
+Such feature maps can capture rich structure \citep{DuvLloGroetal13}, and can enable many types of generalization, such as affine invariance in images \citep{kondor2008group}.
 \cite{SalHin08} used a deep neural network to learn feature transforms for kernels, which learn invariances in an unsupervised manner.
-%However, any fixed representation is unlikely to be useful for a given problem unless it has been optimized specifically for that problem.
 The relatively uninteresting properties of the kernels derived in this section simply reflect the fact that an arbitrary deep computation is not usually a useful representation, unless combined with learning.
+To put it another way, any fixed representation is unlikely to be useful unless it has been chosen specifically for the problem at hand.
 
 
 
@@ -1074,18 +1076,58 @@ The relatively uninteresting properties of the kernels derived in this section s
 
 \section{Related Work}
 
-Deep \gp{}s were first proposed by \cite{lawrence2007hierarchical}. Variational inference in deep \gp{}s was developed by \cite{damianou2012deep}, who also analyzed the effect of automatic relevance determination in that model.
+\paragraph{Prior work on deep \sgp{}s}
+\citet{neal1995bayesian} discussed the properties of arbitrarily deep random networks, including those that would give rise to deep \gp{}s.
+However, deep \gp{}s were first clearly defined and developed by \cite{lawrence2007hierarchical}, as a model of hierarchical generative relationships.
+Deep \gp{}s were first referred to as such in \citet{damianou2012deep}, who developed a variational inference scheme and analyzed the effect of automatic relevance determination in that model.
 
+\paragraph{Other nonparametric neural networks}
 %Other Bayesian deep neural network models have been proposed by, for example, . % and Sum-product networks \cite{poon2011sum}  
-\citet{adams2010learning} proposed a prior on deep Bayesian networks.  Their architecture has no connections except between adjacent layers, and may also be expected to have similar pathologies as deep \gp{}s as the number of layers increases.
+\citet{adams2010learning} proposed a prior on arbitrarily deep Bayesian networks.
+Their architecture has connections only between adjacent layers, and may also be expected to have similar pathologies to those of deep \gp{}s as the number of layers increases.
+
+Deep Density Networks \citep{rippel2013high} were constructed with invertibility in mind, with penalty terms encouraging the preservation of information about lower layers.
+These models are a promising alternative approach to alleviating the pathology discussed in this paper.
+
+\citet{wilson2012gaussian} introduce \gp{} Regression Networks (\gprn{}), which define a matrix product of \gp{}s, rather than a composition.
+The form of the \gprn{} is
 %
-Deep Density Networks \citep{rippel2013high} were constructed with invertibility in mind, with penalty terms encouraging the preservation of information about lower layers. Such priors are a promising approach to alleviating the pathology discussed in this paper.
+\begin{align}
+\vy(\vx) & = \vW(\vx) \vf(\vx) \qquad \textnormal{with each} \; f_{d}, W_{d,j} \simiid \GPt{\vzero}{\kSE + \kWN}
+%\textnormal{each} \; W_{d,j} & \simiid \GPt{\vzero}{\kSE + \kWN}
+\end{align}
+%
+We can easily define a deep \gprn{}:
+%
+\begin{align}
+\vy(\vx) = \vW^{(3)}(\vx) \vW^{(2)}(\vx) \vW^{(1)}(\vx) \vf(\vx)
+\end{align}
+%
+which might be amenable to a similar analysis to that of section \ref{sec:characterizing-deep-gps}.
+%
+%This model has a similar form to the Jacobian of deep \gp{}, (since each row of the Jacobian is jointly a \gp{} but with with a kernel given by \eqref{eq:deriv-kernel}) except that the Jacobian is evaluated at the output from previous layers:
+%
+%\begin{align}
+%\vy(\vx) = J^3(\vf^2(\vx)) J^2(\vf^1(\vx)) J^1(\vx)
+%\end{align}
+%
+
+
+
 
 \paragraph{Recurrent networks}
 \cite{bengio1994learning} and \cite{pascanu2012understanding} analyze a related problem with gradient-based learning in recurrent nets, the ``exploding-gradients'' problem.
-\cite{hermans2012recurrent} analyze deep kernels corresponding to recurrent neural networks.
+Specifically, they note that in recurrent neural networks, the size of the training gradient can grow or shrink exponentially as it is back-propagated, making gadient-based training difficult.
 
-\paragraph{Analysis of deep learning}
+\paragraph{Deep kernels}
+
+% TODO: Flesh out Cho reference.
+%In addition to \citet{cho2012kernel}, 
+
+\cite{hermans2012recurrent} construct deep kernels in a time-series setting, constructing kernels corresponding to infinite-size recurrent neural networks (also called Echo State Networks).
+They also propose concatenating the implicit feature vectors from previous time steps with the current inputs, resulting in an architecture analogous to the input-connected architure proposed by \citet{neal1995bayesian}.
+
+\paragraph{Analyses of deep learning}
 \cite{montavon2010layer} perform a layer-wise analysis of deep networks, and note that the performance of MLPs degrades as the number of layers with random weights increases.
 The importance of network architectures relative to learning has been examined by \cite{saxe2011random}.
 \cite{saxedynamics} looked at the dynamics of learning in deep linear models, as a tractable approximation to deep neural networks.  
@@ -1107,7 +1149,7 @@ The importance of network architectures relative to learning has been examined b
 
 %In this work, we established a number of propositions which help us gain insight into the properties of very deep models, and allow making informed choices regarding their architecture.
 
-In this work, we attempted to gain insight into the properties of deep neural networks by characterizing the sorts of functions likeley to be obtained under different choices of priors on compositions of functions.
+In this chapter, we attempted to gain insight into the properties of deep neural networks by characterizing the sorts of functions likeley to be obtained under different choices of priors on compositions of functions.
 %established a number of propositions which help us gain insight into the properties of very deep models, and allow making informed choices regarding their architecture.
 
 %First, we identified equivalences between multi-layer perceptions and deep \gp{}s --- namely, that a deep \gp{} can be written as an \MLP{}s with a finite number of nonparametric hidden units, or as an \MLP{} with infinitely-many parametric hidden units.
@@ -1118,7 +1160,7 @@ First, we identified deep Gaussian processes as an easy-to-analyze model corresp
 We then showed that representations based on repeated composition of independent functions exhibit a pathology where the representations becomes invariant to all directions of variation but one. % This leads to extremely restricted expressiveness of such deep models in the limit of increasing number of layers. 
 Finally, we showed that this problem could be alleviated by connecting the input to each layer.
 %proposed a way to alleviate this problem: connecting the input to each layer of a deep representation allows us to construct priors on deep functions that do not exhibit the information-capacity pathology.
-
+%
 We also examined properties of deep kernels, corresponding to arbitrarily many compositions of fixed features.
 %Finally, we derived models obtained by performing dropout on Gaussian processes, finding a tractable approximation to exact dropout in \gp{}s.
 

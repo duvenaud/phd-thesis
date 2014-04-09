@@ -45,7 +45,7 @@ Fortunately, Gaussian processes (\gp{}s) provide a very general and analytically
 \end{tabular}
 \end{centering}
 \caption[One-dimensional Gaussian process posterior]{A visual representation of a one-dimensional Gaussian process posterior.
-Shades of red show isocountours of the marginal density at each input location.
+Different shades of red correspond to deciles of the marginal density at each input location.
 Coloured lines show samples from the process.
 Top left: A \gp{} prior, not conditioned on any datapoints.
 Other plots show the posterior as more
@@ -103,8 +103,9 @@ Since the marginal likelihood depends on the kernel, we can select the form of t
 The predictive distributions also have a simple form:
 %
 \begin{align}
-p( y(\iva^*) | \vy, \vX, \mu(\iva), k(\iva, \iva)) = \mathcal{N} \large( y(\iva^*) | & \mu(\iva^*) + k(\iva^*, \vX) k(\vX, \vX)\inv \left( \vy - \mu(\vX) \right)  \nonumber \\
-& k(\iva^*, \iva^*) - k(\iva^*, \vX) k(\vX, \vX)\inv k(\vX, \iva^*) \large)
+p( y(\iva^*) | \vy, \vX, \mu(\iva), k(\iva, \iva)) 
+= \mathcal{N} \big( y(\iva^*) | & \mu(\iva^*) + k(\iva^*, \vX) k(\vX, \vX)\inv \left( \vy - \mu(\vX) \right)  \nonumber \\
+& k(\iva^*, \iva^*) - k(\iva^*, \vX) k(\vX, \vX)\inv k(\vX, \iva^*) \big)
 \label{eq:predictive}
 \end{align}
 %
