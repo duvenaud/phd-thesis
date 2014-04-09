@@ -693,12 +693,13 @@ To what extent are these pathologies present in nets being used today?  In simul
 \label{sec:fix}
 
 \begin{figure}[h!]
-\def\layersep{1.33cm}
-\def\nodeseptwo{1.65cm}
+\def\nodeseptwo{1.9cm}
 \def\nodesize{.35cm}
+\def\numhiddentwo{3}
 
-\begin{tabular}{cc}
-a) Standard \MLP{} connectivity &
+\centering
+\begin{tabular}{ccc}
+a) Standard \MLP{} connectivity & &
 b) Input-connected architecture\\
 \hspace{-4mm}
 \begin{tikzpicture}[draw=black!80]
@@ -711,30 +712,28 @@ b) Input-connected architecture\\
     % Define the input layer node
     \coordinate (I) at (0, 0);
 
-
     % Define the hidden layer nodes
-    \foreach \name / \y in {1,...,\numhidden}
-    {
+    \foreach \name / \y in {1,...,\numhiddentwo} {
         \coordinate (H-\name) at (\nodeseptwo*\y, 0);
     }
 
+    \path[pile] (I) edge (H-1) {};
     % Connect every node            
-    \foreach \name in {1,...,\numhidden}
-    {
-	 \path[pile] (I) edge (H-\name) {};
-         %\path[pile] (I) edge [bend left] (H-\name) {};
+    \foreach \name in {2,...,\numhiddentwo} {
+	 	\pgfmathsetmacro\hindex{\name - 1}
+		\path[pile] (H-\hindex) edge (H-\name) {};
     }
 
     \draw (I) node[neuron] {};
     \draw (I) node[below = 0.5cm]  {$\vx$};
 
     % Draw the hidden layer nodes
-    \foreach \name / \y in {1,...,\numhidden}
-    {
-	\draw (H-\name) node[neuron]  {};
+    \foreach \name / \y in {1,...,\numhiddentwo} {
+		\draw (H-\name) node[neuron]  {};
         \draw (H-\name) node[below = 0.34cm] {$\vf^{(\y)}(\vx)$};
     }
 \end{tikzpicture} &
+\hspace{0.5cm} &
 \begin{tikzpicture}[draw=black!80]
     \tikzstyle{neuron}=[circle,minimum size=17pt, draw = black!80, fill = white, thick]
     \tikzstyle{input neuron}=[neuron, fill=green!50];
@@ -745,29 +744,26 @@ b) Input-connected architecture\\
     % Define the input layer node
     \coordinate (I) at (0, 0);
 
-
     % Define the hidden layer nodes
-    \foreach \name / \y in {1,...,\numhidden}
-    {
+    \foreach \name / \y in {1,...,\numhiddentwo} {
         \coordinate (H-\name) at (\nodeseptwo*\y, 0);
     }
 
-    % Connect every node
-    \path[pile] (I) edge (H-1) {};          
-    \foreach \name in {2,...,\numhidden}
-    {
-	 \path[pile] (I) edge (H-\name) {};
-         \path[pile] (I) edge [bend left] (H-\name) {};
+    % Connect every node            
+    \path[pile] (I) edge (H-1) {};
+    \foreach \name in {2,...,\numhiddentwo} {
+		\pgfmathsetmacro\hindex{\name - 1}
+		\path[pile] (H-\hindex) edge (H-\name) {};
+        \path[pile] (I) edge [bend left] (H-\name) {};
     }
 
     \draw (I) node[neuron] {};
     \draw (I) node[below = 0.5cm]  {$\vx$};
 
     % Draw the hidden layer nodes
-    \foreach \name / \y in {1,...,\numhidden}
-    {
-	\draw (H-\name) node[neuron]  {};
-        \draw (H-\name) node[below = 0.34cm] {$\vf^{(\y)}(\vx)$};
+    \foreach \name / \y in {1,...,\numhiddentwo} {
+		\draw (H-\name) node[neuron]  {};
+       	\draw (H-\name) node[below = 0.34cm] {$\vf^{(\y)}(\vx)$};
     }
 \end{tikzpicture}
 \end{tabular}
