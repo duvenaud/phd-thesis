@@ -270,16 +270,16 @@ where $\vV^{(1)}$ is another weight matrix.
 There exists a correspondence between one-layer \MLP{}s and \gp{}s \citep{neal1995bayesian}.  \gp{}s can be viewed as a prior on neural networks with infinitely many hidden units, and unknown weights.  More precisely, for any model of the form
 %
 \begin{align}
-f(\vx) = \frac{1}{K}{\mathbf \alpha}\tra \hPhi(\vx) = \frac{1}{K} \sum_{i=1}^K \alpha_i \hphi_i(\vx),
+f(\vx) = \frac{1}{K}{\mathbf \vnetweights}\tra \hPhi(\vx) = \frac{1}{K} \sum_{i=1}^K \netweights_i \hphi_i(\vx),
 \label{eq:one-layer-gp}
 \end{align}
 %
-with fixed features $\left[ \hphi_1(\vx), \dots, \hphi_K(\vx) \right]\tra = \hPhi(\vx)$ and i.i.d. $\alpha$'s with zero mean and finite variance $\sigma^2$, the central limit theorem implies that as the number of features $K$ grows, any two function values $f(\vx), f(\vx')$ have a joint distribution approaching $\Nt{0}{\frac{\sigma^2}{K}\sum_{i=1}^K \hphi_i(\vx)\hphi_i(\vx')}$.
+with fixed features $\left[ \hphi_1(\vx), \dots, \hphi_K(\vx) \right]\tra = \hPhi(\vx)$ and i.i.d. $\netweights$'s with zero mean and finite variance $\sigma^2$, the central limit theorem implies that as the number of features $K$ grows, any two function values $f(\vx), f(\vx')$ have a joint distribution approaching $\Nt{0}{\frac{\sigma^2}{K}\sum_{i=1}^K \hphi_i(\vx)\hphi_i(\vx')}$.
 A joint Gaussian distribution between any set of function values is the definition of a Gaussian process.
 %\TBD{DD: any two or any set?}
 
 The result is surprisingly general:
-it puts no constraints on the features (other than having uniformly bounded activation), nor does it require that the feature weights $\alpha$ be Gaussian distributed.  
+it puts no constraints on the features (other than having uniformly bounded activation), nor does it require that the feature weights $\netweights$ be Gaussian distributed.  
 
 We can also work backwards to derive a one-layer \MLP{} from any \gp{}.
 Mercer's theorem implies that any positive-definite kernel function corresponds to an inner product of features: $k(\vx, \vx') = \hPhi(\vx) \tra \hPhi(\vx')$.
@@ -303,12 +303,12 @@ This architecture is shown in figure \ref{fig:architectures}b.
 For example, if we extend the model given by \eqref{eq:one-layer-nn} to have two layers of feature mappings,  the resulting model is
 %
 \begin{align}
-f(\vx) = \frac{1}{K}{\mathbf \alpha}\tra \hPhi^{(2)}\left( \hPhi^{(1)}(\vx) \right) \;.
-% = \frac{1}{K} \sum_{i=1}^K \alpha_i \hphi_i(\vx),
+f(\vx) = \frac{1}{K}{\mathbf \vnetweights}\tra \hPhi^{(2)}\left( \hPhi^{(1)}(\vx) \right) \;.
+% = \frac{1}{K} \sum_{i=1}^K \netweights_i \hphi_i(\vx),
 \label{eq:mutli-layer-nn}
 \end{align}
 
-If the features $\vh(\vx)$ are considered fixed with only the last layer weights ${\mathbf \alpha}$ unknown, this model corresponds to a \gp{} with a ``deep kernel'': 
+If the features $\vh(\vx)$ are considered fixed with only the last layer weights ${\vnetweights}$ unknown, this model corresponds to a \gp{} with a ``deep kernel'': 
 \begin{align}
 k(\vx, \vx') = \left( \hPhi^{(2)} ( \hPhi^{(1)}(\vx) ) \right) \tra \hPhi^{(2)} (\hPhi^{(1)}(\vx') )
 \end{align}
@@ -591,17 +591,20 @@ Theorem \ref{thm:prodjacob} allows us to analyze the representational properties
 %b) A na\"{i}ve representation (colors) \\ of a one-dimensional manifold (white)
 %\end{tabular}
 \caption[Desirable properties of representations of manifolds]
-{Representing a 1-D manifold.
+{Representing a 1-D data manifold.
 %A representation is a function mapping the input space to some set of outputs.
-Colors show the output of the computed representation as a function of the input space.
-The representation (blue \& green) is invariant in directions orthogonal to the data manifold (white), making it robust to noise in those directions, and reducing the number of parameters needed to represent a datapoint.
-The representation also changes in directions tangent to the manifold, preserving information for later layers. 
+Colors correspond to the computed representation as a function of the input space.
+The representation (blue \& green) varies in directions tangent to the data manifold (white), preserving information for later layers. 
+The representation is also invariant to directions orthogonal to the manifold, making it robust to noise in those directions.
+%, and reducing the number of parameters needed to represent a datapoint.
 %Representation b) changes in all directions, preserving potentially useless information.}% The representation on the right might be useful if the data were spread out in over plane.
 }
 \label{fig:hidden}
 \end{figure}
 %
-We follow \cite{rifai2011contractive} in characterizing the representational properties of a function by the singular value spectrum of the Jacobian. In their experiments, the Jacobian was computed at the training points.  Because the priors we are examining are stationary, the distribution of the Jacobian is identical everywhere.
+As in \cite{rifai2011contractive}, we characterize the representational properties of a function by the singular value spectrum of the Jacobian.
+In their experiments, the Jacobian was computed at the training points.
+Because the priors we are examining are stationary, the distribution of the Jacobian is identical everywhere.
 %
 \newcommand{\spectrumpic}[1]{
 %\hspace{-0.2in}
@@ -614,9 +617,11 @@ We follow \cite{rifai2011contractive} in characterizing the representational pro
  & { Singular value index} & { Singular value index}
 \end{tabular}
 \caption[Singular value spectrum of the Jacobian of a deep \sgp{}]
-{The normalized singular value spectrum of the Jacobian of a deep \gp{} warping $\Reals^5 \to \Reals^5$.
-As the net gets deeper, the largest singular value dominates.
+{%The normalized singular value spectrum of the Jacobian of a deep \gp{} warping $\Reals^5 \to \Reals^5$.
+The distribution of singular values relative to the largest, of the Jacobian of a function drawn from 5-dimensional deep \sgp{} prior, at 25 and 50 layers deep.
+As the net gets deeper, the largest singular value becomes much larger than the others.
 This implies that with high probability, there is only one effective degree of freedom in the representation being computed.
+%direction in which we can vary the input in order to make the function vary
 %As depth increases, the distribution on singular values also becomes heavy-tailed.
 }
 \label{fig:deep_spectrum}
@@ -646,11 +651,11 @@ As the number of layers increases, the density concentrates along one-dimensiona
 \label{fig:filamentation}
 \end{figure}
 %
-Figure \ref{fig:deep_spectrum} shows the singular value spectrum for 5-dimensional deep GPs of different depths.  As the net gets deeper, the largest singular value dominates, implying there is usually only one effective degree of freedom in representation being computed.
-%
+Figure \ref{fig:deep_spectrum} shows the singular value spectrum for 5-dimensional deep GPs of different depths.
+As the net gets deeper, the largest singular value dominates, implying there is usually only one effective degree of freedom in representation being computed.
 
-
-Figure \ref{fig:filamentation} demonstrates a related pathology that arises when composing functions to produce a deep density model.  The density in the observed space eventually becomes locally concentrated onto one-dimensional manifolds, or \emph{filaments}, implying that such models are insuitable to model manifolds whose underlying dimensionality is greater than one.
+Figure \ref{fig:filamentation} demonstrates a related pathology that arises when composing functions to produce a deep density model.
+The density in the observed space eventually becomes locally concentrated onto one-dimensional manifolds, or \emph{filaments}, implying that such models are insuitable to model manifolds whose underlying dimensionality is greater than one.
 
 \newcommand{\mappic}[1]{\hspace{-0.05in}\includegraphics[width=0.465\columnwidth]{\deeplimitsfiguresdir/map/latent_coord_map_layer_#1}} 
 \newcommand{\mappiccon}[1]{\hspace{-0.05in} \includegraphics[width=0.465\columnwidth]{\deeplimitsfiguresdir/map_connected/latent_coord_map_layer_#1}}
@@ -860,7 +865,7 @@ As depth increases, the density becomes more complex without concentrating along
  & {\scriptsize Singular value number} & {\scriptsize Singular value number}
 \end{tabular}
 \caption[Distribution of singular values of an input-connected deep GP]
-{The distribution of singular values drawn from 5-dimensional input-connected deep GP priors 25 and 50 layers deep.
+{The distribution of singular values drawn from 5-dimensional input-connected deep GP priors, 25 and 50 layers deep.
 The singular values remain roughly the same scale as one another.}
 \label{fig:good_spectrum}
 \end{figure}
