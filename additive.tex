@@ -177,7 +177,7 @@ In this section, we show how one can evaluate the sum over all terms in $O(D^2)$
 
 %\subsection{ Elementary Symmetric Polynomials}
 To efficiently compute the additive kernel, we exploit the fact that the $n$th order additive kernel corresponds to the $n$th \textit{elementary symmetric polynomial} \citep{macdonald1998symmetric}
-%\cite{stanley2001enumerative}, 
+%\citep{stanley2001enumerative}, 
 of the base kernels, which we denote $e_n$.
 For example:  if $\bf x$ has 4 input dimensions ($D = 4$), and if we let $z_i = k_i(x_i,x_i')$, then
 %
@@ -264,19 +264,20 @@ Thus, dropping out features of an infinitely-wide MLP does not change the model 
 
 \subsection{Dropping Out Inputs}
 
-In a \gp{} with kernel ${k(\vx, \vx') = \prod_{d=1}^D k_d(\vx_d, \vx_d')}$, exact averaging over all possible ways of dropping out inputs with probability $\nicefrac{1}{2}$ results in a mixture of \gp{}s, each depending on only a subset of the inputs:
+In a \gp{} with kernel ${k(\vx, \vx') = \prod_{d=1}^D k_d(x_d, x_d')}$, exact averaging over all possible ways of dropping out inputs with probability $\nicefrac{1}{2}$ results in a mixture of \gp{}s, each depending on only a subset of the inputs:
 \begin{align}
-p \left( f(\vx) \right)= \frac{1}{2^D} \sum_{\vr \in \{0,1\}^D}  \textnormal{\gp} \left(0, \prod_{d=1}^D k_d(\vx_d, \vx_d')^{r_d} \right)
+p \left( f(\vx) \right)
+= \frac{1}{2^D} \sum_{\vr \in \{0,1\}^D}  \textnormal{\gp} \left(0, \prod_{d=1}^D k_d(x_d, x_d')^{r_d} \right)
 \label{eq:dropout-mixture}
 \end{align}
 We present two results ways to gain intuition about this model.
 
-First, if the kernel on each dimension has the form ${k_d(\vx_d, \vx_d') = g \left( \frac{\vx_d - \vx_d'}{\lengthscale_d} \right)}$, as does the \humble{SE} kernel \eqref{eq:se_kernel}, then any input dimension can be dropped out by setting its lengthscale $\lengthscale_d$ to $\infty$.
+First, if the kernel on each dimension has the form ${k_d(x_d, x_d') = g \left( \frac{x_d - x_d'}{\lengthscale_d} \right)}$, as does the \kSE{} kernel, then any input dimension can be dropped out by setting its lengthscale $\lengthscale_d$ to $\infty$.
 Thus, dropout on the inputs of a \gp{} corresponds to a spike-and-slab prior on lengthscales, with each dimension independently having $w_d = \infty$ with probability $\nicefrac{1}{2}$.
 
 Another way to understand the resulting prior is to note that the dropout mixture \eqref{eq:dropout-mixture} has the same covariance as
 \begin{align}
-f(\vx) \sim \textnormal{\gp} \left(0, \frac{1}{2^{-2D}} \sum_{\vr \in \{0,1\}^D}  \prod_{d=1}^D k_d(\vx_d, \vx_d')^{r_d} \right)
+f(\vx) \sim \textnormal{\gp} \left(0, \frac{1}{2^{-2D}} \sum_{\vr \in \{0,1\}^D}  \prod_{d=1}^D k_d(x_d, x_d')^{r_d} \right)
 \label{eq:additive-gps}
 \end{align}
 
@@ -294,8 +295,8 @@ Our experiments show that often, the intermediate degrees of interaction contrib
 
 A related functional \ANOVA{} \gp{} model \citep{kaufman2010bayesian} decomposes the \emph{mean} function into a weighted sum of \gp{}s.
 However, the effect of a particular degree of interaction cannot be quantified by that approach.
-Also, computationally, the Gibbs sampling approach used in \cite{kaufman2010bayesian} is disadvantageous.
-%[Todo:  read and mention  and \cite{friedman1981projection} from Hannes]
+Also, computationally, the Gibbs sampling approach used in \citep{kaufman2010bayesian} is disadvantageous.
+%[Todo:  read and mention  and \citep{friedman1981projection} from Hannes]
 
 %\subsection{Multiple Kernel Learning}
 
@@ -305,7 +306,7 @@ However, their approach learns a mixture over a small, fixed set of kernels, whi
 
 \subsection{Hierarchical Kernel Learning}
 
-\begin{figure}
+\begin{figure}[ht!]
 \centering
 \begin{tabular}{c|c}
 HKL kernel & GP-GAM kernel \\
@@ -314,9 +315,6 @@ HKL kernel & GP-GAM kernel \\
  Squared-exp GP & Additive GP kernel\\
 \hspace{-0.06in} \includegraphics[height=0.35\textwidth]{\additivefigsdir/compare_models/ard.pdf} \hspace{-0.07in} &
 \hspace{-0.06in} \includegraphics[height=0.35\textwidth]{\additivefigsdir/compare_models/additive.pdf} \\
-
-
-% & & kernel & \\
 \end{tabular}
 \caption[A comparison of different additive model classes]
 {
@@ -340,7 +338,7 @@ The subsets of kernels considered by this method are restricted to be a \textit{
 For details, see \citep{DBLP:journals/corr/abs-0909-0844}.}
 Given each dimension's kernel, and a pre-defined weighting over all terms, \HKL{} performs model selection by searching over hulls of interaction terms.
 % \subsubsection{All-subsets kernel with uniform weightings}
-In \cite{DBLP:journals/corr/abs-0909-0844}, Bach also fixes the relative weighting between orders of interaction with a single term $\alpha$, computing the sum over all orders by:
+\citet{DBLP:journals/corr/abs-0909-0844} also fixes the relative weighting between orders of interaction with a single term $\alpha$, computing the sum over all orders by:
 \begin{equation}
 \label{eqn:uniform}
 k_{a}({\bf x, x'}) = v_D^2 \prod_{d=1}^D \left(1 + \alpha k_{d}(x_{d}, x_{d}') \right)
@@ -348,7 +346,7 @@ k_{a}({\bf x, x'}) = v_D^2 \prod_{d=1}^D \left(1 + \alpha k_{d}(x_{d}, x_{d}') \
 which has computational complexity $O(D)$.  However, this formulation forces the weight of all $n$th order terms to be weighted by $\alpha^n$.
 
 Figure \ref{hulls-figure} contrasts the \HKL{} hull-selection method with the Additive \gp{} hyperparameter-learning method. Neither method dominates the other in flexibility.
-The main difficulty with the approach of \cite{DBLP:journals/corr/abs-0909-0844} is that hyperparameters are hard to set other than by cross-validation.
+The main difficulty with the approach of \citep{DBLP:journals/corr/abs-0909-0844} is that hyperparameters are hard to set other than by cross-validation.
 In contrast, our method optimizes the hyperparameters of each dimension's base kernel, as well as the relative weighting of each order of interaction. 
 
 
@@ -366,10 +364,10 @@ A closely related procedure from \citet{wahba1990spline} is smoothing-splines \A
 An \SSANOVA{} model is estimated as a weighted sum of splines along each dimension, plus a sum of splines over all pairs of dimensions, all triplets, etc, with each individual interaction term having a separate weighting parameter.
 Because the number of terms to consider grows exponentially in the order, in practice, only terms of first and second order are usually considered.
 Learning in SS-ANOVA is usually done via penalized-maximum likelihood with a fixed sparsity hyperparameter.
-%\cite{shawe2004kernel} define ANOVA kernels thusly: "The ANOVA kernel of degree d is like the all-subsets kernel except that it is restricted to subsets of the given cardinality $d$."
+%\citep{shawe2004kernel} define ANOVA kernels thusly: "The ANOVA kernel of degree d is like the all-subsets kernel except that it is restricted to subsets of the given cardinality $d$."
 
-% estimated by generalized cross-validation\cite{craven1978smoothing}. 
-%MARS\cite{friedman1991multivariate} is another spline-based regression method.
+% estimated by generalized cross-validation\citep{craven1978smoothing}. 
+%MARS\citep{friedman1991multivariate} is another spline-based regression method.
 
 In contrast to these procedures, our method can easily include all $D$ orders of interaction, each weighted by a separate hyperparameter.
 As well, we can learn kernel hyperparameters individually per input dimension, allowing automatic relevance determination to operate.
@@ -398,7 +396,7 @@ They emphasize that the locality of the kernels means that these models cannot c
 They argue that many functions that we care about have such structure.
 Methods based solely on local kernels will require training examples at all combinations of relevant inputs.
 
-\begin{figure}[h]
+\begin{figure}[ht!]
 \centering
 \begin{tabular}{cccc}
 \hspace{-0.1in}
@@ -452,15 +450,15 @@ For speed, we limited the maximum order of interaction in the additive kernels t
 %\footnote{Code for HKL available at \texttt{http://www.di.ens.fr/\textasciitilde fbach/hkl/}}
 was run using the all-subsets kernel, which corresponds to the same set of kernels as considered by the additive GP with a squared-exp base kernel.     
 
-%For all 3 GP models, we allowed 5 multiple restarts for all of our hyperparameter maximization steps, choosing the set of hyperparameters with the highest training-set marginal likelihood.  We ran each hyperparameter search for 500 function evaluations by the usual method of maximizing marginal likelihood, using L-BFGS \cite{nocedal1980updating}.  In addition to kernel hyperparameters, we fit a constant mean function to the data.
+%For all 3 GP models, we allowed 5 multiple restarts for all of our hyperparameter maximization steps, choosing the set of hyperparameters with the highest training-set marginal likelihood.  We ran each hyperparameter search for 500 function evaluations by the usual method of maximizing marginal likelihood, using L-BFGS \citep{nocedal1980updating}.  In addition to kernel hyperparameters, we fit a constant mean function to the data.
 For all GP models, we fit hyperparameters by the standard method of maximizing training-set marginal likelihood, using L-BFGS \citep{nocedal1980updating} for 500 iterations, allowing five random restarts.
 In addition to learning kernel hyperparameters, we fit a constant mean function to the data.
 %
 In the classification experiments, approximate \gp{} inference was done using Expectation Propagation \citep{minka2001expectation}.
 
 \subsection{Bach Synthetic Dataset}
-In addition to standard UCI repository datasets, we generated a synthetic dataset following the same recipe as \cite{DBLP:journals/corr/abs-0909-0844}.
-This dataset was designed by \cite{DBLP:journals/corr/abs-0909-0844} to demonstrate the advantages of \HKL{} over \gp{}-\ARD{}.
+In addition to standard UCI repository datasets, we generated a synthetic dataset following the same recipe as \citet{DBLP:journals/corr/abs-0909-0844}.
+This dataset was designed by \citet{DBLP:journals/corr/abs-0909-0844} to demonstrate the advantages of \HKL{} over \gp{}-\ARD{}.
 From a covariance matrix drawn from a Wishart distribution with 1024 degrees of freedom, we select 8 variables.
 We then construct the non-linear function $f(X) = \sum_{i=1}^4 \sum_{j=1+1}^4 X_i X_j + \epsilon$, which sums all 2-way products of the first 4 variables, and adds Gaussian noise $\epsilon$.
 This dataset is one which can be predicted well by a kernel which is a sum of two-way interactions over the first 4 variables, ignoring the extra 4 noisy copies.%, as well as the higher-order interactions.
@@ -558,7 +556,7 @@ GP Additive & $\mathbf{0.150}$ & $\mathbf{0.466}$ & $\mathbf{0.409}$ & $\mathbf{
 
 
 The model with best performance on each dataset is in bold, along with all other models that were not significantly different under a paired $t$-test.
-The additive model never performs significantly worse than any other model, and sometimes performs significantly better than all other models.  The difference between all methods is larger in the case of regression experiments. The performance of HKL is consistent with the results in \cite{DBLP:journals/corr/abs-0909-0844}, performing competitively but slightly worse than SE-GP.%  This is especially clear in the case of the regression tasks.
+The additive model never performs significantly worse than any other model, and sometimes performs significantly better than all other models.  The difference between all methods is larger in the case of regression experiments. The performance of HKL is consistent with the results in \citep{DBLP:journals/corr/abs-0909-0844}, performing competitively but slightly worse than SE-GP.%  This is especially clear in the case of the regression tasks.
 
 The additive GP performed best on datasets well-explained by low orders of interaction, and approximately as well as the SE-GP model on datasets which were well explained by high orders of interaction (see table \ref{tbl:all_orders}).
 Because the additive GP is a superset of both the GP-GAM model and the SE-GP model, instances where the additive GP performs slightly worse are presumably due to over-fitting, or due to the hyperparameter optimization becoming stuck in a local maximum. % Absence of over-fitting may explain the relatively strong performance of GP-GAM on classification tasks.  
@@ -626,7 +624,7 @@ Our experiments show that additive \gp{}s are a state-of-the-art regression mode
 %\begin{equation}
 %k_{h_n}({\bf x, x'}) = v_n^2 \sum_{i_1, \dots, i_n} \prod_{d=1}^n k_{i_d}(x_{i_d}, x_{i_d}') = v_n^2 \prod_{d=1}^n \sum_{i_1, \dots, i_n}^n k_{i_d}(x_{i_d}, x_{i_d}')
 %\end{equation}
-%This formulation allows repeated terms, such as $x_i^2$ and is equivalent to the polynomial kernel\cite{shawe2004kernel}.  However, this formulation cases the length scale of each dimension to vary with the order of interaction considered.
+%This formulation allows repeated terms, such as $x_i^2$ and is equivalent to the polynomial kernel\citep{shawe2004kernel}.  However, this formulation cases the length scale of each dimension to vary with the order of interaction considered.
 
 
 

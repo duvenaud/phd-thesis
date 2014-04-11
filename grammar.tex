@@ -183,23 +183,14 @@ We call this system the Automatic Bayesian Covariance Discovery (\procedurename{
 \section{A Language of Regression Models}
 \label{sec:improvements}
 
-
-
 As shown in Chapter~\ref{ch:kernels}, we can construct a wide variety of kernel structures compositionally by adding and multiplying a small number of base kernels.
 In particular, we consider the four base kernel families discussed in Section \ref{sec:Structure}: \kSE, \kPer, \kLin, and \kRQ.
 Any algebraic expression combining these kernels using the operations $+$ and $\times$ defines a kernel family, whose parameters are the concatenation of the parameters for the base kernel families. 
-
-
-
 
 %Details of the search algorithm are given in the supplementary material \TBD{For now}.
 
 %\paragraph{A greedy search algorithm}
 %Our search starts by first proposing all base kernels applied to all input dimensions.  We then choose the kernel with the highest approximate marginal likelihood, apply all expansions to this kernel, and repeat this process for a fixed number of steps.
-
-
-
-
 
 %The general problem of regression consists of learning a function $f$ mapping from some input space $\mathcal{X}$ to some output space $\mathcal{Y}$.
 We would like an expressive language which can represent both simple parametric forms of $f$ such as linear, polynomial, \etc and also complex nonparametric functions specified in terms of properties such as smoothness, periodicity, \etc~
@@ -218,8 +209,8 @@ Our base kernels are white noise ($\kWN$), constant ($\kC$), linear ($\kLin$), s
 %\footnote{Definitions of kernels are in the supplementary material.}.
 The composition rules are addition and multiplication:
 \begin{align}
-k_1 + k_2 =      & \,\, k_1(x,x') + k_2(x,x') \\
-k_1 \times k_2 = & \,\, k_1(x,x') \times k_2(x,x')
+k_1 + k_2 =      & \,\, k_1(\vx, \vx') + k_2(\vx, \vx') \\
+k_1 \times k_2 = & \,\, k_1(\vx, \vx') \times k_2(\vx, \vx')
 \end{align}
 
 %Combining kernels using these operations can yield kernels encoding for richer structures such as approximate periodicity ($\kSE \times \kPer$) or smooth functions with linear trends ($\kSE + \kLin$).

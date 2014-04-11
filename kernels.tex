@@ -12,7 +12,7 @@ Combining kernels in a few simple ways gives us a rich language with which to bu
 \section{Definition}
 
 Since we'll be discussing covariance functions at length, we now give a precise definition.
-A kernel $\kernel(x, x') : \InputSpace \times \InputSpace \to \Reals$ is any positive-definite function between two points $\inputVar, \inputVar'$ in some space $\InputSpace$.
+A kernel $\kernel(\vx, \vx') : \InputSpace \times \InputSpace \to \Reals$ is any positive-definite function between two points $\inputVar, \inputVar'$ in some space $\InputSpace$.
 In this chapter, $\InputSpace$ is usually taken to be Euclidian space, %but it doesn't have to be.
 %As we shall see, $\InputSpace$ 
 it can also be the space of images, documents, categories or points on a sphere, for example.
@@ -22,7 +22,7 @@ Gaussian process models use a kernel to define the prior covariance between any 
 %${\textrm{Cov}(\outputVar, \outputVar') = \kernel(\inputVar,\inputVar')}$
 %
 \begin{align}
-\textrm{Cov}\left(f(\inputVar), f(\inputVar') \right) = \kernel(\inputVar,\inputVar')
+\textrm{Cov}\left(f(\vx), f(\vx') \right) = \kernel(\vx,\vx')
 \end{align}
 %
 Colloquially, kernels are often said to specify the similarity between two objects.
@@ -105,8 +105,8 @@ Using a few simple base kernels and operations for combining them will give us a
 
 In this chapter, we'll focus on two ways of combining kernels: addition and multiplication, which we'll often write in shorthand without arguments:
 \begin{align}
-k_1 + k_2 =& \,\, k_1(x,x') + k_2(x,x')\\
-k_1 \times k_2 =& \,\, k_1(x,x') \times k_2(x,x')
+k_1 + k_2 =& \,\, k_1(\vx, \vx') + k_2( \vx, \vx')\\
+k_1 \times k_2 =& \,\, k_1(\vx, \vx') \times k_2(\vx, \vx')
 \end{align}
 
 
@@ -543,7 +543,7 @@ By Mercer's theorem \citep{mercer1909functions},
 any positive-definite kernel can be represented as the inner product between a fixed set of features, evaluated at $x$ and at $x'$:
 %
 \begin{align}
-k(x,x') = \feat(x)\tra \feat(x')
+k(\vx, \vx') = \feat(\vx)\tra \feat(\vx')
 \end{align}
 
 As a simple example, the squared-exponential kernel ($\kSE$) on the real line has a representation in terms of infinitely many radial-basis functions.
@@ -556,7 +556,7 @@ In some cases, $\InputSpace$ can even be the infinite-dimensional feature mappin
 
 \subsection{Relation to Linear Regression}
 
-Suprisingly, \gp{} regression is equivalent to Bayesian linear regression on $\feat(x)$:
+Suprisingly, \gp{} regression is equivalent to Bayesian linear regression on $\feat(\vx)$:
 %
 \begin{align}
 f(\iva) = \vw\tra \feat(\iva), \quad \vw \sim \N{\vw}{\vzero}{\Sigma} \quad
@@ -592,7 +592,7 @@ and we consider their addition, then
 \begin{align}
 k_a(\iva, \iva') + k_b(\iva, \iva)
 & = \feata(\iva)\tra \featb(\iva') + \feata(\iva)\tra \featb(\iva') \\
-& = \colvec{\feata(\iva)}{\featb(\iva)}^\tra \colvec{\feata(\iva')}{\featb(\iva')}
+& = \colvec{\feata(\iva)}{\featb(\iva)}\tra \colvec{\feata(\iva')}{\featb(\iva')}
 \end{align}
 %
 meaning that the features of $k_a + k_b$ are the concatenation of the features of each kernel.
@@ -647,7 +647,7 @@ The elements of the group $\gswitch$ are
 %
 \begin{align}
 g_1(f(x,y)) & = f(x,y) \qquad \textnormal{(identity)}\\
-g_2(f(x,y)) & = f(y,x) \qquad \textnormal{(swap)}
+g_2(f(x,y)) & = f(y,x) \qquad \textnormal{(switch)}
 \end{align}
 
 It might not be clear how to come up with a kernel obeying these symmetries.  Fortunately, for finite groups, there are a few simple ways to transform any kernel into one which is argumentwise invariant to actions under the group:
