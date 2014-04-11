@@ -114,8 +114,9 @@ All of the base kernels we'll consider in this chapter are one-dimensional.
 Kernels over multidimensional inputs are constructed by adding and multiplying kernels over individual dimensions.
 These dimensions are represented using subscripts, e.g. $\SE_2$ represents an \kSE{} kernel over the second dimension of $\inputVar$.
 
-Each kernel has a number of parameters (sometimes called \emph{hyperparameters}) which specify the precise shape of the covariance function.
-To remove clutter, we'll usually refer to a kernel without specifying these parameters.
+Each kernel has a number of parameters which specify the precise shape of the covariance function.
+These are sometimes referred to as \emph{hyperparameters}, since they can be viewed as specifying a distribution over function parameters, instead of specifying the function directly.
+To remove clutter, we'll usually refer to a kernels without specifying their parameters.
 
 
 

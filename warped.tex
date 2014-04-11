@@ -349,7 +349,7 @@ The second term can be calculated as follows:
 \frac{\partial \log p(\vX|\vZ,\bm{S},\nu,\vu,r)}{\partial \vx_{n}} 
 = -\nu_{z_{n}}\bm{S}_{z_{n}}\inv(\vx_{n}-\vu_{z_{n}}).
 \end{align}
-We also infer kernel hyperparameters $\bm{\theta}=\{\alpha,\beta,\ell\}$ via HMC, using the gradient of the log unnormalized posterior with respect to the kernel hyperparameters.
+We also infer kernel parameters $\bm{\theta}=\{\alpha,\beta,\ell\}$ via HMC, using the gradient of the log unnormalized posterior with respect to the kernel parameters.
 The complexity of each iteration of HMC is dominated by the $\mathcal{O}(N^3)$ computation of $\vK\inv$.
 This complexity could be improved by making use of an inducing-point approximation such as \citep{quinonero2005unifying,snelson2006sparse}.
 
