@@ -61,9 +61,9 @@ Figure \ref{fig:generative} shows a set of manifolds and datapoints sampled from
 To our knowledge this is the first probabilistic generative model for clustering with flexible nonparametric component densities.
 Since the proposed model is generative, it can be used for density estimation as well as clustering. It can also be extended to handle missing data, integrate with other probabilistic models, and use other families of distributions for the latent components.
 
-We derive an inference procedure for the \iwmm{} based on Markov chain Monte Carlo (MCMC).  In particular, we sample the cluster assignments using Gibbs sampling, sample the latent coordinates using hybrid Monte Carlo, and analytically integrate out both the mixture parameters (weights, means and covariance matrices), and the nonlinear warping function. 
+We derive an inference procedure for the \iwmm{} based on Markov chain Monte Carlo (MCMC).  In particular, we sample the cluster assignments using Gibbs sampling, sample the latent coordinates using Hamiltonian Monte Carlo, and analytically integrate out both the mixture parameters (weights, means and covariance matrices), and the nonlinear warping function. 
 
-%In particular, we iteratively infer the infinite Gaussian mixture model in the latent space by using Gibbs sampling, the latent coordinates and nonlinear function by using the hybrid Monte Carlo.
+%In particular, we iteratively infer the infinite Gaussian mixture model in the latent space by using Gibbs sampling, the latent coordinates and nonlinear function by using the Hamiltonian Monte Carlo.
 
 
 
@@ -180,7 +180,7 @@ The Wishart distribution is defined as follows:
 where $G$ is the normalizing constant.
 Because we use conjugate Gaussian-Wishart priors for the parameters of the Gaussian mixture components, we can analytically integrate out those parameters, given the assignments of points to components.
 Let $z_{n}$ be the latent assignment of the $n^{\text{\tiny th}}$ point.
-The probability of latent coordinates $\vX$ given latent assignments $\vZ=(z_1,\cdots,z_N)$ is obtained by integrating out the Gaussian parameters $\{\vmu_c,\vR_c\}$ as follows:
+The probability of latent coordinates $\vX$ given latent assignments $\vZ=(z_1, z_2, \dots, z_N)$ is obtained by integrating out the Gaussian parameters $\{\vmu_c,\vR_c\}$ as follows:
 %
 \begin{align}
 p(\vX|\vZ,\vS,\nu,r) &= \prod_{c=1}^{\infty}
@@ -235,23 +235,23 @@ where factors in the right hand side can be calculated by (\ref{eq:py_x}), (\ref
 In summary, the infinite warped mixture model generates observations $\vY$ according to the following generative process:
 %
 \begin{enumerate}
-\item Draw mixture weights $\bm{\lambda} \sim {\rm GEM}(\eta)$
-\item For each component $c=1,\cdots,\infty$
+\item Draw mixture weights $\bm{\lambda} \sim {\rm \GEM{}}(\eta)$
+\item For each component $c=1, 2, \dots, \infty$
 \begin{enumerate}
-\item Draw precision $\vR_{c} \sim {\cal W}(\vS\inv,\nu)$
-\item Draw mean $\bm{\mu}_{c} \sim {\cal N}(\vu,(r\vR_{c})\inv)$
+\item Draw precision $\vR_c \sim {\mathcal W}(\vS\inv, \nu)$
+\item Draw mean $\vmu_c \sim {\mathcal N}(\vu,(r\vR_c)\inv)$
 \end{enumerate}
-\item For each observed dimension $d=1,\cdots,D$
+\item For each observed dimension $d=1, 2, \dots, D$
 \begin{enumerate}
 \item Draw function $f_{d}(\vx) \sim {\rm GP}(m(\vx),k(\vx,\vx'))$
 \end{enumerate}
-\item For each observation $n=1,\cdots,N$
+\item For each observation $n=1, 2, \dots,N$
 \begin{enumerate}
-\item Draw latent assignment $z_{n} \sim {\rm Mult}(\bm{\lambda})$
-\item Draw latent coordinates $\vx_{n} \sim {\cal N}(\bm{\mu}_{z_{n}},\vR_{z_{n}}\inv)$
-\item For each observed dimension $d=1,\cdots,D$
+\item Draw latent assignment $z_n \sim {\rm Mult}(\bm{\lambda})$
+\item Draw latent coordinates $\vx_n \sim {\mathcal N}(\vmu_{z_n},\vR_{z_n}\inv)$
+\item For each observed dimension $d=1, 2, \dots, D$
 \begin{enumerate}
-\item Draw feature $y_{nd} \sim {\cal N}(f_{d}(\vx_{n}),\beta\inv)$
+\item Draw feature $y_{nd} \sim {\cal N}(f_d(\vx_n), \beta\inv)$
 \end{enumerate}
 \end{enumerate}
 \end{enumerate}
@@ -284,16 +284,17 @@ The \iwmm{} offers attractive properties that do not exist in other probabilisti
 \section{Inference}
 
 We infer the posterior distribution of the latent coordinates $\vX$ and cluster assignments $\vZ$ using Markov chain Monte Carlo (MCMC).
-In particular, we alternate collapsed Gibbs sampling of $\vZ$, and hybrid Monte Carlo sampling of $\vX$.
+In particular, we alternate collapsed Gibbs sampling of $\vZ$, and Hamiltonian Monte Carlo sampling of $\vX$.
 Given $\vX$,
 %the proposed model is simply a standard infinite mixture model with conjugate priors. Therefore, 
 we can efficiently sample $\vZ$ using collapsed Gibbs sampling, integrating out the mixture parameters.
 Given $\vZ$, we can calculate the gradient of the unnormalized posterior distribution of $\vX$, integrating over warping functions.
-This gradient allows us to sample $\vX$ using hybrid Monte Carlo.
+This gradient allows us to sample $\vX$ using Hamiltonian Monte Carlo.
 
 First, we explain collapsed Gibbs sampling for $\vZ$.
-Given a sample of $\vX$, $p(\vZ|\vX,\vS,\nu,\vu,r,\eta)$ does not depend on $\vY$.  This lets resample cluster assignments, integrating out the iGMM likelihood in close form.
-Given the current state of all but one latent component $z_{n}$, a new value for $z_{n}$ is sampled from the following probability:
+Given a sample of $\vX$, $p(\vZ | \vX, \vS, \nu, \vu, r, \eta)$ does not depend on $\vY$.
+This lets us resample cluster assignments, integrating out the iGMM likelihood in closed form.
+Given the current state of all but one latent component $z_{n}$, a new value for $z_{n}$ is sampled with the following probability:
 %
 \begin{align}
 p(z_{n}=c|\vX,\vZ_{\setminus n},\bm{S},\nu,\vu,r,\eta)
@@ -360,7 +361,7 @@ by iterating the following steps:
 %\begin{enumerate}
 sample the component assignment $z_{n}$ by collapsed Gibbs sampling (\ref{eq:gibbs}).
 %\end{enumerate}
-\item Sample latent coordinates $\vX$ and kernel parameters $\bm{\theta}$ using hybrid Monte Carlo.
+\item Sample latent coordinates $\vX$ and kernel parameters $\bm{\theta}$ using Hamiltonian Monte Carlo.
 \end{enumerate}
 
 
@@ -384,7 +385,7 @@ p(\vy_\star | \vY)
 & = \int\!\!\! \int p(\vy_\star | \vx_\star, \vX, \vY)p(\vx_\star|\vX,\vY)p(\vX|\vY)d\vx_\star d\vX.
 \label{eq:density}
 \end{align}
-We approximate $p(\vX | \vY)$ using the samples from the Gibbs and hybrid Monte Carlo samplers.
+We approximate $p(\vX | \vY)$ using the samples from the Gibbs and Hamiltonian Monte Carlo samplers.
 We approximate $p(\vx_\star | \vX, \vY)$ by sampling points from the latent mixture and warping them, using the following procedure:
 \begin{enumerate}
 \item Draw latent assignments
@@ -712,7 +713,7 @@ Code to reproduce all the above experiments is available at \url{http://github.c
 
 %One design decision which may be worth revisiting is the use the same warping for all mixture components.  It would be simple, and typically faster, to use a separate set of GPs to model the warping of each latent cluster.  
 The Dirichlet process mixture of Gaussians in the latent space of our model could easily be replaced by a more sophisticated density model, such as a hierarchical Dirichlet process~\citep{teh2006hierarchical}, or a Dirichlet diffusion tree~\citep{neal2003density}.
-Another straightforward extension of our model would be making inference more scalable by using sparse Gaussian processes~\citep{quinonero2005unifying,snelson2006sparse} or more advanced hybrid Monte Carlo methods~\citep{zhang2011quasi}.
+Another straightforward extension of our model would be making inference more scalable by using sparse Gaussian processes~\citep{quinonero2005unifying,snelson2006sparse} or more advanced Hamiltonian Monte Carlo methods~\citep{zhang2011quasi}.
 An interesting but more complex extension of the \iwmm{} would be a semi-supervised version of the model.
 The \iwmm{} could allow label propagation along regions of high density in the latent space, even if those regions were stretched along low-dimensional manifolds in the observed space.  Another natural extension would be to allow a separate warping for each cluster, which would also improve inference speed.
 
