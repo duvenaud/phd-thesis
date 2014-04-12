@@ -330,9 +330,16 @@ A \gp{} whose covariance is a sum of kernels corresponds to a sum of functions, 
 
 \section{Related Work}
 
+Since additive models are a relatively natural and easy-to-analyze model class, the literature on similar model classes is extensive.
+We try to give a broad overview in this section.
+
+\subsubsection{Additive \sgp{}s}
+
 %\paragraph{Projection-pursuit Gaussian Process Regression}
 Since the non-local structure capturable by additive kernels is necessarily axis-aligned, we can naturally consider that an initial transformation of the input space might allow us to recover non-axis aligned additivity in functions.
 This avenue was explored by \citet{gilboa2013scaling}, who developed a linearly-transformed first-order additive \gp{} model, called projection-pursuit \gp{} regression.  They further showed that inference in this model was possible in $\mathcal{O}(N)$ time.
+
+\citet{durrande2011additive} also examined the properties of additive \gp{}s, and proposed a layer-wise optimization strategy for kernel hyperparameters in these models.
 
 \citet{plate1999accuracy} constructed an additive \gp{} using only the first-order and $D$th-order terms.
 This model is motivated by the desire to trade off the interpretability of first-order models with the flexibility of full-order models.
@@ -341,36 +348,13 @@ Our experiments show that often, the intermediate degrees of interaction contrib
 A related functional \ANOVA{} \gp{} model \citep{kaufman2010bayesian} decomposes the \emph{mean} function into a weighted sum of \gp{}s.
 However, the effect of a particular degree of interaction cannot be quantified by that approach.
 Also, computationally, the Gibbs sampling approach used in \citep{kaufman2010bayesian} is disadvantageous.
-%[Todo:  read and mention  and \citep{friedman1981projection} from Hannes]
+%[TODO:  read and mention  and \citep{friedman1981projection} from Hannes]
 
-%\subsection{Multiple Kernel Learning}
-
-%Our current framework relates to Multiple Kernel Learning in that we are learning the weights in a certain mixture of kernels.  
 \citet{christoudias2009bayesian} previously showed how mixtures of kernels can be learnt by gradient descent in the Gaussian process framework.  They call this \emph{Bayesian localized multiple kernel learning}.
 However, their approach learns a mixture over a small, fixed set of kernels, while our method learns a mixture over all possible products of those kernels.
 
-\subsection{Hierarchical Kernel Learning}
 
-\begin{figure}[ht!]
-\centering
-\begin{tabular}{c|c}
-HKL kernel & GP-GAM kernel \\
-\hspace{-0.06in} \includegraphics[height=0.35\textwidth]{\additivefigsdir/compare_models/hkl.pdf} \hspace{-0.07in} &
-\hspace{-0.06in} \includegraphics[height=0.35\textwidth]{\additivefigsdir/compare_models/gam.pdf} \hspace{-0.07in} \\ \hline \\
- Squared-exp GP & Additive GP kernel\\
-\hspace{-0.06in} \includegraphics[height=0.35\textwidth]{\additivefigsdir/compare_models/ard.pdf} \hspace{-0.07in} &
-\hspace{-0.06in} \includegraphics[height=0.35\textwidth]{\additivefigsdir/compare_models/additive.pdf} \\
-\end{tabular}
-\caption[A comparison of different additive model classes]
-{
-%A comparison of model flexibility between HKL, additive GPs, the GP-Generalized Additive Model, and the squared-exponential GP model.  
-A comparison of different additive model classes.
-Nodes represent different interaction terms, ranging from first-order to fourth-order interactions.
-Far left: \HKL{} can select a hull of interaction terms, but must use a pre-determined weighting over those terms.
-Far right: the additive \gp{} model can weight each order of interaction seperately.
-Neither \HKL{} nor the additive model dominate one another in terms of flexibility, however the \gp{}-\GAM{} and the \SEGP{} are special cases of additive \gp{}s. }
-\label{hulls-figure}
-\end{figure}
+\subsubsection{Hierarchical Kernel Learning}
 
 A similar model class has been recently explored by \citet{DBLP:journals/corr/abs-0909-0844} called Hierarchical Kernel Learning (\HKL{}).
 %\HKL{} explores a similar class of models, and sidesteps the possibly exponential number of interaction terms by cleverly selecting only a tractable subset.
@@ -378,6 +362,30 @@ A similar model class has been recently explored by \citet{DBLP:journals/corr/ab
 %In addition, the machinery necessary to train these models is immense.
 %Finally, on real datasets, HKL is outperformed by the standard \SEGP{} \citep{DBLP:journals/corr/abs-0909-0844}.
 \HKL{} uses a regularized optimization framework to learn a weighted sum over an exponential number of kernels which can be computed in polynomial time.
+%
+\begin{figure}[ht!]
+\centering
+\begin{tabular}{c|c}
+Hierarchical Kernel Learning & All-orders additive \gp{} \\
+\includegraphics[height=0.35\textwidth]{\additivefigsdir/compare_models/hkl.pdf} &
+\includegraphics[height=0.35\textwidth]{\additivefigsdir/compare_models/additive.pdf}
+\\ \hline \\
+ Squared-exp GP & First-order additive \gp{} \\
+\includegraphics[height=0.35\textwidth]{\additivefigsdir/compare_models/ard.pdf} &
+\includegraphics[height=0.35\textwidth]{\additivefigsdir/compare_models/gam.pdf} \\
+\end{tabular}
+\caption[A comparison of different additive model classes]
+{
+%A comparison of model flexibility between HKL, additive GPs, the GP-Generalized Additive Model, and the squared-exponential GP model.  
+A comparison of different additive model classes.
+Nodes represent different interaction terms, ranging from first-order to fourth-order interactions.
+Coloured boxes represent the weightings of different terms.
+Top left: \HKL{} can select a hull of interaction terms, but must use a pre-determined weighting over those terms.
+Top right: the additive \gp{} model can weight each order of interaction separately.
+Bottom row: Neither \HKL{} nor the additive model dominate one another in terms of flexibility, however the \SEGP{} and first-order additive \gp{} models are special cases of the all-orders additive \gp{}. }
+\label{hulls-figure}
+\end{figure}
+%
 This method chooses among \textit{hull} of kernels, defined as a subset of all terms such that if $\prod_{j \in J} k_j(\bf x, x')$ is included in the subset, then so are all terms $\prod_{j \in J / i} k_j(\bf x, x')$, for all $i \in J$.
 %For details, see \citep{DBLP:journals/corr/abs-0909-0844}.
 %Given each dimension's kernel, and a pre-defined weighting over all terms, \HKL{} performs model selection by searching over hulls of interaction terms.
@@ -392,13 +400,14 @@ k_{a}({\bf x, x'}) = v^2 \prod_{d=1}^D \left(1 + \alpha k_{d}(x_{d}, x_{d}') \ri
 %However, this formulation 
 which forces the weight of all $n$th order terms to be weighted by $\alpha^n$.
 
+
 Figure~\ref{hulls-figure} contrasts the \HKL{} model class with the additive \gp{} model.
 Neither method is strictly more flexibile than the other.
 The main difficulty with the approach of \citet{DBLP:journals/corr/abs-0909-0844} is that the kernel parameters are hard to set, other than by cross-validation.
 %In contrast, our method optimizes the parameters of each dimension's base kernel, as well as the relative weighting of each order of interaction. 
 
 
-\subsection{ANOVA Procedures}
+\subsubsection{Support Vector Machines}
 
 \citet{vapnik1998statistical} introduced the support vector \ANOVA{} decomposition, which has the same form as our additive kernel.
 They recommend approximating the sum over all $D$ orders with only one term ``of appropriate order'', presumably because of the difficulty of setting the parameters of an \SVM{}.
@@ -408,27 +417,27 @@ They too allowed only one order to be active, and set parameters by cross-valida
 %  The order of the kernel, kernel parameters, the allowable regression error $\epsilon$, and the cost hyperparameter $c$ were all set by a lengthy cross-validation process.
 
 %\subsection{Smoothing Splines ANOVA}
+\subsubsection{Generalizations}
+
 A closely related procedure from \citet{wahba1990spline} is smoothing-splines \ANOVA{} (\SSANOVA{}).
 An \SSANOVA{} model is a weighted sum of splines along each dimension, plus a sum of splines over all pairs of dimensions, all triplets, etc, with each individual interaction term having a separate weighting parameter.
 Because the number of terms to consider grows exponentially in the order, in practice, only terms of first and second order are usually considered.
-Learning in SS-ANOVA is usually done via penalized-maximum likelihood with a fixed sparsity hyperparameter.
+%Learning in SS-ANOVA is usually done via penalized-maximum likelihood with a fixed sparsity hyperparameter.
 %\citep{shawe2004kernel} define ANOVA kernels thusly: "The ANOVA kernel of degree d is like the all-subsets kernel except that it is restricted to subsets of the given cardinality $d$."
 
 % estimated by generalized cross-validation\citep{craven1978smoothing}. 
 %MARS\citep{friedman1991multivariate} is another spline-based regression method.
 
-In contrast to these procedures, our method can easily include all $D$ orders of interaction, each weighted by a separate hyperparameter.
-As well, we can learn kernel parameters individually per input dimension, allowing automatic relevance determination to operate.
+This more general model class, in which each interaction term is estimated separately, is known in the physical sciences as High Dimensional Model Representation (\HDMR{}).  \citet{rabitz1999general} review some properties and applications of this model clas.
 
 
-
-
+The main benefits of the relatively Bayesian treatment of this model class proposed in this chapter are the ability to include all $D$ orders of interaction with differing weights, and the ability to learn kernel parameters individually per input dimension, allowing automatic relevance determination to operate.
 
 
 
 \section{Experiments}
 
-\subsubsection{Overfitting and Parameterization}
+\subsubsection{Parameterization}
 A $D$-dimensional \kSE-\ARD{} kernel has $D$ lengthscale parameters and the output variance.
 An first-order additive $\kSE$ model has $2 \times D$ parameters.
 A fully-parametrized model including all orders of interaction, with a seperate output variance for each scale will have $3 \times D$ parameters.
@@ -438,7 +447,10 @@ Because each additional parameter increases the tendency to overfit, we recommen
 %
 In our experiments, we parametrized each one-dimensional kernel with only the lengthscale, fixing the output variance to be 1.
 
-On a diverse collection of datasets, we compared five different models.
+\subsubsection{Methods}
+
+%On a diverse collection of datasets, 
+We compare five different methods.
 In the results tables below, \gp{} Additive refers to a \gp{} using the additive kernel with squared-exp base kernels.
 For speed, we limited the maximum order of interaction in the additive kernels to 10.
 \gp{}-\GAM{} denotes an additive \gp{} model with only first-order interactions.
@@ -548,7 +560,6 @@ GP Additive & $\mathbf{0.150}$ & $\mathbf{0.466}$ & $\mathbf{0.409}$ & $\mathbf{
 \end{center}
 \end{table}
 % End automatically generated LaTeX
-
 
 The model with best performance on each dataset is in bold, along with all other models that were not significantly different under a paired $t$-test.
 The additive model never performs significantly worse than any other model, and sometimes performs significantly better than all other models.
