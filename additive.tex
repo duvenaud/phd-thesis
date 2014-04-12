@@ -21,9 +21,9 @@ Additive GPs generalize both Generalized Additive Models, and the standard GP mo
 We introduce an expressive but tractable parameterization of the kernel function, which allows efficient evaluation of all input interaction terms, whose number is exponential in the input dimension.
 The additional structure discoverable by this model results in state-of-the-art predictive power in regression tasks, as well as increased interpretability.
 
-\section{Introduction}
+%\section{Introduction}
 %$f: {\bf x} \mapsto y$
-Most statistical regression models in use today are of the form:
+Many popular statistical regression models are of the form:
 %
 \begin{align}
 g(y) = f(x_1) + f(x_2) + \dots + f(x_D).
@@ -41,7 +41,7 @@ We denote this model as SE-GP.
 This model is much more flexible than the \GAM{}, but its flexibility makes it difficult to generalize to new combinations of input variables.
 %To the extent that a set of variables is relevant to the output, this model must be highly uncertain about any novel combination of those variables.
 
-In this paper, we introduce a Gaussian process model that generalizes both \GAM{}s and the \SE-\gp{}.
+In this chapter, we introduce a Gaussian process model that generalizes both \GAM{}s and the \SE-\gp{}.
 This is achieved through a kernel which allow additive interactions of all orders, ranging from first order interactions (as in a \GAM{}) all the way to $D$th-order interactions (as in a \SE-\gp{}).
 Although this kernel amounts to a sum over an exponential number of terms, we show how to compute this kernel efficiently, and introduce a parameterization which limits the number of parameters to $\mathcal{O}(D)$.
 A Gaussian process with this kernel function (an additive \gp{}) constitutes a powerful model that allows one to automatically determine which orders of interaction are important.
@@ -50,7 +50,8 @@ We show that this model can significantly improve modeling efficacy, and has maj
 
 
 
-We can see that a \gp{} with a first-order additive kernel is an example of a \GAM{}:  Each function drawn from this model is a sum of orthogonal one-dimensional functions.  Compared to functions drawn from the higher-order GP, draws from the first-order GP have more long-range structure.
+We can see that a \gp{} with a first-order additive kernel is an example of a \GAM{}:  Each function drawn from this model is a sum of orthogonal one-dimensional functions.
+Compared to functions drawn from the higher-order GP, draws from the first-order GP have more long-range structure.
 
   %The only weaknesses with this method are due to over-fitting the kernel parameters, the kernel not being rich enough to capture the structure exhibited by the data, or due to the optimization process not finding the global optima of the parameters.
 

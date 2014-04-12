@@ -667,8 +667,8 @@ This model is typically used in unsupervised tasks and requires an expensive int
 %}
 \citet{salakhutdinov2008using} use a deep neural network to learn an embedding;
 %\NA{
-this is a flexible approach to kernel learning but relies upon finding structure in the input density, p(\inputVar).
-Instead we focus on domains where most of the interesting structure is in \function(\inputVar).
+this is a flexible approach to kernel learning but relies upon finding structure in the input density $p(\vx)$.
+Instead we focus on domains where most of the interesting structure is in $f(\vx)$.
 %}\fTBD{removed comment about interpretability}%; this is a flexible approach to kernel learning but potentially less interpretable.
 
 \citet{diosan2007evolving} and \citet{bing2010gp} learn composite kernels for support vector machines and relevance vector machines, using genetic search algorithms.
@@ -713,14 +713,14 @@ These approaches find the optimal solution in polynomial time but only if the co
 We compare to a Bayesian variant of MKL in section~\ref{sec:numerical} which is expressed as a restriction of our language of kernels.
 
 \rwsheader{Equation learning}
-\cite{todorovski1997declarative}, \cite{washio1999discovering} and \cite{schmidt2009distilling} learn parametric forms of functions specifying time series, or relations between quantities.
+\cite{todorovski1997declarative}, \cite{washio1999discovering} and \cite{Schmidt2009b} learn parametric forms of functions specifying time series, or relations between quantities.
 In contrast, \procedurename{} learns a parametric form for the covariance, allowing it to model functions without a simple parametric form.
 
 
 
-\rwsheader{nonparametric nonstationary covariance learning}
+%\rwsheader{nonparametric nonstationary covariance learning}
 
-TODO: Add a lit review of nonparametric nonstationary covariance learning.
+%TODO: Add a lit review of nonparametric nonstationary covariance learning.
 
 \rwsheader{Discovering interpretable structure}
 Besides allowing faster learning and extrapolation, learning a more structured kernel sometimes has the added benefit of making the resulting model more intepretable.
@@ -734,9 +734,6 @@ This work was inspired by previous successes at searching over open-ended model 
 In both cases, the model spaces were defined compositionally through a handful of components and operators, and models were selected using criteria which trade off model complexity and goodness of fit.
 Our work differs in that our procedure automatically interprets the chosen model, making the results accessible to non-experts.
 
-\rwsheader{Natural-language output}
-To the best of our knowledge, our procedure is the first example of automatic description of nonparametric statistical models.
-However, systems with natural language output have been built in the areas of video interpretation \citep{barbu2012video} and automated theorem proving \citep{GanesalingamG13}.
 
 
 
