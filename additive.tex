@@ -12,56 +12,81 @@
 
 
 
-
-
-In this chapter, we introduce a Gaussian process model of functions which are $\textit additive$.
-An additive function is one which decomposes into a sum of low-dimensional functions, each depending on only a subset of the input variables.
-Additive GPs generalize both Generalized Additive Models, and the standard GP models which use squared-exponential kernels.
-%Hyperparameter learning in this model can be seen as Bayesian Hierarchical Kernel Learning (HKL).  
-We introduce an expressive but tractable parameterization of the kernel function, which allows efficient evaluation of all input interaction terms, whose number is exponential in the input dimension.
-The additional structure discoverable by this model results in state-of-the-art predictive power in regression tasks, as well as increased interpretability.
-
-%\section{Introduction}
-%$f: {\bf x} \mapsto y$
-Many popular statistical regression models are of the form:
+In \cref{ch:kernels}, we saw how additive structure in a \gp{} prior enabled long-range extrapolation in multivariate problems.
+In general, models of the form
 %
 \begin{align}
-g(y) = f(x_1) + f(x_2) + \dots + f(x_D).
+g(y) = f(x_1) + f(x_2) + \dots + f(x_D)
+\label{eq:general-additive}
 \end{align}
 %
-Popular examples include logistic regression, linear regression, and Generalized Linear Models \citep{nelder1972generalized}.
-This family of functions, known as Generalized Additive Models (\GAM{}) \citep{hastie1990generalized}, are typically easy to fit and interpret.
-Some extensions of this family, such as smoothing-splines ANOVA \citep{wahba1990spline}, add terms depending on more than one variable.
-However, such models generally become intractable and difficult to fit as the number of terms increases.
+are widely used in machine learning and statistics, because they are relatively easy to fit and interpret.
+Examples include logistic regression, linear regression, Generalized Linear Models \citep{nelder1972generalized} and Generalized Additive Models (\GAM{}) \citep{hastie1990generalized}.
+%, are typically easy to fit and interpret.
+%Some extensions of this family, such as smoothing-splines ANOVA \citep{wahba1990spline}, also consider terms depending on more than one variable.
+%However, such models often become intractable and difficult to fit as the number of terms increases.
 
-At the other end of the spectrum are kernel-based models, which typically allow the response to depend on all input variables simultaneously.
-These have the form: $y = f(x_1, x_2, \dots, x_D)$.
-A popular example would be a Gaussian process model using a squared-exponential (or Gaussian) kernel.
-We denote this model as SE-GP.
-This model is much more flexible than the \GAM{}, but its flexibility makes it difficult to generalize to new combinations of input variables.
+At the other end of the spectrum are models which allow the response to depend on all input variables simultaneously, having the form
+%
+\begin{align}
+y = f(x_1, x_2, \dots, x_D)
+\end{align}
+%
+An example would be a \gp{} with an \seard{} kernel.
+Such models are much more flexible than those having the form \eqref{eq:general-additive}, but this flexibility makes it difficult to generalize to new combinations of input variables.
+
+In between these extremes, we can consider function classes depending on pairs or triplets of inputs, such as
+%
+\begin{align}
+g(y) = f(x_1, x_2) + f(x_2, x_3) + f(x_1, x_3)
+\label{eq:second-order-additive}
+\end{align}
+%
+
+
+%In this chapter, we introduce a Gaussian process model of functions which are $\textit additive$.
+%An additive function is one which decomposes into a sum of low-dimensional functions, each depending on only a subset of the input variables.
+
+In this chapter, we'll consider a \gp{} model consisting of a sum of functions of all possible combinations of input variables.
+We'll call this model class \emph{Additive Gaussian processes}.
+This model can be expressed by specifying a kernel which is a sum of all possible products of one-dimensional kernels.
+
+There are $2^D$ combinations of $D$ kernels, so a na\"{i}ve computation of such a kernel would be intractable.
+Furthermore, if each term has different kernel parameters, fitting or integrating over so many parameters would pose severe difficulty.
+% In fact, this has been tried...
+To get around this problem, we introduce an expressive but tractable parameterization of the kernel function which also allows efficient evaluation of all interaction terms.
+Empirically, this kernel results in good predictive power in regression tasks, as well as increased interpretability.
+
+In \cref{ch:grammar}, we showed how to learn the structure of a kernel by building it up piece-by-piece.
+This chapter presents an alternative approach, where we start with many different types of structure in the kernel from the beginning, and adjust the kernel parameters to discard whichever types \emph{aren't} present in the current dataset.
+The advantage of this approach is that we don't need to run an expensive, mixed discrete-continuous optimization problem in order to build a structured model.
+Implementation is also much simpler.
+
+
+
 %To the extent that a set of variables is relevant to the output, this model must be highly uncertain about any novel combination of those variables.
 
-In this chapter, we introduce a Gaussian process model that generalizes both \GAM{}s and the \SE-\gp{}.
-This is achieved through a kernel which allow additive interactions of all orders, ranging from first order interactions (as in a \GAM{}) all the way to $D$th-order interactions (as in a \SE-\gp{}).
-Although this kernel amounts to a sum over an exponential number of terms, we show how to compute this kernel efficiently, and introduce a parameterization which limits the number of parameters to $\mathcal{O}(D)$.
-A Gaussian process with this kernel function (an additive \gp{}) constitutes a powerful model that allows one to automatically determine which orders of interaction are important.
-We show that this model can significantly improve modeling efficacy, and has major advantages for model interpretability.
+%In this chapter, we introduce a Gaussian process model that generalizes both \GAM{}s and the \SE-\gp{}.
+%This is achieved through a kernel which allow additive interactions of all orders, ranging from first order interactions (as in a \GAM{}) all the way to $D$th-order interactions (as in a \SE-\gp{}).
+%Although this kernel amounts to a sum over an exponential number of terms, we show how to compute this kernel efficiently, and introduce a parameterization which limits the number of parameters to $\mathcal{O}(D)$.
+%A Gaussian process with this kernel function (an additive \gp{}) constitutes a powerful model that allows one to automatically determine which orders of interaction are important.
+%We show that this model can significantly improve modeling efficacy, and has major advantages for model interpretability.
 %This model is also extremely simple to implement, and we provide example code.
 
 
 
-We can see that a \gp{} with a first-order additive kernel is an example of a \GAM{}:  Each function drawn from this model is a sum of orthogonal one-dimensional functions.
-Compared to functions drawn from the higher-order GP, draws from the first-order GP have more long-range structure.
+%We can see that a \gp{} with a first-order additive kernel is an example of a \GAM{}:  Each function drawn from this model is a sum of orthogonal one-dimensional functions.
+%Compared to functions drawn from the higher-order GP, draws from the first-order GP have more long-range structure.
 
   %The only weaknesses with this method are due to over-fitting the kernel parameters, the kernel not being rich enough to capture the structure exhibited by the data, or due to the optimization process not finding the global optima of the parameters.
 
 %\subsection{Additivity in the wild}
 
-We can expect many natural functions to depend only on sums of low-order interactions.
-For example, the price of a house or car will presumably be well approximated by a sum of prices of individual features, such as a sun-roof.  
+%We can expect many natural functions to depend only on sums of low-order interactions.
+%For example, the price of a house or car will presumably be well approximated by a sum of prices of individual features, such as a sun-roof.  
 %Other features of the object may depend on the size of the object to jointly determine the price.  
-Other parts of the price may depend jointly on a small set of features, such as the size and building materials of a house.
-Capturing these regularities will mean that a model can confidently extrapolate to unseen combinations of features.
+%Other parts of the price may depend jointly on a small set of features, such as the size and building materials of a house.
+%Capturing these regularities will mean that a model can confidently extrapolate to unseen combinations of features.
 
 
 %\subsection{Additive Covariance}
@@ -71,10 +96,8 @@ Capturing these regularities will mean that a model can confidently extrapolate 
 %\subsection{Why additive functions can be expected to be a good model}
 
 \section{Additive Kernels}
-%\subsection{Definition}
 
-
-We now give a precise definition of additive kernels.
+We now give a precise definition of additive kernels.  % used in this chapter.
 We first assign each dimension $i \in \{1 \dots D\}$ a one-dimensional \emph{base kernel} $k_i(x_i, x'_i)$.
 We then define the first order, second order and $n$th order additive kernel as:
 %
