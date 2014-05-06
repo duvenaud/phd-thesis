@@ -1,34 +1,28 @@
 % ************************** Thesis Abstract *****************************
 % Use `abstract' as an option in the document class to print only the titlepage and the abstract.
 \begin{abstract}
-Gaussian processes are a broad class of models,
-% of functions
- useful for learning and forecasting in such domains as time series, geological formations, and physical dynamics.
-The types of generalization these models can perform depends on the kernel,
-%The main design decision when applying these models is choosing the kernel,
-% or covariance function.
-%The choice of kernel 
-whose choice typically requires trial-and-error by experts,
+This thesis develops a broad class of models, useful for learning and forecasting in such domains as time series, geological formations, and physical dynamics.
+These nonparametric models are based on Gaussian processes, which can express a wide variety of statistical structure, depending on the choice of kernel.
+%The types of generalization \gp{}s can perform depends on the kernel, whose 
+Historically, the type of kernel has been chosen by hand by experts, 
+%Choosing the type of kernel typically requires trial-and-error by experts, 
 limiting the power of Gaussian processes in practice.
-In this thesis, we show how to automate this task.
+In this thesis, we show how to automate this task, creating the beginnings of an artificial statistician.
 
-We first detail the many types of structure that can be encoded through kernels, giving recipes to produce models with a wide variety of properties.
-%, combining into one place many tricks of the trade, little-known extensions, and recipes 
-%for combining kernels to produce a wide variety of properties.
-For example, we show how kernels can be combined to produce priors over manifolds having the topologies of cylinders, torii, and M\"{o}bius strips, as well as their higher-dimensional analogues.
+The many types of structure that can be encoded through kernels, such as periodicity, changepoints, additivity, and symmetries are detailed in a tutorial-style chapter.
+For example, compound kernels can produce priors over toplogical manifolds such as cylinders, torii, and M\"{o}bius strips, as well as their higher-dimensional analogues.
 
 The main contribution of this thesis is to show how this open-ended space of models can be explored automatically.
-We define a simple grammar over kernels, a search criterion (marginal likelihood), and a breadth-first search procedure.
+To do so, we define a simple grammar over kernels, a search criterion (marginal likelihood), and a breadth-first search procedure.
 Combining these, we present a procedure which takes a dataset, and outputs a detailed report with graphs and automatically-generated text illustrating the qualitatively different, and potentially novel, types of structure discovered in that dataset.
 This system automates parts of the model-building and analysis currently performed by expert statisticians.
 
-Kernel learning can also be seen as feature learning, a problem which has received intense interest in the last decade.
+Kernel learning is a type of feature learning, a problem which has received intense interest in the last decade.
 In particular, the practical success of deep neural networks has demonstrated the potential of automatic feature extraction.
 Building on earlier work relating Gaussian processes and neural nets, we explore the natural extensions of these models to \emph{deep kernels} and \emph{deep Gaussian processes}.
 
-%In addition to this automatic model-building procedure, w
 We also explore several more extensions to Gaussian process models.
 First, we examine the model class consisting of the sum of functions of all possible combinations of input variables.
 We show a close connection between this model class and the recently-developed regularization method of \emph{dropout}.
-Second, we combine Gaussian processes with the Dirichlet process to produce the \emph{warped mixture model} - an unsupervised clustering model with nonparametric cluster shapes, and a corresponding interpretable, low-dimensional latent space.
+Second, we combine Gaussian processes with the Dirichlet process to produce the \emph{warped mixture model} - an unsupervised clustering model with nonparametric cluster shapes, and a corresponding latent space in which each cluster has an interpretable parametric form.
 \end{abstract}
