@@ -261,7 +261,7 @@ f_1(\textnormal{cement}) + f_2(\textnormal{slag}) + f_3(\textnormal{fly ash}) + 
 \end{align}
 %
 where $\textnormal{noise} \simiid \Nt{0}{\sigma_n}$.
-After learning the kernel parameters by maximizing the marginal likelihood of the data, we can visualize the posterior distribution of each component of the model.
+After learning the kernel parameters by maximizing the marginal likelihood of the data, we can visualize the predictive distribution of each component of the model.
 %
 %
 \newcommand{\concretepic}[1]{\includegraphics[width=0.31\columnwidth]{\decompfigsdir/concrete-component-#1}}
@@ -295,20 +295,18 @@ The vertical axis is the same for all plots.
 Figure~\ref{fig:interpretable functions} shows the marginal posterior distribution of each of the 8 components in Equation~\eqref{eq:concrete}.
 We can see that the parameters controlling the variance of two of the components, Coarse and Fine, were set to zero, meaning that the marginal likelihood preferred a parsimonious model which did not depend on these dimensions.
 This is an example of the automatic sparsity that arises by maximizing marginal likelihood in \gp{} models, also known as automatic relevance determination (\ARD) \citep{neal1995bayesian}.
+The ability to learn kernel parameters in this way is much more difficult when using non-probabilistic methods such as Support Vector Machines [cite], for which cross-validation is often the best method to select kernel parameters.
 
 
 
-\subsection{Marginal Covariance of Components}
+\subsection{Posterior Variance of Additive Components}
 
-How to compute the posterior distributions shown in Figure~\ref{fig:interpretable functions}?
-%The derivation is actually quite straightforward, but in this
-Here we derive the posterior marginal variance and covariance of each of the additive components of a \gp{}.
+How did we produce the plots shown in \Cref{fig:interpretable functions}?
+%\footnote{Code is available at \url{github.com/duvenaud/phd-thesis/}}
+Here we derive the posterior variance and covariance of all of the additive components of a \gp{}.
 %These formulas let us plot the marginal variance of each component separately.  These formulas can also be used to examine the posterior covariance between pairs of components.
 
-%Let us assume that our function $\vf$ is a sum of two functions, $\vf_1$ and $\vf_2$, where $\vf = \vf_1 + \vf_2$.  
-
-%Let's examine the 
-First, we'll write down the joint prior over the sum of two functions.
+First, we'll write down the joint prior over the sum of two functions drawn from \gp{} priors.
 We'll distinguish between $\vecf(\vX)$ (the function values at the training locations) and  $\vecf(\vX^\star)$ (the function values at some set of query locations).
 % so that it's clear which matrices to use to extrapolate.
 
@@ -316,12 +314,12 @@ If $f_1$ and $f_2$ are \emph{a priori} independent, and $f_1 \sim \gp( \mu_1, k_
 %
 \begin{align}
 \left[ \begin{array}{l} 
-\vf_1(\vx) \\
-\vf_1(\vx^\star) \\
-\vf_2(\vx) \\
-\vf_2(\vx^\star) \\
-\vf_1(\vx) + \vf_2(\vx) \\
-\vf_1(\vx^\star) + \vf_2(\vx^\star)
+\vf_1(\vX) \\
+\vf_1(\vX^\star) \\
+\vf_2(\vX) \\
+\vf_2(\vX^\star) \\
+\vf_1(\vX) + \vf_2(\vX) \\
+\vf_1(\vX^\star) + \vf_2(\vX^\star)
 \end{array} \right]
 \sim
 \Nt{
@@ -346,25 +344,25 @@ where we represent the Gram matrices, evaluated at all pairs of vectors in bold 
 \vK_1^{\star\star} & = k_1( \vX^\star, \vX^\star )
 \end{align}
 
-By the formula for Gaussian conditionals: \cref{eq:gauss_conditional}, we get that the conditional distribution of a \gp{}-distributed function conditioned on its sum with another \gp{}-distributed function is given by
+By the formula for Gaussian conditionals, (given by \cref{eq:gauss_conditional}), we get that the conditional distribution of a \gp{}-distributed function conditioned on its sum with another \gp{}-distributed function is given by
 %
 \begin{align}
-\vf_1^\star | \vf \sim \Normal \Big( 
-\vmu_1^\star + \vK_1^{\star\tra} & (\vK_1 + \vK_2)\inv \left( \vf - \vmu_1 - \vmu_2 \right) \nonumber \\
-\vK_1^{\star\star} - \vK_1^{\star\tra} & (\vK_1 + \vK_2)\inv \vK_1^{\star} \Big)
+\vf_1(\vX^\star) | \vf_1(\vX) + \vf_2(\vX) \sim \Normal \Big( 
+& \vmu_1^\star + \vK_1^{\star\tra} (\vK_1 + \vK_2)\inv \left[ \vf_1(\vX) + \vf_2(\vX) - \vmu_1 - \vmu_2 \right] \nonumber \\
+& \vK_1^{\star\star} - \vK_1^{\star\tra} (\vK_1 + \vK_2)\inv \vK_1^{\star} \Big)
 %\vf_1(\vx^\star) | \vf(\vx) \sim \mathcal{N}\big( 
 %& \vmu_1(\vx^\star) + \vk_1(\vx^{\star}, \vx)  \left[ \vK_1(\vx, \vx) + \vK_2(\vx, \vx) \right]\inv \left( \vf(\vx) - \vmu_1(\vx) - \vmu_2(\vx) \right) , \nonumber \\
 %& \vk_1(\vx^{\star}, \vx^{\star}) - \vk_1(\vx^{\star}, \vx)  \left[ \vK_1(\vx, \vx) + \vK_2(\vx, \vx) \right] \inv \vk_1(\vx, \vx^{\star}) 
 %\big).
 \end{align}
 %
-These formulae express the posterior model uncertainty about different components of the signal, integrating over the possible configurations of the other components.
+These formulae express the model's posterior uncertainty about the different components of the signal, integrating over the possible configurations of the other components.
 If we wish to condition on the sum of more than two functions, the term $\vK_1 + \vK_2$ can simply be replaced by $\sum_i \vK_i$ everywhere.
 
 
 
 
-\subsubsection{Posterior Covariance of Components}
+\subsubsection{Posterior Covariance of Additive Components}
 
 \begin{figure}[t]
 \centering
@@ -404,11 +402,11 @@ Dimensions `Coarse' and `Fine' are not shown, because their variance was zero.
 \end{figure}
 %
 
-One of the advantages of using a generative, model-based approach is that we can examine any aspect of the model we wish to.
-For instance, we can compute the posterior covariance between any two components, conditioned on their sum:
+%One of the advantages of using a generative, model-based approach is that we can examine any aspect of the model we wish to.
+We can also compute the posterior covariance between any two components, conditioned on their sum:
 %
 \begin{align}
-\covargs{ \vf_1^\star}{\vf_2^\star | \vf } 
+\covargs{ \vf_1(\vX^\star)}{\vf_2(\vX^\star) | \vf(\vX) } 
 & = - \vK_1^{\star\tra} (\vK_1 + \vK_2)\inv \vK_2^\star
 %\covargs{\vf_1(\vx^\star)}{\vf_2(\vx^\star) | \vf(\vx) }
 %& = - \vk_1(\vx^{\star}, \vx)  \left[ \vK_1(\vx, \vx) + \vK_2(\vx, \vx) \right] \inv \vk_1(\vx, \vx^{\star}) 
@@ -416,8 +414,7 @@ For instance, we can compute the posterior covariance between any two components
 \end{align}
 %
 If this quantity is negative, it means that there is ambiguity about which of the two components explains the data at that location.
-
-For example, Figure~\ref{fig:interpretable interactions} plots the posterior correlation between all non-zero components of the concrete model.
+\Cref{fig:interpretable interactions} shows the posterior correlation between all non-zero components of the concrete model.
 We can see that there is negative correlation between the ``Cement'' and ``Slag'' variables.
 This reflects an ambiguity in the model about which one of these functions is high and the other low.
 
@@ -436,7 +433,9 @@ This reflects an ambiguity in the model about which one of these functions is hi
 \subsection{Long-range Extrapolation through Additivity}
 \label{sec:additivity-extrapolation}
 
-\begin{figure}
+Additive structure often allows us to make predictions far from the training data.
+%
+\begin{figure}[h!]
 \centering
 \begin{tabular}{ccc}
  & \gp{} mean using & \gp{} mean using \\
@@ -454,14 +453,10 @@ The product kernel allows a different function value for every combination of in
 }
 \label{fig:synth2d}
 \end{figure}
-
-Finding additive structure is useful, because it allows us to make predictions far from the training data.
-%additive models imply non-local structure, so they are exceptionally well-suited to problems where local interpolation fails.  
-%[Would this make them good for nonstationary noise?]
-%Figure \ref{fig:synth2d} shows a simple experiment demonstrating the ability of additive kernels to discover low-order structure, and to exploit that structure to make predictions about unseen combinations of inputs.
+%
 Figure \ref{fig:synth2d} compares the extrapolations made by additive versus non-additive \gp{} models, conditioned on data from a sum of two axis-aligned sine functions, evaluated in a small, L-shaped area.
-In this example, the additive model is able to correctly predict the value of the function at unseen combinations of inputs.
-The product-kernel model is more flexible, and so remains uncertain about the function value at unseen combinations of inputs.
+In this example, the additive model is able to correctly predict the height of the function at unseen combinations of inputs.
+The product-kernel model is more flexible, and so remains uncertain about the function away from the data.
 %The ability of additive GPs to discover long-range structure suggests that this model may be well-suited to deal with covariate-shift problems.
 
 These types of additive models have been well-explored in the statistics literature.  For example, generalized additive models~\citep{hastie1990generalized} have seen wide adoption.
@@ -494,7 +489,7 @@ Plots have same meaning as in figure \ref{fig:basic_kernels}.}
 \label{fig:kernels_times}
 \end{figure}
 
-Multiplying kernels allows us to account for interactions between different input dimensions or different notions of similarity. 
+Multiplying kernels allows us to account for interactions between different input dimensions, or different notions of similarity. 
 %For instance, in multidimensional data, the multiplicative kernel $\SE_1 \times \SE_2$ represents a smoothly varying function of dimensions 1 and 2 which is not constrained to be additive.
 In univariate data, multiplying a kernel by \kSE{} gives a way of converting global structure to local structure. 
 For example, $\Per$ corresponds to globally periodic structure, whereas $\Per \times \SE$ corresponds to locally periodic structure, as shown in row 1 of figure~\ref{fig:kernels}.
@@ -503,7 +498,9 @@ For example, $\Per$ corresponds to globally periodic structure, whereas $\Per \t
 Products of $\kSE$ kernels, having a different lengthscale parameter for each dimension, are equivalent to the $\seard$ kernel:
 %
 \begin{align}
-\seard( \vx, \vx') = \exp \left( -\frac{1}{2} \sum_{d=1}^D \frac{\left( x_d - x'_d \right)^2}{\ell_d^2} \right)
+\seard( \vx, \vx')
+ = \prod_{d=1}^D \exp \left( -\frac{1}{2} \frac{\left( x_d - x'_d \right)^2}{\ell_d^2} \right)
+ = \exp \left( -\frac{1}{2} \sum_{d=1}^D \frac{\left( x_d - x'_d \right)^2}{\ell_d^2} \right)
 \end{align}
 %
 Where \ARD{} stands for Automatic Relevance Determination .
@@ -640,25 +637,30 @@ By using these priors to define warpings from $\Reals^2 \to \Reals^3$, we'll als
 % I would cite Pierre Chiche but he hasn't actually published his damn papers.
 
 \citet{ginsbourger2012argumentwise} and \citet{Invariances13} characterized the set of \gp{} priors on functions invariant to given transformations.
-They showed that the only way to construct a prior on functions which respect a given invariance is to construct a kernel which respects the same invariance w.r.t. each of its two inputs.
+They showed that the only way to construct a prior on functions which respect a given invariance is to construct a kernel which respects the same invariance with respect to each of its two inputs.
 
-Formally, given a finite group of operations $G$ to which we wish our function to remain invariant, and $f \sim \GPt{0}{k(\vx,\vx')}$, $f$ is invariant under G if and only if $k(\cdot, \cdot)$ is argumentwise invariant:
+Formally, given a finite group of operations $G$ to which we wish our function to remain invariant, and $f \sim \GPt{0}{k(\vx,\vx')}$, $f$ is invariant under $G$ if and only if $k(\cdot, \cdot)$ is argumentwise invariant:
 %
 \begin{align}
-\forall \vx, \vx' \in \InputSpace, \forall g, g' \in G, \quad k( g(\vx), g(\vx')) = k(\vx, \vx')
+k( g(\vx), g(\vx')) = k(\vx, \vx'), \quad \forall \vx, \vx' \in \InputSpace, \quad \forall g, g' \in G
 \end{align}
 
-\def\gswitch{G_\textnormal{switch}}
+\def\gswitch{G_\textnormal{swap}}
 
-As a simple example, consider the symmetry $f(x, y) = f(y,x)$, or the set of functions invariant to switching their two arguments.
-The elements of the group $\gswitch$ are
+As a simple example, consider the symmetry $f(x, y) = f(y,x)$, or the set of functions invariant to swapping their two arguments.
+The elements of the group $\gswitch$ describing this symmetry are
 %
 \begin{align}
 g_1(f(x,y)) & = f(x,y) \qquad \textnormal{(identity)}\\
-g_2(f(x,y)) & = f(y,x) \qquad \textnormal{(switch)}
+g_2(f(x,y)) & = f(y,x) \qquad \textnormal{(swap)}
 \end{align}
+%
+However, it might not be clear how to find a kernel obeying these symmetries.
 
-It might not be clear how to come up with a kernel obeying these symmetries.  Fortunately, for finite groups, there are a few simple ways to transform any kernel into one which is argumentwise invariant to actions under the group:
+
+\subsection{Three Recipes for Group Invariance}
+
+Fortunately, for finite groups, there are a few simple ways to transform any kernel into one which is argumentwise invariant to actions under any finite group:
 %
 %
 \begin{figure}
@@ -695,14 +697,14 @@ All three methods introduce a different type of nonstationarity.
 %
 \begin{enumerate}
 
-\item {\bf Sum over the Orbit} 
+\item {\bf Sum over the Orbit.} 
 \citet{ginsbourger2012argumentwise} and \citet{kondor2008group} suggest a double sum over the orbits of $\vx$ and $\vx'$ w.r.t. G:
 %
 \begin{align}
 k_\textnormal{sum}(\vx, \vx') = \sum_{g, \in G} \sum_{g' \in G} k( g( \vx ), g'( \vx') )
 \end{align}
 
-For our example group $\gswitch$, this operation results in:
+For our example group $\gswitch$, this operation results in the kernel:
 %
 \begin{align}
 k_\textnormal{switch}(\vx, \vx')
@@ -711,32 +713,30 @@ k_\textnormal{switch}(\vx, \vx')
 \end{align}
 %
 For stationary kernels, some pairs of elements in this sum will be identical, and can be ignored.
-Figure~\ref{fig:add_vs_min}a shows a draw from this prior using the $\kSE$ kernel.
+\Cref{fig:add_vs_min}(a) shows a draw from a \gp{} prior with an $\kSE$ kernel symmetrized in this way.
 This construction has the property that the marginal variance is doubled near $x = y$, which may or may not be desirable.
 
 
 
-\item {\bf Projection to a Fundamental Domain}
-\citet{Invariances13} also explore the possibility of projecting each datapoint into a fundamental domain of the group:
+\item {\bf Project onto a Fundamental Domain.}
+\citet{Invariances13} also explore the possibility of projecting each datapoint into a fundamental domain of the group, using a mapping $A_G$:
 %
 \begin{align}
 k_\textnormal{rep}(\vx, \vx') = k( A_G(\vx), A_G( \vx') )
 \end{align}
 %
-
 For our example group $\gswitch$, a fundamental domain is $\{x, y : x < y\}$, which can be mapped to using $A_{\gswitch}( x, y ) = \big[ \min(x,y), \max(x,y) \big]$.
-Constructing a kernel using this method introduces a non-differentiable  ``seam'' along $x = y$.
-
+Constructing a kernel using this method introduces a non-differentiable  ``seam'' along $x = y$, as shown in \Cref{fig:add_vs_min}(b).
 The projection method also works for infinite groups, as we shall see below.
 
-\item {\bf Product over the Orbit}
+\item {\bf Multiply over the Orbit.}
 Ryan P. Adams (personal communication) suggests a construction using products over the orbits:
 %
 \begin{align}
 k_\textnormal{sum}(\vx, \vx') = \prod_{g, \in G} \prod_{g' \in G} k( g( \vx ), g'( \vx') )
 \end{align}
 %
-This method is not recommended, since it will often produce \gp{} priors with zero variance in some regions of the space, as in Figure~\ref{fig:add_vs_min}c.
+This method will often produce \gp{} priors with zero variance in some regions of the space, as in \Cref{fig:add_vs_min}(c).
 %We include it here to show that each of these methods for enforcing symmetries modifies the resulting model in other ways as well.
 \end{enumerate}
 
@@ -749,16 +749,15 @@ For example, simply setting $k(\vx, \vx') = 0$ gives rise to a \gp{} prior which
 %In this section, we give recipes for expressing several classes of symmetries.  Later, we will show how these can be combined to produce more interesting structures.
 
 
-\subsection{Example: Periodicity}
+\subsection{Periodicity}
 
 %We can enforce periodicity on any subset of the dimensions:
 Periodicity in a one-dimensional function corresponds to the invariance
 %
 \begin{align}
-f(x) = f( x + \tau)% \quad \forall k \in \mathbb{Z}
+f(x) = f( x + \tau)
 \label{eq:periodic_invariance}
 \end{align}
-% TODO: Generalize this to multiple dimensions.
 %
 where $\tau$ is the period.
 
@@ -768,17 +767,17 @@ A fundamental domain of the symmetry group is a circle, so the kernel
 %The representer transformation for periodicity is simply $A(x) = [\sin(x), \cos(x)]$:
 %
 \begin{align}
-\kPer(x, x') = \kSE( \big[ \sin(x), \cos(x) \big], \big[ \sin(x'), \cos(x') \big])
+\kPer(x, x') = \kSE \left( \big[ \sin(x), \cos(x) \big], \big[ \sin(x'), \cos(x') \big] \right)
 \end{align}
 %
 %We can also apply rotational symmetry repeatedy to a single dimension.
 achieves the invariance in Equation~\eqref{eq:periodic_invariance}.
-Some simple algebra reduces this kernel to the form shown in Table~\ref{fig:basic_kernels}.
+Simple algebra reduces this kernel to the form shown in Table~\ref{fig:basic_kernels}.
 
-We could also build a periodic kernel by the mapping $A(x) = \mod(x, \tau)$.
-However, samples from this prior would be discontinuous at every multiple of $\tau$.
+We could also build a periodic kernel with period $\tau$ by the mapping $A(x) = \mod(x, \tau)$.
+However, samples from this prior would be discontinuous at every integer multiple of $\tau$.
 
-\subsection{Example: Reflective Symmetry Along an Axis}
+\subsection{Reflective Symmetry Along an Axis}
 
 We can enforce symmetry about zero
 %
@@ -791,31 +790,6 @@ using the sum over orbits method, by the transform
 \begin{align}
 k_{\textnormal{symm axis}}(x, x') & = k(x, x') + k(x, -x') + k(-x, x') + k(-x, -x')
 \end{align}
-%
-%Note that, because $k(\vx, \vx') = k(\vx', \vx')$ for any PSD kernel, so we don't need to include the corresponding terms $k(-x, x')$ and $k(-x, -x')$.
-
-
-%\subsubsection{Reflective Symmetry Along a Diagonal}
-%We can enforce that a function is invariant to the order of two of its arguments:
-%symmetry between any two dimensions:
-%
-%\begin{align}
-%f(x, y) = f( y, x)
-%\end{align}
-%
-%by two methods:  In the additive method, we transform the kernel by:
-%
-
-%
-%or by
-%
-%\begin{align}
-%k_{\textnormal{reflect min}}(x, y, x', y') = k( & \min(x, y), \max(x,y), % \nonumber \\ & 
-%\min(x', y'), \max(x',y') )
-%\end{align}
-%however, the second method will in general lead to non-differentiability along $x = y$.  Figure \ref{fig:add_vs_min} shows the difference.
-
-
 
 
 %\paragraph{Spherical Symmetry}
@@ -833,28 +807,16 @@ k_{\textnormal{symm axis}}(x, x') & = k(x, x') + k(x, -x') + k(-x, x') + k(-x, -
 
 %\cite{flanders1989}
 
-%\subsection{Parametric embeddings}
-
-%In general, we can always enforce the symmetries obeyed by a given surface by finding a parametric embedding to that surface.  However, it is not clear how to do this in general without introducing unnecessary 
 
 
-%It is possible to construct
-
-%Because then one dimension would be special.
-
-
-
-
-
-\subsection{Example: Translation Invariance in Images}
+\subsection{Translation Invariance in Images}
 
 Most models of images are invariant to spatial translations \citep{lecun1995convolutional}.
 Similarily, most models of sounds are also invariant to translation through time.
 
-Note that this sort of translational invariance is completely distinct from the stationarity of kernels such as $\kSE$ or $\kPer$.
+This sort of translation-invariance is completely distinct from the stationarity of kernels such as $\kSE$ or $\kPer$.
 A stationary kernel implies that the prior is invariant to translations of the entire training and test set.
-
-In contrast, we are discussing here a discretized input space (into pixels or the audio equivalent), where the input vectors have one dimension for every pixel.
+In contrast, we are discussing here a discretized input space (into pixels or the audio equivalent), where the input vectors have one dimension for each pixel.
 We are interested in creating priors on functions that are invariant to shifting a signal along its pixels:
 %
 \begin{align}
@@ -862,9 +824,16 @@ f \Bigg( \raisebox{-2.5ex}{ \includegraphics[width=1cm]{\topologyfiguresdir/grid
 = f \Bigg( \raisebox{-2.5ex}{ \includegraphics[width=1cm]{\topologyfiguresdir/grid3} } \Bigg)
 \end{align}
 %
-Translational invariance in this setting is equivalent to invariance two swapping sets of dimensions in the input space.
+In this setting, translation is equivalent to swapping dimensions of the input vector $\vx$.
+For example, in a one-dimensional image, translation could be define as
+%
+\begin{align}
+\shift(\vx, i) = \big[ x_{\mod( i + 1, D )}, x_{\mod( i + 2, D )}, \dots, x_{\mod( D + i, D )} \big]
+\end{align}
+%
+The extension to two dimensions is straightforward, but notationally cumbersome.
 
-This invariance can be achieved in one dimension by using the transformation
+Translation invariance in one dimension can be achieved by the transformation
 %
 \begin{align}
 %k \left( (x_1, x_2, \dots, x_D ), (x_1', x_2', \dots, x_D' ) \right) & = %\nonumber \\
@@ -873,65 +842,37 @@ k_\textnormal{invariant} \left( \vx, \vx' \right) = %\nonumber \\
 \sum_{i=1}^D \sum_{j=1}^D k( \shift(\vx, i), \shift(\vx, j) )
 \end{align}
 %
-where
-%
-\begin{align}
-\shift(\vx, i) = \big[ x_{\mod( i + 1, D )}, x_{\mod( i + 2, D )}, \dots, x_{\mod( D + i, D )} \big]
-\end{align}
-%
-%Edge effects can be handled either by wrapping the image around, or by padding it with zeros.
-%
-%\paragraph{Convolution} The resulting kernel could be called a \emph{discrete convolution kernel}.  For an image with $R, C$ rows and columns, it can also be written as:
-%
-%\begin{align}
-%k_{\textnormal{conv}} \left( (x_{11}, x_{12}, \dots, x_{RC} ), (x_{11}', x_{12}', \dots, x_{RC}' ) \right) = % \nonumber \\
-%\sum_{i=-L}^L \sum_{j=-L}^L k\left( (x_{1+i,1+j}, x_{1+i,2+j} , \dots, x_{R+i,C+j} ), (x_{1+i,1+j}', x_{1+i,2+j}' , \dots, x_{R+i,C+j}' ) \right)
-%\sum_{i=-L}^L \sum_{j=-L}^L k\left( \vx, T_{ij}(\vx') \right)
-%\end{align}
-%
-%where $T_{ij}(\vx)$ is the operator which replaces each $x_{mn}$ with $x_{m+i, n+j}$.
-The extension to two dimensions is straightforward, but notationally cumbersome.
 We are simply defining the covariance between two images to be the sum of all covariances between all translations of the two images.
 
-\citet{kondor2008group} built a kernel between images approximately invariant to translation and rotation by using the projection method.
-%; his kernels depend only of functions of images% projecting the images onto a sphere, then using as features the eigenvalues of the Laplacian
-%We can also normalize the kernel by pre-multiplying it with $\sqrt{k_{\textnormal{conv}}(\vx, \vx) k_{\textnormal{conv}}(\vx', \vx') }$.
-
-%$f \left( \begin{tikzpicture} \draw[step=0.1,black,thin] (0.3,0.3) grid (1,1); \end{tikzpicture} \right)$
-
-
+\citet{kondor2008group} built a more elaborate kernel between images, approximately invariant to both translation and rotation by using the projection method.
 
 %Is there a pathology of the additive construction that appears in the limit?
 
 %\subsection{Max-pooling}
 %What we'd really like to do is a max-pooling operation.  However, in general, a kernel which is the max of other kernels is not PSD [put counterexample here?].  Is the max over co-ordinate switching PSD?
 
-%\section{Related Work}
-%\label{sec:related_work}
-
-%\paragraph{Invariances in Gaussian processes}
-%\cite{Invariances13} show that, for Gaussian processes, with probability one, $f(\vx) = f(T(\vx))$ if and only if $k(x, x') = k(x, T(x'))$.
-
 
 
 
 
 \section{Generating Topological Manifolds}
+\label{sec:topological-manifolds}
 
-We now give a geometric illustration of the symmetries encoded by \gp{}s with different sorts of kernels.
-%The language of models of
+We now give a geometric illustration of the symmetries encoded by different combinations of kernels.
 
 Priors on functions exhibiting symmetries can be used to create a prior on topological manifolds, by warping a latent surface $\vx$ to an observed surface $\vy = f(\vx)$.
 %The distribution on $\vf$ allows us to put mass on 
 %If we set the input $\vx$ to be a 2-dimensional plane, intro 3 dimensions using a \gp{} encoding certain symmetries, the resulting surfaces will correspon
-To doso, first create a mesh in 2D.  Next, draw 3 independent functions from a \gp{} prior.
+To do so, first create a mesh in 2D.
+Next, draw 3 independent functions from a \gp{} prior.
 % with the relevant symmetries encoded in the kernel.  
 Then, map the 2D mesh through those functions to get 3D coordinates of each point on the mesh.
+[TODO: flesh this out]
 
-This construction is similar in spirit to the \gp{} latent variable model (\gplvm{}) \citep{lawrence2005probabilistic}, which learns a latent embedding of the data into a low-dimensional space, given a \gp{} prior on the mapping from the latent space to the observed space.%and constructs a fixed kernel structure over that space.
+This construction is similar in spirit to the \gp{} latent variable model (\gplvm{}) of \citet{lawrence2005probabilistic}, which learns a latent embedding of the data into a low-dimensional space, given a \gp{} prior on the mapping from the latent space to the observed space.%and constructs a fixed kernel structure over that space.
 %The GP-LVM will be discussed in further detail in chapter ...
 
-\subsection{Surfaces, Cylinders and Torii}
+%\subsection{Surfaces, Cylinders and Torii}
 
 \begin{figure}
 \renewcommand{\tabcolsep}{1mm}
@@ -988,11 +929,11 @@ $\begin{array}{r@{}l@{}}
 %\includegraphics[width=0.3\columnwidth,clip=true,trim=10.55cm 0cm 0cm 0cm]{\topologyfiguresdir/sudanese-wikipedia}
 %\end{tabular}}
 %\end{minipage}
-\raisebox{1cm}{\includegraphics[width=0.4\columnwidth,clip=true,trim=0cm 0cm 10cm 0cm]{\topologyfiguresdir/sudanese-wikipedia}}
+\raisebox{1cm}{\includegraphics[width=0.25\columnwidth,clip=true,trim=0cm 0cm 14.6cm 0cm]{\topologyfiguresdir/sudanese-wikipedia}}
 \end{tabular}
 \caption[Generating M\"{o}bius strips]{Generating M\"{o}bius strips.
 Left: By enforcing that the functions mapping from $\mathbb{R}^2$ to $\mathbb{R}^3$ obey the appropriate symmetries, surfaces sampled from the prior have topology corresponding to a M\"{o}bius strip.
-M\"{o}bius strips generated this way do not have the familiar shape of a circular flat surface with a half-twist; rather they tend to look like \emph{Sudanese} M\"{o}bius strips \citep{sudanese1984}, whose edge has a circular shape.
+M\"{o}bius strips generated this way do not have the familiar shape of a circular flat surface with a half-twist; instead they tend to look like \emph{Sudanese} M\"{o}bius strips \citep{sudanese1984}, whose edge has a circular shape.
 Right: A Sudanese projection of a M\"{o}bius strip.
 Image adapted from \citep{sudanesepict}.
 }
