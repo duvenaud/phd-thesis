@@ -4,88 +4,96 @@
 \chapter{Expressing Structure with Kernels}
 \label{ch:kernels}
 
-In this chapter, we'll show how to use kernels (also called \emph{covariance functions}) to build many different kinds of models of functions.
-By combining a few simple kernels through addition and multiplication, we'll be able to express many different kinds of structure: additivity, symmetry, periodicity, interactions between variables, and many types of invariances.
-Combining kernels in a few simple ways gives us a rich language with which to build appropriate models.
+In this chapter, we'll show how to use kernels, also called \emph{covariance functions}, to build many different kinds of models of functions.
+By combining a few simple kernels through addition and multiplication, we'll be able to express many different kinds of structure: additivity, symmetry, periodicity, interactions between variables, and changepoints.
+We'll also show several ways to encode group invariances into kernels.
+Combining kernels in these simple ways gives us a rich, open-ended language of models.
 
 
 \section{Definition}
 
 Since we'll be discussing covariance functions at length, we now give a precise definition.
 A kernel $\kernel(\vx, \vx') : \InputSpace \times \InputSpace \to \Reals$ is any positive-definite function between two points $\inputVar, \inputVar'$ in some space $\InputSpace$.
-In this chapter, $\InputSpace$ is usually taken to be Euclidian space, %but it doesn't have to be.
-%As we shall see, $\InputSpace$ 
-it can also be the space of images, documents, categories or points on a sphere, for example.
+In this chapter, $\InputSpace$ is usually taken to be Euclidian space, but it can be any type of space, corresponding to spaces of images, documents, categories or points on a sphere.
 
-%\fTBD{Define $\GP\sim\dots$ here?}
 Gaussian process models use a kernel to define the prior covariance between any two function values:
-%${\textrm{Cov}(\outputVar, \outputVar') = \kernel(\inputVar,\inputVar')}$
 %
 \begin{align}
 \textrm{Cov}\left(f(\vx), f(\vx') \right) = \kernel(\vx,\vx')
 \end{align}
 %
 Colloquially, kernels are often said to specify the similarity between two objects.
-This is slightly misleading in the context of \gp{}s, since what is actually being specified is the similarity between two values of a \emph{function} over objects.
+This is slightly misleading in this context, since what is actually being specified is the similarity between two values of a \emph{function} over objects.
 The kernel specifies which functions are likely under the \gp{} prior, which in turn determines the generalization properties of the model.
 
-%The kernel, $\kernel$, must define a valid covariance function\fTBD{expand me}; when this is the case $\kernel$ is said to be positive semi-definite (PSD).
-
-%In this section, we review the ways in which kernel families\footnotemark can be composed to express diverse priors over functions. 
-%\footnotetext{When unclear from context, we use `kernel family' to refer to the parametric forms of the functions given in the appendix. A kernel is a kernel family with all of the parameters specified.}  
 
 
 
 
+\section{A Few Basic Kernels}
+\label{sec:based-kernels}
 
-\section{Basic Kernels}
-Commonly used kernels families include the squared exponential (\kSE), periodic (\kPer), linear (\kLin), and rational quadratic (\kRQ).
+To begin understanding the types of structures expressible by \gp{}s, we'll start by briefly examining the types of structure encoded by a diverse set of commonly used kernels:
+the squared-exponential (\kSE), periodic (\kPer), and linear (\kLin) kernels.
 These kernels are defined in Table~\ref{fig:basic_kernels}.
 %
-\newcommand{\fhbig}{2cm}
-\newcommand{\fwbig}{3cm}
-\newcommand{\kernpic}[1]{\includegraphics[height=\fhbig,width=\fwbig]{\grammarfiguresdir/structure_examples/#1}}
-\newcommand{\kernpicr}[1]{\rotatebox{90}{\includegraphics[height=\fwbig,width=\fhbig]{\grammarfiguresdir/structure_examples/#1}}}
-\newcommand{\addkernpic}[1]{{\includegraphics[height=\fhbig,width=\fwbig]{\grammarfiguresdir/additive_multi_d/#1}}}
-\newcommand{\largeplus}{\tabbox{{\Large+}}}
-\newcommand{\largeeq}{\tabbox{{\Large=}}}
-\newcommand{\largetimes}{\tabbox{{\Large$\times$}}}
-\newcommand{\fixedx}{$x$ with $(x' = 1)$}
+\newcommand{\fhbig}{2cm}%
+\newcommand{\fwbig}{3cm}%
+\newcommand{\kernpic}[1]{\includegraphics[height=\fhbig,width=\fwbig]{\grammarfiguresdir/structure_examples/#1}}%
+\newcommand{\kernpicr}[1]{\rotatebox{90}{\includegraphics[height=\fwbig,width=\fhbig]{\grammarfiguresdir/structure_examples/#1}}}%
+\newcommand{\addkernpic}[1]{{\includegraphics[height=\fhbig,width=\fwbig]{\grammarfiguresdir/additive_multi_d/#1}}}%
+\newcommand{\largeplus}{\tabbox{{\Large+}}}%
+\newcommand{\largeeq}{\tabbox{{\Large=}}}%
+\newcommand{\largetimes}{\tabbox{{\Large$\times$}}}%
+\newcommand{\fixedx}{$x$ (with $x' = 1$)}%
 %
-\begin{table}[h]
+\begin{table}[h]%
 \centering
 \begin{tabular}{cccc}
-Squared-exp (\kSE)  & Periodic (\kPer) & Linear (\kLin) & Rational quadratic (\kRQ) \\[6pt]
-$\exp\left(-\frac{(\inputVar - \inputVar')^2}{2\ell^2}\right)$ &
+Kernel name: & Squared-exp (\kSE) & Periodic (\kPer) & Linear (\kLin) \\[10pt]
+$k(x, x') =$ & $\exp\left(-\frac{(\inputVar - \inputVar')^2}{2\ell^2}\right)$ &
 $\exp\left(-\frac{2}{\ell^2} \sin^2 \left( \pi \frac{\inputVar - \inputVar'}{p} \right)\right)$ &
-$(\inputVar - c)(\inputVar' - c)$ &
-$\left( 1 + \frac{(\inputVar - \inputVar')^2}{2 \alpha \ell^2} \right)^{-\alpha}$ \\[14pt]
-\kernpic{se_kernel} & \kernpic{per_kernel} & \kernpic{lin_kernel} & \kernpic{rq_kernel}\\
-$x -x'$ & $x -x'$ & \fixedx & $x -x'$ \\
+$(\inputVar - c)(\inputVar' - c)$ \\[14pt]
+\raisebox{1cm}{Plot of kernel:} & \kernpic{se_kernel} & \kernpic{per_kernel} & \kernpic{lin_kernel}\\
+& $x -x'$ & $x -x'$ & \fixedx \\
 %& & & \\
-\large $\downarrow$ & \large $\downarrow$ & \large $\downarrow$ & \large $\downarrow$  \\
-\kernpic{se_kernel_draws} & \kernpic{per_kernel_draws_s2} & \kernpic{lin_kernel_draws} & \kernpic{rq_kernel_draws}\\
-local variation & repeating structure & linear functions & multi-scale variation \\[10pt]
+ & \large $\downarrow$ & \large $\downarrow$ & \large $\downarrow$  \\
+\raisebox{1cm}{Samples from prior:} & \kernpic{se_kernel_draws} & \kernpic{per_kernel_draws_s2} & \kernpic{lin_kernel_draws} \\
+Type of structure: & local variation & repeating structure & linear functions \\[10pt]
 \end{tabular}
-\caption[Examples of structures expressible by base kernels]
-{Examples of structures expressible by base kernels.
-Left and third columns: base kernels $k(\cdot,0)$.
-Second and fourth columns: draws from a \sgp{} with each repective kernel.
-The x-axis has the same range on all plots.}
+\caption[Examples of structures expressible by some basic kernels]
+{Examples of structures expressible by some basic kernels.
+%Left and third columns: base kernels $k(\cdot,0)$.
+%Second and fourth columns: draws from a \sgp{} with each repective kernel.
+%The x-axis has the same range on all plots.
+}
 \label{fig:basic_kernels}
 \end{table}
 %
-There is nothing special about these kernels in particular, except that they represent a diverse set.
+%There is nothing special about these kernels in particular, except that they represent a diverse set.
 
 Each covariance function corresponds to a different set of assumptions made about the function we wish to model.
 For example, using a squared-exp ($\kSE$) kernel implies that the function we are modeling has infinitely many derivatives.
+There exist many variants of the $\kSE$ kernel, each encoding slightly different assumptions of the smoothness of the underlying function.
+
+\paragraph{Kernel parameters}
+Each kernel has a number of parameters which specify the precise shape of the covariance function.
+These are sometimes referred to as \emph{hyperparameters}, since they can be viewed as specifying a distribution over function parameters, instead of specifying the function directly.
+
+
+\paragraph{Stationary and Non-stationary}
+The $\kSE$ and $\kPer$ kernels are \emph{stationary}, meaning that their value only depends on the difference $x-x'$.  This implies that the probability of observing a particular dataset doesn't depend on the particular location of the dataset.
+In contrast, the linear kernel $\kLin$ is non-stationary, meaning that the model will produce different answers if the data is moved around but the kernel parameters are kept fixed.
+
 
 
 
 \section{Combining Kernels}
 
-The rest of this chapter will explore ways in which kernels can be combined to create new ones with different properties.
-Using a few simple base kernels and operations for combining them will give us a rich language with which to build models with diverse sorts of properties.
+What if the kind of structure we need isn't expressed by any existing kernel?
+For many types of structure, it's possible to build a ``made to order'' kernel with the desired properties.
+The next few sections of this chapter will explore ways in which kernels can be combined to create new ones with different properties.
+This will allow us to include as much high-level structure as necessary into our models.
 %For an overview, see \cite[Chapter~4]{rasmussen38gaussian}.
 
 %In this chapter, we'll focus on two methods for combining kernels: addition and multiplication.
@@ -103,26 +111,27 @@ Using a few simple base kernels and operations for combining them will give us a
 
 \subsection{Notation}
 
-In this chapter, we'll focus on two ways of combining kernels: addition and multiplication, which we'll often write in shorthand without arguments:
+In this chapter, we'll focus on two ways of combining kernels: addition and multiplication.
+We'll often write these operations in shorthand, without arguments:
+%
 \begin{align}
 k_1 + k_2 =& \,\, k_1(\vx, \vx') + k_2( \vx, \vx')\\
 k_1 \times k_2 =& \,\, k_1(\vx, \vx') \times k_2(\vx, \vx')
 \end{align}
 
+All of the basic kernels we considered in \cref{sec:based-kernels} are one-dimensional, but kernels over multidimensional inputs can be constructed by adding and multiplying between kernels on different dimensions.
+The dimension on which a kernel operates is denoted by a subscript.
+For example, $\SE_2$ represents an \kSE{} kernel over the second dimension of $\vx$.
 
-All of the base kernels we'll consider in this chapter are one-dimensional.
-Kernels over multidimensional inputs are constructed by adding and multiplying kernels over individual dimensions.
-These dimensions are represented using subscripts, e.g. $\SE_2$ represents an \kSE{} kernel over the second dimension of $\inputVar$.
-
-Each kernel has a number of parameters which specify the precise shape of the covariance function.
-These are sometimes referred to as \emph{hyperparameters}, since they can be viewed as specifying a distribution over function parameters, instead of specifying the function directly.
 To remove clutter, we'll usually refer to a kernels without specifying their parameters.
 
 
 
-\section{Modeling Additive Functions}
+\section{Modeling Sums of Functions}
 
-\begin{figure}
+An additive function is one which can be expressed as $f(\vx) = f_1(\vx) + f_2(\vx)$.
+%
+\begin{table}
 \centering
 \begin{tabular}{cccc}
 %Composite & Draws from \gp{} & \gp{} posterior \\ \toprule
@@ -137,15 +146,15 @@ periodic plus trend & periodic plus noise & linear plus variation & slow \& fast
 \caption[Examples of one-dimensional structures expressible by adding kernels]
 { Examples of one-dimensional structures expressible by adding kernels.  
 %The x-axis has the same scale for all plots.
-Plots have same meaning as in figure \ref{fig:basic_kernels}.}
+Rows have the same meaning as in \Cref{fig:basic_kernels}.
+$\kSE^{(\textnormal{long})}$ denotes a $\kSE$ kernel whose lengthscale is long relative to that of $\kSE^{(\textnormal{short})}$
+}
 \label{fig:kernels_plus}
-\end{figure}
-
-
-
-Additivity is a very useful modeling assumption in a wide variety of contexts.  It often aids in building interpretable models, as well as enabling extrapolation in high-dimensional settings.
-Fortunately, this assumption is easy to encode in \gp{} models.
-By summing kernels, we can model the data as a sum of independent functions, each possibly representing a different type of structure.
+\end{table}
+%
+Additivity is a very useful modeling assumption in a wide variety of contexts, especially if it allows us to make stronger assumptions about the component functions in the sum.
+Restricting the flexibility of the component functions often aids in building interpretable models, and often enables extrapolation in high dimensions.
+Fortunately, additivity is easy to encode in \gp{} models.
 Suppose functions ${\function_1, \function_2}$ are drawn independently from \gp{} priors:
 %
 \begin{align}
@@ -153,14 +162,15 @@ Suppose functions ${\function_1, \function_2}$ are drawn independently from \gp{
 \function_2 \dist \GP(\mu_2, \kernel_2)
 \end{align}
 %
-Then we can model the sum of those functions through another \gp{}:
+Then the sum of those functions is simply another \gp{}:
 %
 \begin{align}
 %\function := 
 \function_1 + \function_2 \dist \GP(\mu_1 + \mu_2, \kernel_1 + \kernel_2).
 \end{align}
 %
-Kernels $\kernel_1$ and $\kernel_2$ can be kernels of any type, and we can sum up any number of kernels this way.
+Kernels $\kernel_1$ and $\kernel_2$ can be kernels of different types, allowing us to model the data as a sum of independent functions, each possibly representing a different type of structure.
+We can also sum any number of components this way.
 
 %In time-series models, sums of kernels can express superposition of different processes, possibly operating at different scales.
 
@@ -171,7 +181,7 @@ Kernels $\kernel_1$ and $\kernel_2$ can be kernels of any type, and we can sum u
 \subsection{Additivity Across Multiple Dimensions}
 
 %\subsection{Additivity in a GP}
-\begin{figure}
+\begin{figure}[ht!]
 \centering
 \begin{tabular}{ccccc|c}
 \multicolumn{5}{c|}{A sum of two orthogonal} & \multicolumn{1}{c}{Mutliplicative} \\
@@ -230,7 +240,7 @@ f(x_1, x_2) & = f_1(x_1) + f_2(x_2)
 %Then we can model the sum of those functions through another \gp{}:
 %
 
-Figure \ref{fig:kernels} illustrates this decomposition.
+\Cref{fig:kernels} illustrates a decomposition of this form.
 Note that the product of two kernels does not have an analogous interpretation as the product of two functions.
 
 
@@ -238,19 +248,19 @@ Note that the product of two kernels does not have an analogous interpretation a
 \subsection{Example: Additive Model of Concrete Compressive Strength}
 \label{sec:concrete}
 
-We now give an example of how additive kernels give rise to interpetable models.
-We model measurements of the compressive strength of concrete, as a function of the concentration of 7 ingredients, plus the age of the concrete \citep{yeh1998modeling}.
+To illustrate how additive kernels give rise to interpetable models, we'll build an additive model of the strength of concrete as a function of the amount of 7 different ingredients, plus the age of the concrete \citep{yeh1998modeling}.
+%We model measurements of the compressive strength of concrete, as a function of the concentration of 7 ingredients, plus the age of the concrete.
 
-We build an additive model
+Our simple additive model looks like
 %
 \begin{align}
 f(\vx) & = 
 f_1(\textnormal{cement}) + f_2(\textnormal{slag}) + f_3(\textnormal{fly ash}) + f_4(\textnormal{water}) \nonumber \\
-& + f_5(\textnormal{plasticizer}) + f_6(\textnormal{coarse}) + f_7(\textnormal{fine}) + f_8(\textnormal{age}) + \epsilon
+& + f_5(\textnormal{plasticizer}) + f_6(\textnormal{coarse}) + f_7(\textnormal{fine}) + f_8(\textnormal{age}) + \textnormal{noise}
 \label{eq:concrete}
 \end{align}
 %
-where $\epsilon \simiid \Nt{0}{\sigma_n}$.
+where $\textnormal{noise} \simiid \Nt{0}{\sigma_n}$.
 After learning the kernel parameters by maximizing the marginal likelihood of the data, we can visualize the posterior distribution of each component of the model.
 %
 %
@@ -270,7 +280,7 @@ Cement & Slag & Fly Ash\\
  \concretepic{7} & \concretepic{8} & \concretelegend \\
 \end{tabular}
 \caption[Decomposition of posterior into interpretable one-dimensional functions]
-{By considering only one-dimensional terms of the additive kernel, we recover a form of Generalized Additive Model, and can plot the corresponding 1-dimensional functions.
+{By considering only one-dimensional terms of the additive kernel, we can plot the predictive distribution of each 1-dimensional function.
 Blue points indicate the original data, green points are data after the contribution from all other terms has been subtracted.
 The vertical axis is the same for all plots.
 %The black line is the posterior mean of a \sgp{} with only one term in its kernel.
