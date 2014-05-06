@@ -7,6 +7,7 @@
 
 \begin{quotation}
 ``It would be very nice to have a formal apparatus that gives us some `optimal' way of recognizing unusual phenomena and inventing new classes of hypotheses that are most likely to contain the true one; but this remains an art for the creative human mind.''
+%``It would be very nice to have a formal apparatus that gives us some `optimal' way of recognizing unusual phenomena and inventing new classes of hypotheses \dots but this remains an art for the creative human mind.''
 % In trying to practice this art, the Bayesian has the advantage because his formal apparatus already developed gives him a clearer picture of what to expect, and therefore a sharper perception for recognizing the unexpected.
 
 \defcitealias{Jaynes85highlyinformative}{E. T.  Jaynes, 1985}
@@ -15,106 +16,23 @@
 
 
 In \cref{ch:kernels}, we saw that the choice of kernel determines the type of structure that can be learnt by a \gp{} model, and that a wide variety of models could be constructed through simply adding and multiplying a few base kernels together.
-%Applying \gp{} regression as a non-expert is a daunting task.
 We didn't answer the question, however, of how to tell which kernel to use for a given problem.
-%However, when facing a new problem, it is sometimes difficult to construct an appropriate kernel by hand.
-%The first problem one encounters when attempting to apply \gp{}s to a particular task is that the choice of kernel is very important, but it's usually not clear which covariance function is appropriate.
-Even for experts, choosing the kernel in nonparametric regression remains a black art.
-
-%As we shall see in this thesis, in the small-to-medium data range, the choice of of kernel is extremely important.
-%This is especially true when one wishes to do extrapolation.
-
-%When I first used the GPML package, I was stymied by the lack of a default kernel.
-%Faced with a bewildering array of possible kernels to try, I simply tried each one, and chose the one with the best predictive performance on a held-out test set.
-%Why not simply automate this process as part of the software package?
-%After starting my Ph.D., 
+Even for experts, choosing the kernel in nonparametric regression remains something of a black art.
 
 In this chapter, we'll automate the process of building kernels for \gp{} models.
-%
-%e define a space of kernel structures which are built compositionally by adding and multiplying a small number of base kernels.
-To do so, all we need to do is define an open-ended space of kernels, which we can do by simply adding and multiplying together simple kernels from a fixed set.
-%We present a method for searching over this space of structures which mirrors the scientific discovery process.
+To do so, we need to define an open-ended space of kernels; we'll do this by simply adding and multiplying together simple kernels from a fixed set.
 We can then simply search over this space to find a kernel which captures as much structure in the data as possible.
-%The learned structures can often decompose functions into interpretable components and enable long-range extrapolation on time-series datasets.
 
-%Our structure search method outperforms many widely used kernels and kernel combination methods on a variety of prediction tasks.
-%Because we're searching over a large model class, this procedure w
-
-Searching over such a large, structured model class has two benefits.
-First, this method has very good predictive accuracy, since it effectively tries out a huge number of different regression models.
-Second, we end up discovering interpretable structure in our dataset.
-Because \gp{} posteriors can easily be decomposed (as in \cref{sec:concrete}), we can examine the resulting structures graphically.
+Searching over such a large, structured model class has two main benefits.
+First, this procedure has very good predictive accuracy, since it tries out a large number of different regression models.
+Second, this procedure can discover interpretable structure in datasets.
+Because \gp{} posteriors can be decomposed (as in \cref{sec:concrete}), we can also examine the resulting structures visually.
 In \cref{ch:description}, we'll even show how to automatically generate english-language descriptions of the resulting models.
-%Second, because so many regression techniques are a special case of this method, if we spend enough time searching over kernel structures, we'll often be able to discover the
 
-
-%This paper presents the beginnings of an automatic statistician, focusing on regression problems.
-%Our system explores an open-ended space of possible statistical models to discover a good explanation of the data, and then produces a detailed report with figures and natural-language text.
-
-%Our approach treats unknown functions nonparametrically using Gaussian processes, which has two important consequences.
-%First, Gaussian processes model functions in terms of high-level properties (e.g.\ smoothness, trends, periodicity, changepoints).
-%Taken together with the compositional structure of our language of models, this allows us to automatically describe functions through a decomposition into additive parts.
-%Second, the use of flexible nonparametric models and a rich language for composing them in an open-ended manner also results in state-of-the-art extrapolation performance evaluated over 13 real time series data sets from various domains.
-
-
-%\subsection{Attribution}
-% Moved to first chapter.
-%Joint work with James Robert Lloyd, Roger Grosse, Joshua B. Tenenbaum and Zoubin Ghahramani.
-
-
-%\section{Introduction}
-
-%Supervised learning problems, such as classification and regression, learn a function $\function$ from some input (predictor) variables, $\InputVar$, to some output (response) variables, $\outputVar$.
-%Kernel-based nonparametric models, such as support vector machines and Gaussian processes (\gp{}s), have been one of the dominant paradigms for supervised machine learning over the last 20 years.
-%These methods depend on defining a kernel function, $\kernel(\inputVar,\inputVar')$, which specifies how similar or correlated outputs $\outputVar$ and $\outputVar'$ are expected to be at two inputs $\inputVar$ and $\inputVar'$.
-%By defining the measure of similarity between inputs, the kernel determines the pattern of inductive generalization.
-%The kernel function gives a measure of similarity between inputs and determines the pattern of inductive generalizations that are made. 
-
-%Most existing techniques pose kernel learning as a (possibly high-dimensional) parameter estimation problem.
-%The ability to learn kernels automatically has helped greatly in making kernel methods accessible to non-experts.
-%Examples include learning hyperparameters \citep{rasmussen38gaussian}, linear combinations of fixed kernels \cite{Bach_HKL}, and mappings from the input space to an embedding space \cite{salakhutdinov2008using}.
-
-%However, to apply existing kernel learning algorithms, the user must specify the parametric form of the kernel, and this can require considerable expertise, as well as trial and error.
-
-%To make kernel learning more generally applicable, we reframe the kernel learning problem as one of structure discovery, and automate the choice of kernel form.
-%In particular, we formulate a space of kernel structures defined compositionally in terms of sums and products of a small number of base kernel structures.
-%This provides an expressive modeling language which concisely captures many widely used techniques for constructing kernels.
-%We focus on Gaussian process regression, where the kernel specifies a covariance function, because the Bayesian framework is a convenient way to formalize structure discovery.
-%Borrowing discrete search techniques which have proved successful in equation discovery \cite{todorovski1997declarative} and unsupervised learning \cite{grosse2012exploiting}, we automatically search over this space of kernel structures using marginal likelihood as the search criterion.
-
-%This simple structure discovery algorithm is able to automatically recover known structures from synthetic data as well as plausible structures for a variety of real-world datasets. 
-%On a variety of time series datasets, the learned kernels yield decompositions of the unknown function into interpretable components that enable accurate extrapolation beyond the range of the observations.
-%Furthermore, the automatically discovered kernels outperform a variety of widely used kernel classes and kernel combination methods on supervised prediction tasks.
-
-%\fTBD{I hate these paragraphs, but they seem to be required...} 
 %Section \ref{sec:Structure} outlines some commonly used kernel families as well as ways in which they can be composed. 
 %Our grammar over kernels and our proposed structure discovery algorithm are described in Section \ref{sec:Search}. 
 %Section \ref{sec:related_work} situates our work in the context of other nonparametric regression, kernel learning, and structure discovery methods.
 %We evaluate our methods on synthetic datasets, time series analysis, and high-dimensional prediction problems in Sections \ref{sec:synthetic} through \ref{sec:quantitative}, respectively.
-
-
-
-
-%Kernel learning has been an important topic in machine learning since the kernel essentially determines the pattern of inductive
-%generalisation \fTBD{which citations canonical?}\citep[e.g.][]{diosan2007evolving,salakhutdinov2008using,Bach_HKL}.
-%In this paper, we pose the problem of kernel learning in a radically new way, as one of structure discovery from data.
-%In previous work, kernel learning has been posed as a problem of (possibly very high-dimensional) parameter estimation.
-%Here we reframe the problem of kernel learning as one of structure discovery from data.
-%This provides a more expressive modeling language, allows us to exploit efficient discrete search methods that rapidly explore a large space of structures, and yields results that are both more interpretable and better in objective generalization performance.
-%A key challenge for kernel based methods is learning an appropriate kernel from data, and a great many papers have been written on this important topic\TBD{ cite kernel learning for SVMs and GP literature}. \TBD{RBG: sounds like another approach to the same problem; want it to be an underexplored \emph{aspect} of the problem}
-%In this paper, we pose the problem of kernel learning as a problem of structure discovery from data.
-
-%We use this insight to define a simple grammar over composite kernels, and we develop an automated search algorithm over the (exponentially large) space of kernels that can be derived from this grammar.
-%The search criterion is the marginal likelihood of the kernel, which is the driving term for Bayesian model comparison and selection in analogous structure discovery tasks such as graphical model learning \cite{heckerman1995learning}.
-
-%\paragraph{Benefits of kernel structure}  In many regression problems, or time series analysis, or when modeling dynamical systems, we often think we are observing the superposition of multiple distinct causal processes.
-%For example, an underlying linear function plus Gaussian noise in classical linear regression, or an underlying linear dynamics plus Gaussian observation noise in a Kalman filter.
-%Our approach can be seen as a general way to learn functions like this, where the product of kernels can be used to capture richer causal proceses (e.g., nonlinear rather simply linear, amplifying perioidic (as in the second layer of the airline example) rather than simply periodic) and the sum of kernels corresponds to the superposition of these causal processes.
-
-
-% Moved to discussion.
-%Automating the process of statistical modeling would have a tremendous impact on fields that currently rely on expert statisticians, machine learning researchers, and data scientists.
-%While fitting simple models (such as linear regression) is largely automated by standard software packages, there has been little work on the automatic construction of flexible but interpretable models. 
 
 %What are the ingredients required for an artificial intelligence system to be able to perform statistical modeling automatically? 
 %In this paper we conjecture that the following ingredients may be useful for building an AI system for statistics, and we develop a working system which incorporates them:
@@ -128,37 +46,30 @@ In \cref{ch:description}, we'll even show how to automatically generate english-
 
 \section{Ingredients of an Automatic Statistician}
 \label{sec:ingredients}
-%\fTBD{JL: Has RG written anything on this?}
 \citet{gelman2013philblogpost} asks ``How can an artificial intelligence do statistics? ... It needs not just an inference engine, but also a way to construct new models and a way to check models. Currently, those steps are performed by humans, but the AI would have to do it itself.''
-
-%In this section, we discuss in more detail the elements required to build a system that can automatically construct and then describe complex nonparametric models.
 
 In this section, we discuss in more detail the elements we believe are required to build an artificial intelligence that can do statistics.
 
 \paragraph{1. An open-ended language of models}
 Many statistical procedures consider all models in a class of fixed size - for example, graphical model construction algorithms\fTBD{Cite} search over connectivity graphs for a given set of nodes.
-While these methods can be powerful, human statisticians are capable of deriving novel model classes when required by the modelling task.
-%An open ended language can 
+While these methods can be powerful, human statisticians are capable of deriving novel model classes when required.
 An automatic search through an open-ended class of models can achieve some of this flexibility, growing the complexity of the model to fit the task at hand, and possibly combining existing structures in novel ways.
-%However, in order for a procedure to be as powerful as a human statistician, it must be able to add to a model in a wide variety of ways, building arbitrarily complex models if the data demands it.
 
-\paragraph{2. Searching through model space}
+\paragraph{2. A Search through model space}
 An open-ended space of models cannot be searched exhaustively.
 Just as human researchers iteratively refine their models, search procedures can propose new search directions based on the results of previous model fits.
 Because any search in an open-ended space must start with relatively simple models before moving on to more complex ones, any model search in an open-ended space will likely resemble a model-building procedure.% based 
 
-\paragraph{3. Model comparison and checking model fit}
+\paragraph{3. A Model comparison procedure}
 An automatic statistician should be able to question the models it has constructed, and formal procedures from model checking provide a way for it to do this.
-%A practically and philsophically interesting question is how to compare models, and how to check whether there is statistical structure not being captured by a given model. 
-%\fTBD{Struggling with this section - do we need to defend marginal likelihood or discuss the options}
 \citet{gelman2012philosophy} review the literature on model checking.
 In this work, we use approximate marginal likelihood to compare models, penalizing complexity using the Bayesian Information Criterion as a heuristic.
 
-\paragraph{4. Describing models}
-
-%Capturing statistical structure helps to provide good predictions. 
+\paragraph{4. A model description procedure}
 Part of the value of statistical models comes from enabling humans to understand a dataset or a phenomenon.
 Furthermore, a clear description of the statistical structure found in a dataset helps a user to notice when the dataset has errors, the wrong question was asked, the model-building procedure failed to capture known structure, a relevant piece of data or constraint is missing, or when a novel statistical structure has been found.
+%In this chapter, we'll show how the additive decomposition of \gp{} posteriors allows a visual description of composite \gp{} models.
+%In \cref{ch:description}, we'll further show how to automatically generate english-language descriptions of the resulting models.
 
 
 
@@ -166,17 +77,7 @@ Furthermore, a clear description of the statistical structure found in a dataset
 
 In this chapter, we introduce a system containing all the above ingredients.
 We call this system the Automatic Bayesian Covariance Discovery (\procedurename{}) system.
-%The system defines an open-ended language of Gaussian process models via a compositional grammar.
-%The space is searched greedily, using marginal likelihood and the Bayesian Information Criterion (BIC) to evaluate models.
-%The compositional structure of the language allows us to develop a method for automatically translating components of the model into natural-language descriptions of patterns in the data.
-
-%We show examples of automatically generated reports which highlight interpretable features discovered in a variety of data sets (e.g.\ Figure~\ref{fig:periodic}).
-%The supplementary material to this paper includes 13 complete reports automatically generated by \procedurename{}.
-
-%Good statistical modeling requires not only interpretability but predictive accuracy.
-%We compare \procedurename{} against existing model construction techniques in terms of predictive performance at extrapolation, and we find state-of-the-art performance on 13 time series.
-
-
+The next four sections of this chapter describe the mechanisms we use to produce these four ingredients, for this particular example of an artificial intelligence which does statistics.
 
 
 
@@ -184,28 +85,12 @@ We call this system the Automatic Bayesian Covariance Discovery (\procedurename{
 \label{sec:improvements}
 
 As shown in Chapter~\ref{ch:kernels}, we can construct a wide variety of kernel structures compositionally by adding and multiplying a small number of base kernels.
-In particular, we consider the four base kernel families discussed in Section \ref{sec:Structure}: \kSE, \kPer, \kLin, and \kRQ.
-Any algebraic expression combining these kernels using the operations $+$ and $\times$ defines a kernel family, whose parameters are the concatenation of the parameters for the base kernel families. 
-
-%Details of the search algorithm are given in the supplementary material \TBD{For now}.
-
-%\paragraph{A greedy search algorithm}
-%Our search starts by first proposing all base kernels applied to all input dimensions.  We then choose the kernel with the highest approximate marginal likelihood, apply all expansions to this kernel, and repeat this process for a fixed number of steps.
-
-%The general problem of regression consists of learning a function $f$ mapping from some input space $\mathcal{X}$ to some output space $\mathcal{Y}$.
-We would like an expressive language which can represent both simple parametric forms of $f$ such as linear, polynomial, \etc and also complex nonparametric functions specified in terms of properties such as smoothness, periodicity, \etc~
-Fortunately, Gaussian processes (\gp{}s) provide a very general and analytically tractable way of capturing both simple and complex functions. 
-
-%Gaussian processes are distributions over functions such that any finite subset of function evaluations, $(f(x_1), f(x_2), \ldots f(x_N))$, have a joint Gaussian distribution \citep{rasmussen38gaussian}.
-%A \gp{} is completely specified by its mean function, $\mu(x)=\mathbb{E}(f(x))$ and kernel (or covariance) function $\kernel(x,x') = \Cov(f(x),f(x'))$.
-%It is common practice to assume zero mean, since marginalizing over an unknown mean function can be equivalently expressed as a zero-mean \gp{} with a new kernel.
-%The structure of the kernel captures high-level properties of the unknown function, $f$, which in turn determines how the model generalizes or extrapolates to new data.
-
 We can therefore define a language of regression models by specifying a language of kernels.
 
 The elements of this language are a set of  base kernels capturing different function properties, and a set of
 composition rules which combine kernels to yield other valid kernels.
-Our base kernels are white noise ($\kWN$), constant ($\kC$), linear ($\kLin$), squared exponential ($\kSE$) and periodic ($\kPer$), which on their own encode for uncorrelated noise, constant functions, linear functions, smooth functions and periodic functions respectively.
+Our base kernels are white noise ($\kWN$), constant ($\kC$), linear ($\kLin$), squared-exponential ($\kSE$), rational-quadratic ($\kRQ$), sigmoidal ($\kSig$) and periodic ($\kPer$).
+%, which on their own encode for uncorrelated noise, constant functions, linear functions, smooth functions and periodic functions respectively.
 %\footnote{Definitions of kernels are in the supplementary material.}.
 The composition rules are addition and multiplication:
 \begin{align}
@@ -213,11 +98,10 @@ k_1 + k_2 =      & \,\, k_1(\vx, \vx') + k_2(\vx, \vx') \\
 k_1 \times k_2 = & \,\, k_1(\vx, \vx') \times k_2(\vx, \vx')
 \end{align}
 
-%Combining kernels using these operations can yield kernels encoding for richer structures such as approximate periodicity ($\kSE \times \kPer$) or smooth functions with linear trends ($\kSE + \kLin$).
 
-%This kernel composition framework (with different base kernels) was described by \citet{DuvLloGroetal13}.
-%We extend and adapt this framework in several ways.
 We have found that incorporating changepoints into the language is essential for realistic models of time series (\eg figure~\ref{fig:periodic}).
+[todo: expand a little]
+
 
 % Moved to kernels chapter.
 %Changepoints can be defined through addition and multiplication with sigmoidal functions:
@@ -257,62 +141,43 @@ $\cos$ is a special case of our reparametrised \skPer.
 
 
 
-\section{Model Search}
+\section{A Model Search Procedure}
 
-%As in \citet{DuvLloGroetal13} w
 We explore the space of regression models using a greedy search.
-We use the same search operators, but also include additional operators to incorporate changepoints; a complete list is contained in the supplementary material. 
-
-
-Our search procedure begins by proposing all base kernel families applied to all input dimensions. 
-We allow the following search operators over our set of expressions:
-\begin{itemize}
-\item[(1)] Any subexpression $\subexpr$ can be replaced with $\subexpr + \baseker$, where $\baseker$ is any base kernel family.
-\item[(2)] Any subexpression $\subexpr$ can be replaced with $\subexpr \times \baseker$, where $\baseker$ is any base kernel family.
-\item[(3)] Any base kernel $\baseker$ may be replaced with any other base kernel family $\baseker^\prime$.
-\end{itemize}
-
+At each stage, we choose the highest scoring kernel and expand it by applying all possible operators:
+%
 \begin{center}
 \begin{tabular}{rccc}
-\textrm{Replacement} & $\kernel_i$ & $\to$ & $\kernel'_i$\\% & $\forall\, \kernel' $\\
-\textrm{Addition} & $\kernel_i$ & $\to$ & $\kernel_i + \kernel'_j$\\% & $\forall\, j,\kernel' $\\
-\textrm{Multiplication} & $\kernel_i$ &  $\to$ & $\kernel_i \times \kernel'_j$\\% & $\forall\, j,\kernel'$\\
+\textrm{Replacement} & $\kernel$ & $\to$ & $\kernel'$\\% & $\forall\, \kernel' $\\
+\textrm{Addition} & $\kernel$ & $\to$ & $\kernel + \kernel'$\\% & $\forall\, j,\kernel' $\\
+\textrm{Multiplication} & $\kernel$ &  $\to$ & $\kernel \times \kernel'$\\% & $\forall\, j,\kernel'$\\
 \end{tabular}
 \end{center}
+%
+We lso include additional operators to incorporate changepoints.
+A complete list is contained in Appendix [BLANK]. 
 
 These operators can generate all possible algebraic expressions.
-To see this, observe that if we restricted the $+$ and $\times$ rules to only apply to base kernel families, we would obtain a context-free grammar which generates the set of algebraic expressions.
-However, the more general versions of these rules allow more flexibility in the search procedure, which is useful because the context-free grammar derivation may not be the most straightforward way to arrive at a kernel family.
+To see this, observe that if we restricted the $+$ and $\times$ rules to only apply to base kernels, we would obtain a context-free grammar which generates the set of algebraic expressions.
 
-Our algorithm searches over this space using a greedy search: at each stage, we choose the highest scoring kernel and expand it by applying all possible operators.
-%\NA{
-%It is unlikely that a greedy search will be optimal, but empirically it has performed well to date.
-%}
-%\NA{
-%We then select the highest scoring kernel over the entire search.
-%\footnotemark
-%}
-%\footnotetext{\NA{Since search operator (3) results in copies of the current composite kernel, the search typically stops itself, selecting the same kernel expression at each level of the search.}}
-
-Our search operators are motivated by strategies researchers often use to construct kernels.
+Our search operators are motivated by strategies that human researchers often use to construct kernels.
 In particular,
 \begin{itemize}
-\item One can look for structure, \eg periodicity, in the residuals of a model, and then extend the model to capture that structure.
-This corresponds to applying rule (1).
-\item One can start with structure, \eg linearity, which is assumed to hold globally, but find that it only holds locally.
-This corresponds to applying rule (2) to obtain the structure shown in rows 1 and 3 of figure~\ref{fig:kernels}.
+\item One can look for structure, such as periodicity, in the residuals of a model, and then extend the model to capture that structure.
+This corresponds to adding a new kernel to the existing structure.
+\item One can start with structure, such as linearity, which is assumed to hold globally, but find that it only holds locally.
+This corresponds to multiplying a kernel structure by a local kernel, such as $\kSE$.
 \item One can add features incrementally, analogous to algorithms like boosting, backfitting, or forward selection.
-This corresponds to applying rules (1) or (2) to dimensions not yet included in the model.
+This corresponds to adding or multiplying with kernels on dimensions not yet included in the model.
 \end{itemize}
 
 
 \subsubsection{Hyperparameter initialization}
 
-Unfortunately, optimizing over parameters is not a convex optimization problem, and the space can have many local optima.
+Unfortunately, optimizing the marginal likelihood over parameters is not a convex optimization problem, and the space can have many local optima.
 For example, in data with periodic structure, integer multiples of the true period (harmonics) are often local optima. 
-%
-To alleviate this difficulty, we take advantage of our search procedure to provide reasonable initializations: all of the parameters which were part of the previous kernel are initialized to their previous values.
-All parameters are then optimized using conjugate gradients, randomly restarting the newly introduced parameters.
+To alleviate this difficulty, we take advantage of our search procedure to provide reasonable initializations: all of the parameters which were part of the previous kernel are initialized to their previous values, while randomly initializing any newly introduced parameters.
+In the newly proposed kernel, all parameters are then optimized using conjugate gradients.
 This procedure is not guaranteed to find the global optimum, but it implements the commonly used heuristic of iteratively modeling residuals.
 
 
@@ -365,7 +230,8 @@ This procedure is not guaranteed to find the global optimum, but it implements t
 %}
 %\end{minipage}
 %\end{tabular}
-\caption[Search tree over kernels]{An example of a search tree over kernel expressions.  Figure \ref{fig:mauna_grow} shows the model increasing in sophistication as the kernel expression grows.}
+\caption[Search tree over kernels]{An example of a search tree over kernel expressions.
+\Cref{fig:mauna_grow} shows the model increasing in sophistication as the kernel expression grows.}
 \label{fig:mauna_search_tree}
 \end{figure}
 
@@ -373,9 +239,9 @@ This procedure is not guaranteed to find the global optimum, but it implements t
 
 
 
-\section{Model Evaluation}
+\section{A Model Comparison Procedure}
 
-Choosing kernel structures requires a criterion for evaluating structures.
+Choosing kernel structures requires a criterion for comparing models.
 We choose marginal likelihood as our criterion, since it balances the fit and complexity of a model \citep{rasmussen2001occam}.
 Conditioned on kernel parameters, the marginal likelihood of a \gp{} can be computed analytically.
 However, to evaluate a kernel family we must integrate over kernel parameters.
