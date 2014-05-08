@@ -177,6 +177,33 @@ We can also sum any number of components this way.
 %A theme throughout this thesis is exploring the idea that a lot of the expressivity of \gp{} models comes from the fact that these models can be combined and decomposed additively.
 
 
+\subsubsection{A known mean function can be moved into the covariance function}
+Specifically, if we wish to model an unknown function $f(\vx)$ with known mean $m(\vx)$, (with unknown magnitude $c \sim \Nt{0}{\sigma^2_c}$), we can equivalently express this model using another \gp{} with zero mean:
+%$related modelquivalently (\vx) a(\vx)$ with $f \sim \GPt{0}{k(\vx,\vx')}$, then this 
+%
+\begin{align}
+f \sim \GPt{c m(\vx)}{k(\vx,\vx')}, \quad c \sim \Nt{0}{\sigma^2_c}
+\iff f \sim \GPt{ \vzero }{ c^2 m(\vx) m(\vx') + k(\vx,\vx')}
+\end{align}
+
+
+By moving the mean function into the covariance function, we get the same model, but we can integrate over the magnitude of the mean function at no additional cost.
+This is one advantage of moving as much structure as possible into the covariance function.
+%In fact, we can view \gp{} regression as simply implicitly integrating over the magnitudes of (possibly uncountably many) different mean functions all summed together.
+%TODO: provide a link to the GPs as neural nets discussion.
+
+\paragraph{An unknown mean function can be moved into the covariance function}
+
+If we wish to express our ignorance about the mean function, one way would be by putting a \gp{} prior on it.
+%
+\begin{align}
+m \sim \GPt{\vzero}{k_1(\vx,\vx')}, \quad
+f \sim \GPt{m(\vx)}{k_2(\vx,\vx')}
+\iff 
+f \sim \GPt{\vzero}{k_1(\vx,\vx') + k_2(\vx,\vx')}
+\end{align}
+
+
 
 \subsection{Additivity Across Multiple Dimensions}
 
