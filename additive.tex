@@ -299,37 +299,54 @@ To maintain similar overall activation levels, weights are multiplied by $\nicef
 At test time, the set of models defined by all possible ways of dropping-out neurons is averaged over, usually in an approximate way.
 
 \citet{baldi2013understanding} and \citet{wang2013fast} analyzed dropout in terms of the effective prior induced by this procedure in several models, such as linear and logistic regression.
-In this section, we examine the priors on functions that result from performing dropout in the one-hidden-layer neural network implicitly defined by a \gp{} (equation \eqref{eq:one-layer-nn}).
+In this section, we examine the priors on functions that result from performing dropout in the one-hidden-layer neural network implicitly defined by a \gp{}.% (equation \eqref{eq:one-layer-nn}).
 
+Recall that \gp{}s can be derived as an infinitely-wide one-layer neural network, with fixed activation functions $\feat(\vx)$, and independent random weights $\valpha$ with finite variance $\sigma^2_{\valpha}$:
+%
+\begin{align}
+& f(\vx) = \frac{1}{K}{\mathbf \vnetweights}\tra \hPhi(\vx) = \frac{1}{K} \sum_{i=1}^K \netweights_i \hphi_i(\vx)
+\\
+\implies & f(\vx) \distas{} \GPt{\expectargs{}{\valpha\tra \feat(\vx)}}{\sigma^2_{\valpha} \feat(\vx)\tra\feat(\vx')}
+\label{eq:one-layer-gp-two}
+\end{align}
+%
+Mercer's theorem implies that we can write any \gp{} prior equivalently in this way.
+Now that we've expressed a \gp{} as a neural network, we can examine the prior we get from performing dropout in this network.
 
+\subsection{Dropout on Hidden Units}
 
-\subsection{Dropout on Feature Activations}
-
-First, we examine the prior that results from randomly dropping features from $\hPhi(\vx)$ with probability $p$.
-If these features have a weight distribution with finite moments
-$\expectargs{}{ \alpha_i} = \mu, \varianceargs{}{\alpha_i} = \sigma^2$,
-then the distribution of weights after each one has been dropped out with probability $p$ is:
+First, we'll examine the prior we get from independently dropping features from $\hPhi(\vx)$ by setting some of the weights $\valpha$ to zero with probability $p$.
+For simplicity, we'll assume that $\expectargs{}{\valpha} = \vzero$.
+If the weights initially have finite variance $\sigma^2_{\alpha}$ before dropout, then after dropout they'll have variance
+%$\expectargs{}{ \alpha_i} = \vzero, 
+%\varianceargs{}{\alpha_i} = \sigma^2$,
+%then the distribution of weights after each one has been dropped out with probability $p$ is:
 \begin{align}
 r_i \simiid \textnormal{Ber}(p)
 \qquad
-\expectargs{}{ r_i \alpha_i} = p\mu, \quad \varianceargs{}{r_i \alpha_i} = p^2 \sigma^2 \;.
-\end{align}
-However, after we increase the remaining activations to maintain the same expected activation by multiplying them by $\nicefrac{1}{p}$, the resulting moments are again:
-\begin{align}
-\expectargs{}{ \frac{1}{p} r_i \alpha_i } = \frac{p}{p}\mu = \mu, \quad \varianceargs{}{ \frac{1}{p} r_i \alpha_i} = \frac{p^2}{p^2} \sigma^2 = \sigma^2 \;.
+%\expectargs{}{ r_i \alpha_i} = p\mu, \quad 
+\varianceargs{}{r_i \alpha_i} = p \sigma_{\alpha}^2 \;.
 \end{align}
 %Since only the first two moments of the weight variance matter, the resulting \gp{} remain
-Thus, dropping out features of an infinitely-wide MLP does not change the model at all, since no individual feature can have more than infinitesimal contribution to the network output.
+Because \cref{eq:one-layer-gp-two} is a result of the central limit theorem, it does not depend on the form of the distribution on $\valpha$, only its mean and variance.
+Thus, dropping out features of an infinitely-wide \MLP{} does not change the model at all, except to rescale the output variance, since no individual feature can have more than infinitesimal contribution to the network output.
+%If we were to rescale the weights by a factor other than $p^{-1/2}$, we would only rescale the output variance of the model, leaving all other aspects identical.
 %Is there a better way to drop out features that would lead to robustness?
+Indeed, multiplying all weights by $p^{-1/2}$, the initial variance is restored:
+\begin{align}
+%\expectargs{}{ \frac{1}{p} r_i \alpha_i } = \frac{p}{p}\mu = \mu, \quad 
+\varianceargs{}{ \frac{1}{p^\frac{1}{2}} r_i \alpha_i} = \frac{p}{p} \sigma_{\alpha}^2 = \sigma_{\alpha}^2 \;.
+\end{align}
+In which case dropout on the hidden units has no effect at all.
 
 
 
-\subsection{Dropping Out Inputs}
+\subsection{Dropout on Inputs}
 
 In a \gp{} with kernel ${k(\vx, \vx') = \prod_{d=1}^D k_d(x_d, x_d')}$, exact averaging over all possible ways of dropping out inputs with probability $\nicefrac{1}{2}$ results in a mixture of \gp{}s, each depending on only a subset of the inputs:
 \begin{align}
 p \left( f(\vx) \right)
-= \frac{1}{2^D} \sum_{\vr \in \{0,1\}^D}  \textnormal{\gp} \left(0, \prod_{d=1}^D k_d(x_d, x_d')^{r_d} \right)
+= \frac{1}{2^D} \sum_{\vr \in \{0,1\}^D}  \textnormal{\gp} \left(f(\vx) \given 0, \prod_{d=1}^D k_d(x_d, x_d')^{r_d} \right)
 \label{eq:dropout-mixture}
 \end{align}
 We present two results ways to gain intuition about this model.
@@ -343,10 +360,11 @@ f(\vx) \sim \textnormal{\gp} \left(0, \frac{1}{2^{-2D}} \sum_{\vr \in \{0,1\}^D}
 \label{eq:additive-gps}
 \end{align}
 
-A \gp{} whose covariance is a sum of kernels corresponds to a sum of functions, each distributed according to a \gp{}.  Therefore, \eqref{eq:additive-gps} describes a sum of $2^D$ functions, each depending on a different subset of the inputs.
+%As noted above, a \gp{} whose covariance is a sum of kernels corresponds to a sum of functions, each distributed according to a \gp{}.  Therefore, \eqref{eq:additive-gps} describes a sum of $2^D$ functions, each depending on a different subset of the inputs.
 %This model class was studied by \citet{duvenaud2011additive11}, who showed that exact inference in these models can be performed in $\mathcal{O}(N^2 D^2 + N^3)$.
 %Thus, the dropout prior is closely related to a model which learns many functions, each of which only depends on a subset of the inputs.
-
+Therefore, dropout on the inputs to a \gp{} can be approximated by the all-subsets additive kernel.
+This suggests an interpretation of additive kernels as an approximation to a mixture of models, each of which depends on only a subset of the input variables.
 
 
 \section{Related Work}
@@ -401,9 +419,9 @@ Hierarchical Kernel Learning & All-orders additive \gp{} \\
 A comparison of different additive model classes.
 Nodes represent different interaction terms, ranging from first-order to fourth-order interactions.
 Coloured boxes represent the weightings of different terms.
-Top left: \HKL{} can select a hull of interaction terms, but must use a pre-determined weighting over those terms.
-Top right: the additive \gp{} model can weight each order of interaction separately.
-Bottom row: Neither \HKL{} nor the additive model dominate one another in terms of flexibility, however the \SEGP{} and first-order additive \gp{} models are special cases of the all-orders additive \gp{}. }
+\emph{Top left: }\HKL{} can select a hull of interaction terms, but must use a pre-determined weighting over those terms.
+\emph{Top right:} the additive \gp{} model can weight each order of interaction separately.
+\emph{Bottom row:} Neither \HKL{} nor the additive model dominate one another in terms of flexibility, however the \SEGP{} and first-order additive \gp{} models are special cases of the all-orders additive \gp{}. }
 \label{hulls-figure}
 \end{figure}
 %
