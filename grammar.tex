@@ -90,6 +90,9 @@ We can therefore define a language of regression models by specifying a language
 The elements of this language are a set of base kernels capturing different function properties, and a set of
 composition rules which combine kernels to yield other valid kernels.
 In this chapter, we'll use such base kernels as white noise ($\kWN$), constant ($\kC$), linear ($\kLin$), squared-exponential ($\kSE$), rational-quadratic ($\kRQ$), sigmoidal ($\kSig$) and periodic ($\kPer$).
+We use a new parameterization of $\kPer$ which has $cos(x - x')$ as a special case.
+For details, see \cref{sec:kernel-definitions}.
+\Cref{fig:basic_kernels_two} shows the new kernels introduced in this chapter.
 %, which on their own encode for uncorrelated noise, constant functions, linear functions, smooth functions and periodic functions respectively.
 
 %
@@ -147,21 +150,21 @@ Table~\ref{table:motifs} lists common regression models that can be expressed by
 \begin{tabular}{l|l|l}
 Regression model & Kernel & Related work\\
 \midrule
-Linear regression & $\kC + \kLin + \kWN$ & \\
-Kernel ridge regression & $\kSE + \kWN$ & \\
-Linear Semiparametric & $\kLin + \kSE + \kWN$ & \citep[e.g.][]{ruppert2003semiparametric} \\
-Multiple kernel learning & $\sum \kSE$ + \kWN & \citep[e.g.][]{bach2004multiple} \\
-Trend, cyclical, irregular   & $\sum \kSE + \sum \kPer$ + \kWN & \citep{lind2006basic}\\
-Fourier decomposition & $\kC + \sum \cos$ + \kWN & \\
-Sparse spectrum \gp{}s & $\sum \cos$ + \kWN & \citep{lazaro2010sparse} \\
-Spectral mixture & $\sum \SE \times \cos$ + \kWN & \citep{WilAda13} \\
-Changepoints & \eg $\kCP(\kSE, \kSE) + \kWN$ & \citep[e.g.][]{garnett2010sequential} \\
-Heteroscedasticity & \eg $\kSE + \kLin \times \kWN$ & \\
-Additive + Flexible & $ \sum_d \kSE_d + \prod_d \kSE_d$ & \citep{plate1999accuracy} 
+Linear regression & $\kC \kernplus \kLin \kernplus \kWN$ & \\
+Kernel ridge regression & $\kSE \kernplus \kWN$ & \\
+Linear Semiparametric & $\kLin \kernplus \kSE \kernplus \kWN$ & \citep[e.g.][]{ruppert2003semiparametric} \\
+Multiple kernel learning & $\sum \kSE \kernplus \kWN$ & \citep[e.g.][]{bach2004multiple} \\
+Trend, cyclical, irregular   & $\sum \kSE \kernplus \sum \kPer \kernplus \kWN$ & \citep{lind2006basic}\\
+Fourier decomposition & $\kC \kernplus \sum \cos \kernplus \kWN$ & \\
+Sparse spectrum \gp{}s & $\sum \cos \kernplus \kWN$ & \citep{lazaro2010sparse} \\
+Spectral mixture & $\sum \SE \times \cos \kernplus \kWN$ & \citep{WilAda13} \\
+Changepoints & \eg $\kCP(\kSE, \kSE) \kernplus \kWN$ & \citep[e.g.][]{garnett2010sequential} \\
+Heteroscedasticity & \eg $\kSE \kernplus \kLin \kerntimes \kWN$ & \\
+Additive \kernplus Flexible & $ \sum_d \kSE_d \kernplus \prod_d \kSE_d$ & \citep{plate1999accuracy} 
 \end{tabular}
 \caption[Common regression models expressible in the kernel language]
 {Common regression models expressible by sums and products of base kernels.
-$\cos$ is a special case of our reparametrised \skPer.
+$\cos(\cdot, \cdot)$ is a special case of our reparametrised $\kPer(\cdot, \cdot)$.
 }
 \label{table:motifs}
 \end{table}
@@ -222,7 +225,7 @@ This corresponds to adding or multiplying with kernels on dimensions not yet inc
       [sibling distance=0.15\treescale]
       child {node[shape=rectangle,draw,thick] {$\SE + \Per + \RQ$}}
       child {node {\ldots}}
-      child {node[shape=rectangle,draw,thick,fill=blue!30] {$\SE \times (\Per + \RQ)$}
+      child {node[shape=rectangle,draw,thick,fill=blue!30] {$\SE \kerntimes (\Per + \RQ)$}
         [sibling distance=0.14\treescale]
         child {node {\ldots}}
         child {node {\ldots}}
@@ -231,7 +234,7 @@ This corresponds to adding or multiplying with kernels on dimensions not yet inc
       child {node {\ldots}}
     }
     child {node {\ldots}}
-    child {node[shape=rectangle,draw,thick] {$\Per \times \RQ$}}
+    child {node[shape=rectangle,draw,thick] {$\Per \kerntimes \RQ$}}
   }
   child {node[shape=rectangle,draw,thick] {$\Lin$}
   }
@@ -252,7 +255,7 @@ This corresponds to adding or multiplying with kernels on dimensions not yet inc
 \includegraphics[width=\wmg,height=\hmg, clip,trim=0mm 0mm 0mm 7mm]{\grammarfiguresdir/decomposition/11-Feb-v4-03-mauna2003-s_max_level_#1/03-mauna2003-s_all_small}}
 \begin{tabular}{ccc}
 Level 1: & Level 2: & Level 3: \\
-\RQ & $\Per + \RQ$ & $\SE \times (\Per + \RQ )$ \\[0.5em]
+\RQ & $\Per + \RQ$ & $\SE \kerntimes (\Per + \RQ )$ \\[0.5em]
 \maunadecomp{0} & \maunadecomp{1} & \maunadecomp{2} \\[0.5em]
 \end{tabular}
 \caption[Progression of models as the search depth increases]
@@ -431,14 +434,14 @@ In addition, the composite kernel captures the near-linearity of the long-term t
 
 
 \section{Related Work}
-\label{sec:related-work}
+\label{sec:gpss-related-work}
 
 \def\rwsheader{\subsubsection}
 
 \rwsheader{Building Kernel Functions By Hand}
-\cite{rasmussen38gaussian} devote 4 pages to manually constructing a composite kernel to model a time series of carbon dioxode concentrations.
-In the supplementary material, we include a report automatically generated by \procedurename{} for this dataset; our procedure chose a model similar to the one they constructed by hand.
-Other examples of papers whose main contribution is to manually construct and fit a composite \gp{} kernel are \cite{klenske2012nonparametric} and \cite{lloydgefcom2012}.
+\cite{rasmussen38gaussian} devote 4 pages to manually constructing a composite kernel to model the Mauna Loa dataset.
+%In the supplementary material, we include a report automatically generated by \procedurename{} for this dataset; our procedure chose a model similar to the one they constructed by hand.
+Other examples of papers whose main contribution is to manually construct and fit a composite \gp{} kernel are \cite{EdgarTelescope} and \cite{lloydgefcom2012}.
 
 
 \rwsheader{Nonparametric regression in high dimensions}
@@ -675,7 +678,7 @@ In the next chapter, we'll see how the model components found by this procedure 
 
 \section{Open Questions}
 
-\subsubsection{Can the search be extended to classification settings?}
+\subsubsection{How well will the search work for classification?}
 While we focus on Gaussian process regression, we believe our kernel search method can be extended to other supervised learning frameworks such as classification or ordinal regression, or to other kinds of kernel architectures such as kernel \SVM{}s.
 However, it might be the case that it is much more difficult to discover structure from class labels alone, since they usually contain less information about the underlying process than does regression data.
 %However, whether or not such modularity and interpretability is present in other model classes is an open question.
@@ -686,7 +689,7 @@ Presumably, some sort of model-based search would be worthwhile, since evaluatin
 However, this raises the question of how to build an open-ended model of the relative marginal likelihood of \gp{} models.
 In order to use a \gp{} for this task, one would need to create a kernel over kernels.
 
-One interesting possibility is that the model of model performance could generate its own data offline, by generating synthetic data, then scoring many kernel structures in order to improve its model of their relative performance.
+One interesting possibility is that the model of model performance could generate its own data offline, by generating synthetic regression datasets, then scoring many kernel structures on those datasets in order to improve its model of kernel performance.
 
 \subsubsection{Can we build similar languages in other model classes?}
 The compositionality of diverse types of kernels is what allowed a rich language of \gp{} models.
