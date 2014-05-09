@@ -517,7 +517,8 @@ This prior work also did not explore the automatic model decomposition, summariz
 This model class contains many existing unsupervised models as special cases and was able to discover such structure automatically from data.
 Our framework takes a similar approach, but in a supervised setting.
 
-
+Similarly, \citet{christian-thesis} showed to automatically perform inference in arbitrary compositions of discrete sequence models.
+More generally, \citet{dechter2013bootstrap} and \citet{liang2010learning} constructed grammars over programs, and automatically searched the resulting spaces.
 
 
 
@@ -598,15 +599,16 @@ The results are similar to those for extrapolation, and are included in the appe
 
 \subsection{High-dimensional Prediction}
 
-\procedurename{} can also be applied to multidimensional regression problems, without any modification.
-An experimental comparison with other methods can be found in \Cref{sec:additive-experiments}, where it outperforms a wide variety of multidimensional regression methods.
+\procedurename{} can also be applied to multidimensional regression problems without modification.
+An experimental comparison with other methods can be found in \cref{sec:additive-experiments}, where it outperforms a wide variety of multidimensional regression methods.
 
 
 
 \subsection{Structure Recovery on Synthetic Data}
 \label{sec:synthetic}
 
-Because it is difficult to visualize the structures discovered in multiple dimensions, it is hard to tell from predictive accuracy alone if the search procedure is finding all structure present.
+The structure found in the examples above may seem reasonable, but we may wonder to what extent \procedurename{} is consistent - that is, when do we recover all the structure in a dataset?
+Especially in multiple dimensions, it is hard to tell from predictive accuracy alone if the search procedure is finding the correct structure.
 To address this question, we tested our method's ability to recover known structure on a set of synthetic datasets.
 
 For several composite kernel expressions, we constructed synthetic data by first sampling 300 points uniformly at random, then sampling function values at those points from a \gp{} prior.
@@ -662,7 +664,7 @@ Towards the goal of automating statistical modeling, we developed a system which
 
 We acheived this by introducing a space of composite kernels defined compositionally as sums and products of a small number of base kernels.  
 The set of models included in this space includes many standard regression models.
-We proposed a search procedure for this space of kernels which parallels the process of scientific discovery.
+We proposed a search procedure for this space of kernels, and argued that this search process parallels the process of scientific discovery, and of model-building by statisticians.
 
 We found that the learned structures are often capable of accurate extrapolation in complex time-series datasets, and are competitive with widely used kernel classes and kernel combination methods on a variety of prediction tasks.
 The learned kernels often yield decompositions of a signal into diverse and interpretable components, enabling model-checking by humans.
@@ -673,12 +675,27 @@ In the next chapter, we'll see how the model components found by this procedure 
 
 \section{Open Questions}
 
+\subsubsection{Can the search be extended to classification settings?}
 While we focus on Gaussian process regression, we believe our kernel search method can be extended to other supervised learning frameworks such as classification or ordinal regression, or to other kinds of kernel architectures such as kernel \SVM{}s.
+However, it might be the case that it is much more difficult to discover structure from class labels alone, since they usually contain less information about the underlying process than does regression data.
 %However, whether or not such modularity and interpretability is present in other model classes is an open question.
 
+\subsubsection{How can the search be made faster?}
+It is clear that the search procedure used in this chapter leaves much room for improvement.
+Presumably, some sort of model-based search would be worthwhile, since evaluating each kernel expression is relatively expensive.
+However, this raises the question of how to build an open-ended model of the relative marginal likelihood of \gp{} models.
+In order to use a \gp{} for this task, one would need to create a kernel over kernels.
 
+One interesting possibility is that the model of model performance could generate its own data offline, by generating synthetic data, then scoring many kernel structures in order to improve its model of their relative performance.
 
+\subsubsection{Can we build similar languages in other model classes?}
+The compositionality of diverse types of kernels is what allowed a rich language of \gp{} models.
+Can we build similar languages of other model classes?
 
+As noted in \cref{sec:gpss-related-work}, languages have already been constructed on several powerful model classes: matrix decompositions, sequence models, graphical models, and functional programs.
+Building languages of models that support efficient search as well and interpretable decompositions could be a fruitful direction.
+%\citet{roger-grosse-thesis} demonstrated a very rich class of unsupervised models by composing matrix decompositions.
+%\citet{kemp2008discovery} and \citet{ellislearning} built grammars on graphical models.
 
 
 \outbpdocument{
