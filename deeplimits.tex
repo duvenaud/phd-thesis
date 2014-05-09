@@ -446,11 +446,11 @@ v_{\log} = \varianceargs{}{\log \left| \frac{\partial f(x)}{\partial x} \right|}
 where $\gamma \approxeq 0.5772$ is Euler's constant.  Since the second moment is finite, by the central limit theorem, the limiting distribution of the size of the gradient approaches log-normal as L grows:
 \begin{align}
 \log \left| \frac{\partial f^{(1:L)}(x)}{\partial x} \right| 
-& = \sum_{\layerindex=1}^L \log \left| \frac{\partial f^{(\layerindex)}(x)}{\partial x} \right| \nonumber \\
- \implies
-% \distas{L \rightarrow \infty} \Nt{L ?}{L ?}
+& = \sum_{\layerindex=1}^L \log \left| \frac{\partial f^{(\layerindex)}(x)}{\partial x} \right| 
+% \implies
 %\log \left| \frac{\partial f^{1:L}(x)}{\partial x} \right| & \distas{L \rightarrow \infty} \Nt{L \sqrt{\frac{2 \sigma^2_f}{\pi\lengthscale^2}}}{L \frac{\sigma^2_f}{\lengthscale^2} \left( 1 - \frac{2}{\pi} \right)}
-\log \left| \frac{\partial f^{(1:L)}(x)}{\partial x} \right| & \distas{L \rightarrow \infty} \Nt{ L m_{\log} }{L^2 v_{\log}}
+%\log \left| \frac{\partial f^{(1:L)}(x)}{\partial x} \right| & 
+\distas{L \rightarrow \infty} \Nt{ L m_{\log} }{L^2 v_{\log}}
 \end{align}
 %
 Even if the expected magnitude of the derivative remains constant, the variance of the log-normal distribution grows without bound as the depth increases.  Because the log-normal distribution is heavy-tailed and its domain is bounded below by zero, the derivative will become very small almost everywhere, with rare but very large jumps.  
@@ -770,7 +770,7 @@ b) Input-connected architecture\\
     % Draw the hidden layer nodes
     \foreach \name / \y in {1,...,\numhiddentwo} {
 		\draw (H-\name) node[neuron]  {};
-       	\draw (H-\name) node[below = 0.34cm] {$\vf^{(\y)}(\vx)$};
+       	\draw (H-\name) node[below = 0.34cm] {$\vf_C^{(\y)}(\vx)$};
     }
 \end{tikzpicture}
 \end{tabular}
@@ -783,12 +783,12 @@ The input-connected architecture also connects the original input $\vx$ to each 
 
 
 Following a suggestion from \cite{neal1995bayesian}, we can fix the pathologies exhibited in figures \ref{fig:filamentation} and \ref{fig:deep_map} by simply making each layer depend not only on the output of the previous layer, but also on the original input $\vx$.  
-We refer to these models as \emph{input-connected} networks.
+We refer to these models as \emph{input-connected} networks, and denote deep functions having this architecture with the subscript $C$, as in $f_C(\vx)$.
 Figure \ref{fig:input-connected} shows a graphical representation of the two connectivity architectures.
 Similar connections between non-adjacent layers can also be found the primate visual cortex \citep{maunsell1983connections}.
 Formally, this functional dependence can be written as
 \begin{align}
-\vf^{(1:L)}(\vx) = \vf^{(L)} \left( \vf^{(1:L-1)}(\vx), \vx \right), \quad \forall L
+\vf_C^{(1:L)}(\vx) = \vf^{(L)} \left( \vf_C^{(1:L-1)}(\vx), \vx \right), \quad \forall L
 \end{align}
 %
 Draws from the resulting prior are shown in figures \ref{fig:deep_draw_1d_connected}, \ref{fig:no_filamentation} and \ref{fig:deep_map_connected}.
@@ -803,10 +803,10 @@ Draws from the resulting prior are shown in figures \ref{fig:deep_draw_1d_connec
 \onedsamplepiccon{5} &
 \onedsamplepiccon{10}
 \end{tabular}
-\caption[Draws from a 1D deep GP prior with each layer connected to the input]
-{Draws from a 1D deep GP prior with each layer connected to the input.
+\caption[Draws from a 1D deep \sgp{} prior with each layer connected to the input]
+{Draws from a 1D deep \sgp{} prior with each layer connected to the input.
 Even after many layers, the functions remain smooth in some regions, while varying rapidly in other regions.
-Compare to standard-connectivity deep GP draws shown in figure \ref{fig:deep_draw_1d}.}
+Compare to standard-connectivity deep \sgp{} draws shown in figure \ref{fig:deep_draw_1d}.}
 \label{fig:deep_draw_1d_connected}
 \end{figure}
 %
@@ -845,8 +845,8 @@ Compare to standard-connectivity deep GP draws shown in figure \ref{fig:deep_dra
 \gpdrawboxcon{3} &
 \gpdrawboxcon{6}
 \end{tabular}
-\caption[Densities defined by a draw from a deep GP]
-{Left: Densities defined by a draw from a deep GP, with each layer connected to the input $\vx$.
+\caption[Densities defined by a draw from a deep \sgp{}]
+{Densities defined by a draw from a deep \sgp{}, with each layer connected to the input $\vx$.
 As depth increases, the density becomes more complex without concentrating along filaments.}
 \label{fig:no_filamentation}
 \end{figure}
@@ -891,12 +891,12 @@ Compare to figure \ref{fig:deep_map}.
 %
 %
 %\paragraph{Jacobian of input-connected deep networks}
-The Jacobian of the composed, input-connected deep function is defined by the recurrence
+The Jacobian of an input-connected deep function is defined by the recurrence
 %
 \newcommand{\sbi}[2]{\left[ \! \begin{array}{c} #1 \\ #2 \end{array} \! \right]} 
 %\newcommand{\sbi}[2]{\left[ #1 \quad \!\! #2 \right]} 
 \begin{align}
-{J^{1:L}(\vx) = J^L \sbi{ J^{1:L-1}}{I_D}}.
+{J_C^{1:L}(\vx) = J^L \sbi{ J_C^{1:L-1}}{I_D}}.
 \end{align}
 %
 %So the entire Jacobian has the form:
@@ -1031,9 +1031,9 @@ Input-connected deep kernels & Draws from corresponding \gp{}s \\
 $ x - x'$ &  $ x - x'$
 \end{tabular}
 \caption[Infinitely deep kernels]{
-Left:  Input-connected deep kernels.
+\emph{Left:}  Input-connected deep kernels.
 By connecting the inputs $\vx$ to each layer, the kernel can still depend on its input even after arbitrarily many layers of computation.
-Right: GP draws using deep input-connected kernels.  }
+\emph{Right:} Draws from \sgp{} with deep input-connected kernels.}
 \label{fig:deep_kernel_connected}
 \end{figure}
 
@@ -1070,7 +1070,7 @@ Right: GP draws using deep input-connected kernels.  }
 
 Kernels correspond to fixed feature maps, and so kernel learning is an example of implicit representation learning. %can compute %useful representations.
 Such feature maps can capture rich structure \citep{DuvLloGroetal13}, and can enable many types of generalization, such as affine invariance in images \citep{kondor2008group}.
-\cite{SalHin08} used a deep neural network to learn feature transforms for kernels, which learn invariances in an unsupervised manner.
+\cite{salakhutdinov2008using} used a deep neural network to learn feature transforms for kernels, which learn invariances in an unsupervised manner.
 The relatively uninteresting properties of the kernels derived in this section simply reflect the fact that an arbitrary deep computation is not usually a useful representation, unless combined with learning.
 To put it another way, any fixed representation is unlikely to be useful unless it has been chosen specifically for the problem at hand.
 
@@ -1102,13 +1102,15 @@ The form of the \gprn{} is
 %\textnormal{each} \; W_{d,j} & \simiid \GPt{\vzero}{\kSE + \kWN}
 \end{align}
 %
-We can easily define a deep \gprn{}:
+We can easily define a ``deep'' \gprn{}:
 %
 \begin{align}
 \vy(\vx) = \vW^{(3)}(\vx) \vW^{(2)}(\vx) \vW^{(1)}(\vx) \vf(\vx)
 \end{align}
 %
-which might be amenable to a similar analysis to that of section \ref{sec:characterizing-deep-gps}.
+which adds and multiplies functions drawn from \gp{}s, in contrast to deep \gp{}s, which compose functions drawn from \gp{}s.
+This prior on functions might be amenable to a similar analysis to that of section \ref{sec:characterizing-deep-gps}.
+
 %
 %This model has a similar form to the Jacobian of deep \gp{}, (since each row of the Jacobian is jointly a \gp{} but with with a kernel given by \eqref{eq:deriv-kernel}) except that the Jacobian is evaluated at the output from previous layers:
 %
@@ -1129,7 +1131,7 @@ Specifically, they note that in recurrent neural networks, the size of the train
 % TODO: Flesh out Cho reference.
 %In addition to \citet{cho2012kernel}, 
 
-\cite{hermans2012recurrent} construct deep kernels in a time-series setting, constructing kernels corresponding to infinite-size recurrent neural networks (also called Echo State Networks).
+\cite{hermans2012recurrent} construct deep kernels in a time-series setting, constructing kernels corresponding to infinite-width recurrent neural networks.% (also called Echo State Networks).
 They also propose concatenating the implicit feature vectors from previous time steps with the current inputs, resulting in an architecture analogous to the input-connected architure proposed by \citet{neal1995bayesian}.
 
 \paragraph{Analyses of deep learning}

@@ -231,10 +231,10 @@ $f_1 \sim \GP\left(0, k_1\right)$ & & $f_2 \sim \GP\left(0, k_2\right)$ & & $f_1
 %Draw from product kernel GP prior & Draw from additive kernel GP prior\\
 \end{tabular}
 \caption[Additive kernels correspond to additive functions]{
-Top left: An additive kernel is a sum of kernels.
-Bottom left:  A draw from an additive kernel corresponds to a sum of draws from independent \gp{} priors with the corresponding kernels.
-Top right: A product kernel.
-Bottom right:  A \gp{} prior with a product of kernels does not correspond to a product of draws from \gp{}s.
+\emph{Top left:} An additive kernel is a sum of kernels.
+\emph{Bottom left:}  A draw from an additive kernel corresponds to a sum of draws from independent \gp{} priors with the corresponding kernels.
+\emph{Top right:} A product kernel.
+\emph{Bottom right:}  A \gp{} prior with a product of kernels does not correspond to a product of draws from \gp{}s.
 %In this example, both kernels are composed of one dimensional squared-exponential kernels, but this need not be the case in general.
 }
 \label{fig:kernels}
@@ -948,16 +948,17 @@ If we imagine moving along the edge of a M\"{o}bius strip, that is equivalent to
 Figure~\ref{fig:mobius}a shows an example of a function drawn from such a prior.
 %
 \begin{figure}
-\begin{tabular}[t]{c|c|c}
+\begin{tabular}[t]{ccc}
 %\begin{columns}
 \centering
-Draw from \gp{} prior: &  M\"{o}bius manifold & Sudanese M\"{o}bius strip \\
+Draw from \gp{} prior: &  &  \\
 %$( \Per_1 \times \Per_2 )$ and $f(x,y) = f(y,x)$ & generated parametrically\\
-$\begin{array}{r@{}l@{}}
-&\Per(x_1, x_1') \times \Per(x_2, x_2') \\
-          + & \Per(x_1, x_2') \times \Per(x_2, x_1')
+$\begin{array}{l@{}l@{}}
+&\Per(x_1, x_1') \kerntimes \Per(x_2, x_2') \\
+          \kernplus & \Per(x_1, x_2') \kerntimes \Per(x_2, x_1')
 \end{array}$
-& & generated parametrically\\
+& $\begin{array}{c} \textnormal{ M\"{o}bius strip}  \\ \textnormal{drawn from manifold prior}  \end{array}$
+ & $\begin{array}{c} \textnormal{Sudanese M\"{o}bius strip}  \\ \textnormal{generated parametrically}  \end{array}$\\
 %$ + \Per(x_1, x_2') \times \Per(x_2, x_1')$ & \\
 %\includegraphics[width=0.45\columnwidth, height=0.45\columnwidth, clip=true,trim=2cm 2cm 2cm 1cm]{\topologyfiguresdir/mobius_regression} \\
 \includegraphics[width=0.3\columnwidth, height=0.3\columnwidth, clip=true,trim=3cm 2cm 2cm 2cm]{\topologyfiguresdir/mobius_field} & 
@@ -973,9 +974,10 @@ $\begin{array}{r@{}l@{}}
 \raisebox{1cm}{\includegraphics[width=0.25\columnwidth,clip=true,trim=0cm 0cm 14.6cm 0cm]{\topologyfiguresdir/sudanese-wikipedia}}
 \end{tabular}
 \caption[Generating M\"{o}bius strips]{Generating M\"{o}bius strips.
-Left: By enforcing that the functions mapping from $\mathbb{R}^2$ to $\mathbb{R}^3$ obey the appropriate symmetries, surfaces sampled from the prior have topology corresponding to a M\"{o}bius strip.
+\emph{Left:} A function drawn from a \sgp{} prior obeying the same symmetries as a M\"{o}bius strip.
+\emph{Center:} By enforcing that the functions mapping from $\mathbb{R}^2$ to $\mathbb{R}^3$ obey the appropriate symmetries, surfaces sampled from the prior have topology corresponding to a M\"{o}bius strip.
 M\"{o}bius strips generated this way do not have the familiar shape of a circular flat surface with a half-twist; instead they tend to look like \emph{Sudanese} M\"{o}bius strips \citep{sudanese1984}, whose edge has a circular shape.
-Right: A Sudanese projection of a M\"{o}bius strip.
+\emph{Right:} A Sudanese projection of a M\"{o}bius strip.
 Image adapted from \citep{sudanesepict}.
 }
 \label{fig:mobius}
