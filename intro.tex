@@ -173,6 +173,8 @@ Although they form an extremely limited model class, they are fast, simple, and 
 Gaussian processes can be seen as an extension of linear models which retain these attractive properties.
 %Linear models may seem like a hopelessly simple model class, but they're arguably the most useful modeling tools in existence.
 
+\citet{rasmussen38gaussian} give a thorough introduction to \gp{}s, including many different types of analysis of the properties of this model.
+
 \end{itemize}
 
 
@@ -185,7 +187,7 @@ Gaussian processes can be seen as an extension of linear models which retain the
 \item {\bf Slow inference}
 Computing the matrix inverse in \eqref{eq:gp_marg_lik} and \eqref{eq:predictive} takes $\mathcal{O}(N^3)$ time.
 %and $\mathcal{O}(N^2)$ memory.  
-This problem can now be addressed by approximate inference schemes, [TODO: Citations] and most \gp{} software packages implement several of these.
+This problem can now be addressed by approximate inference schemes, \citep{snelson2006sparse, quinonero2005unifying, hensman2013gaussian} and most \gp{} software packages implement several of these methods \citep{GPML, VanRiiHarJylVeh14}.
 
 \item {\bf Light tails}
 We may wish to use non-Gaussian noise models, for instance in order to be robust to outliers, to perform classification, or for some other form of structured prediction.

@@ -197,8 +197,11 @@ f \sim \GPt{\vzero}{k_1(\vx,\vx') + k_2(\vx,\vx')}
 
 \subsection{Additivity Across Multiple Dimensions}
 
+When modeling functions of multiple dimensions, summing kernels can give rise to additive structure across different dimensions.
+To be more precise, if the kernels being added together are functions only of a subset of input dimensions, then the implied prior over functions decomposes in the same way.
+%
 %\subsection{Additivity in a GP}
-\begin{figure}[ht!]
+\begin{figure}[h!]
 \centering
 \begin{tabular}{ccccc|c}
 \multicolumn{5}{c|}{A sum of two orthogonal} & \multicolumn{1}{c}{Mutliplicative} \\
@@ -236,9 +239,7 @@ Bottom right:  A \gp{} prior with a product of kernels does not correspond to a 
 }
 \label{fig:kernels}
 \end{figure}
-
-When modeling functions of multiple dimensions, summing kernels can give rise to additive structure across different dimensions.
-To be more precise, if the kernels being added together are functions only of a subset of input dimensions, then the implied prior over functions decomposes in the same way.
+%
 For example, if
 %
 \begin{align}
@@ -510,7 +511,7 @@ Plots have same meaning as in figure \ref{fig:basic_kernels}.}
 Multiplying kernels allows us to account for interactions between different input dimensions, or different notions of similarity. 
 %For instance, in multidimensional data, the multiplicative kernel $\SE_1 \times \SE_2$ represents a smoothly varying function of dimensions 1 and 2 which is not constrained to be additive.
 In univariate data, multiplying a kernel by \kSE{} gives a way of converting global structure to local structure. 
-For example, $\Per$ corresponds to globally periodic structure, whereas $\Per \times \SE$ corresponds to locally periodic structure, as shown in row 1 of figure~\ref{fig:kernels}.
+For example, $\Per$ corresponds to globally periodic structure, whereas $\Per \kerntimes \SE$ corresponds to locally periodic structure, as shown in row 1 of figure~\ref{fig:kernels}.
 
 
 Products of $\kSE$ kernels, having a different lengthscale parameter for each dimension, are equivalent to the $\seard$ kernel:
@@ -524,7 +525,7 @@ Products of $\kSE$ kernels, having a different lengthscale parameter for each di
 Where \ARD{} stands for Automatic Relevance Determination .
 
 Since we are applying these operations to the similarity functions rather than the regression functions themselves, compositions of even a few base kernels are able to capture complex relationships in data which do not have a simple parametric form.
-[TODO: flesh this section out]
+%[TODO: flesh this section out]
 
 
 %This is why it is common practice to assume zero mean, since marginalizing over an unknown mean function can be equivalently expressed as a zero-mean \gp{} with a new kernel.
@@ -533,16 +534,37 @@ Since we are applying these operations to the similarity functions rather than t
 %d\subsection{Multiplyingication with a Known Function}
 
 \section{Changepoints}
-An example of aChangepoints can be defined through addition and multiplication with sigmoidal functions:
+A simple example of how multiplication of kernels can give rise to more structure priors is given by chapngepoint kernels.
+Changepoints can be defined through addition and multiplication with sigmoidal functions:
 %
 \begin{align}
-\kCP(\kernel_1, \kernel_2) = \kernel_1 \times \boldsymbol\sigma + \kernel_2 \times \boldsymbol{\bar\sigma}
+\kCP(\kernel_1, \kernel_2) = \kernel_1 \kerntimes \boldsymbol\sigma \kernplus \kernel_2 \kerntimes \boldsymbol{\bar\sigma}
 \label{eq:cp}
 \end{align}
 where $\boldsymbol\sigma = \sigma(x)\sigma(x')$ and $\boldsymbol{\bar\sigma} = (1-\sigma(x))(1-\sigma(x'))$.
 %
 This compound kernel expresses a change from one kernel to another.
 The parameters of the sigmoid determine where, and how rapidly, this change occurs.
+
+\begin{figure}[h!]
+\centering
+\begin{tabular}{rcccc}
+ & $\kCP(\kSE, \kPer)$ & $\kCP(\kSE, \kPer)$ & $\kCP(\kSE, \kSE)$ & $\kCP(\kPer, \kPer)$ \\
+\raisebox{1cm}{f(x)} & \kernpic{../changepoint/draw_1} & \kernpic{../changepoint/draw_2} & \kernpic{../changepoint/draw_3} & \kernpic{../changepoint/draw_4} \\
+& $x$ & $x$ & $x$ & $x$
+%\fixedx & $x -x'$ & \fixedx & \fixedx\\
+%& & & \\
+%\large $\downarrow$ & \large $\downarrow$ & \large $\downarrow$ & \large $\downarrow$  \\
+%\kernpic{lin_times_lin_draws}  & \kernpic{se_times_per_draws_s7} & \kernpic{se_times_lin_draws_s2} & \kernpic{lin_times_per_draws_s2} \\
+%quadratic functions & locally \newline periodic & increasing variation  & growing amplitude \\[10pt]
+\end{tabular}
+\caption[Draws from changepoint priors]
+{ Draws from different priors on changepoints, constructed by adding and multiplying together base kernels with sigmoidal functions.  
+%The x-axis has the same scale for all plots.
+}
+\label{fig:changepoint_examples}
+\end{figure}
+
 We can also express a function which changes structure within some interval - a change window - by replacing $\sigma(x)$ with a product of two sigmoids, one increasing and one decreasing.
 
 \subsection{Multiplication by a Known Function}
@@ -881,11 +903,12 @@ We now give a geometric illustration of the symmetries encoded by different comb
 Priors on functions exhibiting symmetries can be used to create a prior on topological manifolds, by warping a latent surface $\vx$ to an observed surface $\vy = f(\vx)$.
 %The distribution on $\vf$ allows us to put mass on 
 %If we set the input $\vx$ to be a 2-dimensional plane, intro 3 dimensions using a \gp{} encoding certain symmetries, the resulting surfaces will correspon
-To do so, first create a mesh in 2D.
-Next, draw 3 independent functions from a \gp{} prior.
+To build a prior on 2-dimensional manifolds embedded in 3-dimensional space, we simply need a prior on mappings from $\mathbb{R}^2$ to $\mathbb{R}^3$, which we can construct using 3 independent functions $[f_1(\vx), f_2(\vx), f_3(\vx)]$ mapping from $\mathbb{R}^2$ to $\mathbb{R}$, specified with \gp{} priors.
+%Next, draw 3 independent functions from a \gp{} prior.
 % with the relevant symmetries encoded in the kernel.  
-Then, map the 2D mesh through those functions to get 3D coordinates of each point on the mesh.
-[TODO: flesh this out]
+%Then, map the 2D mesh through those functions to get 3D coordinates of each point on the mesh.
+%[TODO: flesh this out]
+Symmetries in $[f_1, f_2, f_3]$ will connect different parts of the manifolds, giving rise to non-trivial topologies on the sampled surfaces.
 
 This construction is similar in spirit to the \gp{} latent variable model (\gplvm{}) of \citet{lawrence2005probabilistic}, which learns a latent embedding of the data into a low-dimensional space, given a \gp{} prior on the mapping from the latent space to the observed space.%and constructs a fixed kernel structure over that space.
 %The GP-LVM will be discussed in further detail in chapter ...
