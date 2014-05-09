@@ -68,12 +68,6 @@ Implementation is also much simpler.
 %Although this kernel amounts to a sum over an exponential number of terms, we show how to compute this kernel efficiently, and introduce a parameterization which limits the number of parameters to $\mathcal{O}(D)$.
 %A Gaussian process with this kernel function (an additive \gp{}) constitutes a powerful model that allows one to automatically determine which orders of interaction are important.
 %We show that this model can significantly improve modeling efficacy, and has major advantages for model interpretability.
-%This model is also extremely simple to implement, and we provide example code.
-
-
-
-%We can see that a \gp{} with a first-order additive kernel is an example of a \GAM{}:  Each function drawn from this model is a sum of orthogonal one-dimensional functions.
-%Compared to functions drawn from the higher-order GP, draws from the first-order GP have more long-range structure.
 
   %The only weaknesses with this method are due to over-fitting the kernel parameters, the kernel not being rich enough to capture the structure exhibited by the data, or due to the optimization process not finding the global optima of the parameters.
 
@@ -164,7 +158,7 @@ housing  & $0.1 $ & $0.6 $ & ${\bf 80.6 }$ & $1.4 $ & $1.8 $ & $0.8 $ & $0.7 $ &
 % End automatically generated LaTeX
 
 On different datasets, the dominant order of interaction estimated by the additive model varies widely.
-An additive \gp{} with all of its variance coming from the 1st order is equivalent to a \GAM{}; an additive \gp{} with all its variance coming from the $D$th order is equivalent to a \SEGP{}.
+An additive \gp{} with all of its variance coming from the 1st order is equivalent to a sum of one-dimensional functions; an additive \gp{} with all its variance coming from the $D$th order is equivalent to a \SEGP{}.
 %
 % We can see that the length-scales learnt are not necessarily the same.  This is because, in a normal ARD-style kernel, the length-scale of a dimension is conflated with the variance of the function along that dimension.  The additive kernel separates these two parameters.
 %
@@ -182,12 +176,6 @@ If low-dimensional additive structure is not present, the kernel parameters can 
 
 %To push the analogy, using a product kernel is analogous to performing polynomial regression when we are forced to use a high-degree polynomial, even when the data do not support it.  One could also view the Gaussian kernel as one which makes the pessimistic assumption that the function we are model can vary independently for each new combination of variables observed.
 
-
-
-
-
-%\subsection{Allowable Base Kernels}
-%Any one-dimensional base kernel is allowable, and each dimension can use a different base kernel.  One could even specify a mixture of base kernels for each dimension, allowing the parameters to specify the mixture weights.
 
 
 \subsection{Efficient Evaluation of Additive Kernels}
@@ -287,8 +275,9 @@ The third-order kernel only considers nearby points relevant, while the lower-or
 \end{figure}
 
 Additive kernels have a much more complex structure, and allow extrapolation based on distant parts of the input space, without spreading the mass of the kernel over the whole space.  For example, additive kernels of the second order allow strong non-local interactions between any points which are similar in any two input dimensions.
-Figure \ref{fig:kernels3d} provides a geometric comparison between squared-exponential kernels and additive kernels in 3 dimensions.
+\Cref{fig:kernels3d} provides a geometric comparison between squared-exponential kernels and additive kernels in 3 dimensions.
 
+In \cref{ch:kernels}, \cref{sec:additivity-multiple-dimensions} gives an example of how additive kernels exptrapolate differently than local kernels.
 
 
 \section{Dropout in Gaussian Processes}
@@ -299,14 +288,14 @@ To maintain similar overall activation levels, weights are multiplied by $\nicef
 At test time, the set of models defined by all possible ways of dropping-out neurons is averaged over, usually in an approximate way.
 
 \citet{baldi2013understanding} and \citet{wang2013fast} analyzed dropout in terms of the effective prior induced by this procedure in several models, such as linear and logistic regression.
-In this section, we examine the priors on functions that result from performing dropout in the one-hidden-layer neural network implicitly defined by a \gp{}.% (equation \eqref{eq:one-layer-nn}).
+In this section, we examine the priors on functions that result from performing dropout in the one-hidden-layer neural network implicitly defined by a \gp{}.
 
 Recall that \gp{}s can be derived as an infinitely-wide one-layer neural network, with fixed activation functions $\feat(\vx)$, and independent random weights $\valpha$ with finite variance $\sigma^2_{\valpha}$:
 %
 \begin{align}
 & f(\vx) = \frac{1}{K}{\mathbf \vnetweights}\tra \hPhi(\vx) = \frac{1}{K} \sum_{i=1}^K \netweights_i \hphi_i(\vx)
 \\
-\implies & f(\vx) \distas{} \GPt{\expectargs{}{\valpha\tra \feat(\vx)}}{\sigma^2_{\valpha} \feat(\vx)\tra\feat(\vx')}
+\implies & f(\vx) \distas{K \to \infty} \GPt{\expectargs{}{\valpha\tra \feat(\vx)}}{\sigma^2_{\valpha} \feat(\vx)\tra\feat(\vx')}
 \label{eq:one-layer-gp-two}
 \end{align}
 %
@@ -360,9 +349,6 @@ f(\vx) \sim \textnormal{\gp} \left(0, \frac{1}{2^{-2D}} \sum_{\vr \in \{0,1\}^D}
 \label{eq:additive-gps}
 \end{align}
 
-%As noted above, a \gp{} whose covariance is a sum of kernels corresponds to a sum of functions, each distributed according to a \gp{}.  Therefore, \eqref{eq:additive-gps} describes a sum of $2^D$ functions, each depending on a different subset of the inputs.
-%This model class was studied by \citet{duvenaud2011additive11}, who showed that exact inference in these models can be performed in $\mathcal{O}(N^2 D^2 + N^3)$.
-%Thus, the dropout prior is closely related to a model which learns many functions, each of which only depends on a subset of the inputs.
 Therefore, dropout on the inputs to a \gp{} can be approximated by the all-subsets additive kernel.
 This suggests an interpretation of additive kernels as an approximation to a mixture of models, each of which depends on only a subset of the input variables.
 
@@ -374,7 +360,6 @@ We try to give a broad overview in this section.
 
 \subsubsection{Additive \sgp{}s}
 
-%\paragraph{Projection-pursuit Gaussian Process Regression}
 Since the non-local structure capturable by additive kernels is necessarily axis-aligned, we can naturally consider that an initial transformation of the input space might allow us to recover non-axis aligned additivity in functions.
 This avenue was explored by \citet{gilboa2013scaling}, who developed a linearly-transformed first-order additive \gp{} model, called projection-pursuit \gp{} regression.  They further showed that inference in this model was possible in $\mathcal{O}(N)$ time.
 
@@ -387,18 +372,16 @@ Our experiments show that often, the intermediate degrees of interaction contrib
 A related functional \ANOVA{} \gp{} model \citep{kaufman2010bayesian} decomposes the \emph{mean} function into a weighted sum of \gp{}s.
 However, the effect of a particular degree of interaction cannot be quantified by that approach.
 Also, computationally, the Gibbs sampling approach used in \citep{kaufman2010bayesian} is disadvantageous.
-%[TODO:  read and mention  and \citep{friedman1981projection} from Hannes]
+%[TODO: read and mention \citep{friedman1981projection} from Hannes]
 
-\citet{christoudias2009bayesian} previously showed how mixtures of kernels can be learnt by gradient descent in the Gaussian process framework.  They call this \emph{Bayesian localized multiple kernel learning}.
+\citet{christoudias2009bayesian} previously showed how mixtures of kernels can be learnt by gradient descent in the Gaussian process framework.
+They call this \emph{Bayesian localized multiple kernel learning}.
 However, their approach learns a mixture over a small, fixed set of kernels, while our method learns a mixture over all possible products of those kernels.
 
 
 \subsubsection{Hierarchical Kernel Learning}
 
-A similar model class has been recently explored by \citet{DBLP:journals/corr/abs-0909-0844} called Hierarchical Kernel Learning (\HKL{}).
-%\HKL{} explores a similar class of models, and sidesteps the possibly exponential number of interaction terms by cleverly selecting only a tractable subset.
-%However, this method suffers considerably from the fact that cross-validation must be used to set kernel parameters.
-%In addition, the machinery necessary to train these models is immense.
+A similar model class was recently explored by \citet{DBLP:journals/corr/abs-0909-0844} called Hierarchical Kernel Learning (\HKL{}).
 %Finally, on real datasets, HKL is outperformed by the standard \SEGP{} \citep{DBLP:journals/corr/abs-0909-0844}.
 \HKL{} uses a regularized optimization framework to learn a weighted sum over an exponential number of kernels which can be computed in polynomial time.
 %
@@ -456,7 +439,7 @@ They too allowed only one order to be active, and set parameters by cross-valida
 %  The order of the kernel, kernel parameters, the allowable regression error $\epsilon$, and the cost hyperparameter $c$ were all set by a lengthy cross-validation process.
 
 %\subsection{Smoothing Splines ANOVA}
-\subsubsection{Generalizations}
+\subsubsection{Other Related Models}
 
 A closely related procedure from \citet{wahba1990spline} is smoothing-splines \ANOVA{} (\SSANOVA{}).
 An \SSANOVA{} model is a weighted sum of splines along each dimension, plus a sum of splines over all pairs of dimensions, all triplets, etc, with each individual interaction term having a separate weighting parameter.
@@ -493,7 +476,7 @@ In our experiments, we parametrized each one-dimensional kernel with only the le
 We compare six different methods.
 In the results tables below, \gp{} Additive refers to a \gp{} using the additive kernel with squared-exp base kernels.
 For speed, we limited the maximum order of interaction in the additive kernels to 10.
-\gp{}-\GAM{} denotes an additive \gp{} model with only first-order interactions.
+\gp{}-1st denotes an additive \gp{} model with only first-order interactions - a sum of one-dimensional kernels.
 \gp{} Squared-Exp is a \gp{} model with a squared-exponential \ARD{} kernel.
 \HKL{} was run using the all-subsets kernel, which corresponds to the same set of kernels as considered by the additive \gp{} with a squared-exp base kernel.
 
@@ -505,6 +488,7 @@ For the regression experiments, we also compared against the structure search me
 
 \subsection{Datasets}
 
+We compared these methods on a diverse set of regression and classification datasets from the UCI repository~\citep{UCI}.  Their size and dimension are given in \cref{table:regression-dataset-stats,table:classification-dataset-stats}:
 
 \begin{table}[h]
 \caption{Regression Dataset Statistics}
@@ -512,58 +496,54 @@ For the regression experiments, we also compared against the structure search me
 \begin{center}
 \begin{tabular}{l | lllll}
 Method & bach & concrete & pumadyn & servo & housing \\ \hline
-D      & 8    & 8        & 8       & 4     & 13 \\
-N      & 200  & 500      & 512     & 167   & 506
+Dimension      & 8    & 8        & 8       & 4     & 13 \\
+Number of datapoints       & 200  & 500      & 512     & 167   & 506
 \end{tabular}
 \end{center}
+\label{table:regression-dataset-stats}
 \end{table}
-
-
-
+%
 \begin{table}[h]
 \caption{Classification Dataset Statistics}
 \label{tbl:Classification Dataset Statistics}
 \begin{center}
 \begin{tabular}{l | llllll}
 Method & breast & pima & sonar & ionosphere & liver & heart\\ \hline
-D      & 9      & 8    & 60    & 32         & 6     & 13 \\
-N      & 449    & 768  & 208   & 351        & 345   & 297
+Dimension      & 9      & 8    & 60    & 32         & 6     & 13 \\
+Number of datapoints      & 449    & 768  & 208   & 351        & 345   & 297
 \end{tabular}
 \end{center}
+\label{table:classification-dataset-stats}
 \end{table}
-
-
-
-
 
 \subsubsection{Bach Synthetic Dataset}
 In addition to standard UCI repository datasets, we generated a synthetic dataset following the same recipe as \citet{DBLP:journals/corr/abs-0909-0844}.
-This dataset was designed by \citet{DBLP:journals/corr/abs-0909-0844} to demonstrate the advantages of \HKL{} over \gp{}-\ARD{}.
+This dataset was designed to demonstrate the advantages of \HKL{} over \gp{}-\SE{}.
 %From a covariance matrix drawn from a Wishart distribution with 1024 degrees of freedom, we select 8 variables.
 It is generated by passing correlated Gaussian-distributed inputs $x_1, x_2, \dots, x_8$ through the quadratic function
 %
 \begin{align}
-f(\vx) = \sum_{i=1}^4 \sum_{j=1+1}^4 x_i x_j + \epsilon \qquad    \epsilon \sim \Nt{0}{\sigma_\epsilon}
+f(\vx) = \sum_{i=1}^4 \sum_{j=1+1}^4 x_i x_j + \epsilon \qquad \epsilon \sim \Nt{0}{\sigma_\epsilon}
 \end{align}
 %
 %which sums all 2-way products of the first 4 variables, and adds Gaussian noise $\epsilon$.
 This dataset is well-modeled by an additive kernel which includes all two-way interactions over the first 4 variables, but does not depend on the extra 4 irrelevant inputs.%, as well as the higher-order interactions.
 %TODO: Move description to grammar experiments?
 
-If the dataset is large enough, \HKL{} can construct a hull around only those subsets of cross terms that are optimal for predicting the output.
-\gp{}-\ARD{}, in contrast, can learn to ignore the noisy copy variables, but cannot learn to ignore the higher-term interactions between the predictive variables.
+If the dataset is large enough, \HKL{} can construct a hull around only the 16 cross-terms optimal for predicting the output.
+\gp{}-\SE{}, in contrast, can learn to ignore the noisy copy variables, but cannot learn to ignore the higher-order interactions between dimensions.
 However, a \gp{} with an additive kernel can learn both to ignore irrelevant variables, and to ignore missing orders of interaction.
 With enough data, the marginal likelihood will favour hyperparameters specifying such a model.
 %In this example, the additive \gp{} is able to recover the relevant structure.
  
  
 \subsection{Results}
-Tables \ref{tbl:Regression Mean Squared Error}, \ref{tbl:Regression Negative Log Likelihood}, \ref{tbl:Classification Percent Error} and \ref{tbl:Classification Negative Log Likelihood} show mean performance across 10 train-test splits.
+\Cref{tbl:Regression Mean Squared Error,tbl:Regression Negative Log Likelihood,tbl:Classification Percent Error,tbl:Classification Negative Log Likelihood} show mean performance across 10 train-test splits.
 Because \HKL{} does not specify a noise model, it could not be included in the likelihood comparisons.
 
 % --- Automatically generated by resultsToLatex2.m ---
 % Exported at 19-Jan-2012 10:55:19
-\begin{table}[h]
+\begin{table}[h!]
 \caption[Comparison of predictive error on regression problems]
 {Regression Mean Squared Error}
 \label{tbl:Regression Mean Squared Error}
@@ -571,7 +551,7 @@ Because \HKL{} does not specify a noise model, it could not be included in the l
 \begin{tabular}{l | r r r r r}
 Method & \rotatebox{0}{ bach  }  & \rotatebox{0}{ concrete  }  & \rotatebox{0}{ pumadyn-8nh }  & \rotatebox{0}{ servo }  & \rotatebox{0}{ housing }  \\ \hline
 Linear Regression & $1.031$ & $0.404$ & $0.641$ & $0.523$ & $0.289$ \\
-\gp{} \GAM{} & $1.259$ & $0.149$ & $0.598$ & $0.281$ & $0.161$ \\
+\gp{}-1st & $1.259$ & $0.149$ & $0.598$ & $0.281$ & $0.161$ \\
 \HKL{} & $\mathbf{0.199}$ & $0.147$ & $0.346$ & $0.199$ & $0.151$ \\
 \gp{} Squared-exp & $\mathbf{0.045}$ & $0.157$ & $0.317$ & $0.126$ & $\mathbf{0.092}$ \\
 \gp{} Additive & $\mathbf{0.045}$ & $\mathbf{0.089}$ & $\mathbf{0.316}$ & $\mathbf{0.110}$ & $0.102$ \\
@@ -583,7 +563,7 @@ Structure Search & $\mathbf{0.044}$ & $\mathbf{0.087}$ & $\mathbf{0.315}$ & $\ma
 %
 % --- Automatically generated by resultsToLatex2.m ---
 % Exported at 19-Jan-2012 10:55:19
-\begin{table}[h]
+\begin{table}[h!]
 \caption[Comparison of predictive likelihood on regression problems]
 {Regression Negative Log Likelihood}
 \label{tbl:Regression Negative Log Likelihood}
@@ -591,7 +571,7 @@ Structure Search & $\mathbf{0.044}$ & $\mathbf{0.087}$ & $\mathbf{0.315}$ & $\ma
 \begin{tabular}{l | r r r r r}
 Method & \rotatebox{0}{ bach  }  & \rotatebox{0}{ concrete  }  & \rotatebox{0}{ pumadyn-8nh }  & \rotatebox{0}{ servo }  & \rotatebox{0}{ housing }  \\ \hline
 Linear Regression & $2.430$ & $1.403$ & $1.881$ & $1.678$ & $1.052$ \\
-\gp{} \GAM{} & $1.708$ & $0.467$ & $1.195$ & $0.800$ & $0.457$ \\
+\gp{}-1st & $1.708$ & $0.467$ & $1.195$ & $0.800$ & $0.457$ \\
 GP Squared-exp & $\mathbf{-0.131}$ & $0.398$ & $0.843$ & $0.429$ & $0.207$ \\
 GP Additive & $\mathbf{-0.131}$ & $\mathbf{0.114}$ & $\mathbf{0.841}$ & $\mathbf{0.309}$ & $0.194$ \\
 Structure Search & $\mathbf{-0.141}$ & $\mathbf{0.065}$ & $\mathbf{0.840}$ & $\mathbf{0.265}$ & $\mathbf{0.059}$
@@ -602,7 +582,7 @@ Structure Search & $\mathbf{-0.141}$ & $\mathbf{0.065}$ & $\mathbf{0.840}$ & $\m
 %
 % --- Automatically generated by resultsToLatex2.m ---
 % Exported at 03-Jun-2011 00:23:25
-\begin{table}[h]
+\begin{table}[h!]
 \caption[Comparison of predictive error on classification problems]
 {Classification percent error}
 \label{tbl:Classification Percent Error}
@@ -610,7 +590,7 @@ Structure Search & $\mathbf{-0.141}$ & $\mathbf{0.065}$ & $\mathbf{0.840}$ & $\m
 \begin{tabular}{l | r r r r r r}
 Method & \rotatebox{0}{ breast }  & \rotatebox{0}{ pima }  & \rotatebox{0}{ sonar }  & \rotatebox{0}{ ionosphere }  & \rotatebox{0}{ liver }  & \rotatebox{0}{ heart }  \\ \hline
 Logistic Regression & $7.611$ & $24.392$ & $26.786$ & $16.810$ & $45.060$ & $\mathbf{16.082}$ \\
-\gp{} \GAM{} & $\mathbf{5.189}$ & $\mathbf{22.419}$ & $\mathbf{15.786}$ & $\mathbf{8.524}$ & $\mathbf{29.842}$ & $\mathbf{16.839}$ \\
+\gp{}-1st & $\mathbf{5.189}$ & $\mathbf{22.419}$ & $\mathbf{15.786}$ & $\mathbf{8.524}$ & $\mathbf{29.842}$ & $\mathbf{16.839}$ \\
 \HKL{} & $\mathbf{5.377}$ & $24.261$ & $\mathbf{21.000}$ & $9.119$ & $\mathbf{27.270}$ & $\mathbf{18.975}$ \\
 \gp{} Squared-exp & $\mathbf{4.734}$ & $\mathbf{23.722}$ & $\mathbf{16.357}$ & $\mathbf{6.833}$ & $\mathbf{31.237}$ & $\mathbf{20.642}$ \\
 \gp{} Additive & $\mathbf{5.566}$ & $\mathbf{23.076}$ & $\mathbf{15.714}$ & $\mathbf{7.976}$ & $\mathbf{30.060}$ & $\mathbf{18.496}$ \\
@@ -618,11 +598,10 @@ Logistic Regression & $7.611$ & $24.392$ & $26.786$ & $16.810$ & $45.060$ & $\ma
 \end{center}
 \end{table}
 % End automatically generated LaTeX
-
-
+%
 % --- Automatically generated by resultsToLatex2.m ---
 % Exported at 03-Jun-2011 00:23:28
-\begin{table}[h]
+\begin{table}[h!]
 \caption[Comparison of predictive likelihood on classification problems]
 {Classification negative log-likelihood}
 \label{tbl:Classification Negative Log Likelihood}
@@ -630,7 +609,7 @@ Logistic Regression & $7.611$ & $24.392$ & $26.786$ & $16.810$ & $45.060$ & $\ma
 \begin{tabular}{l | r r r r r r}
 Method & \rotatebox{0}{ breast }  & \rotatebox{0}{ pima }  & \rotatebox{0}{ sonar }  & \rotatebox{0}{ ionosphere }  & \rotatebox{0}{ liver }  & \rotatebox{0}{ heart }  \\ \hline
 Logistic Regression & $0.247$ & $0.560$ & $4.609$ & $0.878$ & $0.864$ & $0.575$ \\
-\gp{} \GAM{} & $\mathbf{0.163}$ & $\mathbf{0.461}$ & $\mathbf{0.377}$ & $\mathbf{0.312}$ & $\mathbf{0.569}$ & $\mathbf{0.393}$ \\
+\gp{}-1st & $\mathbf{0.163}$ & $\mathbf{0.461}$ & $\mathbf{0.377}$ & $\mathbf{0.312}$ & $\mathbf{0.569}$ & $\mathbf{0.393}$ \\
 \gp{} Squared-exp & $\mathbf{0.146}$ & $0.478$ & $\mathbf{0.425}$ & $\mathbf{0.236}$ & $\mathbf{0.601}$ & $0.480$ \\
 \gp{} Additive & $\mathbf{0.150}$ & $\mathbf{0.466}$ & $\mathbf{0.409}$ & $\mathbf{0.295}$ & $\mathbf{0.588}$ & $\mathbf{0.415}$ \\
 \end{tabular}
@@ -639,13 +618,17 @@ Logistic Regression & $0.247$ & $0.560$ & $4.609$ & $0.878$ & $0.864$ & $0.575$ 
 % End automatically generated LaTeX
 
 The model with best performance on each dataset is in bold, along with all other models that were not significantly different under a paired $t$-test.
-The additive model never performs significantly worse than any other model, and sometimes performs significantly better than all other models.
-The difference between all methods is larger in the case of regression experiments.
-The performance of \HKL{} is consistent with the results in \citep{DBLP:journals/corr/abs-0909-0844}, performing competitively but slightly worse than \SE{}-\gp{}.%  This is especially clear in the case of the regression tasks.
+%The additive model never performs significantly worse than any other model, and sometimes performs significantly better than all other models.
+The additive and structure search methods usually outperformed the other methods, especially on regression problems.
+The structure search outperforms the additive \gp{}, but at the cost of a slow search over kernels.
 
-The additive \gp{} performed best on datasets well-explained by low orders of interaction, and approximately as well as the \SE{}-\gp{} model on datasets which were well explained by high orders of interaction (see table \ref{tbl:all_orders}).
-Because the additive \gp{} is a superset of both the \gp{}-\GAM{} model and the \kSE{}-\gp{} model, instances where the additive \gp{} performs slightly worse are presumably due to over-fitting, or due to the hyperparameter optimization becoming stuck in a local maximum. % Absence of over-fitting may explain the relatively strong performance of GP-GAM on classification tasks.  
-Performance ccould be expected to benefit from integrating over the kernel parameters.
+%The difference between all methods is larger in the case of regression experiments.
+
+The additive \gp{} performed best on datasets well-explained by low orders of interaction, and approximately as well as the \SE{}-\gp{} model on datasets which were well explained by high orders of interaction (see \cref{tbl:all_orders}).
+Because the additive \gp{} is a superset of both the \gp{}-1st model and the \kSE{}-\gp{} model, instances where the additive \gp{} performs slightly worse are presumably due to over-fitting, or due to the hyperparameter optimization becoming stuck in a local maximum. % Absence of over-fitting may explain the relatively strong performance of GP-GAM on classification tasks.  
+Performance could be expected to benefit from approximately integrating over the kernel parameters.
+
+The performance of \HKL{} is consistent with the results in \citep{DBLP:journals/corr/abs-0909-0844}, performing competitively but slightly worse than \SE{}-\gp{}.%  This is especially clear in the case of the regression tasks.
 
 
 \subsection{Source Code}
