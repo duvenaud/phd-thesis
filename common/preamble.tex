@@ -378,3 +378,16 @@
 
 \newcommand{\underwrite}[2]{{\underbrace{#1}_{\textnormal{#2}}}}
 
+
+
+% For kernel figures
+\newcommand{\fhbig}{2cm}%
+\newcommand{\fwbig}{3cm}%
+\newcommand{\kernpic}[1]{\includegraphics[height=\fhbig,width=\fwbig]{\grammarfiguresdir/structure_examples/#1}}%
+\newcommand{\kernpicr}[1]{\rotatebox{90}{\includegraphics[height=\fwbig,width=\fhbig]{\grammarfiguresdir/structure_examples/#1}}}%
+\newcommand{\addkernpic}[1]{{\includegraphics[height=\fhbig,width=\fwbig]{\grammarfiguresdir/additive_multi_d/#1}}}%
+\newcommand{\largeplus}{\tabbox{{\Large+}}}%
+\newcommand{\largeeq}{\tabbox{{\Large=}}}%
+\newcommand{\largetimes}{\tabbox{{\Large$\times$}}}%
+\newcommand{\fixedx}{$x$ (with $x' = 1$)}%
+

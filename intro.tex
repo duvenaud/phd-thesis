@@ -103,7 +103,8 @@ To be concrete, here's the marginal likelihood under a \gp{} of observing a set 
 %
 \begin{align}
 p(\funcval | \vX, \mu(\cdot), k(\cdot, \cdot)) & = \N{\funcval}{\mu(\vX)}{k(\vX, \vX)} \nonumber\\
-& = (2\pi)^{-\frac{N}{2}} \underwrite{|k(\vX, \vX)|^{-\frac{1}{2}}\,}{discourages flexiblity} \underwrite{\exp \left\{ -\frac{1}{2} \left( \funcval - \boldsymbol\mu(\vX) \right)\tra k(\vX, \vX)\inv \left(\funcval - \boldsymbol\mu(\vX) \right) \right\}}{encourages fit with data}
+& = (2\pi)^{-\frac{N}{2}} \underwrite{ |k(\vX, \vX)|^{-\frac{1}{2}}\,}{\footnotesize discourages flexiblity} \nonumber \\
+& \qquad \times \underwrite{\exp \left\{ -\frac{1}{2} \left( \funcval - \boldsymbol\mu(\vX) \right)\tra k(\vX, \vX)\inv \left(\funcval - \boldsymbol\mu(\vX) \right) \right\}}{\footnotesize encourages fit with data}
 \label{eq:gp_marg_lik}
 \end{align}
 %
@@ -114,9 +115,9 @@ Even though we don't need to consider any other locations when computing the lik
 The predictive distribution at a test point $\testpoint$ has a simple form:
 %
 \begin{align}
-& p( f(\testpoint) | \funcval, \vX, \mu(\cdot), k(\cdot, \cdot)) \nonumber\\
-& = \mathcal{N} \big( f(\testpoint) | \underwrite{\mu(\testpoint) + k(\testpoint, \vX) k(\vX, \vX)\inv \left( \funcval - \mu(\vX) \right) }{predictive mean goes through observations}, 
-\underwrite{k(\testpoint, \testpoint) - k(\testpoint, \vX) k(\vX, \vX)\inv k(\vX, \testpoint)}{predictive variance shrinks given more data}
+p( f(\testpoint) | \funcval, \vX, \mu(\cdot), k(\cdot, \cdot))
+ = \mathcal{N} \big( f(\testpoint) \given & \underwrite{\mu(\testpoint) + k(\testpoint, \vX) k(\vX, \vX)\inv \left( \funcval - \mu(\vX) \right) }{\footnotesize predictive mean goes through observations}, \nonumber \\
+ & \underwrite{k(\testpoint, \testpoint) - k(\testpoint, \vX) k(\vX, \vX)\inv k(\vX, \testpoint)}{\footnotesize predictive variance shrinks given more data}
  \big)
 \label{eq:predictive}
 \end{align}

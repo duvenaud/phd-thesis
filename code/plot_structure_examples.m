@@ -1,4 +1,4 @@
-function plot_structure_examples()
+function plot_structure_examples(seed)
 
 % A script to make a series of plots demonstrating how structure can be
 % reflected in a kernel.
@@ -8,12 +8,14 @@ function plot_structure_examples()
 % David Duvenaud
 % Jan 2013
 
-seed=5;   % fixing the seed of the random generators
+if nargin < 1; seed = 1; end
 randn('state',seed);
 rand('state',seed);
 
 savefigs = true;
 figpath = '../figures/grammar/structure_examples/';
+
+addpath(genpath('utils'))
 
 % Make up some data
 %X = [ -2 -1 0 1 2 ]' .* 2;
@@ -45,8 +47,15 @@ longse_kernel = @(x,y) longse_output_var*exp( - 0.5 * ( ( x - y ) .^ 2 ) ./ long
 
 per_length_scale = 1;
 per_period = 4;
-per_outout_var = 1.1;
-per_kernel = @(x,y) per_outout_var*exp( - 2 * ( sin(pi*( x - y )./per_period) .^ 2 ) ./ per_length_scale^2 );
+per_output_var = 1.1;
+per_kernel = @(x,y) per_output_var*exp( - 2 * ( sin(pi*( x - y )./per_period) .^ 2 ) ./ per_length_scale^2 );
+
+cos_period = 4;
+cos_output_var = 1.1;
+cos_kernel = @(x,y) cos_output_var*cos( 2 * pi * (  x - y )./cos_period);
+
+wn_output_var = 1.1;
+wn_kernel = @(x,y) wn_output_var*double(  x == y );
 
 rq_length_scale = 2.5;
 rq_outout_var = 2;
@@ -72,7 +81,7 @@ longse_plus_se = @(x,y) longse_kernel(x, y) + se_kernel(x, y);
 %            'lin_times_per', 'lin_plus_per', 'lin_times_lin', ...
 %            'longse_times_per', 'longse_plus_per', 'longse_times_lin', ...
 %            'rq_kernel','c_kernel'};
-kernel_names = {'longse_plus_se'};
+kernel_names = {'wn_kernel'};
 
 % Automatically build kernel names from function names.
 for i = 1:numel(kernel_names)
@@ -107,7 +116,7 @@ for k = 1:numel(kernels)
     samples_plot( xrange, samples, [1:n_samples] );
 
     if savefigs
-        save2pdf([ figpath, kernel_names{k} '_draws_s7.pdf'], gcf, 600, true);
+        save2pdf([ figpath, kernel_names{k} '_draws_s', int2str(seed), '.pdf'], gcf, 600, true);
     end
     pause(0.01);
     drawnow;    

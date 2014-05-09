@@ -87,20 +87,47 @@ The next four sections of this chapter describe the mechanisms we use to produce
 As shown in Chapter~\ref{ch:kernels}, we can construct a wide variety of kernel structures compositionally by adding and multiplying a small number of base kernels.
 We can therefore define a language of regression models by specifying a language of kernels.
 
-The elements of this language are a set of  base kernels capturing different function properties, and a set of
+The elements of this language are a set of base kernels capturing different function properties, and a set of
 composition rules which combine kernels to yield other valid kernels.
-Our base kernels are white noise ($\kWN$), constant ($\kC$), linear ($\kLin$), squared-exponential ($\kSE$), rational-quadratic ($\kRQ$), sigmoidal ($\kSig$) and periodic ($\kPer$).
+In this chapter, we'll use such base kernels as white noise ($\kWN$), constant ($\kC$), linear ($\kLin$), squared-exponential ($\kSE$), rational-quadratic ($\kRQ$), sigmoidal ($\kSig$) and periodic ($\kPer$).
 %, which on their own encode for uncorrelated noise, constant functions, linear functions, smooth functions and periodic functions respectively.
-%\footnote{Definitions of kernels are in the supplementary material.}.
-The composition rules are addition and multiplication:
+
+%
+\begin{table}[h]%
+\centering
+\begin{tabular}{cccc}
+Kernel name: & Rational quadratic (\kRQ) & Cosine ($\cos$) & White noise (\kLin) \\[10pt]
+$k(x, x') =$ & $\exp\left(-\frac{(\inputVar - \inputVar')^2}{2\ell^2}\right)$ &
+$\cos\left(\frac{2 \pi (x - x')}{p}\right)$ &
+$\delta(\inputVar - \inputVar')$ \\[14pt]
+\raisebox{1cm}{Plot of kernel:} & \kernpic{rq_kernel} & \kernpic{cos_kernel} & \kernpic{wn_kernel}\\
+& $x -x'$ & $x -x'$ & \fixedx \\
+%& & & \\
+ & \large $\downarrow$ & \large $\downarrow$ & \large $\downarrow$  \\
+\raisebox{1cm}{Samples from prior:} & \kernpic{rq_kernel_draws_s4} & \kernpic{cos_kernel_draws_s1} & \kernpic{wn_kernel_draws_s1} \\
+Type of structure: & multiscale variation & sine waves & uncorrelated noise\\[10pt]
+\end{tabular}
+\caption[Some other basic kernels]
+{New base kernels introduced in this chapter, and the types of structure they encode.
+More interesting kernels can be constructed by adding and multiplying base kernels together.
+%Left and third columns: base kernels $k(\cdot,0)$.
+%Second and fourth columns: draws from a \sgp{} with each repective kernel.
+%The x-axis has the same range on all plots.
+}
+\label{fig:basic_kernels}
+\end{table}
+%
+To specify an open-ended language of structured kernels, we'll consider the set of all kernels that can be built by adding and multiplying these base kernels together:
 \begin{align}
-k_1 + k_2 =      & \,\, k_1(\vx, \vx') + k_2(\vx, \vx') \\
-k_1 \times k_2 = & \,\, k_1(\vx, \vx') \times k_2(\vx, \vx')
+%k_1 + k_2 =      & \,\, k_1(\vx, \vx') + k_2(\vx, \vx') \\
+%k_1 \times k_2 = & \,\, k_1(\vx, \vx') \times k_2(\vx, \vx') \\
+(k_1 + k_2)(\vx, \vx') =& \,\, k_1(\vx, \vx') + k_2(\vx, \vx')\\
+(k_1 \times k_2)(\vx, \vx') =& \,\, k_1(\vx, \vx') \times k_2(\vx, \vx')
 \end{align}
 
 
-We have found that incorporating changepoints into the language is essential for realistic models of time series (\eg figure~\ref{fig:periodic}).
-[todo: expand a little]
+%We have found that incorporating changepoints into the language is essential for realistic models of time series (\eg figure~\ref{fig:periodic}).
+%[todo: expand a little]
 
 
 % Moved to kernels chapter.
@@ -495,10 +522,8 @@ Our framework takes a similar approach, but in a supervised setting.
 
 
 
-
-\section{Predictive Accuracy On Time Series}
+\section{Experiments}
 \label{sec:numerical}
-
 
 \subsection{Interpretability versus Accuracy}
 
@@ -509,15 +534,17 @@ We experimented with not allowing parentheses during the search, discouraging ne
 We call this procedure \procedurename{}-interpretability, in contrast to the unrestricted version of the search, \procedurename{}-accuracy.
 
 
+\subsection{Predictive Accuracy On Time Series}
 
-\subsection{Datasets}
+
+%\subsubsection{Datasets}
 
 We evaluate the performance of the algorithms listed below on 13 real time-series from various domains from the time series data library \citep{TSDL}.
 % plots of the data can be found at the beginning of the reports in the supplementary material.
 
 
 
-\subsection{Algorithms}
+\subsubsection{Algorithms}
 
 We compare \procedurename{} to equation learning using Eureqa \citep{Eureqa}, as well as six other regression algorithms: linear regression, \gp{} regression with a single $\kSE$ kernel (squared exponential), a Bayesian variant of multiple kernel learning (MKL) \citep[e.g.][]{bach2004multiple}, change point modeling \citep[e.g.][]{garnett2010sequential, saatcci2010gaussian, FoxDunson:NIPS2012}, spectral mixture kernels \citep{WilAda13} (spectral kernels) and trend-cyclical-irregular models \citep[e.g.][]{lind2006basic}.
 
@@ -533,7 +560,7 @@ Constructing a language of autoregression time-series models would be an interes
 
 
 
-\subsection{Extrapolation}
+\subsubsection{Extrapolation}
 
 To test extrapolation we trained all algorithms on the first 90\% of the data, predicted the remaining 10\% and then computed the root mean squared error (\RMSE{}).
 The \RMSE{}s are then standardised by dividing by the smallest \RMSE{} for each data set so that the best performance on each data set will have a value of 1.
@@ -558,9 +585,9 @@ Despite searching over a rich model class, Eureqa performs relatively poorly, si
 Not shown on the plot are large outliers for spectral kernels, Eureqa, squared exponential and linear regression with values of 11, 493, 22 and 29 respectively.
 %All of these outliers occurred on a data set with a large discontinuity (see the call centre data in the supplementary material).
 
-\paragraph{Interpolation}
+\subsubsection{Interpolation}
 To test the ability of the methods to interpolate, we randomly divided each data set into equal amounts of training data and testing data.
-The results are similar to those for extrapolation and are included in the appendix.
+The results are similar to those for extrapolation, and are included in the appendix.
 
 %\fTBD{Josh: Can you write about the Blessing of abstraction, and doing lots with a small amount of data?  This might become apparent from plotting the extraplolations.}
 %\fTBD{RBG: We could make this point as part of the learning curves for extrapolation by marking the points at which each additional aspect of the structure is found.}
@@ -641,14 +668,13 @@ We found that the learned structures are often capable of accurate extrapolation
 The learned kernels often yield decompositions of a signal into diverse and interpretable components, enabling model-checking by humans.
 We hope that this procedure has the potential to make powerful statistical model-building techniques accessible to non-experts.
 
-Whether or not such modularity and interpretability is present in other open-ended model classes is an open question.
-
 In the next chapter, we'll see how the model components found by this procedure can be automatically described in terms of english-language text.
 
 
 \section{Open Questions}
 
-While we focus on Gaussian process regression, we believe our kernel search method can be extended to other supervised learning frameworks such as classification or ordinal regression, or to other kinds of kernel architectures such as kernel SVMs.
+While we focus on Gaussian process regression, we believe our kernel search method can be extended to other supervised learning frameworks such as classification or ordinal regression, or to other kinds of kernel architectures such as kernel \SVM{}s.
+%However, whether or not such modularity and interpretability is present in other model classes is an open question.
 
 
 
