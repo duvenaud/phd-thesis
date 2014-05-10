@@ -186,11 +186,11 @@ At each stage, we choose the highest scoring kernel and expand it by applying al
 \end{tabular}
 \end{center}
 %
-We also include additional operators to incorporate changepoints.
-A complete list is contained in Appendix [BLANK]. 
-
 These operators can generate all possible algebraic expressions.
 To see this, observe that if we restricted the $+$ and $\times$ rules to only apply to base kernels, we would obtain a context-free grammar which generates the set of algebraic expressions.
+
+We also include additional operators to incorporate changepoints.
+A complete list is contained in \cref{sec:search-operators}.
 
 Our search operators are motivated by strategies that human researchers often use to construct kernels.
 In particular,
@@ -591,7 +591,7 @@ Not shown on the plot are large outliers for spectral kernels, Eureqa, squared e
 
 \subsubsection{Interpolation}
 To test the ability of the methods to interpolate, we randomly divided each data set into equal amounts of training data and testing data.
-The results are similar to those for extrapolation, and are included in the appendix.
+The results are similar to those for extrapolation, and are included in \cref{sec:interpolation-appendix}.
 
 %\fTBD{Josh: Can you write about the Blessing of abstraction, and doing lots with a small amount of data?  This might become apparent from plotting the extraplolations.}
 %\fTBD{RBG: We could make this point as part of the learning curves for extrapolation by marking the points at which each additional aspect of the structure is found.}

@@ -1,14 +1,22 @@
 \input{common/header.tex}
 \inbpdocument
 
-\chapter{Appendix for Grammars}
+\chapter{Appendix}
+\label{ch:appendix}
 
+\section{Gaussian Conditionals}
+%
+\begin{align}
+\vx_A | \vx_B \sim \Nt{\vmu_A + \vSigma_{AB} \vSigma_{BB}\inv \left( \vx_B - \vmu_B \right) }
+{\vSigma_{AA} - \vSigma_{AB} \vSigma_{BB}\inv \vSigma_{BA} }
+\label{eq:gauss_conditional}
+\end{align}
+%
 
 \section{Kernels}
 
 \subsection{Base kernels}
 \label{sec:kernel-definitions}
-{sec:kernel-definitions}
 For scalar-valued inputs, the white noise ($\kWN$), constant ($\kC$), linear ($\kLin$), squared exponential ($\kSE$), and periodic kernels ($\kPer$) are defined as follows:
 \begin{eqnarray}
 \kWN(\inputVar, \inputVar') =& \sigma^2\delta_{\inputVar, \inputVar'} \\
@@ -62,6 +70,7 @@ The search then proceeds by applying the search operators to the new kernel \ie 
 In all experiments, 10 random restarts were used for parameter initialisation and the search was run to a depth of 10.
 
 \subsection{Search operators}
+\label{sec:search-operators}
 
 \procedurename{} is based on a search algorithm which used the following search operators
 %
@@ -97,15 +106,17 @@ Based on experience with typical paths followed by the search algorithm we intro
 where $\mathcal{S'}$ represents any other kernel expression.
 Their introduction is currently not rigorously justified.
 
-\section{Predictive accuracy}
+\section{Comparison of Predictive Accuracy}
+\label{sec:accuracy-appendix}
 
-\paragraph{Interpolation}
+\subsection{Interpolation}
+\label{sec:interpolation-appendix}
 
 To test the ability of the methods to interpolate, we randomly divided each data set into equal amounts of training data and testing data.
-We trained each algorithm on the training half of the data, produced predictions for the remaining half and then computed the root mean squared error (RMSE).
-The values of the RMSEs are then standardised by dividing by the smallest RMSE for each data set \ie the best performance on each data set will have a value of 1.
+We trained each algorithm on the training half of the data, produced predictions for the remaining half and then computed the root mean squared error (\RMSE{}).
+The values of the \RMSE{}s are then standardised by dividing by the smallest RMSE for each data set \ie the best performance on each data set will have a value of 1.
 
-Figure~\ref{fig:box_interp} shows the standardised RMSEs for the different algorithms.
+\Cref{fig:box_interp} shows the standardised \RMSE{}s for the different algorithms.
 The box plots show that all quartiles of the distribution of standardised RMSEs are lower for both versions of \procedurename{}.
 The median for \procedurename{}-accuracy is 1; it is the best performing algorithm on 7 datasets.
 The largest outliers of \procedurename{} and spectral kernels are similar in value.
@@ -113,12 +124,12 @@ The largest outliers of \procedurename{} and spectral kernels are similar in val
 \begin{figure*}[ht]
 \centering
 \includegraphics[width=\textwidth]{\grammarfiguresdir/comparison/box_interp}
-\caption[Comparision of extrapolation error of all methods on 13 time-series datasets.]
-{Box plot of standardised RMSE (best performance = 1) on 13 interpolation tasks.}
+\caption[Comparision of interpolation error of all methods on 13 time-series datasets.]
+{Box plot of standardised \RMSE{} (best performance = 1) on 13 interpolation tasks.}
 \label{fig:box_interp}
 \end{figure*}
 
-Changepoints performs slightly worse than MKL despite being strictly more general than Changepoints.
+Changepoints performs slightly worse than \MKL{} despite being strictly more general than Changepoints.
 The introduction of changepoints allows for more structured models, but it introduces parametric forms into the regression models (\ie the sigmoids expressing the changepoints).
 This results in worse interpolations at the locations of the change points, suggesting that a more robust modeling language would require a more flexible class of changepoint shapes or improved inference (\eg fully Bayesian inference over the location and shape of the changepoint).
 
