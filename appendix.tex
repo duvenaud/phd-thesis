@@ -32,51 +32,44 @@ In the case of Gaussian processes, this result tells us how to condition on know
 
 \section{Kernels}
 
+%\newcommand{\scalefactor}{\sigma_f^2}
+\newcommand{\scalefactor}{}
+
 \subsection{Base kernels}
 \label{sec:kernel-definitions}
-For scalar-valued inputs, the white noise ($\kWN$), constant ($\kC$), linear ($\kLin$), squared exponential ($\kSE$), and periodic kernels ($\kPer$) are defined as follows:
+%For scalar-valued inputs, the white noise ($\kWN$), constant ($\kC$), linear ($\kLin$), squared exponential ($\kSE$), and periodic kernels ($\kPer$) are defined as follows:
+Here we give the formulas for all one-dimensional base kernels mentioned in the thesis.
+Each of these formulas includes a scale factor, $\sigma_f^2$, which we omit for clarity.
 \begin{align}
-\kC(\inputVar, \inputVar') =& \sigma^2 \\
-\kWN(\inputVar, \inputVar') =& \sigma^2\delta(\inputVar - \inputVar') \\
-\kLin(\inputVar, \inputVar') =& \sigma^2(\inputVar - c)(\inputVar' - c) \\
-\kSE(\inputVar, \inputVar') =& \sigma^2\exp\left(-\frac{(\inputVar - \inputVar')^2}{2\ell^2}\right) \\
-\kPer(\inputVar, \inputVar') =&  \sigma^2\frac{\exp\left(\frac{\cos\frac{2 \pi (\inputVar - \inputVar')}{p}}{\ell^2}\right) - I_0\left(\frac{1}{\ell^2}\right)}{\exp\left(\frac{1}{\ell^2}\right) - I_0\left(\frac{1}{\ell^2}\right)} \\
-\kCP(\kernel_1, \kernel_2)(x, x') = & \sigma(x) k_1(x,x')\sigma(x') + (1-\sigma(x)) k_2(x,x')(1-\sigma(x')) \\
-\boldsymbol\sigma = & \sigma(x)\sigma(x') \\
-\boldsymbol{\bar\sigma} = & (1-\sigma(x))(1-\sigma(x'))
+\kC(\inputVar, \inputVar') & = \scalefactor 1 \\
+\kWN(\inputVar, \inputVar') & = \scalefactor \delta(\inputVar - \inputVar') \\
+\kLin(\inputVar, \inputVar') & = \scalefactor (\inputVar - c)(\inputVar' - c) \\
+\kSE(\inputVar, \inputVar') & = \scalefactor \exp\left(-\frac{(\inputVar - \inputVar')^2}{2\ell^2}\right) \\
+\kRQ(x, x') & = \scalefactor \left( 1 + \frac{(\inputVar - \inputVar')^2}{2\alpha\ell^2}\right)^{-\alpha} \\
+\kPer(\inputVar, \inputVar') & =  \sigma_f^2 \frac{\exp\left(\frac{1}{\ell^2}\cos 2 \pi  \frac{(\inputVar - \inputVar')}{p}\right) - I_0\left(\frac{1}{\ell^2}\right)}{\exp\left(\frac{1}{\ell^2}\right) - I_0\left(\frac{1}{\ell^2}\right)} \label{eq:generalized-periodic}\\
+%\kPer(\inputVar, \inputVar') & =  \scalefactor \exp\left(\frac{1}{\ell^2}\cos 2 \pi  \frac{(\inputVar - \inputVar')}{p}\right) - I_0\left(\frac{1}{\ell^2}\right) \\
+\cos(x, x') & = \scalefactor \cos\left(\frac{2 \pi (x - x')}{p}\right) \\
+\kCP(\kernel_1, \kernel_2)(x, x') & = \scalefactor \sigma(x) k_1(x,x')\sigma(x') + (1-\sigma(x)) k_2(x,x')(1-\sigma(x')) \\
+\boldsymbol\sigma & = \scalefactor \sigma(x)\sigma(x') \\
+\boldsymbol{\bar\sigma} & = \scalefactor (1-\sigma(x))(1-\sigma(x'))
 \end{align}
-where $\delta_{\inputVar, \inputVar'}$ is the Kronecker delta function, $I_0$ is the modified Bessel function of the first kind of order zero and other symbols are parameters of the kernel functions.
+where $\delta_{\inputVar, \inputVar'}$ is the Kronecker delta function, $I_0$ is the modified Bessel function of the first kind of order zero, and other symbols are parameters of the kernel functions.
 
 
 
-\subsection{Changepoints and changewindows}
 
-The changepoint, $\kCP(\cdot,\cdot)$ operator is defined as follows:
-\begin{align}
-\kCP(\kernel_1, \kernel_2)(x, x') = \qquad \qquad \sigma(x) & k_1(x,x')\sigma(x') \nonumber \\ + (1-\sigma(x)) & k_2(x,x')(1-\sigma(x'))
-\end{align}
-where $\sigma(x) = 0.5 \times (1 + \tanh(\frac{\ell - x}{s}))$.
-This can also be written as
-\begin{align}
-\kCP(\kernel_1, \kernel_2) = \boldsymbol\sigma\kernel_1 + \boldsymbol{\bar\sigma}\kernel_2
-\end{align}
-where $\boldsymbol\sigma(x,x') = \sigma(x)\sigma(x')$ and $\boldsymbol{\bar\sigma}(x,x') = (1-\sigma(x))(1-\sigma(x'))$.
+\subsection{The Generalized Periodic Kernel}
 
-Changewindow, $\kCW(\cdot,\cdot)$, operators are defined similarly by replacing the sigmoid, $\sigma(x)$, with a product of two sigmoids.
-
-\subsection{Properties of the periodic kernel}
-
-A simple application of l'H\^opital's rule shows that
+\citet{lloyd-periodic} showed that the standard periodic kernel due to \citet{mackay1998introduction} can be decomposed into a periodic and a constant component.  He derived a more general form of periodic kernel, shown in \cref{eq:generalized-periodic}, without a constant component.
+He further showed that its limit as the lengthscale grows is the cosine kernel:
 \begin{equation}
-\kPer(x, x') \to \sigma^2\cos\left(\frac{2 \pi (x - x')}{p}\right) \quad \textrm{as} \quad\ell \to \infty.
+\lim_{\ell \to \infty} \kPer(x, x') = \cos\left(\frac{2 \pi (x - x')}{p}\right).
 \end{equation}
-This limiting form is written as the cosine kernel ($\cos$).
-%It was recently demonstrated \citep{WilAda13} that any stationary kernel can be arbitrarily well approximated by kernels with syntax\fTBD{RG: Syntax $\to$ expression, structure, family?}
-%\begin{equation}
-%\sum \kSE \times \cos
-%\end{equation}
-%by appealing to Bochner's theorem \citep{bochner1959lectures}.
-%By using this new periodic kernel our language of kernels also attains this completeness property.
+%
+%The generalized periodic kernel has no constant component
+
+
+
 
 \section{Model construction / search}
 

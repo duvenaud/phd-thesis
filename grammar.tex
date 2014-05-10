@@ -84,13 +84,13 @@ The next four sections of this chapter describe the mechanisms we use to produce
 \section{A Language of Regression Models}
 \label{sec:improvements}
 
-As shown in Chapter~\ref{ch:kernels}, we can construct a wide variety of kernel structures compositionally by adding and multiplying a small number of base kernels.
+As shown in \cref{ch:kernels}, we can construct a wide variety of kernel structures compositionally by adding and multiplying a small number of base kernels.
 We can therefore define a language of regression models by specifying a language of kernels.
 
 The elements of this language are a set of base kernels capturing different function properties, and a set of
 composition rules which combine kernels to yield other valid kernels.
 In this chapter, we'll use such base kernels as white noise ($\kWN$), constant ($\kC$), linear ($\kLin$), squared-exponential ($\kSE$), rational-quadratic ($\kRQ$), sigmoidal ($\kSig$) and periodic ($\kPer$).
-We use a new parameterization of $\kPer$ which has $cos(x - x')$ as a special case.
+We use a generalized form of $\kPer$ due to \citet{lloyd-periodic} which has $\cos(x - x')$ as a special case.
 For details, see \cref{sec:kernel-definitions}.
 \Cref{fig:basic_kernels_two} shows the new kernels introduced in this chapter.
 %, which on their own encode for uncorrelated noise, constant functions, linear functions, smooth functions and periodic functions respectively.
@@ -100,8 +100,8 @@ For details, see \cref{sec:kernel-definitions}.
 \centering
 \begin{tabular}{cccc}
 Kernel name: & Rational quadratic (\kRQ) & Cosine ($\cos$) & White noise (\kLin) \\[10pt]
-$k(x, x') =$ & $\exp\left(-\frac{(\inputVar - \inputVar')^2}{2\ell^2}\right)$ &
-$\cos\left(\frac{2 \pi (x - x')}{p}\right)$ &
+$k(x, x') =$ & $ \left( 1 + \frac{(\inputVar - \inputVar')^2}{2\alpha\ell^2}\right)^{-\alpha}$ &
+$\cos\left(2 \pi \frac{ (x - x')}{p}\right)$ &
 $\delta(\inputVar - \inputVar')$ \\[14pt]
 \raisebox{1cm}{Plot of kernel:} & \kernpic{rq_kernel} & \kernpic{cos_kernel} & \kernpic{wn_kernel}\\
 & $x -x'$ & $x -x'$ & \fixedx \\
