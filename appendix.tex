@@ -4,10 +4,39 @@
 \chapter*{Appendix}
 \label{ch:appendix}
 
+
+\section{Kernels}
+
+%\newcommand{\scalefactor}{\sigma_f^2}
+\newcommand{\scalefactor}{}
+
+\subsection{Base kernels}
+\label{sec:kernel-definitions}
+%For scalar-valued inputs, the white noise ($\kWN$), constant ($\kC$), linear ($\kLin$), squared exponential ($\kSE$), and periodic kernels ($\kPer$) are defined as follows:
+Here we give the formulas for all one-dimensional base kernels mentioned in the thesis.
+Each of these formulas includes a scale factor, $\sigma_f^2$, which we omit for clarity.
+\begin{align}
+\kC(\inputVar, \inputVar') & = \scalefactor 1 \\
+\kWN(\inputVar, \inputVar') & = \scalefactor \delta(\inputVar - \inputVar') \label{eq:appendix-wn}\\
+\kLin(\inputVar, \inputVar') & = \scalefactor (\inputVar - c)(\inputVar' - c)  \label{eq:appendix-lin} \\
+\kSE(\inputVar, \inputVar') & = \scalefactor \exp\left(-\frac{(\inputVar - \inputVar')^2}{2\ell^2}\right)  \label{eq:appendix-se}\\
+\kRQ(x, x') & = \scalefactor \left( 1 + \frac{(\inputVar - \inputVar')^2}{2\alpha\ell^2}\right)^{-\alpha}  \label{eq:appendix-rq}\\
+\kPer(\inputVar, \inputVar') & =  \sigma_f^2 \frac{\exp\left(\frac{1}{\ell^2}\cos 2 \pi  \frac{(\inputVar - \inputVar')}{p}\right) - I_0\left(\frac{1}{\ell^2}\right)}{\exp\left(\frac{1}{\ell^2}\right) - I_0\left(\frac{1}{\ell^2}\right)} \label{eq:generalized-periodic} \\
+%\kPer(\inputVar, \inputVar') & =  \scalefactor \exp\left(\frac{1}{\ell^2}\cos 2 \pi  \frac{(\inputVar - \inputVar')}{p}\right) - I_0\left(\frac{1}{\ell^2}\right) \\
+\cos(x, x') & = \scalefactor \cos\left(\frac{2 \pi (x - x')}{p}\right) \label{eq:appendix-cos} \\
+\kCP(\kernel_1, \kernel_2)(x, x') & = \scalefactor \sigma(x) k_1(x,x')\sigma(x') + (1-\sigma(x)) k_2(x,x')(1-\sigma(x')) \\
+\boldsymbol\sigma & = \scalefactor \sigma(x)\sigma(x') \\
+\boldsymbol{\bar\sigma} & = \scalefactor (1-\sigma(x))(1-\sigma(x'))
+\end{align}
+where $\delta_{\inputVar, \inputVar'}$ is the Kronecker delta function, $I_0$ is the modified Bessel function of the first kind of order zero, and other symbols are parameters of the kernel functions.
+\Cref{eq:appendix-se,eq:generalized-periodic,eq:appendix-lin} are plotted in \cref{fig:based_kernels}, and \cref{eq:appendix-wn,eq:appendix-rq,eq:appendix-cos} are plotted in \cref{fig:basic_kernels_two}.
+Draws from \gp{} priors with changepoint kernels are shown in \cref{fig:changepoint_examples}.
+
+
+
 \section{Formula for Gaussian Conditionals}
 
 A standard result of multivariate Gaussians states shows how to condition on a knowing a subset of the dimensions of a Gaussian vector.  If
-
 %
 \begin{align}
 \colvec{\vx_A}{\vx_B} \sim \Nt{\colvec{\vmu_A}{\vmu_B}}{\left[ \begin{array}{cc}\vSigma_AA & \vSigma_AB \\ \vSigma_BA & \vSigma_BB \end{array} \right]}
@@ -30,37 +59,10 @@ In the case of Gaussian processes, this result tells us how to condition on know
 
 
 
-\section{Kernels}
-
-%\newcommand{\scalefactor}{\sigma_f^2}
-\newcommand{\scalefactor}{}
-
-\subsection{Base kernels}
-\label{sec:kernel-definitions}
-%For scalar-valued inputs, the white noise ($\kWN$), constant ($\kC$), linear ($\kLin$), squared exponential ($\kSE$), and periodic kernels ($\kPer$) are defined as follows:
-Here we give the formulas for all one-dimensional base kernels mentioned in the thesis.
-Each of these formulas includes a scale factor, $\sigma_f^2$, which we omit for clarity.
-\begin{align}
-\kC(\inputVar, \inputVar') & = \scalefactor 1 \\
-\kWN(\inputVar, \inputVar') & = \scalefactor \delta(\inputVar - \inputVar') \\
-\kLin(\inputVar, \inputVar') & = \scalefactor (\inputVar - c)(\inputVar' - c) \\
-\kSE(\inputVar, \inputVar') & = \scalefactor \exp\left(-\frac{(\inputVar - \inputVar')^2}{2\ell^2}\right) \\
-\kRQ(x, x') & = \scalefactor \left( 1 + \frac{(\inputVar - \inputVar')^2}{2\alpha\ell^2}\right)^{-\alpha} \\
-\kPer(\inputVar, \inputVar') & =  \sigma_f^2 \frac{\exp\left(\frac{1}{\ell^2}\cos 2 \pi  \frac{(\inputVar - \inputVar')}{p}\right) - I_0\left(\frac{1}{\ell^2}\right)}{\exp\left(\frac{1}{\ell^2}\right) - I_0\left(\frac{1}{\ell^2}\right)} \label{eq:generalized-periodic}\\
-%\kPer(\inputVar, \inputVar') & =  \scalefactor \exp\left(\frac{1}{\ell^2}\cos 2 \pi  \frac{(\inputVar - \inputVar')}{p}\right) - I_0\left(\frac{1}{\ell^2}\right) \\
-\cos(x, x') & = \scalefactor \cos\left(\frac{2 \pi (x - x')}{p}\right) \\
-\kCP(\kernel_1, \kernel_2)(x, x') & = \scalefactor \sigma(x) k_1(x,x')\sigma(x') + (1-\sigma(x)) k_2(x,x')(1-\sigma(x')) \\
-\boldsymbol\sigma & = \scalefactor \sigma(x)\sigma(x') \\
-\boldsymbol{\bar\sigma} & = \scalefactor (1-\sigma(x))(1-\sigma(x'))
-\end{align}
-where $\delta_{\inputVar, \inputVar'}$ is the Kronecker delta function, $I_0$ is the modified Bessel function of the first kind of order zero, and other symbols are parameters of the kernel functions.
-
-
-
-
 \subsection{The Generalized Periodic Kernel}
 
-\citet{lloyd-periodic} showed that the standard periodic kernel due to \citet{mackay1998introduction} can be decomposed into a periodic and a constant component.  He derived a more general form of periodic kernel, shown in \cref{eq:generalized-periodic}, without a constant component.
+\citet{lloyd-periodic} showed that the standard periodic kernel due to \citet{mackay1998introduction} can be decomposed into a periodic and a constant component.
+He derived a more general form of periodic kernel, shown in \cref{eq:generalized-periodic}, without a constant component.
 He further showed that its limit as the lengthscale grows is the cosine kernel:
 \begin{equation}
 \lim_{\ell \to \infty} \kPer(x, x') = \cos\left(\frac{2 \pi (x - x')}{p}\right).
@@ -71,18 +73,18 @@ He further showed that its limit as the lengthscale grows is the cosine kernel:
 
 
 
-\section{Model construction / search}
+\section{Details of Model Search}
 
-\subsection{Overview}
+%\subsection{Overview}
 
 The model construction phase of \procedurename{} starts with the kernel equal to the noise kernel, $\kWN$.
-New kernel expressions are generated by applying search operators to the current kernel.
-When new base kernels are proposed by the search operators, their parameters are randomly initialised with several restarts.
-Parameters are then optimized by conjugate gradients to maximise the likelihood of the data conditioned on the kernel parameters.
-The kernels are then scored by the Bayesian information criterion and the top scoring kernel is selected as the new kernel.
-The search then proceeds by applying the search operators to the new kernel \ie this is a greedy search algorithm.
+New kernel expressions are generated by applying search operators to the current kernel, which replace some part of the existing kernel expression with a new kernel expression.
+%When new base kernels are proposed by the search operators, their parameters are randomly initialised with several restarts.
+%Parameters are then optimized by conjugate gradients to maximise the likelihood of the data conditioned on the kernel parameters.
+%The kernels are then scored by the Bayesian information criterion and the top scoring kernel is selected as the new kernel.
+%The search then proceeds by applying the search operators to the new kernel \ie this is a greedy search algorithm.
 
-In all experiments, 10 random restarts were used for parameter initialisation and the search was run to a depth of 10.
+%In all experiments, 10 random restarts were used for parameter initialisation and the search was run to a depth of 10.
 
 \subsection{Search operators}
 \label{sec:search-operators}
@@ -91,13 +93,16 @@ In all experiments, 10 random restarts were used for parameter initialisation an
 %
 \begin{eqnarray}
 \mathcal{S} &\to& \mathcal{S} + \mathcal{B} \\
-\mathcal{S} &\to& \mathcal{S} \times \mathcal{B} \\
+\mathcal{S} &\to& \mathcal{S} \times \mathcal{B} \label{eq:search-multiply}\\
 \mathcal{B} &\to& \mathcal{B'}
 \end{eqnarray}
 %
-where $\mathcal{S}$ represents any kernel subexpression and $\mathcal{B}$ is any base kernel within a kernel expression \ie the search operators represent addition, multiplication and replacement.
+where $\mathcal{S}$ represents any kernel subexpression and $\mathcal{B}$ is any base kernel within a kernel expression.
+These search operators represent addition, multiplication and replacement.
+When the multiplication operator is applied to a subexpression which includes a sum of subexpressions, parentheses () are introduced.
+For instance, if rule \eqref{eq:search-multiply} is applied to the subexpression $k_1 + k_2$, the resulting expression is $(k_1 \kernplus k_2) \kerntimes \mathcal{B}$.
 
-To accommodate changepoint/window operators we introduce the following additional operators
+To accommodate changepoints and changewindows, we introduced the following additional operators to our search:
 %
 \begin{eqnarray}
 \mathcal{S} &\to& \kCP(\mathcal{S},\mathcal{S}) \\
@@ -107,22 +112,57 @@ To accommodate changepoint/window operators we introduce the following additiona
 \end{eqnarray}
 %
 where $\kC$ is the constant kernel.
-The last two operators result in a kernel only applying outside or within a certain region.
+The last two operators result in a kernel only applying outside, or within, a certain region.
 
-Based on experience with typical paths followed by the search algorithm we introduced the following operators
+To allow the search to simplify existing expressions, we introduced the following operators:
 %
 \begin{eqnarray}
-\mathcal{S} &\to& \mathcal{S} \times (\mathcal{B} + \kC)\\
 \mathcal{S} &\to& \mathcal{B}\\
 \mathcal{S} + \mathcal{S'} &\to& \mathcal{S}\\
 \mathcal{S} \times \mathcal{S'} &\to& \mathcal{S}
 \end{eqnarray}
 %
 where $\mathcal{S'}$ represents any other kernel expression.
-Their introduction is currently not rigorously justified.
+%Their introduction is currently not rigorously justified.
+We also introduced the operator
+%
+\begin{eqnarray}
+\mathcal{S} &\to& \mathcal{S} \times (\mathcal{B} + \kC)
+\end{eqnarray}
+%
+Which allows a new base kernel to be added along with the constant kernel, for cases when multiplying by a base kernel by itself would restrict the model too much.
+
+
+\outbpdocument{
+\bibliographystyle{plainnat}
+\bibliography{references.bib}
+}
+
+
+\iffalse
+
+\section{Guide to the automatically generated reports}
+
+Additional supplementary material to this paper is 13 reports automatically generated by \procedurename{}.
+A link to these reports will be maintained at \url{http://mlg.eng.cam.ac.uk/lloyd/}.
+We recommend that you read the report for `01-airline' first and review the reports that follow afterwards more briefly.
+`02-solar' is discussed in the main text.
+`03-mauna' analyses a dataset mentioned in the related work.
+`04-wheat' demonstrates changepoints being used to capture heteroscedasticity.
+`05-temperature' extracts an exactly periodic pattern from noisy data.
+`07-call-centre' demonstrates a large discontinuity being modeled by a changepoint.
+`10-sulphuric' combines many changepoints to create a highly structured model of the data.
+`12-births' discovers multiple periodic components.
+
+\fi
+
+
+\iffalse
+
 
 \section{Comparison of Predictive Accuracy}
 \label{sec:accuracy-appendix}
+
 
 \subsection{Interpolation}
 \label{sec:interpolation-appendix}
@@ -207,8 +247,10 @@ The following abbreviations are used: \procedurename{}-accuracy (\procedurename{
 \label{table:extrap}
 \end{table*}
 
+\fi
 
 
+\iffalse
 
 \subsection{Comparison to Equation Learning}
 \label{sec:eqn-learning-comp}
@@ -229,27 +271,5 @@ The learned function for the airline passenger data is
 \end{align*}
 which captures the approximately linear trend, and the periodic component with approximately linearly (logistic) increasing amplitude.
 However, the annual cycle is heavily approximated by a sinusoid and the model does not capture heteroscedasticity.
-
-
-\outbpdocument{
-\bibliographystyle{plainnat}
-\bibliography{references.bib}
-}
-
-
-\iffalse
-
-\section{Guide to the automatically generated reports}
-
-Additional supplementary material to this paper is 13 reports automatically generated by \procedurename{}.
-A link to these reports will be maintained at \url{http://mlg.eng.cam.ac.uk/lloyd/}.
-We recommend that you read the report for `01-airline' first and review the reports that follow afterwards more briefly.
-`02-solar' is discussed in the main text.
-`03-mauna' analyses a dataset mentioned in the related work.
-`04-wheat' demonstrates changepoints being used to capture heteroscedasticity.
-`05-temperature' extracts an exactly periodic pattern from noisy data.
-`07-call-centre' demonstrates a large discontinuity being modeled by a changepoint.
-`10-sulphuric' combines many changepoints to create a highly structured model of the data.
-`12-births' discovers multiple periodic components.
 
 \fi

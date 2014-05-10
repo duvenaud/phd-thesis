@@ -122,29 +122,14 @@ More interesting kernels can be constructed by adding and multiplying base kerne
 %
 To specify an open-ended language of structured kernels, we'll consider the set of all kernels that can be built by adding and multiplying these base kernels together:
 \begin{align}
-%k_1 + k_2 =      & \,\, k_1(\vx, \vx') + k_2(\vx, \vx') \\
-%k_1 \times k_2 = & \,\, k_1(\vx, \vx') \times k_2(\vx, \vx') \\
-(k_1 + k_2)(\vx, \vx') =& \,\, k_1(\vx, \vx') + k_2(\vx, \vx')\\
-(k_1 \times k_2)(\vx, \vx') =& \,\, k_1(\vx, \vx') \times k_2(\vx, \vx')
+k_1 + k_2 =      & \,\, k_1(\vx, \vx') + k_2(\vx, \vx') \\
+k_1 \times k_2 = & \,\, k_1(\vx, \vx') \times k_2(\vx, \vx')
+%(k_1 + k_2)(\vx, \vx') =& \,\, k_1(\vx, \vx') + k_2(\vx, \vx')\\
+%(k_1 \times k_2)(\vx, \vx') =& \,\, k_1(\vx, \vx') \times k_2(\vx, \vx')
 \end{align}
-
-
-%We have found that incorporating changepoints into the language is essential for realistic models of time series (\eg figure~\ref{fig:periodic}).
-%[todo: expand a little]
-
-
-% Moved to kernels chapter.
-%Changepoints can be defined through addition and multiplication with sigmoidal functions:
-%\begin{align}
-%\kCP(\kernel_1, \kernel_2) = \kernel_1 \times \boldsymbol\sigma + \kernel_2 \times \boldsymbol{\bar\sigma}
-%\label{eq:cp}
-%\end{align}
-%where $\boldsymbol\sigma = \sigma(x)\sigma(x')$ and $\boldsymbol{\bar\sigma} = (1-\sigma(x))(1-\sigma(x'))$.
-%Changewindows $\kCW(\cdot,\cdot)$ can be defined similarly by replacing $\sigma(x)$ with a product of two sigmoids.
-
-%We also expanded and reparametrised the set of base kernels so that they were more amenable to automatic description and to extend the number of common regression models included in the language.
-
+%
 Table~\ref{table:motifs} lists common regression models that can be expressed by this language.
+
 \begin{table}[ht]
 \centering
 \begin{tabular}{l|l|l}
@@ -492,7 +477,8 @@ We compare to a Bayesian variant of \MKL{} in \cref{sec:numerical} which is expr
 \rwsheader{Equation learning}
 \cite{todorovski1997declarative}, \cite{washio1999discovering} and \cite{Schmidt2009b} learn parametric forms of functions specifying time series, or relations between quantities.
 In contrast, \procedurename{} learns a parametric form for the covariance, allowing it to model functions without a simple parametric form.
-A examination of the structure discovered by the automatic equation-learning software Eureqa \citep{Eureqa} on the airline and Mauna Loa datasets can be found in \Cref{sec:eqn-learning-comp}.
+A examination of the structure discovered by the automatic equation-learning software Eureqa \citep{Eureqa} on the airline and Mauna Loa datasets can be found in \citet{LloDuvGroetal14}.
+%\Cref{sec:eqn-learning-comp}.
 
 
 
@@ -579,7 +565,7 @@ The methods are ordered by median.
 \end{figure}
 
 
-Figure~\ref{fig:box_extrap_dist} shows the standardised RMSEs across algorithms.
+\Cref{fig:box_extrap_dist} shows the standardised \RMSE{}s across algorithms.
 \procedurename{}-accuracy outperforms \procedurename{}-interpretability.
 Both algorithms have lower quartiles than all other methods.
 
@@ -589,9 +575,9 @@ Despite searching over a rich model class, Eureqa performs relatively poorly, si
 Not shown on the plot are large outliers for spectral kernels, Eureqa, squared exponential and linear regression with values of 11, 493, 22 and 29 respectively.
 %All of these outliers occurred on a data set with a large discontinuity (see the call centre data in the supplementary material).
 
-\subsubsection{Interpolation}
-To test the ability of the methods to interpolate, we randomly divided each data set into equal amounts of training data and testing data.
-The results are similar to those for extrapolation, and are included in \cref{sec:interpolation-appendix}.
+%\subsubsection{Interpolation}
+%To test the ability of the methods to interpolate, we randomly divided each data set into equal amounts of training data and testing data.
+%The results are similar to those for extrapolation, and are included in \cref{sec:interpolation-appendix}.
 
 %\fTBD{Josh: Can you write about the Blessing of abstraction, and doing lots with a small amount of data?  This might become apparent from plotting the extraplolations.}
 %\fTBD{RBG: We could make this point as part of the learning curves for extrapolation by marking the points at which each additional aspect of the structure is found.}
