@@ -41,7 +41,9 @@ Dirichlet process mixture models can alleviate the problem of an unknown number 
 Latent space & & Observed space \\
 \end{tabular}}
 \caption[A draw from the infinite warped mixture model prior]{
-A sample from the \iwmm{} prior.  Left: In the latent space, a mixture distribution is sampled from a Dirichlet process mixture of Gaussians.  Right:  The latent mixture is smoothly warped to produce non-Gaussian manifolds in the observed space.}
+A sample from the \iwmm{} prior.
+\emph{Left:} In the latent space, a mixture distribution is sampled from a Dirichlet process mixture of Gaussians.
+\emph{Right:} The latent mixture is smoothly warped to produce non-Gaussian manifolds in the observed space.}
 \label{fig:generative}
 \end{figure}
 
@@ -72,13 +74,8 @@ We derive an inference procedure for the \iwmm{} based on Markov chain Monte Car
 \section{Gaussian Process Latent Variable Model}
 
 
-Besides being useful for modeling functions, a simple extension allows \gp{}s to be useful for general density modeling.  
-
-
-
-Unfortunately, this extension causes many of the useful properties of the \gp{} not to hold.
-
-The \gplvm{} can also be thought of as a method for modeling the covariance matrix between all rows of $Y$ using a number of parameters which grows linearly with $N$.
+Besides being useful for modeling functions, a simple extension allows \gp{}s to be useful for general density modeling, at the cost of non-analytic inference.
+The \gplvm{} can also be thought of as a method for modeling the covariance between rows of $Y$, using a number of parameters which grows only linearly with $N$.
 
 
 \begin{figure}[t]
@@ -562,21 +559,19 @@ This configuration was relatively stable, and a similar state was found at the 5
 \includegraphics[width=0.4\columnwidth]{\warpedfiguresdir/result_spiral2all_gplvm_ydistribution}
 \end{tabular}
 \caption[Comparing density estimates of between the \sgplvm{} and the \siwmm{}]{
-Left: The posterior density in the observed space with the 2-curve data inferred by the \siwmm{}.
-Rirght: The posterior inferred by the \siwmm{} with one component, a model equivalent to the \gplvm{}.}
+\emph{Left:} The posterior density in the observed space with the 2-curve data inferred by the \iwmm{}.
+\emph{Right:} The posterior inferred by the \iwmm{} with one component, a model equivalent to the \gplvm{}.}
 \label{fig:posterior}
 \end{figure}
 
-Figure~\ref{fig:posterior} (a) shows the posterior density in the observed space inferred by the \iwmm{} on the 2-curve data, computed using 1000 samples from the Markov chain.
+\Cref{fig:posterior}(a) shows the posterior density in the observed space inferred by the \iwmm{} on the 2-curve data, computed using 1000 samples from the Markov chain.
 The two separate manifolds of high density implied by the two curved lines was recovered by the \iwmm{}.  
-Note also that the density along the manifold varies with the density of data shown in Figure \ref{fig:warping} (a).  
+Note also that the density along the manifold varies with the density of data shown in \Cref{fig:warping}(a).  
 %The warped densities output by our model are actually a richer representation than simply a set of manifolds, since they also define a density at each point in the observed space.
 %The density computed using multiple samples from MCMC is clearer than the density computed from a single sample shown at the bottom of Figure~\ref{fig:warping} (a).
-%
+
 This result can be compared to a special case of our model, which uses only a single Gaussian to model the latent coordinates instead of an infinite GMM.
-Figure~\ref{fig:posterior} (b) shows that the result of the \iwmm{} with $C=1$, where posterior is forced to place significant density connecting the two clusters.
-%;we simply call this the {\it warped model} (WM).%
-Figure~\ref{fig:posterior} (b) shows that the single-cluster variant of the \iwmm{} posterior is forced to place significant density connecting the two clusters.
+\Cref{fig:posterior}(b) shows that the single-cluster variant of the \iwmm{} posterior is forced to place significant density connecting the two clusters, since it has to reproduce the observed density manifold by warping a single Gaussian.
 
 
 \subsection{Visualization}
@@ -763,6 +758,10 @@ We demonstrated that a simple but flexible probabilistic generative model can pe
 %\subsection*{Acknowledgements}
 %The authors would like to thank Dominique Perrault-Joncas, Carl Edward Rasmussen, and Ryan Prescott Adams for helpful discussions.
 %\pagebreak
+
+%\section{Open Questions}
+
+%\subsubsection{How can we extend this model to handle heavy-tailed clusters?}
 
 
 \outbpdocument{

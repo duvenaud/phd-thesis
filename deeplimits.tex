@@ -267,7 +267,9 @@ f(\vx) = \vV^{(1)} \sigma \left( \vb^{(1)} + \vW^{(1)} \vx \right)  = \vV^{(1)} 
 %
 where $\vV^{(1)}$ is another weight matrix.
 
-There exists a correspondence between one-layer \MLP{}s and \gp{}s \citep{neal1995bayesian}.  \gp{}s can be viewed as a prior on neural networks with infinitely many hidden units, and unknown weights.  More precisely, for any model of the form
+There exists a correspondence between one-layer \MLP{}s and \gp{}s \citep{neal1995bayesian}.
+\gp{}s can be viewed as a prior on neural networks with infinitely many hidden units, and unknown weights.
+More precisely, for any model of the form
 %
 \begin{align}
 f(\vx) = \frac{1}{K}{\mathbf \vnetweights}\tra \hPhi(\vx) = \frac{1}{K} \sum_{i=1}^K \netweights_i \hphi_i(\vx),
