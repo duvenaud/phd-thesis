@@ -1,31 +1,53 @@
 \input{common/header.tex}
 \inbpdocument
 
-\chapter{Appendix}
+\chapter*{Appendix}
 \label{ch:appendix}
 
-\section{Gaussian Conditionals}
+\section{Formula for Gaussian Conditionals}
+
+A standard result of multivariate Gaussians states shows how to condition on a knowing a subset of the dimensions of a Gaussian vector.  If
+
+%
+\begin{align}
+\colvec{\vx_A}{\vx_B} \sim \Nt{\colvec{\vmu_A}{\vmu_B}}{\left[ \begin{array}{cc}\vSigma_AA & \vSigma_AB \\ \vSigma_BA & \vSigma_BB \end{array} \right]}
+%\left[ \begin{array} \vx_A \sim \Nt{\vmu_A}{
+%| \vx_B \sim \Nt{\vmu_A + \vSigma_{AB} \vSigma_{BB}\inv \left( \vx_B - \vmu_B \right) }
+%{\vSigma_{AA} - \vSigma_{AB} \vSigma_{BB}\inv \vSigma_{BA} }
+%\label{eq:gauss_conditional}
+\end{align}
+%
+then
 %
 \begin{align}
 \vx_A | \vx_B \sim \Nt{\vmu_A + \vSigma_{AB} \vSigma_{BB}\inv \left( \vx_B - \vmu_B \right) }
 {\vSigma_{AA} - \vSigma_{AB} \vSigma_{BB}\inv \vSigma_{BA} }
 \label{eq:gauss_conditional}
 \end{align}
-%
+
+In the case of Gaussian processes, this result tells us how to condition on knowing the function values $[f(\vx_1), f(\vx_2), \dots, f(\vx_N)]$ at some subset of locations along the real line, indexed by $[\vx_1, \vx_2, \dots, \vx_N]$.
+
+
+
 
 \section{Kernels}
 
 \subsection{Base kernels}
 \label{sec:kernel-definitions}
 For scalar-valued inputs, the white noise ($\kWN$), constant ($\kC$), linear ($\kLin$), squared exponential ($\kSE$), and periodic kernels ($\kPer$) are defined as follows:
-\begin{eqnarray}
-\kWN(\inputVar, \inputVar') =& \sigma^2\delta_{\inputVar, \inputVar'} \\
+\begin{align}
 \kC(\inputVar, \inputVar') =& \sigma^2 \\
-\kLin(\inputVar, \inputVar') =& \sigma^2(\inputVar - \ell)(\inputVar' - \ell) \\
+\kWN(\inputVar, \inputVar') =& \sigma^2\delta(\inputVar - \inputVar') \\
+\kLin(\inputVar, \inputVar') =& \sigma^2(\inputVar - c)(\inputVar' - c) \\
 \kSE(\inputVar, \inputVar') =& \sigma^2\exp\left(-\frac{(\inputVar - \inputVar')^2}{2\ell^2}\right) \\
-\kPer(\inputVar, \inputVar') =&  \sigma^2\frac{\exp\left(\frac{\cos\frac{2 \pi (\inputVar - \inputVar')}{p}}{\ell^2}\right) - I_0\left(\frac{1}{\ell^2}\right)}{\exp\left(\frac{1}{\ell^2}\right) - I_0\left(\frac{1}{\ell^2}\right)}
-\end{eqnarray}
+\kPer(\inputVar, \inputVar') =&  \sigma^2\frac{\exp\left(\frac{\cos\frac{2 \pi (\inputVar - \inputVar')}{p}}{\ell^2}\right) - I_0\left(\frac{1}{\ell^2}\right)}{\exp\left(\frac{1}{\ell^2}\right) - I_0\left(\frac{1}{\ell^2}\right)} \\
+\kCP(\kernel_1, \kernel_2)(x, x') = & \sigma(x) k_1(x,x')\sigma(x') + (1-\sigma(x)) k_2(x,x')(1-\sigma(x')) \\
+\boldsymbol\sigma = & \sigma(x)\sigma(x') \\
+\boldsymbol{\bar\sigma} = & (1-\sigma(x))(1-\sigma(x'))
+\end{align}
 where $\delta_{\inputVar, \inputVar'}$ is the Kronecker delta function, $I_0$ is the modified Bessel function of the first kind of order zero and other symbols are parameters of the kernel functions.
+
+
 
 \subsection{Changepoints and changewindows}
 
