@@ -272,18 +272,18 @@ supported!}
 
 % *************************** Graphics and Figures *****************************
 
-\ifpdf 
+%\ifpdf 
         % Convert eps figures to pdf
-        \RequirePackage{epstopdf} 
+%        \RequirePackage{epstopdf} 
         \RequirePackage[pdftex]{graphicx}
-	\DeclareGraphicsExtensions{.png, .jpg, .pdf}
-	\pdfcompresslevel=9
-	\graphicspath{{crests/Raster/}{crests/}}
-\else
-	\RequirePackage{graphicx}
-	\DeclareGraphicsExtensions{.eps, .ps}
-	\graphicspath{{crests/Vector/}{crests/}}
-\fi
+%	\DeclareGraphicsExtensions{.png, .jpg, .pdf}
+%	\pdfcompresslevel=9
+	\graphicspath{{misc/}}
+%\else
+%	\RequirePackage{graphicx}
+%	\DeclareGraphicsExtensions{.eps, .ps}
+%	\graphicspath{{crests/Vector/}{crests/}}
+%\fi
 
 
 % ************************ URL Package and Definition **************************
