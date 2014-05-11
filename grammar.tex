@@ -2,7 +2,7 @@
 \inbpdocument
 
 
-\chapter{Automatically Building Structured Covariance Functions}
+\chapter{Automatically Building Structured Regression Models}
 \label{ch:grammar}
 
 \begin{quotation}
@@ -47,13 +47,14 @@ In \cref{ch:description}, we'll even show how to automatically generate english-
 \section{Ingredients of an Automatic Statistician}
 \label{sec:ingredients}
 \citet{gelman2013philblogpost} asks ``How can an artificial intelligence do statistics? ... It needs not just an inference engine, but also a way to construct new models and a way to check models. Currently, those steps are performed by humans, but the AI would have to do it itself.''
-
+%
 In this section, we discuss in more detail the elements we believe are required to build an artificial intelligence that can do statistics.
 
 \paragraph{1. An open-ended language of models}
-Many statistical procedures consider all models in a class of fixed size - for example, graphical model construction algorithms\fTBD{Cite} search over connectivity graphs for a given set of nodes.
+Many statistical procedures consider all models in a class of fixed size.
+For example, graphical model construction algorithms \citep{Friedman03,Eaton07_uai} search over connectivity graphs for a given set of nodes.
 While these methods can be powerful, human statisticians are capable of deriving novel model classes when required.
-An automatic search through an open-ended class of models can achieve some of this flexibility, growing the complexity of the model to fit the task at hand, and possibly combining existing structures in novel ways.
+An automatic search through an open-ended class of models can achieve some of this flexibility, growing the complexity of the model as needed, possibly combining existing structures in novel ways.
 
 \paragraph{2. A Search through model space}
 An open-ended space of models cannot be searched exhaustively.
@@ -173,7 +174,7 @@ These operators can generate all possible algebraic expressions.
 To see this, observe that if we restricted the $+$ and $\times$ rules to only apply to base kernels, we would obtain a context-free grammar which generates the set of algebraic expressions.
 
 We also include additional operators to incorporate changepoints.
-A complete list is contained in \cref{sec:search-operators}.
+A complete list is contained in appendix \ref{sec:search-operators}.
 
 Our search operators are motivated by strategies that human researchers often use to construct kernels.
 In particular,
