@@ -37,7 +37,7 @@ The next chapter will describe the many types of functions that we know how to m
 \section{Gaussian Process Models}
 
 %Gaussian processes are a flexible and tractable prior over functions, useful for solving regression and classification tasks \citep{rasmussen38gaussian}.
-Gaussian processes are a simple and general class of nonparametric models of functions.
+Gaussian processes are a simple and general class of models of functions.
 %
 \begin{figure}[t]
 \begin{centering}
@@ -61,7 +61,7 @@ Coloured lines show samples from the process.
 %Figure \ref{fig:gp-post} shows a Gaussian process distribution, as it is conditioned on more and more observations.
 %Typically, it's rendered with the mean and +- 2SD, but there's nothing special about mean.
 %
-To be precise, a \gp{} is any distribution over functions such that any finite subset of function evaluations $f(\vx_1), f(\vx_2), \ldots f(\vx_N)$, have a joint Gaussian distribution \citep{rasmussen38gaussian}.
+To be precise, a \gp{} is any distribution over functions such that any finite subset of function values $f(\vx_1), f(\vx_2), \ldots f(\vx_N)$ have a joint Gaussian distribution \citep{rasmussen38gaussian}.
 A \gp{} model, before conditioning on data, is completely specified by its mean function,
 %
 \begin{align}
@@ -75,17 +75,19 @@ and its covariance function, also called the \emph{kernel}:
 \Cov(f(\vx),f(\vx')) = \kernel(\vx,\vx')
 \end{align}
 %
-It is common practice to assume that mean function is simply zero everywhere, since uncertainty about the mean function can be equivalently expressed by adding an extra term to the kernel.  Also equivalent is to subtract the mean function from the observations, and then add it back when making predictions.
+It is common practice to assume that the mean function is simply zero everywhere, since uncertainty about the mean function can be taken into account by adding an extra term to the kernel.
+%Also equivalent is to subtract the mean function from the observations, and then add it back when making predictions.
 
-After accounting for the mean, the kind of structure which can be captured by a \gp{} model is entirely determined by its kernel.  The kernel determines how the model generalizes, or extrapolates to new data.
+After accounting for the mean, the kind of structure which can be captured by a \gp{} model is entirely determined by its kernel.
+The kernel determines how the model generalizes, or extrapolates to new data.
 
 There are many possible choices of covariance function, and we can specify a wide range of models just by specifying the kernel of a \gp{}.
 For example, 
 %Examples of commonly used models not usually cast as \gp{}s are 
 linear regression, splines, 
 %some forms of generalized additive models,
-and Kalman filters are all \gp{}s with particular kernels.
-However, these model classes barely scratch the surface of the wide variety of possibilites.
+and Kalman filters are all examples of \gp{}s with particular kernels.
+However, these model classes barely scratch the surface of the many possible models we can express through choosing a kernel.
 %In fact, any symmetric positive-definite function can be used to construct a \gp{} model.
 %The benefit to this flexibility is that 
 %We can therefore define a language of regression models by specifying a language of kernels.
@@ -97,12 +99,13 @@ One of the main difficulties in using \gp{}s is constructing a kernel which repr
 
 %Gaussian processes can be seen as a dual representation of Bayesian linear regression. \NA{Cite}
 %By moving into this dual space, we pay a price in computational complexity, but gain the ability to model functions to any desired level of detail.
-The crucial property of \gp{}s that allows us to automatically construct models is that we can compute their \emph{marginal likelihood}.
+The crucial property of \gp{}s that allows us to automatically construct models is that we can compute the \emph{marginal likelihood} of a particular model, also known as the \emph{evidence} \citet{mackay1992bayesian}.
 The marginal likelihood allows us to compare models and automatically discover the appropriate amount of detail to use, due to Bayesian Occam's razor \citep{rasmussen2001occam,mackay2003information}.
 Choosing a kernel, or kernel parameters, by maximizing the marginal likelihood will typically select the \emph{least} flexible model class which still captures all the structure in the data.
 For example, if a kernel has a parameter which controls the smoothness of the functions it models, the maximum-likelihood estimate of that parameter will usually correspond to the smoothest possible family of functions which still go through all the observed function values.
 
-To be concrete, here's the marginal likelihood under a \gp{} of observing a set of function values $\left[ f(\vx_1), f(\vx_2), \ldots f(\vx_N)  \right] = \vf(\vX)$ at locations given by the rows of $\vX$:
+To be concrete, here's the marginal likelihood under a \gp{} of observing a set of function values $\left[ f(\vx_1), f(\vx_2), \ldots f(\vx_N)  \right] = \vf(\vX)$ at locations $[\vx_1, \vx_2, \ldots, \vx_N]\tra = \vX$:
+% given by the rows of $\vX$:
 %
 \begin{align}
 p(\funcval | \vX, \mu(\cdot), k(\cdot, \cdot)) & = \N{\funcval}{\mu(\vX)}{k(\vX, \vX)} \nonumber\\
@@ -111,11 +114,11 @@ p(\funcval | \vX, \mu(\cdot), k(\cdot, \cdot)) & = \N{\funcval}{\mu(\vX)}{k(\vX,
 \label{eq:gp_marg_lik}
 \end{align}
 %
-This Gaussian likelihood is referred to as the \emph{marginal} likelihood because it implicitly integrates over all possible functions values $\vf( \bar \vX)$, where $\bar \vX$ is the set of all locations where we don't have any observations.
+This multivariate Gaussian density is referred to as the \emph{marginal} likelihood because it implicitly integrates (marginalizes) over all possible functions values $\vf( \bar \vX)$, where $\bar \vX$ is the set of all locations where we haven't observed the function.
 
 \subsection{Prediction}
-Even though we don't need to consider any other locations when computing the likelihood, we can still ask the model which function values are likely to occur at any location, given the observations we've seen.
-The predictive distribution at a test point $\testpoint$ has a simple form:
+Even though we don't need to consider locations other than at the data when computing the marginal likelihood, we can still ask the model which function values are likely to occur at any location, given the observations we've seen.
+The predictive distribution of a function value $f(\vx^\star)$ at a test point $\testpoint$ has a simple form:
 %
 \begin{align}
 p( f(\testpoint) | \funcval, \vX, \mu(\cdot), k(\cdot, \cdot))
@@ -127,56 +130,51 @@ p( f(\testpoint) | \funcval, \vX, \mu(\cdot), k(\cdot, \cdot))
 %
 These expressions may look complex, but only require a few matrix operations to evaluate.
 
-%Since the marginal likelihood depends on the kernel, we can select the form of the covariance function, or its parameters, by maximum likelihood, or by integrating over them with respect to some 
-
-Sampling from a \gp{} is also straightforward: a sample from a \gp{} is just a single sample from a single multivariate Gaussian distribution, given by \cref{eq:predictive}.
-Figure~\ref{fig:gp-post} shows prior and posterior samples from a \gp{}.
+Sampling a function from a \gp{} is also straightforward: a sample from a \gp{} is just a single sample from a single multivariate Gaussian distribution, given by \cref{eq:predictive}.
+\Cref{fig:gp-post} shows prior and posterior samples from a \gp{}, as well as contours of the predictive density.
 
 Our representation of uncertainty through probabilites does not mean that we are assuming the function being learned is stochastic or random in any way; it is simply a consistent method of keeping track of our uncertainty.
-%Cite Jaynes?
-
-
-%[explain how that works]
-% Insert neural net stuff here?
 
 
 
 \subsection{Useful Properties of Gaussian Processes}
 
+There are several reasons why \gp{}s in particular are well-stuied for building a langauge of regression models:
+
 \begin{itemize}
 
-\item {\bf Analytic inference}
+\item {\bf Analytic inference.}
 Given a kernel function and some observations, the predictive posterior distribution can be computed exactly in closed form.  This is a rare property for nonparametric models to have.
 
-\item {\bf Expressivity}
+\item {\bf Expressivity.}
 By choosing different covariance functions, we can express a very wide range of modeling assumptions.
 
-\item {\bf Integration over hypotheses}
+\item {\bf Integration over hypotheses.}
 The fact that a \gp{} posterior lets us exactly integrate over a wide range of hypotheses means that overfitting is less of an issue than in comparable model classes, such as neural networks.
 It also removes the need for sophisticated optimization schemes.
 %
 In contrast, much of the neural network literature is devoted to techniques for regularization and optimization.
 
-\item {\bf Marginal likelihood}
+\item {\bf Marginal likelihood.}
 A side benefit of being able to integrate over all hypotheses is that we can compute the \emph{marginal likelihood} of the data given the model.
 This gives us a principled way of comparing different models.
 
-\item {\bf Closed-form predictive distribution}
+\item {\bf Closed-form predictive distribution.}
 The predictive distribution of a \gp{} at a set of test points is simply a multivariate Gaussian distribution.
 This means that \gp{}s can easily be composed with other models or decision procedures, without the need for sampling procedures.
 %For example, in reinforcement learning applications, 
 
-\item {\bf Easy to Analyze}
+\item {\bf Easy to analyze.}
 %\subsection{Why stick to such a limited model class?}
-It may seem unsatisfying to restrict ourselves to a limited model class, instead of some more flexible model class, such as the set of all computible functions.
-However, simple models can be used as well-understood building blocks for constructing more interesting models in diverse settings.
+It may seem unsatisfying to restrict ourselves to a limited model class, as opposed to trying to do inference in set of all computable functions.
+However, simple models can be used as well-understood building blocks for constructing more interesting models. %in diverse settings.
 
 For example, consider linear models.
 Although they form an extremely limited model class, they are fast, simple, and easy to analyze, and easy to incorporate into other models or procedures.
-Gaussian processes can be seen as an extension of linear models which retain these attractive properties.
+Gaussian processes can be seen as an extension of linear models \citep{rasmussen38gaussian} which retain these attractive properties.
 %Linear models may seem like a hopelessly simple model class, but they're arguably the most useful modeling tools in existence.
 
-\citet{rasmussen38gaussian} give a thorough introduction to \gp{}s, including many different types of analysis of the properties of this model.
+%\citet{rasmussen38gaussian} give a thorough introduction to \gp{}s, including many different types of analysis of the properties of this model.
 
 \end{itemize}
 
@@ -185,29 +183,34 @@ Gaussian processes can be seen as an extension of linear models which retain the
 
 \subsection{Limitations of Gaussian Processes}
 
+There are, unfortunately, several issues which make usage of \gp{}s sometimes difficult:
+
 \begin{itemize}
 
-\item {\bf Slow inference}
-Computing the matrix inverse in \eqref{eq:gp_marg_lik} and \eqref{eq:predictive} takes $\mathcal{O}(N^3)$ time.
+\item {\bf Slow inference.}
+Computing the matrix inverse in \cref{eq:gp_marg_lik,eq:predictive} takes $\mathcal{O}(N^3)$ time, making inference slow for more than about 1000 datapoints.
 %and $\mathcal{O}(N^2)$ memory.  
-This problem can now be addressed by approximate inference schemes, \citep{snelson2006sparse, quinonero2005unifying, hensman2013gaussian} and most \gp{} software packages implement several of these methods \citep{GPML, VanRiiHarJylVeh14}.
+However, this problem can be addressed by approximate inference schemes \citep{snelson2006sparse, quinonero2005unifying, hensman2013gaussian}.  Most \gp{} software packages implement several of these methods \citep{GPML, VanRiiHarJylVeh14}.
+%However, some thought is required to use these methods, making inference in \gp{}s more complicated when 
 
-\item {\bf Light tails}
-We may wish to use non-Gaussian noise models, for instance in order to be robust to outliers, to perform classification, or for some other form of structured prediction.
-Using non-Gaussian noise models requires approximate inference schemes.
-Fortunately, mature software packages exist which can automatically perform approximate inference for a wide variety of likelihoods.
+\item {\bf Light tails of the predictive distribution.}
+The predictive distribution of a standard \gp{} model is Gaussian.
+In order to be robust to outliers, or to perform classification, we may wish to use non-Gaussian noise models.
+%Using non-Gaussian noise models requires approximate inference schemes.
+Fortunately, mature software packages exist which can automatically perform approximate inference for a wide variety of non-Gaussian likelihoods.
 %\item {\bf Symmetric}
 %The predictive distribution of a \gp{} is always symmetric about its mean function.
 %This means that \gp{} models are inappropriate for modeling non-negative functions, such as likelihoods.
 %However, this problem can be addressed by simply exponentiating a \gp{} model, giving rise to a \emph{log-Gaussian process}.
 
-\item {\bf The need to choose a kernel}
+\item {\bf The need to choose a kernel.}
 In practice, the extreme flexibility of \gp{} models means that we are also faced with the difficult task of choosing a kernel.
 In fact, 
 %because the model only depends on the inputs through the kernel, 
 choosing a useful kernel is equivalent to the problem of learning a good reprentation of the input.
-Typically, human experts choose from among a small set of standard kernels.
-In this thesis, we show how the construction and selection of useful kernels can be done automatically.
+Kernel parameters are usually set automatically by maximizing the marginal likelihood.
+However, until recently, human experts were still required to choose the parametric form of the kernel from a small set of standard kernels.
+\Cref{ch:grammar} will show how the entire construction of kernels can be automated.
 \end{itemize}
 
 
@@ -216,26 +219,26 @@ In this thesis, we show how the construction and selection of useful kernels can
 
 \section{Outline and Contributions of Thesis}
 
-This thesis presents a set of related results showing how the probabilistic nature of Gaussian process models allows them to be easily extended or composed with other models.
-Furthermore, the fact that the marginal likelihood is available means that we can evaluate how much evidence the data provides for one structure over another, allowing an automatic search to construct models for us.
+The main contribution of this thesis is to show how to automate the discovery and explanation of structure in functions, simply by searching an open-ended language of regression models.
+It also includes a set of related results showing how Gaussian processes can be extended, or composed with other models.
+%Furthermore, the fact that the marginal likelihood is available means that we can evaluate how much evidence the data provides for one structure over another, allowing an automatic search to construct models for us.
 
-{\bf Chapter \ref{ch:kernels}} contains an overview of many types of structured priors on functions that can be easily expressed by constructing appropriate covariance functions.
+{\bf Chapter~\ref{ch:kernels}} is a tutorial showing how to build a wide variety of structured models of functions by constructing appropriate covariance functions.
 %TODO: Expand this description.
-We'll also see how \gp{}s can be combined with latent variable models to produce models of nonparametric manifolds.
-By introducing structure into the kernels of those \gp{}s, we can create manifolds with diverse topological structures, such as cylinders, torii and M\"obius strips.
+We'll also show how \gp{}s can produce nonparametric models of manifolds, diverse topological structures, such as cylinders, torii and M\"obius strips.
 
-{\bf Chapter \ref{ch:grammar}} shows how to construct a general, open-ended language over kernels - which implies a corresponding language over models.
-Given a wide variety of models, plus the ability to evaluate the suitability of each one, it's straightforward to automatically construct and search over models.
-Because of the structure of \gp{}s, the resulting models can be decomposed into diverse, interpretable components, each capturing a different type of structure.
-Capturing high-level structure also allows us to extrapolate, rather than simply interpolating.
+{\bf Chapter \ref{ch:grammar}} shows how search over a general, open-ended language of models, built by composing together different kernels.
+Since we can evaluate each model by its marginal likelihood, we can automatically construct custom models for each dataset by a simple search.
+The nature of \gp{}s allow the resulting models to be visualized by decomposing them into diverse, interpretable components, each capturing a different type of structure.
+Capturing this high-level structure sometimes even allows us to extrapolate beyond the range of the data.
 
-One benefit of using a relatively simple model class is that the resulting models are interpretable.
+One benefit of using a compositional model class is that the resulting models are interpretable.
 {\bf Chapter~\ref{ch:description}} demonstrates a system which automatically describes the structure implied by a given kernel on a given dataset, generating reports with graphs and english-language text describing the resulting model.
 %Chapter \ref{ch:description} shows that, for the particular language of models constructed in chapter \ref{ch:grammar}, it's relatively easy to automatically generate english-language descriptions of the models discovered.
 %Augmented with interpretable plots decomposing the predictive posterior, we demonstrate how to automatically generate useful analyses of time-series.
 We'll show several automatic analyses of time-series.
 Combined with the automatic model search developed in chapter \ref{ch:grammar}, this system represents the beginnings of an ``automatic statistician''.
-We discuss the advantages and potential pitfalls of automating the modeling process in this way.
+%We discuss the advantages and potential pitfalls of automating the modeling process in this way.
 
 %As an example of using \gp{}s as a simple-to-understand building block, 
 {\bf Chapter \ref{ch:deep-limits}} analyzes deep network models by characterizing the prior over functions obtained by composing \gp{} priors to form \emph{deep Gaussian processes}.
@@ -244,14 +247,15 @@ We show that, as the number of layers in such models increases, the amount of in
 A simple change to the network architecture fixes this pathology.
 We relate these models to neural networks, and as a side effect derive different forms of \emph{infinitely deep kernels}.
 
-{\bf Chapter \ref{ch:additive}} examines a more limited, but much faster way of discovering structure using \gp{}s, starting with many different types of structure in the kernel, and using kernel parameters to discard whichever types of structure \emph{aren't} present in the current dataset.
-This model class is called \emph{additive Gaussian processes}, a model summing over exponentially-many \gp{}s, each depending on a different subset of the input variables.
-An polynomial-time algorithm for doing inference in this model class is given, and the resulting model class is characterized and related to existing model classes.
-This model class is also shown to have identical covariance to the model obtained by performing \emph{dropout} in \gp{}s, a recently discovered regularization technique for neural networks.
+{\bf Chapter \ref{ch:additive}} examines a more limited, but much faster way of discovering structure using \gp{}s.
+Specifying a kernel with many different types of structure, we use kernel parameters to discard whichever types of structure \emph{aren't} found in the current dataset.
+The model class we examine is called \emph{additive Gaussian processes}, a model summing over exponentially-many \gp{}s, each depending on a different subset of the input variables.
+We give a polynomial-time inference algorithm for this model class, and relate it to other model classes.
+For example, additive \gp{}s are shown to have the same covariance as a \gp{} that uses \emph{dropout}, a recently discovered regularization technique for neural networks.
 
 {\bf Chapter \ref{ch:warped}} develops a Bayesian clustering model in which the clusters have nonparametric shapes - the infinite Warped Mixture Model.
-The density manifolds learned by this model follow the contours of the data density, but have interpretable, parametric forms in the latent space.
-The availability of the marginal likelihood allows us to infer the effective dimension of each manifold separately, as well as the warping function and the number of clusters.
+The density manifolds learned by this model follow the contours of the data density, and have interpretable, parametric forms in the latent space.
+The marginal likelihood lets us infer the effective dimension and shape of each cluster separately, as well as the number of clusters.
 
 
 
@@ -259,34 +263,34 @@ The availability of the marginal likelihood allows us to infer the effective dim
 \section{Attribution}
 
 This thesis was made possible by the substantial contributions of the many co-authors I was fortunate to work with.
-In this section, I attempt to give proper credit to my tireless co-authors, who made this research enjoyable to produce.
+In this section, I attempt to give proper credit to my tireless co-authors, who made this research enjoyable.
 
-\paragraph{Structure through kernels}
+\paragraph{Structure through kernels:}
 %Chapter \ref{ch:kernels} contains a wide-ranging overview of many of the types of structured priors on functions that can be easily expressed by constructing appropriate covariance functions.
 Section \ref{sec:deep_kernels} of chapter \ref{ch:kernels}, describing how kernel symmetries give rise to priors on manifolds with interesting topologies, is based on a collaboration with David Reshef, Roger Grosse, Josh Tenenbaum, and Zoubin Ghahramani.
 
-\paragraph{Structure Search}
+\paragraph{Structure search:}
 The research upon which Chapter \ref{ch:grammar} is based was done in collaboration with James Robert Lloyd, Roger Grosse, Joshua B. Tenenbaum, and Zoubin Ghahramani, and was published in \citep{DuvLloGroetal13}, where James Lloyd was joint first author.
 Myself, James Lloyd and Roger Grosse jointly developed the idea of searching through a grammar-based language of \gp{} models, inspired by \citet{grosse2012exploiting}, and wrote the first versions of the code together.
 James Lloyd ran most of the experiments.
 I produced all of the figures.
 Carl Rasmussen, Zoubin Ghahramani and Josh Tenenbaum provided many conceptual insights, as well as suggestions about how the resulting procedure could be most fruitfully applied.
 
-\paragraph{Automatic Statistician} The work appearing in chapter \ref{ch:description} was written in collaboration with James Robert Lloyd, Roger Grosse, Joshua B. Tenenbaum, Zoubin Ghahramani, and was published in \citep{LloDuvGroetal14}.
-The idea of the correspondence between kernels and adjectives grew out of discussions between James and myself.
+\paragraph{Automatic statistician:} The work appearing in chapter \ref{ch:description} was written in collaboration with James Robert Lloyd, Roger Grosse, Joshua B. Tenenbaum, Zoubin Ghahramani, and was published in \citep{LloDuvGroetal14}.
+The idea that kernels corresponed to adjectives grew out of discussions between James and myself.
 James Lloyd wrote most of the code to automatically generate reports, and ran all of the experiments.
 The text was written mainly by myself, James Lloyd, and Zoubin Ghahramani, with many helpful contributions and suggestions from Roger Grosse and Josh Tenenbaum.
 
-\paragraph{Deep Gaussian Processes}
+\paragraph{Deep Gaussian processes:}
 The ideas contained in chapter \ref{ch:deep-limits} were developed through discussions with Oren Rippel, Ryan Adams and Zoubin Ghahramani, and appear in \citep{DuvRipAdaGha14}.  The derivations, experiments and writing were done mainly by myself, with many helpful suggestions by my co-authors.
 
-\paragraph{Additive Gaussian processes}
+\paragraph{Additive Gaussian processes:}
 The work in chapter \ref{ch:additive} was done in collaboration with Hannes Nickisch and Carl Rasmussen, who derived and coded up the initial model.
 My role in the project was to examine the properties of the resulting model, clarify the connections to existing methods, to create all figures and run all experiments.
 This work was published in \citep{duvenaud2011additive11}.
 The connection to dropout regularization was my own contribution.
 
-\paragraph{Warped Mixtures}
+\paragraph{Warped mixtures:}
 The work comprising the bulk of chapter \ref{ch:warped} was done in collaboration with Tomoharu Iwata and Zoubin Ghahramani, and appeared in \citep{IwaDuvGha12}.
 Specifically, the main idea was borne out of a conversation between Tomo and myself, and together we wrote almost all of the code together as well as the paper.
 Tomo ran most of the experiments.

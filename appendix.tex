@@ -1,20 +1,58 @@
 \input{common/header.tex}
 \inbpdocument
 
-\chapter{Appendix}
-\label{ch:appendix}
+\chapter{Gaussian Conditionals}
+\label{ch:appendix-gaussians}
+
+%\section{Formula for Gaussian Conditionals}
+
+A standard result shows how to condition on knowing a subset of the dimensions $\vy_B$ of a vector $\vy$ having a multivariate Gaussian distribution.
+If
+%
+\begin{align}
+\vy = \colvec{\vy_A}{\vy_B} \sim \Nt{\colvec{\vmu_A}{\vmu_B}}{\left[ \begin{array}{cc}\vSigma_{AA} & \vSigma_{AB} \\ \vSigma_{BA} & \vSigma_{BB} \end{array} \right]}
+%\left[ \begin{array} \vx_A \sim \Nt{\vmu_A}{
+%| \vx_B \sim \Nt{\vmu_A + \vSigma_{AB} \vSigma_{BB}\inv \left( \vx_B - \vmu_B \right) }
+%{\vSigma_{AA} - \vSigma_{AB} \vSigma_{BB}\inv \vSigma_{BA} }
+%\label{eq:gauss_conditional}
+\end{align}
+%
+then
+%
+\begin{align}
+\vy_A | \vy_B \sim \Nt{\vmu_A + \vSigma_{AB} \vSigma_{BB}\inv \left( \vx_B - \vmu_B \right) }
+{\vSigma_{AA} - \vSigma_{AB} \vSigma_{BB}\inv \vSigma_{BA} }.
+\label{eq:gauss_conditional}
+\end{align}
+
+This result can be used in the context of Gaussian process regression, where $\vy_B = [f(\vx_1), f(\vx_2), \dots, f(\vx_N)]$ represents a set of function values observed at some subset of locations $[\vx_1, \vx_2, \dots, \vx_N]$, while $\vy_A = [f(\vx_1\star), f(\vx_2\star), \ldots, f(\vx_N\star)]$ represents test points whose predictive distribution we'd like to know.
+In this case, the necessary covariance matrices are given by:
+%
+\begin{align}
+\vSigma_{AA} & = k(\vX, \vX) \\
+\vSigma_{AB} & = k(\vX, \vX^\star) \\
+\vSigma_{BA} & = k(\vX^\star, \vX) \\
+\vSigma_{BB} & = k(\vX^\star, \vX^\star)
+\end{align}
+and similarily for the mean vectors.
 
 
-\section{Kernels}
+
+
+
+
+\chapter{Kernel Definitions}
+\label{ch:appendix-kernels}
+\label{sec:kernel-definitions}
 
 %\newcommand{\scalefactor}{\sigma_f^2}
 \newcommand{\scalefactor}{}
 
-\subsection{Base kernels}
-\label{sec:kernel-definitions}
+%\subsection{Base kernels}
+
 %For scalar-valued inputs, the white noise ($\kWN$), constant ($\kC$), linear ($\kLin$), squared exponential ($\kSE$), and periodic kernels ($\kPer$) are defined as follows:
 Here we give the formulas for all one-dimensional base kernels mentioned in the thesis.
-Each of these formulas includes a scale factor, $\sigma_f^2$, which we omit for clarity.
+Each of these formulas is multiplied by a scale factor $\sigma_f^2$, which we omit for clarity.
 \begin{align}
 \kC(\inputVar, \inputVar') & = \scalefactor 1 \\
 \kWN(\inputVar, \inputVar') & = \scalefactor \delta(\inputVar - \inputVar') \label{eq:appendix-wn}\\
@@ -28,56 +66,35 @@ Each of these formulas includes a scale factor, $\sigma_f^2$, which we omit for 
 \boldsymbol\sigma & = \scalefactor \sigma(x)\sigma(x') \\
 \boldsymbol{\bar\sigma} & = \scalefactor (1-\sigma(x))(1-\sigma(x'))
 \end{align}
-where $\delta_{\inputVar, \inputVar'}$ is the Kronecker delta function, $I_0$ is the modified Bessel function of the first kind of order zero, and other symbols are parameters of the kernel functions.
+where $\delta_{\inputVar, \inputVar'}$ is the Kronecker delta function, $I_0$ is the modified Bessel function of the first kind of order zero, and other symbols are kernel parameters.
 \Cref{eq:appendix-se,eq:generalized-periodic,eq:appendix-lin} are plotted in \cref{fig:basic_kernels}, and \cref{eq:appendix-wn,eq:appendix-rq,eq:appendix-cos} are plotted in \cref{fig:basic_kernels_two}.
 Draws from \gp{} priors with changepoint kernels are shown in \cref{fig:changepoint_examples}.
 
 
 
-\section{Formula for Gaussian Conditionals}
-
-A standard result of multivariate Gaussians states shows how to condition on a knowing a subset of the dimensions of a Gaussian vector.  If
-%
-\begin{align}
-\colvec{\vx_A}{\vx_B} \sim \Nt{\colvec{\vmu_A}{\vmu_B}}{\left[ \begin{array}{cc}\vSigma_AA & \vSigma_AB \\ \vSigma_BA & \vSigma_BB \end{array} \right]}
-%\left[ \begin{array} \vx_A \sim \Nt{\vmu_A}{
-%| \vx_B \sim \Nt{\vmu_A + \vSigma_{AB} \vSigma_{BB}\inv \left( \vx_B - \vmu_B \right) }
-%{\vSigma_{AA} - \vSigma_{AB} \vSigma_{BB}\inv \vSigma_{BA} }
-%\label{eq:gauss_conditional}
-\end{align}
-%
-then
-%
-\begin{align}
-\vx_A | \vx_B \sim \Nt{\vmu_A + \vSigma_{AB} \vSigma_{BB}\inv \left( \vx_B - \vmu_B \right) }
-{\vSigma_{AA} - \vSigma_{AB} \vSigma_{BB}\inv \vSigma_{BA} }
-\label{eq:gauss_conditional}
-\end{align}
-
-In the case of Gaussian processes, this result tells us how to condition on knowing the function values $[f(\vx_1), f(\vx_2), \dots, f(\vx_N)]$ at some subset of locations along the real line, indexed by $[\vx_1, \vx_2, \dots, \vx_N]$.
-
-
-
-
-\subsection{The Generalized Periodic Kernel}
+\subsubsection{The Generalized Periodic Kernel}
 
 \citet{lloyd-periodic} showed that the standard periodic kernel due to \citet{mackay1998introduction} can be decomposed into a periodic and a constant component.
-He derived a more general form of periodic kernel, shown in \cref{eq:generalized-periodic}, without a constant component.
+He derived the equivalent periodic kernel without any constant component, shown in \cref{eq:generalized-periodic}.
 He further showed that its limit as the lengthscale grows is the cosine kernel:
 \begin{equation}
 \lim_{\ell \to \infty} \kPer(x, x') = \cos\left(\frac{2 \pi (x - x')}{p}\right).
 \end{equation}
-%
-%The generalized periodic kernel has no constant component
+
+Separating out the constant component allows us to express negative prior covariance, as well as increasing the interpretability of the resulting models.
 
 
 
 
-\section{Details of Model Search}
+
+
+\chapter{Search Operators}
+\label{ch:appendix-search}
+\label{sec:search-operators}
 
 %\subsection{Overview}
 
-The model construction phase of \procedurename{} starts with the kernel equal to the noise kernel, $\kWN$.
+The model construction phase of \procedurename{} starts with the noise kernel, $\kWN$.
 New kernel expressions are generated by applying search operators to the current kernel, which replace some part of the existing kernel expression with a new kernel expression.
 %When new base kernels are proposed by the search operators, their parameters are randomly initialised with several restarts.
 %Parameters are then optimized by conjugate gradients to maximise the likelihood of the data conditioned on the kernel parameters.
@@ -86,10 +103,9 @@ New kernel expressions are generated by applying search operators to the current
 
 %In all experiments, 10 random restarts were used for parameter initialisation and the search was run to a depth of 10.
 
-\subsection{Search operators}
-\label{sec:search-operators}
+%\subsection{Search operators}
 
-\procedurename{} is based on a search algorithm which used the following search operators
+The search used in the multidimensional regression experiments in \cref{sec:synthetic,sec:additive-experiments} used only the following search operators:
 %
 \begin{eqnarray}
 \mathcal{S} &\to& \mathcal{S} + \mathcal{B} \\
@@ -101,6 +117,9 @@ where $\mathcal{S}$ represents any kernel subexpression and $\mathcal{B}$ is any
 These search operators represent addition, multiplication and replacement.
 When the multiplication operator is applied to a subexpression which includes a sum of subexpressions, parentheses () are introduced.
 For instance, if rule \eqref{eq:search-multiply} is applied to the subexpression $k_1 + k_2$, the resulting expression is $(k_1 \kernplus k_2) \kerntimes \mathcal{B}$.
+
+Afterwards, we added several more search operators in order to speed up the search.
+These new operators do not change the set of possible models.
 
 To accommodate changepoints and changewindows, we introduced the following additional operators to our search:
 %
