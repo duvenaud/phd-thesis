@@ -91,11 +91,9 @@ The elements of this language are a set of base kernels capturing different func
 composition rules which combine kernels to yield other valid kernels.
 In this chapter, we'll use such base kernels as white noise ($\kWN$), constant ($\kC$), linear ($\kLin$), squared-exponential ($\kSE$), rational-quadratic ($\kRQ$), sigmoidal ($\kSig$) and periodic ($\kPer$).
 We use a generalized form of $\kPer$ due to \citet{lloyd-periodic} which has $\cos(x - x')$ as a special case.
-For details, see \cref{sec:kernel-definitions}.
 \Cref{fig:basic_kernels_two} shows the new kernels introduced in this chapter.
-%, which on their own encode for uncorrelated noise, constant functions, linear functions, smooth functions and periodic functions respectively.
+For precise definitions of all kernels, see appendix \ref{sec:kernel-definitions}.
 
-%
 \begin{table}[h]%
 \centering
 \begin{tabular}{cccc}
@@ -320,7 +318,7 @@ To investigate our method's ability to discover structure, and to plausibly extr
 In the following examples, the search was run to depth 10, using \kSE{}, \kRQ{}, \kLin{}, \kPer{} and \kWN{} as base kernels.
 
 \label{sec:extrapolation}
-\subsection{Mauna Loa atmospheric CO$\mathbf{_{2}}$}
+\subsection{Mauna Loa Atmospheric CO$\mathbf{_{2}}$}
 
 Using our method, we analyzed records of carbon dioxide levels recorded at the Mauna Loa observatory.
 Since this dataset was analyzed in detail by \citet{rasmussen38gaussian}, we can compare the kernel chosen by our method to a kernel constructed by human experts.
@@ -356,10 +354,10 @@ The yearly periodic component has been rescaled for clarity.}
 
 
 
-Figure \ref{fig:mauna_grow} shows the posterior mean and variance on this dataset as the search depth increases.
+\Cref{fig:mauna_grow} shows the posterior mean and variance on this dataset as the search depth increases.
 While the data can be smoothly interpolated by a single base kernel model, the extrapolations improve dramatically as the increased search depth allows more structure to be included.
 
-Figure \ref{fig:mauna_decomp} shows the final model chosen by our method, together with its decomposition into additive components.
+\Cref{fig:mauna_decomp} shows the final model chosen by our method, together with its decomposition into additive components.
 The final model exhibits both plausible extrapolation and interpretable components: a long-term trend, annual periodicity and medium-term deviations; the same components chosen by \citet{rasmussen38gaussian}.
 %The final model exhibits the same structure 
 %The automatically chosen kernel contains the same components as \citet{rasmussen38gaussian}: a long-term trend, annual periodicity and medium-term deviations from the trend.
@@ -371,7 +369,7 @@ We also plot the residual noise, showing that there is little obvious structure 
 
 
 
-\subsection{Airline passenger data}
+\subsection{Airline Passenger Counts}
 
 \begin{figure}[ht!]
 \centering
@@ -643,7 +641,7 @@ The reported additional linear structure is explainable by the fact that functio
 As the noise increases, our method generally backs off to simpler structures, rather than over-fitting.
 
 \subsubsection{Source Code}
-Source code to perform all experiments is available on at \url{www.github.com/jamesrobertlloyd/gpss-research}. 
+Source code to perform all experiments is available at \url{www.github.com/jamesrobertlloyd/gpss-research}. 
 All \gp{} parameter optimisation was performed by automated calls to the GPML toolbox, available at \url{www.gaussianprocess.org/gpml/code/}.
 
 
