@@ -173,13 +173,12 @@ For example, products of $\kSE$ kernels, having a different lengthscale paramete
 \ARD{} stands for Automatic Relevance Determination, so named because estimating the lengthscale parameters $\ell_1, \ell_2, \dots, \ell_D$, implicitly determines the ``relevance'' of each dimension.
 Input dimensions with relatively large lengthscales indicate relatively little variation along those dimensions in the function being modeled.
 
-$\seard$ kernels are the \emph{de facto} default kernel in most applications of \gp{}s.
-This is partly because they have relatively few parameters to estimate, and those parameters are relatively interpretable.
-In addition, there is a theoretical reason to use them: they are \emph{universal kernels} \citep{micchelli2006universal}, capable of learning learning any continuous function given enough data, under some conditions.
+$\seard$ kernels are the default kernel in most applications of \gp{}s.
+This may be partly because they have relatively few parameters to estimate, and those parameters are relatively interpretable.
+In addition, there is a theoretical reason to use them: they are \emph{universal} kernels~\citep{micchelli2006universal}, capable of learning learning any continuous function given enough data, under some conditions.
 
 However, this flexibilty means that they can sometimes be relatively slow to learn, due to the \emph{curse of dimensionality} \citep{bellman1956dynamic}.
-In general, the more structure we account for in the data, the less data we'll need.
-Loosely speaking, the \emph{blessing of abstraction} \citep{goodman2011learning} counters the curse of dimensionality.
+In general, the more structure we account for in the data, the less data we'll need - the \emph{blessing of abstraction} \citep{goodman2011learning} counters the curse of dimensionality.
 Below, we'll investigate ways to encode more structure into our kernels.
 
 
@@ -335,7 +334,7 @@ Cement & Slag & Fly Ash\\
  \concretepic{7} & \concretepic{8} & \concretelegend \\
 \end{tabular}
 \caption[Decomposition of posterior into interpretable one-dimensional functions]
-{By considering only one-dimensional terms of the additive kernel, we can plot the predictive distribution as a function of each dimension seperately.
+{By considering only one-dimensional terms of the additive kernel, we can plot the predictive distribution as a function of each dimension separately.
 Blue points indicate the original data, green points are data after the average contribution from all other terms has been subtracted.
 The vertical axis is the same for all plots.
 %The black line is the posterior mean of a \sgp{} with only one term in its kernel.
@@ -592,16 +591,18 @@ k(\vx, \vx') = \feat(\vx)\tra \feat(\vx')
 \end{align}
 
 As a simple example, the squared-exponential kernel ($\kSE$) on the real line has a representation in terms of infinitely many radial-basis functions.
-Any stationary kernel (one which only depends on the distance between its inputs) on the real line can be represented by a set of sines and cosines - a Fourier representation \citep{bochner1959lectures}.
+More generally, any stationary kernel
+% (one which only depends on the distance between its inputs) 
+on the real line can be represented by a set of sines and cosines - a Fourier representation \citep{bochner1959lectures}.
 In general, the feature representation of a kernel is not unique, and depends on which space $\InputSpace$ is being considered \citep{minh2006mercer}.
 
-In some cases, $\InputSpace$ can even be the infinite-dimensional feature mapping of another kernel.  Composing feature maps in this way leads to \emph{deep kernels}, a topic explored in chapter~\ref{ch:deep-limits}.
+In some cases, $\InputSpace$ can even be the infinite-dimensional feature mapping of another kernel.  Composing feature maps in this way leads to \emph{deep kernels}, a topic explored in \cref{ch:deep-limits}.
 
 
 
 \subsection{Relation to Linear Regression}
 
-Suprisingly, \gp{} regression is equivalent to Bayesian linear regression on $\feat(\vx)$:
+Suprisingly, \gp{} regression is equivalent to Bayesian linear regression on the implicit features $\feat(\vx)$ which give rise to the kernel:
 %
 \begin{align}
 f(\iva) = \vw\tra \feat(\iva), \quad \vw \sim \N{\vw}{\vzero}{\Sigma} \quad
@@ -609,7 +610,7 @@ f(\iva) = \vw\tra \feat(\iva), \quad \vw \sim \N{\vw}{\vzero}{\Sigma} \quad
 \quad f \sim \GPdist{f}{\vzero}{\feat(\iva) \tra \Sigma \feat(\iva)}
 \end{align}
 %
-The link between Gaussian processes, linear regression, and neural networks is explored further in chapter~\ref{ch:deep-limits}.
+The link between Gaussian processes, linear regression, and neural networks is explored further in \cref{ch:deep-limits}.
 
 
 \subsection{Feature-space view of Combining Kernels}
@@ -617,10 +618,10 @@ The link between Gaussian processes, linear regression, and neural networks is e
 \def\feata{\va}
 \def\featb{\vb}
 
-Many architectures for learning complex functions, such as convolutional networks \cite{lecun1989backpropagation} and sum-product networks \cite{poon2011sum}, include units which compute \texttt{and}-like and \texttt{or}-like operations.
-Composite kernels can be viewed in this way too.
-A sum of kernels can be understood as an \texttt{or}-like operation: two points are considered similar if either kernel has a high value.
-Similarly, multiplying kernels is an \texttt{and}-like operation, since two points are considered similar only if both kernels have high values.
+%Many architectures for learning complex functions, such as convolutional networks \cite{lecun1989backpropagation} and sum-product networks \cite{poon2011sum}, include units which compute \texttt{and}-like and \texttt{or}-like operations.
+%Composite kernels can be viewed in this way too.
+%A sum of kernels can be understood as an \texttt{or}-like operation: two points are considered similar if either kernel has a high value.
+%Similarly, multiplying kernels is an \texttt{and}-like operation, since two points are considered similar only if both kernels have high values.
 
 
 We can also view kernel addition and multiplication as a combination of the features of the original kernels.
@@ -655,8 +656,8 @@ k_a(\iva, \iva') \times k_b(\iva, \iva')
 \end{align}
 %
 In other words, the features of $k_a \times k_b$ are just the cartesian product (all possible combinations) of the original two sets of features.
-For example, a set of infinitely many Gaussian bumps spread evenly along the real line gives rise to one-dimensional $\kSE$ kernel.
-The cartesian product of these features with another set spread along a different dimension gives a tiling of the plane with two-dimensional Gaussian bumps.
+For example, a set of infinitely many radial-basis functions spread evenly along the real line gives rise to one-dimensional $\kSE$ kernel.
+The cartesian product of these features with another set spread along a different dimension gives a tiling of the plane with two-dimensional radial-basis functions.
 This tiling corresponds to a two-dimensional $\kSE$ kernel.
 
 
@@ -666,9 +667,9 @@ This tiling corresponds to a two-dimensional $\kSE$ kernel.
 
 \section{Expressing Symmetries and Invariances}
 
-When modeling functions, encoding known symmetries improves both learning and prediction. 
-Many types of symmetry can be enforced through operations on the covariance function.
-In this section, we'll look at different ways in which we can encode a given symmetry into a prior on functions.
+When modeling functions, encoding known symmetries can improve predictive accuracy. 
+In this section, we'll look at different ways in which we can encode symmetries into a prior on functions.
+Many types of symmetry can be enforced through operations on the kernel.
 
 We'll demonstrate the properties of the resulting models by sampling functions from their priors.
 By using these priors to define warpings from $\Reals^2 \to \Reals^3$, we'll also show how to build a nonparametric prior on an open-ended family of topological manifolds, such as cylinders, torii, and M\"{o}bius strips.
@@ -676,10 +677,10 @@ By using these priors to define warpings from $\Reals^2 \to \Reals^3$, we'll als
 
 % I would cite Pierre Chiche but he hasn't actually published his damn papers.
 
-\citet{ginsbourger2012argumentwise} and \citet{Invariances13} characterized the set of \gp{} priors on functions invariant to given transformations.
+\citet{ginsbourger2012argumentwise} and \citet{Invariances13} characterized the set of \gp{} priors on functions which respect any given invariance.%t to any given transformation.
 They showed that the only way to construct a prior on functions which respect a given invariance is to construct a kernel which respects the same invariance with respect to each of its two inputs.
 
-Formally, given a finite group of operations $G$ to which we wish our function to remain invariant, and $f \sim \GPt{0}{k(\vx,\vx')}$, $f$ is invariant under $G$ if and only if $k(\cdot, \cdot)$ is argumentwise invariant:
+Formally, given a finite group of operations $G$ to which we wish our function to remain invariant, and $f \sim \GPt{0}{k(\vx,\vx')}$, $f$ is invariant under $G$ (up to a modification) if and only if $k(\cdot, \cdot)$ is argumentwise invariant:
 %
 \begin{align}
 k( g(\vx), g(\vx')) = k(\vx, \vx'), \quad \forall \vx, \vx' \in \InputSpace, \quad \forall g, g' \in G
@@ -713,7 +714,7 @@ Additive method & Projection method & Product method \\[0.5ex]
 %$k(x, y, x', y') + k(x, y, y', x')$ & $k(x, y, x', y') \times k(x, y, y', x')$ & $k( \min(x, y), \max(x,y),$ \\
 % $+ k(y, x, x', y') + k(y, x, y', x')$ & $\times k(y, x, x', y') \times k(y, x, y', x')$ & $\min(x', y'), \max(x',y') )$
 $\begin{array}{r@{}l@{}}
-& \kSE(x, y, x', y') \\ + & \kSE(x, y, y', x')
+& \kSE(x, y, x', y') \\ + \,\, & \kSE(x, y, y', x')
 \end{array}$
 &
 $\begin{array}{r@{}l@{}}
@@ -722,7 +723,7 @@ $\begin{array}{r@{}l@{}}
 \end{array}$
 &
 $\begin{array}{r@{}l@{}}
-& \kSE(x, y, x', y') \\ \times & \kSE(x, y, y', x') 
+& \kSE(x, y, x', y') \\ \times \,\, & \kSE(x, y, y', x') 
 \end{array}$
 \end{tabular}
 \caption[Three ways to introduce symmetry]{Three methods of introducing symmetry, illustrated through draws from the corresponding priors.
