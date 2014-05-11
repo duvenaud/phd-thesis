@@ -118,7 +118,7 @@ This multivariate Gaussian density is referred to as the \emph{marginal} likelih
 
 \subsection{Prediction}
 Even though we don't need to consider locations other than at the data when computing the marginal likelihood, we can still ask the model which function values are likely to occur at any location, given the observations we've seen.
-The predictive distribution of a function value $f(\vx^\star)$ at a test point $\testpoint$ has a simple form:
+By the formula for Gaussian conditionals (described in appendix \ref{ch:appendix-gaussians}), the predictive distribution of a function value $f(\vx^\star)$ at a test point $\testpoint$ has a simple form:
 %
 \begin{align}
 p( f(\testpoint) | \funcval, \vX, \mu(\cdot), k(\cdot, \cdot))
@@ -127,7 +127,7 @@ p( f(\testpoint) | \funcval, \vX, \mu(\cdot), k(\cdot, \cdot))
  \big)
 \label{eq:predictive}
 \end{align}
-%
+
 These expressions may look complex, but only require a few matrix operations to evaluate.
 
 Sampling a function from a \gp{} is also straightforward: a sample from a \gp{} is just a single sample from a single multivariate Gaussian distribution, given by \cref{eq:predictive}.
