@@ -16,16 +16,19 @@
 \hspace*{\fill} \citet{mlhipster}
 \end{quotation}
 
-Prediction, extrapolation, and induction can all be expressed as learning a function from data.
-A general recipe for learning from data is to perform \emph{inference} - to choose a hyopthesis or to weight a set of hypotheses, based on how compatible they are with the data.
-To do inference, we start with a weighted set of hypotheses - a \emph{model}.
-To be able to learn a wide variety of types of functions, we'd like to have an expressive language of models of functions, which can represent both simple parametric functions, such as linear or polynomial, and also complex nonparametric functions specified in terms of properties such as smoothness or periodicity.
-Fortunately, Gaussian processes (\gp{}s) provide a very general and analytically tractable way of learning many different classes of functions.
-This chapter will introduce the basic properties of \gp{}s.
+Prediction, extrapolation, and induction are all examples of learning a function from data.
+There are many ways to learn functions, but one particularily nice way is by \emph{inference} - where we set up a group of hypotheses - a \emph{model}, then weight those hypotheses based on how well their predictions match the data.
+Keeping around all the hypotheses that match the data helps gaurd against over-fitting.
+We can also compare models to find what sorts of structure are present in a dataset.
 
-Once we have a rich enough language for expressing functions, the remaining question becomes:
-Which particular model will work well on my problem?
-What sort of structure should I put in my model?
+To be able to learn a wide variety of types of structure, we'd like to have an expressive language of models of functions.  We'd like to be able to represent simple kinds of functions, such as linear or polynomial ones.  We'd also like to have models of arbitrarily complex functions, specified in terms of high-level properties such as how smooth they are, whether they repeat over time, or which symmetries they have.
+
+%Fortunately, Gaussian processes (\gp{}s) are a tractable set of models of very different types of functions.
+This thesis will show how to build such a language using Gaussian processes (\gp{}s), a tractable set of models of very different types of functions.
+This chapter will introduce the basic properties of \gp{}s.
+%Once we have a rich enough language for expressing functions, the remaining question becomes:
+%Which particular model will work well on my problem?
+%What sort of structure should I put in my model?
 The next chapter will describe the many types of functions that we know how to model using \gp{}s.
 
 
