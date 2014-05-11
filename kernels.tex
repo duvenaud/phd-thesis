@@ -89,7 +89,7 @@ This will allow us to include as much high-level structure as necessary into our
 
 \subsection{Notation}
 
-In this chapter, we'll focus on two ways of combining kernels: addition and multiplication.
+Below, we'll focus on two ways of combining kernels: addition and multiplication.
 We'll often write these operations in shorthand, without arguments:
 %
 \begin{align}
@@ -101,6 +101,86 @@ All of the basic kernels we considered in \cref{sec:based-kernels} are one-dimen
 The dimension on which a kernel operates is denoted by a subscripted integer.
 For example, $\SE_2$ represents an \kSE{} kernel over the second dimension of $\vx$.
 To remove clutter, we'll usually refer to a kernels without specifying their parameters.
+
+
+
+
+
+
+\subsection{Combining Properties through Multiplication}
+
+%Multiplying kernels allows us to account for interactions between different input dimensions, or to combine different notions of similarity.
+
+%Loosely speaking, multip
+
+Multiplying two positive-definite kernels together always results in another positive-definite kernel.
+But what properties do these new kernels have?
+%
+\begin{figure}
+\centering
+\begin{tabular}{cccc}
+$\kLin \times \kLin$ & $\kSE \times \kPer$ & $\kLin \times \kSE$ & $\kLin \times \kPer$ \\
+\kernpic{lin_times_lin} & \kernpic{longse_times_per} & \kernpic{se_times_lin} & \kernpic{lin_times_per}\\
+\fixedx & $x -x'$ & \fixedx & \fixedx\\
+%& & & \\
+\large $\downarrow$ & \large $\downarrow$ & \large $\downarrow$ & \large $\downarrow$  \\
+\kernpic{lin_times_lin_draws}  & \kernpic{longse_times_per_draws_s2} & \kernpic{se_times_lin_draws_s2} & \kernpic{lin_times_per_draws_s2} \\
+quadratic functions & locally \newline periodic & increasing variation  & growing amplitude \\[10pt]
+\end{tabular}
+\caption[Examples of one-dimensional structures expressible by multiplying kernels]
+{ Examples of one-dimensional structures expressible by multiplying kernels.  
+%The x-axis has the same scale for all plots.
+Plots have same meaning as in figure \ref{fig:basic_kernels}.}
+\label{fig:kernels_times}
+\end{figure}
+%
+\Cref{fig:kernels_times} shows some interesting kernels that one can obtain by multiplying two basic kernels together.
+
+Working with kernels rather than the parametric form of the function itself allows us to express high-level properties of functions that don't necessarily have a simple parametric form.
+Here, we'll discuss a few examples.
+
+\subsubsection{Polynomial Regression}
+By multiplying together $T$ linear kernels, we obtain a prior on polynomials of degree $T$.
+Column 1 of \cref{fig:kernels} shows a quadratic kernel.
+
+\subsubsection{Locally Periodic Functions}
+In univariate data, multiplying a kernel by \kSE{} gives a way of converting global structure to local structure.
+For example, $\Per$ corresponds to exactly periodic structure, whereas $\Per \kerntimes \SE$ corresponds to locally periodic structure, as shown in column 2 of \cref{fig:kernels}.
+
+\subsubsection{Functions with Growing Amplitude}
+Multiplying by a linear kernel means that the marginal standard deviation of the function being modeled will grow linearly away from the origin.
+Columns 3 and 4 of \cref{fig:kernels} show two examples.
+
+\subsubsection{More Combinations}
+We can multiply any number of kernels together in this way to produce kernels combining several high-level propoerties.
+For example, the kernel $\kSE \kerntimes \kLin \kerntimes \kPer$ is a prior on functions which are locally periodic with linearly growing amplitude.
+We'll see examples of real datasets with this kind of structure in \cref{ch:grammar}.
+
+
+\subsection{Building Flexible Multidimensional Models}
+
+%For instance, in multidimensional data, the multiplicative kernel $\SE_1 \kerntimes \SE_2$ represents a smoothly varying function of dimensions 1 and 2 which is not constrained to be additive.
+
+We can build flexible models of functions of more than one input simply by multiplying kernels between the different inputs.
+For example, products of $\kSE$ kernels, having a different lengthscale parameter for each dimension, are called the $\seard$ kernel:
+%
+\begin{align}
+\seard( \vx, \vx')
+ = \prod_{d=1}^D \exp \left( -\frac{1}{2} \frac{\left( x_d - x'_d \right)^2}{\ell_d^2} \right)
+ = \exp \left( -\frac{1}{2} \sum_{d=1}^D \frac{\left( x_d - x'_d \right)^2}{\ell_d^2} \right)
+\end{align}
+%
+\ARD{} stands for Automatic Relevance Determination, so named because estimating the lengthscale parameters $\ell_1, \ell_2, \dots, \ell_D$, implicitly determines the ``relevance'' of each dimension.
+Input dimensions with relatively large lengthscales indicate relatively little variation along those dimensions in the function being modeled.
+
+$\seard$ kernels are the \emph{de facto} default kernel in most applications of \gp{}s.
+This is partly because they have relatively few parameters to estimate, and those parameters are relatively interpretable.
+In addition, there is a theoretical reason to use them: they are \emph{universal kernels} \citep{micchelli2006universal}, capable of learning learning any continuous function given enough data, under some conditions.
+
+However, this flexibilty means that they can sometimes be relatively slow to learn, due to the \emph{curse of dimensionality} \citep{bellman1956dynamic}.
+In general, the more structure we account for in the data, the less data we'll need.
+Loosely speaking, the \emph{blessing of abstraction} \citep{goodman2011learning} counters the curse of dimensionality.
+Below, we'll investigate ways to encode more structure into our kernels.
 
 
 
@@ -242,7 +322,7 @@ After learning the kernel parameters by maximizing the marginal likelihood of th
 \newcommand{\concretepic}[1]{\includegraphics[width=0.31\columnwidth]{\decompfigsdir/concrete-component-#1}}
 \newcommand{\concretelegend}[0]{\raisebox{5mm}{\includegraphics[trim=56mm 1mm 6mm 33mm, clip, width=0.2\columnwidth]{\decompfigsdir/concrete-component-1-legend}}}
 %
-\begin{figure}[h]
+\begin{figure}[ht!]
 \centering
 \begin{tabular}{ccc}
 %\includegraphics[width=0.3\textwidth]{\additivefigsdir/interpretable_1st_order1.pdf} &
@@ -255,7 +335,7 @@ Cement & Slag & Fly Ash\\
  \concretepic{7} & \concretepic{8} & \concretelegend \\
 \end{tabular}
 \caption[Decomposition of posterior into interpretable one-dimensional functions]
-{By considering only one-dimensional terms of the additive kernel, we can plot the predictive distribution of each 1-dimensional function.
+{By considering only one-dimensional terms of the additive kernel, we can plot the predictive distribution as a function of each dimension seperately.
 Blue points indicate the original data, green points are data after the average contribution from all other terms has been subtracted.
 The vertical axis is the same for all plots.
 %The black line is the posterior mean of a \sgp{} with only one term in its kernel.
@@ -269,8 +349,9 @@ The vertical axis is the same for all plots.
 
 \Cref{fig:interpretable functions} shows the marginal posterior distribution of each of the 8 components in \cref{eq:concrete}.
 We can see that the parameters controlling the variance of two of the components, Coarse and Fine, were set to zero, meaning that the marginal likelihood preferred a parsimonious model which did not depend on these dimensions.
-This is an example of the automatic sparsity that arises by maximizing marginal likelihood in \gp{} models, also known as automatic relevance determination (\ARD) \citep{neal1995bayesian}.
-The ability to learn kernel parameters in this way is much more difficult when using non-probabilistic methods such as Support Vector Machines [cite], for which cross-validation is often the best method to select kernel parameters.
+This is an example of the automatic sparsity that arises by maximizing marginal likelihood in \gp{} models, and another example of automatic relevance determination (\ARD) \citep{neal1995bayesian}.
+
+The ability to learn kernel parameters in this way is much more difficult when using non-probabilistic methods such as Support Vector Machines \citep{cortes1995support}, for which cross-validation is often the best method to select kernel parameters.
 
 
 
@@ -341,7 +422,19 @@ If we wish to condition on the sum of more than two functions, the term $\vK_1 +
 
 \subsubsection{Posterior Covariance of Additive Components}
 
-\begin{figure}[t]
+%One of the advantages of using a generative, model-based approach is that we can examine any aspect of the model we wish to.
+We can also compute the posterior covariance between any two components, conditioned on their sum:
+%
+\begin{align}
+\covargs{ \vf_1(\vX^\star)}{\vf_2(\vX^\star) | \vf(\vX) } 
+& = - \vK_1^{\star\tra} (\vK_1 + \vK_2)\inv \vK_2^\star
+%\covargs{\vf_1(\vx^\star)}{\vf_2(\vx^\star) | \vf(\vx) }
+%& = - \vk_1(\vx^{\star}, \vx)  \left[ \vK_1(\vx, \vx) + \vK_2(\vx, \vx) \right] \inv \vk_1(\vx, \vx^{\star}) 
+\label{eq:post-component-cov}
+\end{align}
+%
+If this quantity is negative, it means that there is ambiguity about which of the two components explains the data at that location.
+\begin{figure}[ht!]
 \centering
 \renewcommand{\tabcolsep}{1mm}
 \def\incpic#1{\includegraphics[width=0.1\columnwidth]{../figures/decomp/concrete-#1}}
@@ -365,32 +458,20 @@ If we wish to condition on the sum of more than two functions, the term $\vK_1 +
 %
 \caption[Visualizing posterior correlations between components]
 {Visualizing posterior correlations between the components explaining the concrete dataset.
-%Plots on the diagonal show the posterior correlation of each function.
-Each plot shows the additive model's posterior correlation between two components, plotted over the domain of the data $\pm 5\%$.
+Plots on the diagonal show posterior correlations within each component.
+Each plot shows the additive model's posterior correlations between two components, plotted over the domain of the data $\pm 5\%$.
 %Color indicates the amount of correlation between the function value of the two components.
 Red indicates high correlation, teal indicates no correlation, and blue indicates negative correlation.
 %Off-diagonal plots show posterior covariance between each pair of functions, as a function of both inputs.
 %Because each
 %We can see that t
-There is negative correlation between the ``Cement'' and ``Slag'' variables, meaning that - one of these functions is high and the other low, but which one is uncertain under the model.
+Most of the correlation occurs within componenets, but there is also negative correlation between the ``Cement'' and ``Slag'' variables.
+Negative correlation means that one of function is high and the other low, but which one is uncertain.
 Dimensions `Coarse' and `Fine' are not shown, because their variance was zero.
 }
 \label{fig:interpretable interactions}
 \end{figure}
 %
-
-%One of the advantages of using a generative, model-based approach is that we can examine any aspect of the model we wish to.
-We can also compute the posterior covariance between any two components, conditioned on their sum:
-%
-\begin{align}
-\covargs{ \vf_1(\vX^\star)}{\vf_2(\vX^\star) | \vf(\vX) } 
-& = - \vK_1^{\star\tra} (\vK_1 + \vK_2)\inv \vK_2^\star
-%\covargs{\vf_1(\vx^\star)}{\vf_2(\vx^\star) | \vf(\vx) }
-%& = - \vk_1(\vx^{\star}, \vx)  \left[ \vK_1(\vx, \vx) + \vK_2(\vx, \vx) \right] \inv \vk_1(\vx, \vx^{\star}) 
-\label{eq:post-component-cov}
-\end{align}
-%
-If this quantity is negative, it means that there is ambiguity about which of the two components explains the data at that location.
 \Cref{fig:interpretable interactions} shows the posterior correlation between all non-zero components of the concrete model.
 We can see that there is negative correlation between the ``Cement'' and ``Slag'' variables.
 This reflects an ambiguity in the model about which one of these functions is high and the other low.
@@ -417,7 +498,7 @@ Additive structure often allows us to make predictions far from the training dat
 \begin{tabular}{ccc}
  & \gp{} mean using & \gp{} mean using \\
 True function: & product of $\kSE$ kernels: & sum of $\kSE$ kernels: \\
-\parbox{0.33\columnwidth}{$f(x_1, x_2) = \sin(x_1) + \sin(x_2)$} & $k(x_1, x_1') \times k(x_2, x_2')$ & $k(x_1, x_1') + k(x_2, x_2')$ \\[0.2em]
+\parbox{0.33\columnwidth}{$f(x_1, x_2) = \sin(x_1) + \sin(x_2)$} & $k_1(x_1, x_1') \kerntimes k_2(x_2, x_2')$ & $k_1(x_1, x_1') \kernplus k_2(x_2, x_2')$ \\[0.2em]
 \hspace{-0.1in}\includegraphics[width=0.32\textwidth]{\additivefigsdir/1st_order_censored_truth} &
 \hspace{-0.1in}\includegraphics[width=0.32\textwidth]{\additivefigsdir/1st_order_censored_ard}&
 \hspace{-0.1in}\includegraphics[width=0.32\textwidth]{\additivefigsdir/1st_order_censored_add} \\[1em]
@@ -431,7 +512,7 @@ The product kernel allows a different function value for every combination of in
 \label{fig:synth2d}
 \end{figure}
 %
-Figure \ref{fig:synth2d} compares the extrapolations made by additive versus non-additive \gp{} models, conditioned on data from a sum of two axis-aligned sine functions, evaluated in a small, L-shaped area.
+\Cref{fig:synth2d} compares the extrapolations made by additive versus non-additive \gp{} models, conditioned on data from a sum of two axis-aligned sine functions, evaluated in a small, L-shaped area.
 In this example, the additive model is able to correctly predict the height of the function at unseen combinations of inputs.
 The product-kernel model is more flexible, and so remains uncertain about the function away from the data.
 %The ability of additive GPs to discover long-range structure suggests that this model may be well-suited to deal with covariate-shift problems.
@@ -445,59 +526,11 @@ In high dimensions, we can also consider sums of functions of more than one dime
 
 
 
-\section{Combining Kernels through Multiplication}
 
-%Multiplying kernels allows us to account for interactions between different input dimensions, or to combine different notions of similarity.
-
-\subsection{Combining High-Level Attributes}
-
-%Loosely speaking, multip
-
-In univariate data, multiplying a kernel by \kSE{} gives a way of converting global structure to local structure.
-For example, $\Per$ corresponds to globally periodic structure, whereas $\Per \kerntimes \SE$ corresponds to locally periodic structure, as shown in row 1 of \cref{fig:kernels}.
-%
-\begin{figure}
-\centering
-\begin{tabular}{cccc}
-$\kLin \times \kLin$ & $\kSE \times \kPer$ & $\kLin \times \kSE$ & $\kLin \times \kPer$ \\
-\kernpic{lin_times_lin} & \kernpic{se_times_per} & \kernpic{se_times_lin} & \kernpic{lin_times_per}\\
-\fixedx & $x -x'$ & \fixedx & \fixedx\\
-%& & & \\
-\large $\downarrow$ & \large $\downarrow$ & \large $\downarrow$ & \large $\downarrow$  \\
-\kernpic{lin_times_lin_draws}  & \kernpic{se_times_per_draws_s7} & \kernpic{se_times_lin_draws_s2} & \kernpic{lin_times_per_draws_s2} \\
-quadratic functions & locally \newline periodic & increasing variation  & growing amplitude \\[10pt]
-\end{tabular}
-\caption[Examples of one-dimensional structures expressible by multiplying kernels]
-{ Examples of one-dimensional structures expressible by multiplying kernels.  
-%The x-axis has the same scale for all plots.
-Plots have same meaning as in figure \ref{fig:basic_kernels}.}
-\label{fig:kernels_times}
-\end{figure}
-
-%For instance, in multidimensional data, the multiplicative kernel $\SE_1 \times \SE_2$ represents a smoothly varying function of dimensions 1 and 2 which is not constrained to be additive.
-
-%Since we are applying these operations to the similarity functions rather than the regression functions %themselves, multiplication of even a few base kernels can express complex relationships in data which do not have a simple parametric form.
-
-
-
-\subsection{Building Flexible Multidimensional Models}
-
-%For instance, in multidimensional data, the multiplicative kernel $\SE_1 \kerntimes \SE_2$ represents a smoothly varying function of dimensions 1 and 2 which is not constrained to be additive.
-
-For multivariate data, products of $\kSE$ kernels, having a different lengthscale parameter for each dimension, are called the $\seard$ kernel:
-%
-\begin{align}
-\seard( \vx, \vx')
- = \prod_{d=1}^D \exp \left( -\frac{1}{2} \frac{\left( x_d - x'_d \right)^2}{\ell_d^2} \right)
- = \exp \left( -\frac{1}{2} \sum_{d=1}^D \frac{\left( x_d - x'_d \right)^2}{\ell_d^2} \right)
-\end{align}
-%
-\ARD{} stands for Automatic Relevance Determination, so named because by estimating the lengthscale parameters $\ell_1, \ell_2, \dots, \ell_D$, we are implicitly determining the ``relevance'' of each dimension.
-Input dimensions with relatively large lengthscales indicate relatively little variation in the function being modeled along those dimensions.
 
 
 \section{Changepoints}
-A simple example of how multiplication of kernels can give rise to more structure priors is given by chapngepoint kernels.
+A simple example of how multiplication of kernels can give rise to more structure priors is given by changepoint kernels.
 Changepoints kernels can be defined through addition and multiplication with sigmoidal functions:
 %
 
@@ -1065,8 +1098,8 @@ The quantities represent the relative amount of evidence that the data provide f
 
 
 \subsubsection{Source Code}
-Source code to perform all experiments is available at \url{github.com/duvenaud/pdh-thesis/}. 
-All \gp{} parameter optimisation was performed by automated calls to the \GPML{} toolbox, available at \url{www.gaussianprocess.org/gpml/code/}.
+Source code to produce all figures is available at \url{github.com/duvenaud/pdh-thesis}. 
+All kernel parameter optimisation was performed by calls to the \GPML{} toolbox, available at \url{www.gaussianprocess.org/gpml/code/}.
 
 \section{Conclusion}
 
