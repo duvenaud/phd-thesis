@@ -4,17 +4,17 @@
 \chapter{Expressing Structure with Kernels}
 \label{ch:kernels}
 
-In this chapter, we'll show how to use kernels, also called \emph{covariance functions}, to build many different kinds of models of functions.
+In this chapter, we'll show how to use kernels to build many different kinds of models of functions.
 By combining a few simple kernels through addition and multiplication, we'll be able to express many different kinds of structure: additivity, symmetry, periodicity, interactions between variables, and changepoints.
 We'll also show several ways to encode group invariances into kernels.
-Combining kernels in these simple ways gives us a rich, open-ended language of models.
+Combining kernels in these simple ways will give us a rich, open-ended language of models.
 
 
 \section{Definition}
 
-Since we'll be discussing covariance functions at length, we now give a precise definition.
-A kernel $\kernel(\vx, \vx') : \InputSpace \times \InputSpace \to \Reals$ is any positive-definite function between two points $\inputVar, \inputVar'$ in some space $\InputSpace$.
-In this chapter, $\InputSpace$ is usually taken to be Euclidian space, but it can be any type of space, corresponding to spaces of images, documents, categories or points on a sphere.
+Since we'll be discussing kernels at length, we now give a precise definition.
+A kernel (also called a \emph{covariance function}), is a positive-definite function between two points $\inputVar, \inputVar'$ in some space $\InputSpace$. Formally, $\kernel(\vx, \vx'): \InputSpace \times \InputSpace \to \Reals$.
+In this chapter, $\InputSpace$ is usually a Euclidian space, but it could just as easily corresponding to the space of images, document, categories or points on a sphere.
 
 Gaussian process models use a kernel to define the prior covariance between any two function values:
 %
@@ -23,7 +23,7 @@ Gaussian process models use a kernel to define the prior covariance between any 
 \end{align}
 %
 Colloquially, kernels are often said to specify the similarity between two objects.
-This is slightly misleading in this context, since what is actually being specified is the similarity between two values of a \emph{function} over objects.
+This is a slightly misleading statement in this context, since what is actually being specified is the similarity between two values of a \emph{function} over objects.
 The kernel specifies which functions are likely under the \gp{} prior, which in turn determines the generalization properties of the model.
 
 
@@ -68,12 +68,12 @@ There exist many variants of the $\kSE$ kernel, each encoding slightly different
 
 \paragraph{Kernel parameters}
 Each kernel has a number of parameters which specify the precise shape of the covariance function.
-These are sometimes referred to as \emph{hyperparameters}, since they can be viewed as specifying a distribution over function parameters, instead of specifying the function directly.
+These are sometimes referred to as \emph{hyperparameters}, since they can be viewed as specifying a distribution over function parameters, instead of being parameters which specify a function directly.
 
 
 \paragraph{Stationary and Non-stationary}
-The $\kSE$ and $\kPer$ kernels are \emph{stationary}, meaning that their value only depends on the difference $x-x'$.  This implies that the probability of observing a particular dataset doesn't depend on the particular location of the dataset.
-In contrast, the linear kernel $\kLin$ is non-stationary, meaning that the model will produce different answers if the data is moved around but the kernel parameters are kept fixed.
+The $\kSE$ and $\kPer$ kernels are \emph{stationary}, meaning that their value only depends on the difference $x-x'$.  This implies that the probability of observing a particular dataset remains the same, even if we move all the $\vx$ values over by some amount.
+In contrast, the linear kernel $\kLin$ is non-stationary, meaning that the corresponding \gp{} model will produce different answers if the data is moved around while the kernel parameters are kept fixed.
 
 
 
@@ -86,18 +86,6 @@ The next few sections of this chapter will explore ways in which kernels can be 
 This will allow us to include as much high-level structure as necessary into our models.
 %For an overview, see \cite[Chapter~4]{rasmussen38gaussian}.
 
-%In this chapter, we'll focus on two methods for combining kernels: addition and multiplication.
-%\begin{align}
-%k_1 + k_2 =& \,\, k_1(x,x') + k_2(x,x')\\
-%k_1 \times k_2 =& \,\, k_1(x,x') \times k_2(x,x')
-%\end{align}
-
-%Combining kernels using these operations can yield kernels encoding for richer structures than are encoded in the original kernels.
-% such as approximate periodicity ($\kSE \times \kPer$) or smooth functions with linear trends ($\kSE + \kLin$).
-
-
-%This allows one to create richly structured and interpretable kernels from well-understood base components.
-%Figure \ref{fig:kernels} shows several examples of structured kernels that can be constructed by adding or multiplying standard base kernels.
 
 \subsection{Notation}
 
@@ -105,21 +93,20 @@ In this chapter, we'll focus on two ways of combining kernels: addition and mult
 We'll often write these operations in shorthand, without arguments:
 %
 \begin{align}
-k_1 + k_2 =& \,\, k_1(\vx, \vx') + k_2( \vx, \vx')\\
-k_1 \times k_2 =& \,\, k_1(\vx, \vx') \times k_2(\vx, \vx')
+k_a + k_b =& \,\, k_a(\vx, \vx') + k_b( \vx, \vx')\\
+k_a \times k_b =& \,\, k_a(\vx, \vx') \times k_b(\vx, \vx')
 \end{align}
 
 All of the basic kernels we considered in \cref{sec:based-kernels} are one-dimensional, but kernels over multidimensional inputs can be constructed by adding and multiplying between kernels on different dimensions.
-The dimension on which a kernel operates is denoted by a subscript.
+The dimension on which a kernel operates is denoted by a subscripted integer.
 For example, $\SE_2$ represents an \kSE{} kernel over the second dimension of $\vx$.
-
 To remove clutter, we'll usually refer to a kernels without specifying their parameters.
 
 
 
 \section{Modeling Sums of Functions}
 
-An additive function is one which can be expressed as $f(\vx) = f_1(\vx) + f_2(\vx)$.
+An additive function is one which can be expressed as $f(\vx) = f_a(\vx) + f_b(\vx)$.
 %
 \begin{table}
 \centering
@@ -136,63 +123,32 @@ periodic plus trend & periodic plus noise & linear plus variation & slow \& fast
 \caption[Examples of one-dimensional structures expressible by adding kernels]
 { Examples of one-dimensional structures expressible by adding kernels.  
 %The x-axis has the same scale for all plots.
-Rows have the same meaning as in \Cref{fig:basic_kernels}.
+Rows have the same meaning as in \cref{fig:basic_kernels}.
 $\kSE^{(\textnormal{long})}$ denotes a $\kSE$ kernel whose lengthscale is long relative to that of $\kSE^{(\textnormal{short})}$
 }
 \label{fig:kernels_plus}
 \end{table}
 %
-Additivity is a very useful modeling assumption in a wide variety of contexts, especially if it allows us to make stronger assumptions about the component functions in the sum.
-Restricting the flexibility of the component functions often aids in building interpretable models, and often enables extrapolation in high dimensions.
-Fortunately, additivity is easy to encode in \gp{} models.
+Additivity is a very useful modeling assumption in a wide variety of contexts, especially if it allows us to make strong assumptions about the individual component which make up the sum.
+Restricting the flexibility of the component functions often aids in building interpretable models, and sometimes enables extrapolation in high dimensions.
+
+Fortunately, it's easy to encode additivity into encode into \gp{} models.
 Suppose functions ${\function_1, \function_2}$ are drawn independently from \gp{} priors:
 %
 \begin{align}
-\function_1 \dist \GP(\mu_1, \kernel_1)\\
-\function_2 \dist \GP(\mu_2, \kernel_2)
+\function_a \dist \GP(\mu_a, \kernel_a)\\
+\function_b \dist \GP(\mu_b, \kernel_b)
 \end{align}
 %
 Then the sum of those functions is simply another \gp{}:
 %
 \begin{align}
 %\function := 
-\function_1 + \function_2 \dist \GP(\mu_1 + \mu_2, \kernel_1 + \kernel_2).
+\function_a + \function_b \dist \GP(\mu_a + \mu_b, \kernel_a + \kernel_b).
 \end{align}
 %
-Kernels $\kernel_1$ and $\kernel_2$ can be kernels of different types, allowing us to model the data as a sum of independent functions, each possibly representing a different type of structure.
+Kernels $\kernel_a$ and $\kernel_b$ can be kernels of different types, allowing us to model the data as a sum of independent functions, each possibly representing a different type of structure.
 We can also sum any number of components this way.
-
-%In time-series models, sums of kernels can express superposition of different processes, possibly operating at different scales.
-
-%A theme throughout this thesis is exploring the idea that a lot of the expressivity of \gp{} models comes from the fact that these models can be combined and decomposed additively.
-
-
-\subsubsection{A known mean function can be moved into the covariance function}
-Specifically, if we wish to model an unknown function $f(\vx)$ with known mean $m(\vx)$, (with unknown magnitude $c \sim \Nt{0}{\sigma^2_c}$), we can equivalently express this model using another \gp{} with zero mean:
-%$related modelquivalently (\vx) a(\vx)$ with $f \sim \GPt{0}{k(\vx,\vx')}$, then this 
-%
-\begin{align}
-f \sim \GPt{c m(\vx)}{k(\vx,\vx')}, \quad c \sim \Nt{0}{\sigma^2_c}
-\iff f \sim \GPt{ \vzero }{ c^2 m(\vx) m(\vx') + k(\vx,\vx')}
-\end{align}
-
-
-By moving the mean function into the covariance function, we get the same model, but we can integrate over the magnitude of the mean function at no additional cost.
-This is one advantage of moving as much structure as possible into the covariance function.
-%In fact, we can view \gp{} regression as simply implicitly integrating over the magnitudes of (possibly uncountably many) different mean functions all summed together.
-%TODO: provide a link to the GPs as neural nets discussion.
-
-\paragraph{An unknown mean function can be moved into the covariance function}
-
-If we wish to express our ignorance about the mean function, one way would be by putting a \gp{} prior on it.
-%
-\begin{align}
-m \sim \GPt{\vzero}{k_1(\vx,\vx')}, \quad
-f \sim \GPt{m(\vx)}{k_2(\vx,\vx')}
-\iff 
-f \sim \GPt{\vzero}{k_1(\vx,\vx') + k_2(\vx,\vx')}
-\end{align}
-
 
 
 \subsection{Additivity Across Multiple Dimensions}
@@ -235,7 +191,7 @@ $f_1 \sim \GP\left(0, k_1\right)$ & & $f_2 \sim \GP\left(0, k_2\right)$ & & $f_1
 \emph{Top left:} An additive kernel is a sum of kernels.
 \emph{Bottom left:}  A draw from an additive kernel corresponds to a sum of draws from independent \gp{} priors with the corresponding kernels.
 \emph{Top right:} A product kernel.
-\emph{Bottom right:}  A \gp{} prior with a product of kernels does not correspond to a product of draws from \gp{}s.
+\emph{Right:}  A \gp{} prior with a product of kernels does not correspond to a product of draws from \gp{}s.
 %In this example, both kernels are composed of one dimensional squared-exponential kernels, but this need not be the case in general.
 }
 \label{fig:kernels}
@@ -275,7 +231,7 @@ Our simple additive model looks like
 \begin{align}
 f(\vx) & = 
 f_1(\textnormal{cement}) + f_2(\textnormal{slag}) + f_3(\textnormal{fly ash}) + f_4(\textnormal{water}) \nonumber \\
-& + f_5(\textnormal{plasticizer}) + f_6(\textnormal{coarse}) + f_7(\textnormal{fine}) + f_8(\textnormal{age}) + \textnormal{noise}
+& \quad + f_5(\textnormal{plasticizer}) + f_6(\textnormal{coarse}) + f_7(\textnormal{fine}) + f_8(\textnormal{age}) + \textnormal{noise}
 \label{eq:concrete}
 \end{align}
 %
@@ -300,7 +256,7 @@ Cement & Slag & Fly Ash\\
 \end{tabular}
 \caption[Decomposition of posterior into interpretable one-dimensional functions]
 {By considering only one-dimensional terms of the additive kernel, we can plot the predictive distribution of each 1-dimensional function.
-Blue points indicate the original data, green points are data after the contribution from all other terms has been subtracted.
+Blue points indicate the original data, green points are data after the average contribution from all other terms has been subtracted.
 The vertical axis is the same for all plots.
 %The black line is the posterior mean of a \sgp{} with only one term in its kernel.
 %Right:  the posterior mean of a \sgp{} with only one second-order term in its kernel.
@@ -311,7 +267,7 @@ The vertical axis is the same for all plots.
 \end{figure}
 %
 
-Figure~\ref{fig:interpretable functions} shows the marginal posterior distribution of each of the 8 components in Equation~\eqref{eq:concrete}.
+\Cref{fig:interpretable functions} shows the marginal posterior distribution of each of the 8 components in \cref{eq:concrete}.
 We can see that the parameters controlling the variance of two of the components, Coarse and Fine, were set to zero, meaning that the marginal likelihood preferred a parsimonious model which did not depend on these dimensions.
 This is an example of the automatic sparsity that arises by maximizing marginal likelihood in \gp{} models, also known as automatic relevance determination (\ARD) \citep{neal1995bayesian}.
 The ability to learn kernel parameters in this way is much more difficult when using non-probabilistic methods such as Support Vector Machines [cite], for which cross-validation is often the best method to select kernel parameters.
@@ -321,9 +277,10 @@ The ability to learn kernel parameters in this way is much more difficult when u
 \subsection{Posterior Variance of Additive Components}
 \label{sec:posterior-variance}
 
-How did we produce the plots shown in \Cref{fig:interpretable functions}?
+
 %\footnote{Code is available at \url{github.com/duvenaud/phd-thesis/}}
 Here we derive the posterior variance and covariance of all of the additive components of a \gp{}.
+These formulas allow us to make plots such as \cref{fig:interpretable functions}.
 %These formulas let us plot the marginal variance of each component separately.  These formulas can also be used to examine the posterior covariance between pairs of components.
 
 First, we'll write down the joint prior over the sum of two functions drawn from \gp{} priors.
@@ -481,7 +438,7 @@ The product-kernel model is more flexible, and so remains uncertain about the fu
 
 These types of additive models have been well-explored in the statistics literature.  For example, generalized additive models~\citep{hastie1990generalized} have seen wide adoption.
 In high dimensions, we can also consider sums of functions of more than one dimension.
-Chapter~\ref{ch:additive} considers this model class in more detail.
+\Cref{ch:additive} considers this model class in more detail.
 
 
 
@@ -776,7 +733,7 @@ k_\textnormal{rep}(\vx, \vx') = k( A_G(\vx), A_G( \vx') )
 \end{align}
 %
 For our example group $\gswitch$, a fundamental domain is $\{x, y : x < y\}$, which can be mapped to using $A_{\gswitch}( x, y ) = \big[ \min(x,y), \max(x,y) \big]$.
-Constructing a kernel using this method introduces a non-differentiable  ``seam'' along $x = y$, as shown in \Cref{fig:add_vs_min}(b).
+Constructing a kernel using this method introduces a non-differentiable  ``seam'' along $x = y$, as shown in \cref{fig:add_vs_min}(b).
 The projection method also works for infinite groups, as we shall see below.
 
 \item {\bf Multiply over the Orbit.}
@@ -786,7 +743,7 @@ Ryan P. Adams (personal communication) suggests a construction using products ov
 k_\textnormal{sum}(\vx, \vx') = \prod_{g, \in G} \prod_{g' \in G} k( g( \vx ), g'( \vx') )
 \end{align}
 %
-This method will often produce \gp{} priors with zero variance in some regions of the space, as in \Cref{fig:add_vs_min}(c).
+This method will often produce \gp{} priors with zero variance in some regions of the space, as in \cref{fig:add_vs_min}(c).
 %We include it here to show that each of these methods for enforcing symmetries modifies the resulting model in other ways as well.
 \end{enumerate}
 
@@ -1107,6 +1064,9 @@ The quantities represent the relative amount of evidence that the data provide f
 %We demonstrate that marginal likeihood an be used to automatically search over such structures.
 
 
+\subsubsection{Source Code}
+Source code to perform all experiments is available at \url{github.com/duvenaud/pdh-thesis/}. 
+All \gp{} parameter optimisation was performed by automated calls to the \GPML{} toolbox, available at \url{www.gaussianprocess.org/gpml/code/}.
 
 \section{Conclusion}
 

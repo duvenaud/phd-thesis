@@ -10,6 +10,33 @@
 In literature, as well as in practice, it is common to construct \gp{} priors with a zero mean function.
 This might seem strange, since it is presumably a good place to put prior information, or if we are comparing models, to express  since marginalizing over an unknown mean function can be equivalently expressed as a different \gp{} with zero-mean, and another term added to the kernel.
 
+
+\subsection{Marginalizing Out the Mean Function}
+
+Additivity also helps us to avoid explicitly representing the mean function of a \gp{}, in two ways.
+First of all, a known mean function can be moved into the covariance function.
+Specifically, if we wish to model an unknown function $f(\vx)$ with known mean $m(\vx)$, where the mean has unknown magnitude $c \sim \Nt{0}{\sigma^2_c}$, we can equivalently express this model using another \gp{} with zero mean:
+%$related modelquivalently (\vx) a(\vx)$ with $f \sim \GPt{0}{k(\vx,\vx')}$, then this 
+%
+\begin{align}
+f \sim \GPt{c m(\vx)}{k(\vx,\vx')}, \quad c \sim \Nt{0}{\sigma^2_c}
+\iff f \sim \GPt{ \vzero }{ c^2 m(\vx) m(\vx') + k(\vx,\vx')}
+\end{align}
+
+By moving the mean function into the covariance function, we get the same model as before, but we can integrate over the magnitude $c$ of the mean function at no additional cost.
+
+Second, a mean function with an unknown form can also be expressed through an extra term in the covariance function.
+Specifically, if express our ignorance about the mean function through a \gp{} prior, then that's the same model as a \gp{} whose kernel is a sum of two terms:
+%
+\begin{align}
+m \sim \GPt{\vzero}{k_a(\vx,\vx')}, \quad
+f \sim \GPt{m(\vx)}{k_b(\vx,\vx')}
+\iff 
+f \sim \GPt{\vzero}{k_a(\vx,\vx') + k_b(\vx,\vx')}
+\end{align}
+
+
+
 \paragraph{A known mean function can be moved into the covariance function}
 Specifically, if we wish to model an unknown function $f(\vx)$ with known mean $m(\vx)$, (with unknown magnitude $c \sim \Nt{0}{\sigma^2_c}$), we can equivalently express this model using another \gp{} with zero mean:
 %$related modelquivalently (\vx) a(\vx)$ with $f \sim \GPt{0}{k(\vx,\vx')}$, then this 
