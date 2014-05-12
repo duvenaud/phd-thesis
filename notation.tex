@@ -17,7 +17,8 @@ A bold lower-case number with an index such as $\vx_j$ represents a particular r
 \begin{tabular}{lm{12cm}}
 Symbol \quad     & Description \\
 \hline
-$\feat(\vx)$       & A feature vector. \\
+$y \sim p(y)$       & $y$ is drawn from, or distributed according to, distribution $p(y)$ \\
+%$\feat(\vx)$       & A feature vector. \\
 $\mathcal{O}(\cdot)$ & The big-O asymptotic complexity of an algorithm. \\
 $A \otimes B$ & The Kronecker product of matrices $A$ and $B$. \\
 %$\vecf$ & A function represented as an infinite-dimensional vector. \\
@@ -28,11 +29,13 @@ $\kLin$ & The linear kernel. \\
 $\kWN$ & The white-noise kernel. \\
 $\kC$ & The constant kernel. \\
 $\vsigma$ & The changepoint kernel, $\vsigma(x, x') = \sigma(x) \sigma(x')$, where $\sigma(x)$ is a sigmoidal function such as the logistic function. \\
-$k_1 + k_2$ & Addition of kernels, shorthand for $k_1(x,x') + k_2(\vx, \vx')$ \\
+$k_1 + k_2$ & Addition of kernels, shorthand for $k_1(\vx, \vx') + k_2(\vx, \vx')$ \\
 $k_1 \times k_2$& Multiplication of kernels, shorthand for $k_1(\vx, \vx') \times k_2(\vx, \vx')$ \\
-$k(\vX, \vX)$ & the Gram matrix, whose $i,j$th element is given by $k(\vx_i, \vx_j)$. \\
+$k(\vX, \vX)$ & The Gram matrix, whose $i,j$th element is given by $k(\vx_i, \vx_j)$. \\
 $\vK$ & Shorthand for the Gram matrix $k(\vX, \vX)$ \\
-$\vf(\vX)$ & A vector of function values, whose $i$th element is given by $f(\vx_i)$.
+$\vf(\vX)$ & A vector of function values, whose $i$th element is given by $f(\vx_i)$. \\
+$\textnormal{vec}(\vX)$ & The vectorization operator, which concatenates each column of $\vX$ into a column vector. \\
+$\mod(i,j)$ & The modulo operator: the remainder after dividing $i$ by $j$.
 \end{tabular}
 
 
