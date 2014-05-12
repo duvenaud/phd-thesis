@@ -141,15 +141,15 @@ Here, we'll discuss a few examples.
 
 \subsubsection{Polynomial Regression}
 By multiplying together $T$ linear kernels, we obtain a prior on polynomials of degree $T$.
-Column 1 of \cref{fig:kernels} shows a quadratic kernel.
+Column 1 of \cref{fig:kernels_times} shows a quadratic kernel.
 
 \subsubsection{Locally Periodic Functions}
 In univariate data, multiplying a kernel by \kSE{} gives a way of converting global structure to local structure.
-For example, $\Per$ corresponds to exactly periodic structure, whereas $\Per \kerntimes \SE$ corresponds to locally periodic structure, as shown in column 2 of \cref{fig:kernels}.
+For example, $\Per$ corresponds to exactly periodic structure, whereas $\Per \kerntimes \SE$ corresponds to locally periodic structure, as shown in column 2 of \cref{fig:kernels_times}.
 
 \subsubsection{Functions with Growing Amplitude}
 Multiplying by a linear kernel means that the marginal standard deviation of the function being modeled will grow linearly away from the origin.
-Columns 3 and 4 of \cref{fig:kernels} show two examples.
+Columns 3 and 4 of \cref{fig:kernels_times} show two examples.
 
 \subsubsection{More Combinations}
 We can multiply any number of kernels together in this way to produce kernels combining several high-level properties.
@@ -672,7 +672,7 @@ k_a(\iva, \iva') \times k_b(\iva, \iva')
 \end{align}
 %
 In other words, the features of $k_a \times k_b$ are just the Cartesian product (all possible combinations) of the original two sets of features.
-The Cartesian product of the features of two one-dimensional $\kSE$ kernels covers the plane with two-dimensional radial-basis functions of the form
+For example, the Cartesian product of the features of two one-dimensional $\kSE$ kernels covers the plane with two-dimensional radial-basis functions of the form
 %
 \begin{align}
 h_{ij}(x_1, x_2) \propto \exp \left( -\frac{1}{2} \frac{(x_1 - c_i)^2}{2\ell_1^2} \right) \exp \left( -\frac{1}{2} \frac{(x_2 - c_j)^2}{2\ell_2^2} \right)
@@ -1014,7 +1014,7 @@ but instead resembles an embedding known as the Sudanese M\"{o}bius strip \citep
 %There is a simple way to do \gp{} regression over categorical variables:
 Categorical variables are variables which can take values only from a discrete, unordered set, such as $\{\texttt{blue}, \texttt{green}, \texttt{red}\}$.
 A flexible way to construct a kernel over categorical variables is simply to represent that variable through a set of binary variables, using a one-of-k encoding.
-For example, if $\vx$ can take one of 4 values, $x \in \{ \texttt{A}, \texttt{B}, \texttt{C}, \texttt{D}\}$, then a one-of-k encoding of $\vx$ will correspond to 4 binary inputs, and $\oneofk(\texttt{C}) = [0, 0, 1, 0]$.
+For example, if $\vx$ can take one of 4 values, $x \in \{ \texttt{A}, \texttt{B}, \texttt{C}, \texttt{D}\}$, then a one-of-k encoding of $x$ will correspond to 4 binary inputs, and $\oneofk(\texttt{C}) = [0, 0, 1, 0]$.
 Given a one-of-k encoding, we can place any multidimensional kernel on that space, such as the \seard{}:
 %
 \begin{align}
@@ -1029,7 +1029,7 @@ A more flexible parameterization suggested by Kevin Swersky (personal communicat
 \sefull( \vx, \vx') = \exp \left( -\frac{1}{2} \vx\tra \vL \vx' \right)
 \end{align}
 %
-where $L$ is symmetric.  This kernel individually parameterizes the covariance between each pair of function values of categories.
+where $L$ is a symmetric matrix, individually parameterizing the covariance between each pair of function values of categories.
 
 %Then, simply put a product of kernels on those dimensions.
 %This is the same as putting one SE ARD kernel on all of them.
@@ -1092,7 +1092,7 @@ Long-term trend & Weekly periodicity &Yearly periodicity \\
 
 \section{Building a Kernel in Practice}
 
-\subsection{Learning Kernel Parameters}
+%\subsection{Learning Kernel Parameters}
 
 One difficulty in building \gp{} models is choosing, or integrating over, the kernel parameters.
 %Fortunately, typical kernels only have $\mathcal{O}(D)$ parameters, meaning that if $N$ is reasonably large, these parameters can be estimated by maximum marginal likelihood.
