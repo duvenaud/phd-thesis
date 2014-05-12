@@ -17,18 +17,15 @@
 \end{quotation}
 
 Prediction, extrapolation, and induction are all examples of learning a function from data.
-There are many ways to learn functions, but one particularily nice way is by \emph{inference} - where we set up a group of hypotheses - a \emph{model}, then weight those hypotheses based on how well their predictions match the data.
-Keeping around all the hypotheses that match the data helps gaurd against over-fitting.
+There are many ways to learn functions, but one particularily nice way is by \emph{inference}.
+Inference procedures set up a group of hypotheses -- a \emph{model}, then weight those hypotheses based on how well their predictions match the data.
+Keeping around all the hypotheses that match the data helps guard against over-fitting.
 We can also compare models to find what sorts of structure are present in a dataset.
 
 To be able to learn a wide variety of types of structure, we'd like to have an expressive language of models of functions.  We'd like to be able to represent simple kinds of functions, such as linear or polynomial ones.  We'd also like to have models of arbitrarily complex functions, specified in terms of high-level properties such as how smooth they are, whether they repeat over time, or which symmetries they have.
 
-%Fortunately, Gaussian processes (\gp{}s) are a tractable set of models of very different types of functions.
 This thesis will show how to build such a language using Gaussian processes (\gp{}s), a tractable set of models of very different types of functions.
 This chapter will introduce the basic properties of \gp{}s.
-%Once we have a rich enough language for expressing functions, the remaining question becomes:
-%Which particular model will work well on my problem?
-%What sort of structure should I put in my model?
 The next chapter will describe the many types of functions that we know how to model using \gp{}s.
 
 
@@ -36,7 +33,6 @@ The next chapter will describe the many types of functions that we know how to m
 
 \section{Gaussian Process Models}
 
-%Gaussian processes are a flexible and tractable prior over functions, useful for solving regression and classification tasks \citep{rasmussen38gaussian}.
 Gaussian processes are a simple and general class of models of functions.
 %
 \begin{figure}[t]
@@ -59,8 +55,6 @@ Coloured lines show samples from the process.
 \end{figure}
 %
 %Figure \ref{fig:gp-post} shows a Gaussian process distribution, as it is conditioned on more and more observations.
-%Typically, it's rendered with the mean and +- 2SD, but there's nothing special about mean.
-%
 To be precise, a \gp{} is any distribution over functions such that any finite subset of function values $f(\vx_1), f(\vx_2), \ldots f(\vx_N)$ have a joint Gaussian distribution \citep{rasmussen38gaussian}.
 A \gp{} model, before conditioning on data, is completely specified by its mean function,
 %
@@ -76,35 +70,24 @@ and its covariance function, also called the \emph{kernel}:
 \end{align}
 %
 It is common practice to assume that the mean function is simply zero everywhere, since uncertainty about the mean function can be taken into account by adding an extra term to the kernel.
-%Also equivalent is to subtract the mean function from the observations, and then add it back when making predictions.
 
 After accounting for the mean, the kind of structure which can be captured by a \gp{} model is entirely determined by its kernel.
 The kernel determines how the model generalizes, or extrapolates to new data.
 
 There are many possible choices of covariance function, and we can specify a wide range of models just by specifying the kernel of a \gp{}.
-For example, 
-%Examples of commonly used models not usually cast as \gp{}s are 
-linear regression, splines, 
-%some forms of generalized additive models,
-and Kalman filters are all examples of \gp{}s with particular kernels.
+For example, linear regression, splines, and Kalman filters are all examples of \gp{}s with particular kernels.
 However, these model classes barely scratch the surface of the many possible models we can express through choosing a kernel.
-%In fact, any symmetric positive-definite function can be used to construct a \gp{} model.
-%The benefit to this flexibility is that 
-%We can therefore define a language of regression models by specifying a language of kernels.
-%
 One of the main difficulties in using \gp{}s is constructing a kernel which represents the particular structure present in the data being modeled.
 
 
 \subsection{Model Selection}
 
-%Gaussian processes can be seen as a dual representation of Bayesian linear regression. \NA{Cite}
-%By moving into this dual space, we pay a price in computational complexity, but gain the ability to model functions to any desired level of detail.
 The crucial property of \gp{}s that allows us to automatically construct models is that we can compute the \emph{marginal likelihood} of a particular model, also known as the \emph{evidence} \citet{mackay1992bayesian}.
 The marginal likelihood allows us to compare models and automatically discover the appropriate amount of detail to use, due to Bayesian Occam's razor \citep{rasmussen2001occam,mackay2003information}.
 Choosing a kernel, or kernel parameters, by maximizing the marginal likelihood will typically select the \emph{least} flexible model class which still captures all the structure in the data.
 For example, if a kernel has a parameter which controls the smoothness of the functions it models, the maximum-likelihood estimate of that parameter will usually correspond to the smoothest possible family of functions which still go through all the observed function values.
 
-To be concrete, here's the marginal likelihood under a \gp{} of observing a set of function values $\left[ f(\vx_1), f(\vx_2), \ldots f(\vx_N)  \right] = \vf(\vX)$ at locations $[\vx_1, \vx_2, \ldots, \vx_N]\tra = \vX$:
+Here's the marginal likelihood under a \gp{} of observing a set of function values $\left[ f(\vx_1), f(\vx_2), \ldots f(\vx_N)  \right] = \vf(\vX)$ at locations $[\vx_1, \vx_2, \ldots, \vx_N]\tra = \vX$:
 % given by the rows of $\vX$:
 %
 \begin{align}
@@ -115,6 +98,7 @@ p(\funcval | \vX, \mu(\cdot), k(\cdot, \cdot)) & = \N{\funcval}{\mu(\vX)}{k(\vX,
 \end{align}
 %
 This multivariate Gaussian density is referred to as the \emph{marginal} likelihood because it implicitly integrates (marginalizes) over all possible functions values $\vf( \bar \vX)$, where $\bar \vX$ is the set of all locations where we haven't observed the function.
+% Talk about the meaning of the different terms in the equation?
 
 \subsection{Prediction}
 Even though we don't need to consider locations other than at the data when computing the marginal likelihood, we can still ask the model which function values are likely to occur at any location, given the observations we've seen.
@@ -130,21 +114,22 @@ p( f(\testpoint) | \funcval, \vX, \mu(\cdot), k(\cdot, \cdot))
 
 These expressions may look complex, but only require a few matrix operations to evaluate.
 
-Sampling a function from a \gp{} is also straightforward: a sample from a \gp{} is just a single sample from a single multivariate Gaussian distribution, given by \cref{eq:predictive}.
+Sampling a function from a \gp{} is also straightforward: a sample from a \gp{} at a finite set of locations is just a single sample from a single multivariate Gaussian distribution, given by \cref{eq:predictive}.
 \Cref{fig:gp-post} shows prior and posterior samples from a \gp{}, as well as contours of the predictive density.
 
-Our representation of uncertainty through probabilites does not mean that we are assuming the function being learned is stochastic or random in any way; it is simply a consistent method of keeping track of our uncertainty.
+Our representation of uncertainty through probabilities does not mean that we are assuming the function being learned is stochastic or random in any way; it is simply a consistent method of keeping track of our uncertainty.
 
 
 
 \subsection{Useful Properties of Gaussian Processes}
 
-There are several reasons why \gp{}s in particular are well-stuied for building a langauge of regression models:
+There are several reasons why \gp{}s in particular are well-suited for building a language of regression models:
 
 \begin{itemize}
 
 \item {\bf Analytic inference.}
-Given a kernel function and some observations, the predictive posterior distribution can be computed exactly in closed form.  This is a rare property for nonparametric models to have.
+Given a kernel function and some observations, the predictive posterior distribution can be computed exactly in closed form.
+This is a rare property for nonparametric models to have.
 
 \item {\bf Expressivity.}
 By choosing different covariance functions, we can express a very wide range of modeling assumptions.
@@ -154,6 +139,7 @@ The fact that a \gp{} posterior lets us exactly integrate over a wide range of h
 It also removes the need for sophisticated optimization schemes.
 %
 In contrast, much of the neural network literature is devoted to techniques for regularization and optimization.
+%TODO: add some citations.
 
 \item {\bf Marginal likelihood.}
 A side benefit of being able to integrate over all hypotheses is that we can compute the \emph{marginal likelihood} of the data given the model.
@@ -161,7 +147,7 @@ This gives us a principled way of comparing different models.
 
 \item {\bf Closed-form predictive distribution.}
 The predictive distribution of a \gp{} at a set of test points is simply a multivariate Gaussian distribution.
-This means that \gp{}s can easily be composed with other models or decision procedures, without the need for sampling procedures.
+This means that \gp{}s can easily be composed with other models or decision procedures.
 %For example, in reinforcement learning applications, 
 
 \item {\bf Easy to analyze.}
@@ -189,9 +175,7 @@ There are, unfortunately, several issues which make usage of \gp{}s sometimes di
 
 \item {\bf Slow inference.}
 Computing the matrix inverse in \cref{eq:gp_marg_lik,eq:predictive} takes $\mathcal{O}(N^3)$ time, making inference slow for more than about 1000 datapoints.
-%and $\mathcal{O}(N^2)$ memory.  
 However, this problem can be addressed by approximate inference schemes \citep{snelson2006sparse, quinonero2005unifying, hensman2013gaussian}.  Most \gp{} software packages implement several of these methods \citep{GPML, VanRiiHarJylVeh14}.
-%However, some thought is required to use these methods, making inference in \gp{}s more complicated when 
 
 \item {\bf Light tails of the predictive distribution.}
 The predictive distribution of a standard \gp{} model is Gaussian.
@@ -225,15 +209,15 @@ It also includes a set of related results showing how Gaussian processes can be 
 
 {\bf Chapter~\ref{ch:kernels}} is a tutorial showing how to build a wide variety of structured models of functions by constructing appropriate covariance functions.
 %TODO: Expand this description.
-We'll also show how \gp{}s can produce nonparametric models of manifolds, diverse topological structures, such as cylinders, torii and M\"obius strips.
+We'll also show how \gp{}s can produce nonparametric models of manifolds, diverse topological structures, such as cylinders, toruses and M\"obius strips.
 
-{\bf Chapter \ref{ch:grammar}} shows how search over a general, open-ended language of models, built by composing together different kernels.
+{\bf Chapter~\ref{ch:grammar}} shows how to search over a general, open-ended language of models, built by composing together different kernels.
 Since we can evaluate each model by its marginal likelihood, we can automatically construct custom models for each dataset by a simple search.
 The nature of \gp{}s allow the resulting models to be visualized by decomposing them into diverse, interpretable components, each capturing a different type of structure.
 Capturing this high-level structure sometimes even allows us to extrapolate beyond the range of the data.
 
 One benefit of using a compositional model class is that the resulting models are interpretable.
-{\bf Chapter~\ref{ch:description}} demonstrates a system which automatically describes the structure implied by a given kernel on a given dataset, generating reports with graphs and english-language text describing the resulting model.
+{\bf Chapter~\ref{ch:description}} demonstrates a system which automatically describes the structure implied by a given kernel on a given dataset, generating reports with graphs and English-language text describing the resulting model.
 %Chapter \ref{ch:description} shows that, for the particular language of models constructed in chapter \ref{ch:grammar}, it's relatively easy to automatically generate english-language descriptions of the models discovered.
 %Augmented with interpretable plots decomposing the predictive posterior, we demonstrate how to automatically generate useful analyses of time-series.
 We'll show several automatic analyses of time-series.
@@ -241,19 +225,19 @@ Combined with the automatic model search developed in chapter \ref{ch:grammar}, 
 %We discuss the advantages and potential pitfalls of automating the modeling process in this way.
 
 %As an example of using \gp{}s as a simple-to-understand building block, 
-{\bf Chapter \ref{ch:deep-limits}} analyzes deep network models by characterizing the prior over functions obtained by composing \gp{} priors to form \emph{deep Gaussian processes}.
+{\bf Chapter~\ref{ch:deep-limits}} analyzes deep network models by characterizing the prior over functions obtained by composing \gp{} priors to form \emph{deep Gaussian processes}.
 %, and relates them to existing neep neural network architecures.
 We show that, as the number of layers in such models increases, the amount of information retained about the original input diminshes to a single degree of freedom.
 A simple change to the network architecture fixes this pathology.
 We relate these models to neural networks, and as a side effect derive different forms of \emph{infinitely deep kernels}.
 
-{\bf Chapter \ref{ch:additive}} examines a more limited, but much faster way of discovering structure using \gp{}s.
+{\bf Chapter~\ref{ch:additive}} examines a more limited, but much faster way of discovering structure using \gp{}s.
 Specifying a kernel with many different types of structure, we use kernel parameters to discard whichever types of structure \emph{aren't} found in the current dataset.
 The model class we examine is called \emph{additive Gaussian processes}, a model summing over exponentially-many \gp{}s, each depending on a different subset of the input variables.
 We give a polynomial-time inference algorithm for this model class, and relate it to other model classes.
 For example, additive \gp{}s are shown to have the same covariance as a \gp{} that uses \emph{dropout}, a recently discovered regularization technique for neural networks.
 
-{\bf Chapter \ref{ch:warped}} develops a Bayesian clustering model in which the clusters have nonparametric shapes - the infinite Warped Mixture Model.
+{\bf Chapter~\ref{ch:warped}} develops a Bayesian clustering model in which the clusters have nonparametric shapes - the infinite Warped Mixture Model.
 The density manifolds learned by this model follow the contours of the data density, and have interpretable, parametric forms in the latent space.
 The marginal likelihood lets us infer the effective dimension and shape of each cluster separately, as well as the number of clusters.
 

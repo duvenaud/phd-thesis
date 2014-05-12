@@ -672,12 +672,9 @@ In this section, we'll look at different ways in which we can encode symmetries 
 Many types of symmetry can be enforced through operations on the kernel.
 
 We'll demonstrate the properties of the resulting models by sampling functions from their priors.
-By using these priors to define warpings from $\Reals^2 \to \Reals^3$, we'll also show how to build a nonparametric prior on an open-ended family of topological manifolds, such as cylinders, torii, and M\"{o}bius strips.
-% These symmetries can be composed to produce nonparametric priors on functions whose domains have interesting topological structure such as spheres, torii, and M\"{o}bius strips.
+By using these priors to define warpings from $\Reals^2 \to \Reals^3$, we'll also show how to build a nonparametric prior on an open-ended family of topological manifolds, such as cylinders, toruses, and M\"{o}bius strips.
 
-% I would cite Pierre Chiche but he hasn't actually published his damn papers.
-
-\citet{ginsbourger2012argumentwise} and \citet{Invariances13} characterized the set of \gp{} priors on functions which respect any given invariance.%t to any given transformation.
+\citet{ginsbourger2012argumentwise} and \citet{Invariances13} characterized the set of \gp{} priors on functions which respect any given invariance.
 They showed that the only way to construct a prior on functions which respect a given invariance is to construct a kernel which respects the same invariance with respect to each of its two inputs.
 
 Formally, given a finite group of operations $G$ to which we wish our function to remain invariant, and $f \sim \GPt{0}{k(\vx,\vx')}$, $f$ is invariant under $G$ (up to a modification) if and only if $k(\cdot, \cdot)$ is argumentwise invariant:
