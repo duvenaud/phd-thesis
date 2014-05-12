@@ -27,7 +27,7 @@ Searching over such a large, structured model class has two main benefits.
 First, this procedure has very good predictive accuracy, since it tries out a large number of different regression models.
 Second, this procedure can discover interpretable structure in datasets.
 Because \gp{} posteriors can be decomposed (as in \cref{sec:concrete}), we can also examine the resulting structures visually.
-In \cref{ch:description}, we'll even show how to automatically generate english-language descriptions of the resulting models.
+In \cref{ch:description}, we'll even show how to automatically generate English-language descriptions of the resulting models.
 
 %Section \ref{sec:Structure} outlines some commonly used kernel families as well as ways in which they can be composed. 
 %Our grammar over kernels and our proposed structure discovery algorithm are described in Section \ref{sec:Search}. 
@@ -136,7 +136,7 @@ Regression model & Kernel & Related work\\
 \midrule
 Linear regression & $\kC \kernplus \kLin \kernplus \kWN$ & \\
 Kernel ridge regression & $\kSE \kernplus \kWN$ & \\
-Linear Semiparametric & $\kLin \kernplus \kSE \kernplus \kWN$ & \citep[e.g.][]{ruppert2003semiparametric} \\
+Linear Semi-parametric & $\kLin \kernplus \kSE \kernplus \kWN$ & \citep[e.g.][]{ruppert2003semiparametric} \\
 Multiple kernel learning & $\sum \kSE \kernplus \kWN$ & \citep[e.g.][]{bach2004multiple} \\
 Trend, cyclical, irregular   & $\sum \kSE \kernplus \sum \kPer \kernplus \kWN$ & \citep{lind2006basic}\\
 Fourier decomposition & $\kC \kernplus \sum \cos \kernplus \kWN$ & \\
@@ -183,7 +183,7 @@ In particular,
 This corresponds to adding a new kernel to the existing structure.
 \item One can start with structure, such as linearity, which is assumed to hold globally, but find that it only holds locally.
 This corresponds to multiplying a kernel structure by a local kernel, such as $\kSE$.
-\item One can add features incrementally, analogous to algorithms like boosting, backfitting, or forward selection.
+\item One can add features incrementally, analogous to algorithms like boosting, back-fitting, or forward selection.
 This corresponds to adding or multiplying with kernels on dimensions not yet included in the model.
 \end{itemize}
 
@@ -308,7 +308,7 @@ For example,
 %
 This decomposition into additive components provides a method of visualizing the learned model, breaking down the different types of structure discovered in the data.
 
-In \Cref{ch:description}, we'll extend this model visualization method to include automatically-generated english text explaining the meaning of each type of structure discovered.
+In \Cref{ch:description}, we'll extend this model visualization method to include automatically-generated English text explaining the meaning of each type of structure discovered.
 
 
 
@@ -447,7 +447,7 @@ A closely related procedure is smoothing-splines \ANOVA{} \citep{wahba1990spline
 This model is a linear combinations of splines along each dimension, all pairs of dimensions, and possibly higher-order combinations.
 Because the number of terms to consider grows exponentially in the order, in practice, only terms of first and second order are usually considered.
 
-Semiparametric regression \citep[e.g.][]{ruppert2003semiparametric} attempts to combine interpretability with flexibility by building a composite model out of an interpretable, parametric part (such as linear regression) and a `catch-all' nonparametric part (such as a \gp{} with an \kSE{} kernel).
+Semi-parametric regression \citep[e.g.][]{ruppert2003semiparametric} attempts to combine interpretability with flexibility by building a composite model out of an interpretable, parametric part (such as linear regression) and a `catch-all' nonparametric part (such as a \gp{} with an \kSE{} kernel).
 This model class can be represented through the kernel ${\kSE \kernplus \kLin}$.
 
 
@@ -484,9 +484,9 @@ An examination of the structure discovered by the automatic equation-learning so
 \rwsheader{Structure Discovery Through Grammars}
 
 
-\citet{kemp2008discovery} learned the structural form of a graph used to model human similarity judgments.
+\citet{kemp2008discovery} learned the structural form of a graph used to model human similarity judgements.
 Examples of graphs included planes, trees, and cylinders.
-Some of their discrete graph structures have continous analogues in our own space.
+Some of their discrete graph structures have continuous analogues in our own space.
 For example, $\SE_1 \kerntimes \SE_2$ and $\SE_1 \kerntimes \Per_2$ can be seen as mapping the data to a plane and a cylinder, respectively.
 
 \citet{diosan2007evolving} and \citet{bing2010gp} learn composite kernels for support vector machines and relevance vector machines respectively, using genetic search algorithms to optimize cross-validation error.
@@ -544,8 +544,8 @@ For squared-exponential and linear regression, the procedure corresponds to stan
 More advanced inference methods are typically used for changepoint modeling, but we use the same inference method for all algorithms for comparability.
 %\footnotetext{We experimented with using unpenalised marginal likelihood as the search criterion but observed overfitting, as is to be expected.} 
 
-We restricted to regression algorithms for comparability; this excludes models which regress on previous values of times series, such as autoregressive or moving-average models \citep[e.g.][]{box2013time}.
-Constructing a language of autoregression time-series models would be an interesting area for future research.
+We restricted to regression algorithms for comparability; this excludes models which regress on previous values of times series, such as auto-regressive or moving-average models \citep[e.g.][]{box2013time}.
+Constructing a language of autoregressive time-series models would be an interesting area for future research.
 
 
 
@@ -556,7 +556,7 @@ The \RMSE{}s are then standardised by dividing by the smallest \RMSE{} for each 
 
 \begin{figure}[h!]
 \includegraphics[width=1.02\textwidth]{\grammarfiguresdir/comparison/box_extrap_wide}
-\caption[Comparision of extrapolation error of all methods on 13 time-series datasets.]
+\caption[Comparison of extrapolation error of all methods on 13 time-series datasets.]
 {Box plot (showing median and quartiles) of standardised extrapolation RMSE (best performance = 1) on 13 time-series.
 The methods are ordered by median.
 }
@@ -609,7 +609,7 @@ We then added \iid Gaussian noise to the functions, at various signal-to-noise r
 Kernels chosen by our method on synthetic data generated using known kernel structures. $D$ denotes the dimension of the functions being modeled.
 \SNR{} indicates the signal-to-noise ratio.
 Dashes - indicate no structure was found.
-Each kernel implicity has a \kWN{} kernel included.
+Each kernel implicitly has a \kWN{} kernel included.
 }
 \label{tbl:synthetic}
 \begin{center}
@@ -650,7 +650,7 @@ All \gp{} parameter optimisation was performed by automated calls to the GPML to
 
 Towards the goal of automating statistical modeling, we developed a system which constructs an appropriate model from an open-ended language, and automatically generates plots decomposing the different types of structure present in the model.
 
-We acheived this by introducing a space of composite kernels defined compositionally as sums and products of a small number of base kernels.  
+We achieved this by introducing a space of composite kernels defined compositionally as sums and products of a small number of base kernels.  
 The set of models included in this space includes many standard regression models.
 We proposed a search procedure for this space of kernels, and argued that this search process parallels the process of scientific discovery, and of model-building by statisticians.
 
@@ -658,7 +658,7 @@ We found that the learned structures are often capable of accurate extrapolation
 The learned kernels often yield decompositions of a signal into diverse and interpretable components, enabling model-checking by humans.
 We hope that this procedure has the potential to make powerful statistical model-building techniques accessible to non-experts.
 
-In the next chapter, we'll see how the model components found by this procedure can be automatically described in terms of english-language text.
+In the next chapter, we'll see how the model components found by this procedure can be automatically described in terms of English-language text.
 
 
 \section{Open Questions}

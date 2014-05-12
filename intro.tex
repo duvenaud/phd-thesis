@@ -17,7 +17,7 @@
 \end{quotation}
 
 Prediction, extrapolation, and induction are all examples of learning a function from data.
-There are many ways to learn functions, but one particularily nice way is by \emph{inference}.
+There are many ways to learn functions, but one particularly nice way is by \emph{inference}.
 Inference procedures set up a group of hypotheses -- a \emph{model}, then weight those hypotheses based on how well their predictions match the data.
 Keeping around all the hypotheses that match the data helps guard against over-fitting.
 We can also compare models to find what sorts of structure are present in a dataset.
@@ -77,7 +77,7 @@ The kernel determines how the model generalizes, or extrapolates to new data.
 There are many possible choices of covariance function, and we can specify a wide range of models just by specifying the kernel of a \gp{}.
 For example, linear regression, splines, and Kalman filters are all examples of \gp{}s with particular kernels.
 However, these model classes barely scratch the surface of the many possible models we can express through choosing a kernel.
-One of the main difficulties in using \gp{}s is constructing a kernel which represents the particular structure present in the data being modeled.
+One of the main difficulties in using \gp{}s is constructing a kernel which represents the particular structure present in the data being modelled.
 
 
 \subsection{Model Selection}
@@ -92,7 +92,7 @@ Here's the marginal likelihood under a \gp{} of observing a set of function valu
 %
 \begin{align}
 p(\funcval | \vX, \mu(\cdot), k(\cdot, \cdot)) & = \N{\funcval}{\mu(\vX)}{k(\vX, \vX)} \nonumber\\
-& = (2\pi)^{-\frac{N}{2}} \underwrite{ |k(\vX, \vX)|^{-\frac{1}{2}}\,}{\footnotesize discourages flexiblity} \nonumber \\
+& = (2\pi)^{-\frac{N}{2}} \underwrite{ |k(\vX, \vX)|^{-\frac{1}{2}}\,}{\footnotesize discourages flexibility} \nonumber \\
 & \qquad \times \underwrite{\exp \left\{ -\frac{1}{2} \left( \funcval - \boldsymbol\mu(\vX) \right)\tra k(\vX, \vX)\inv \left(\funcval - \boldsymbol\mu(\vX) \right) \right\}}{\footnotesize encourages fit with data}
 \label{eq:gp_marg_lik}
 \end{align}
@@ -191,7 +191,7 @@ Fortunately, mature software packages exist which can automatically perform appr
 In practice, the extreme flexibility of \gp{} models means that we are also faced with the difficult task of choosing a kernel.
 In fact, 
 %because the model only depends on the inputs through the kernel, 
-choosing a useful kernel is equivalent to the problem of learning a good reprentation of the input.
+choosing a useful kernel is equivalent to the problem of learning a good representation of the input.
 Kernel parameters are usually set automatically by maximizing the marginal likelihood.
 However, until recently, human experts were still required to choose the parametric form of the kernel from a small set of standard kernels.
 \Cref{ch:grammar} will show how the entire construction of kernels can be automated.
@@ -227,7 +227,7 @@ Combined with the automatic model search developed in chapter \ref{ch:grammar}, 
 %As an example of using \gp{}s as a simple-to-understand building block, 
 {\bf Chapter~\ref{ch:deep-limits}} analyzes deep network models by characterizing the prior over functions obtained by composing \gp{} priors to form \emph{deep Gaussian processes}.
 %, and relates them to existing neep neural network architecures.
-We show that, as the number of layers in such models increases, the amount of information retained about the original input diminshes to a single degree of freedom.
+We show that, as the number of layers in such models increases, the amount of information retained about the original input diminishes to a single degree of freedom.
 A simple change to the network architecture fixes this pathology.
 We relate these models to neural networks, and as a side effect derive different forms of \emph{infinitely deep kernels}.
 
@@ -261,8 +261,8 @@ I produced all of the figures.
 Carl Rasmussen, Zoubin Ghahramani and Josh Tenenbaum provided many conceptual insights, as well as suggestions about how the resulting procedure could be most fruitfully applied.
 
 \paragraph{Automatic statistician:} The work appearing in chapter \ref{ch:description} was written in collaboration with James Robert Lloyd, Roger Grosse, Joshua B. Tenenbaum, Zoubin Ghahramani, and was published in \citep{LloDuvGroetal14}.
-The idea that kernels corresponed to adjectives grew out of discussions between James and myself.
-James Lloyd wrote most of the code to automatically generate reports, and ran all of the experiments.
+The procedure translating kernels into adjectives grew out of discussions between James and myself.
+James Lloyd wrote the code to automatically generate reports, and ran all of the experiments.
 The text was written mainly by myself, James Lloyd, and Zoubin Ghahramani, with many helpful contributions and suggestions from Roger Grosse and Josh Tenenbaum.
 
 \paragraph{Deep Gaussian processes:}

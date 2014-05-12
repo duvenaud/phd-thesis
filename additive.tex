@@ -248,7 +248,7 @@ k({\bf x, x'}) = g \!\left( \; \sum_{d=1}^D \left( \frac{  x_{d} - x_{d}' }{ l_d
 %\begin{equation}
 %$r = \sqrt{\sum_{d=1}^D \left( x_{d} - x_{d}' \right)^2 / l_d^2 }$.
 %\end{equation}
-\citet{bengio2006curse} argue that models based on squared-exponential kernels are particularily susceptible to the \textit{curse of dimensionality}.
+\citet{bengio2006curse} argue that models based on squared-exponential kernels are particularly susceptible to the \textit{curse of dimensionality}.
 They emphasize that the locality of the kernels means that these models cannot capture non-local structure. 
 They argue that many functions that we care about have such structure.
 Methods based solely on local kernels will require training examples at all combinations of relevant inputs.
@@ -277,7 +277,7 @@ The third-order kernel only considers nearby points relevant, while the lower-or
 Additive kernels have a much more complex structure, and allow extrapolation based on distant parts of the input space, without spreading the mass of the kernel over the whole space.  For example, additive kernels of the second order allow strong non-local interactions between any points which are similar in any two input dimensions.
 \Cref{fig:kernels3d} provides a geometric comparison between squared-exponential kernels and additive kernels in 3 dimensions.
 
-In \cref{ch:kernels}, \cref{sec:additivity-multiple-dimensions} gives an example of how additive kernels exptrapolate differently than local kernels.
+In \cref{ch:kernels}, \cref{sec:additivity-multiple-dimensions} gives an example of how additive kernels extrapolate differently than local kernels.
 
 
 \section{Dropout in Gaussian Processes}
@@ -424,7 +424,7 @@ which forces the weight of all $n$th order terms to be weighted by $\alpha^n$.
 
 
 Figure~\ref{hulls-figure} contrasts the \HKL{} model class with the additive \gp{} model.
-Neither method is strictly more flexibile than the other.
+Neither method is strictly more flexible than the other.
 The main difficulty with the approach of \citet{DBLP:journals/corr/abs-0909-0844} is that the kernel parameters are hard to set, other than by cross-validation.
 %In contrast, our method optimizes the parameters of each dimension's base kernel, as well as the relative weighting of each order of interaction. 
 
@@ -463,7 +463,7 @@ The main benefits of the model setup and parameterization proposed in this chapt
 \subsubsection{Parameterization}
 A $D$-dimensional \kSE-\ARD{} kernel has $D$ lengthscale parameters and the output variance.
 An first-order additive $\kSE$ model has $2 \times D$ parameters.
-A fully-parametrized model including all orders of interaction, with a seperate output variance for each scale will have $3 \times D$ parameters.
+A fully-parametrized model including all orders of interaction, with a separate output variance for each scale will have $3 \times D$ parameters.
 Because each additional parameter increases the tendency to overfit, we recommend allowing only one kernel parameter per input dimension. 
 %
 %Since there always exists a parameterization of the additive function corresponding to the product kernel, we initialize the hyperparameter search for the additive kernel by first learning parameters for the equivalent product kernel.  This ensures that we start our search in a reasonable area of hyperparameter space.

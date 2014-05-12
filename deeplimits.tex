@@ -421,8 +421,8 @@ k_{\textnormal{SE}}(x, x') = \sigma^2 \exp \left( \frac{-(x - x')^2}{2\lengthsca
 \label{eq:se_kernel}
 \end{align}
 %
-The hyperparameter $\sigma^2$ controls the variance of functions drawn from the prior, and the hyperparameter $\lengthscale$ controls the smoothness.  
-The derivative of a \gp{} with a squared-exp kernel is pointwise distributed as $\Nt{0}{\nicefrac{\sigma^2}{\lengthscale^2}}$.  
+The parameter $\sigma^2$ controls the variance of functions drawn from the prior, and the parameter $\lengthscale$ controls the smoothness.  
+The derivative of a \gp{} with a squared-exp kernel is point-wise distributed as $\Nt{0}{\nicefrac{\sigma^2}{\lengthscale^2}}$.  
 Intuitively, a \gp{} is likely to have large derivatives if it has high variance and small lengthscales.
  
  By the chain rule, the derivative of a one-dimensional deep \gp{} is simply a product of its (independent) derivatives.  
@@ -657,7 +657,7 @@ Figure \ref{fig:deep_spectrum} shows the singular value spectrum for 5-dimension
 As the net gets deeper, the largest singular value dominates, implying there is usually only one effective degree of freedom in representation being computed.
 
 Figure \ref{fig:filamentation} demonstrates a related pathology that arises when composing functions to produce a deep density model.
-The density in the observed space eventually becomes locally concentrated onto one-dimensional manifolds, or \emph{filaments}, implying that such models are insuitable to model manifolds whose underlying dimensionality is greater than one.
+The density in the observed space eventually becomes locally concentrated onto one-dimensional manifolds, or \emph{filaments}, implying that such models are unsuitable to model manifolds whose underlying dimensionality is greater than one.
 
 \newcommand{\mappic}[1]{\hspace{-0.05in}\includegraphics[width=0.465\columnwidth]{\deeplimitsfiguresdir/map/latent_coord_map_layer_#1}} 
 \newcommand{\mappiccon}[1]{\hspace{-0.05in} \includegraphics[width=0.465\columnwidth]{\deeplimitsfiguresdir/map_connected/latent_coord_map_layer_#1}}
@@ -1072,7 +1072,7 @@ By connecting the inputs $\vx$ to each layer, the kernel can still depend on its
 
 Kernels correspond to fixed feature maps, and so kernel learning is an example of implicit representation learning. %can compute %useful representations.
 Such feature maps can capture rich structure \citep{DuvLloGroetal13}, and can enable many types of generalization, such as affine invariance in images \citep{kondor2008group}.
-\cite{salakhutdinov2008using} used a deep neural network to learn feature transforms for kernels, which learn invariances in an unsupervised manner.
+\cite{salakhutdinov2008using} used a deep neural network to learn feature transforms for kernels, which learn invariants in an unsupervised manner.
 The relatively uninteresting properties of the kernels derived in this section simply reflect the fact that an arbitrary deep computation is not usually a useful representation, unless combined with learning.
 To put it another way, any fixed representation is unlikely to be useful unless it has been chosen specifically for the problem at hand.
 
@@ -1126,7 +1126,7 @@ This prior on functions might be amenable to a similar analysis to that of secti
 
 \paragraph{Recurrent networks}
 \cite{bengio1994learning} and \cite{pascanu2012understanding} analyze a related problem with gradient-based learning in recurrent nets, the ``exploding-gradients'' problem.
-Specifically, they note that in recurrent neural networks, the size of the training gradient can grow or shrink exponentially as it is back-propagated, making gadient-based training difficult.
+Specifically, they note that in recurrent neural networks, the size of the training gradient can grow or shrink exponentially as it is back-propagated, making gradient-based training difficult.
 
 \paragraph{Deep kernels}
 
@@ -1134,7 +1134,7 @@ Specifically, they note that in recurrent neural networks, the size of the train
 %In addition to \citet{cho2012kernel}, 
 
 \cite{hermans2012recurrent} construct deep kernels in a time-series setting, constructing kernels corresponding to infinite-width recurrent neural networks.% (also called Echo State Networks).
-They also propose concatenating the implicit feature vectors from previous time steps with the current inputs, resulting in an architecture analogous to the input-connected architure proposed by \citet{neal1995bayesian}.
+They also propose concatenating the implicit feature vectors from previous time steps with the current inputs, resulting in an architecture analogous to the input-connected architecture proposed by \citet{neal1995bayesian}.
 
 \paragraph{Analyses of deep learning}
 \cite{montavon2010layer} perform a layer-wise analysis of deep networks, and note that the performance of MLPs degrades as the number of layers with random weights increases.
@@ -1159,7 +1159,7 @@ Source code to produce all figures is available at \url{github.com/duvenaud/deep
 
 %In this work, we established a number of propositions which help us gain insight into the properties of very deep models, and allow making informed choices regarding their architecture.
 
-In this chapter, we attempted to gain insight into the properties of deep neural networks by characterizing the sorts of functions likeley to be obtained under different choices of priors on compositions of functions.
+In this chapter, we attempted to gain insight into the properties of deep neural networks by characterizing the sorts of functions likely to be obtained under different choices of priors on compositions of functions.
 %established a number of propositions which help us gain insight into the properties of very deep models, and allow making informed choices regarding their architecture.
 
 %First, we identified equivalences between multi-layer perceptions and deep \gp{}s --- namely, that a deep \gp{} can be written as an \MLP{}s with a finite number of nonparametric hidden units, or as an \MLP{} with infinitely-many parametric hidden units.

@@ -72,10 +72,10 @@ Instead of searching over a large class of covariance functions, which seems str
 This is the approach taken by practically every other regression technique: neural networks, decision trees, boosting, \etc.
 If we could integrate over a wide class of possible mean functions, we would have a very powerful learning an inference method.
 The problem faced by all of these methods is the well-known problem \emph{overfitting}.
-If we are forced to choose just a single function with which to make predictions, we must carefully control the flexibility of the model we learn, generally prefering ``simple'' functions, or to choose a function from a restricted set.
+If we are forced to choose just a single function with which to make predictions, we must carefully control the flexibility of the model we learn, generally preferring ``simple'' functions, or to choose a function from a restricted set.
 
 If, on the other hand, we are allowed to keep in mind many possible explanations of the data, \emph{there is no need to penalize complexity}. [cite Occam's razor paper?]
-The power of putting structure into the covariance function is that doing so allows us to implictly integrate over many functions, maintaining a posterior distribution over infinitely many functions, instead of choosing just one.
+The power of putting structure into the covariance function is that doing so allows us to implicitly integrate over many functions, maintaining a posterior distribution over infinitely many functions, instead of choosing just one.
 In fact, each of the functions being considered can be infinitely complex, without causing any form of overfitting.
 For example, each of the samples shown in figure \ref{fig:gp-post} varies randomly over the whole real line, never repeating, each one requiring an infinite amount of information to describe.
 Choosing the one function which best fits the data will almost certainly cause overfitting.

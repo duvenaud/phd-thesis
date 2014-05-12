@@ -6,7 +6,7 @@
 
 In this chapter, we'll show how to use kernels to build many different kinds of models of functions.
 By combining a few simple kernels through addition and multiplication, we'll be able to express many different kinds of structure: additivity, symmetry, periodicity, interactions between variables, and changepoints.
-We'll also show several ways to encode group invariances into kernels.
+We'll also show several ways to encode group invariants into kernels.
 Combining kernels in these simple ways will give us a rich, open-ended language of models.
 
 
@@ -14,7 +14,7 @@ Combining kernels in these simple ways will give us a rich, open-ended language 
 
 Since we'll be discussing kernels at length, we now give a precise definition.
 A kernel (also called a \emph{covariance function}), is a positive-definite function between two points $\inputVar, \inputVar'$ in some space $\InputSpace$. Formally, $\kernel(\vx, \vx'): \InputSpace \times \InputSpace \to \Reals$.
-In this chapter, $\InputSpace$ is usually a Euclidian space, but it could just as easily corresponding to the space of images, document, categories or points on a sphere.
+In this chapter, $\InputSpace$ is usually a Euclidean space, but it could just as easily corresponding to the space of images, document, categories or points on a sphere.
 
 Gaussian process models use a kernel to define the prior covariance between any two function values:
 %
@@ -68,7 +68,7 @@ There exist many variants of the $\kSE$ kernel, each encoding slightly different
 
 \paragraph{Kernel parameters}
 Each kernel has a number of parameters which specify the precise shape of the covariance function.
-These are sometimes referred to as \emph{hyperparameters}, since they can be viewed as specifying a distribution over function parameters, instead of being parameters which specify a function directly.
+These are sometimes referred to as \emph{hyper-parameters}, since they can be viewed as specifying a distribution over function parameters, instead of being parameters which specify a function directly.
 
 
 \paragraph{Stationary and Non-stationary}
@@ -152,7 +152,7 @@ Multiplying by a linear kernel means that the marginal standard deviation of the
 Columns 3 and 4 of \cref{fig:kernels} show two examples.
 
 \subsubsection{More Combinations}
-We can multiply any number of kernels together in this way to produce kernels combining several high-level propoerties.
+We can multiply any number of kernels together in this way to produce kernels combining several high-level properties.
 For example, the kernel $\kSE \kerntimes \kLin \kerntimes \kPer$ is a prior on functions which are locally periodic with linearly growing amplitude.
 We'll see examples of real datasets with this kind of structure in \cref{ch:grammar}.
 
@@ -177,7 +177,7 @@ $\seard$ kernels are the default kernel in most applications of \gp{}s.
 This may be partly because they have relatively few parameters to estimate, and those parameters are relatively interpretable.
 In addition, there is a theoretical reason to use them: they are \emph{universal} kernels~\citep{micchelli2006universal}, capable of learning learning any continuous function given enough data, under some conditions.
 
-However, this flexibilty means that they can sometimes be relatively slow to learn, due to the \emph{curse of dimensionality} \citep{bellman1956dynamic}.
+However, this flexibility means that they can sometimes be relatively slow to learn, due to the \emph{curse of dimensionality} \citep{bellman1956dynamic}.
 In general, the more structure we account for in the data, the less data we'll need - the \emph{blessing of abstraction} \citep{goodman2011learning} counters the curse of dimensionality.
 Below, we'll investigate ways to encode more structure into our kernels.
 
@@ -240,7 +240,7 @@ To be more precise, if the kernels being added together are functions only of a 
 \begin{figure}[h!]
 \centering
 \begin{tabular}{ccccc|c}
-\multicolumn{5}{c|}{A sum of two orthogonal} & \multicolumn{1}{c}{Mutliplicative} \\
+\multicolumn{5}{c|}{A sum of two orthogonal} & \multicolumn{1}{c}{Multiplicative} \\
 \multicolumn{5}{c|}{ one-dimensional kernels} & \multicolumn{1}{c}{kernels} \\
 %\hline \\
 \hspace{-0.2cm}\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel_sum_p2} 
@@ -302,7 +302,7 @@ Note that the product of two kernels does not have an analogous interpretation a
 \subsection{Example: Additive Model of Concrete Compressive Strength}
 \label{sec:concrete}
 
-To illustrate how additive kernels give rise to interpetable models, we'll build an additive model of the strength of concrete as a function of the amount of 7 different ingredients, plus the age of the concrete \citep{yeh1998modeling}.
+To illustrate how additive kernels give rise to interpretable models, we'll build an additive model of the strength of concrete as a function of the amount of 7 different ingredients, plus the age of the concrete \citep{yeh1998modeling}.
 %We model measurements of the compressive strength of concrete, as a function of the concentration of 7 ingredients, plus the age of the concrete.
 
 Our simple additive model looks like
@@ -464,7 +464,7 @@ Red indicates high correlation, teal indicates no correlation, and blue indicate
 %Off-diagonal plots show posterior covariance between each pair of functions, as a function of both inputs.
 %Because each
 %We can see that t
-Most of the correlation occurs within componenets, but there is also negative correlation between the ``Cement'' and ``Slag'' variables.
+Most of the correlation occurs within components, but there is also negative correlation between the ``Cement'' and ``Slag'' variables.
 Negative correlation means that one of function is high and the other low, but which one is uncertain.
 Dimensions `Coarse' and `Fine' are not shown, because their variance was zero.
 }
@@ -568,7 +568,7 @@ We can also express a function which changes structure within some interval - a 
 
 \subsection{Multiplication by a Known Function}
 
-More generally, we can model an unkown function that's been multiplied by some fixed, known function $a(x)$, by multiplying the kernel by $a(\vx) a(\vx')$.
+More generally, we can model an unknown function that's been multiplied by some fixed, known function $a(x)$, by multiplying the kernel by $a(\vx) a(\vx')$.
 Formally,
 %
 \begin{align}
@@ -602,7 +602,7 @@ In some cases, $\InputSpace$ can even be the infinite-dimensional feature mappin
 
 \subsection{Relation to Linear Regression}
 
-Suprisingly, \gp{} regression is equivalent to Bayesian linear regression on the implicit features $\feat(\vx)$ which give rise to the kernel:
+Surprisingly, \gp{} regression is equivalent to Bayesian linear regression on the implicit features $\feat(\vx)$ which give rise to the kernel:
 %
 \begin{align}
 f(\iva) = \vw\tra \feat(\iva), \quad \vw \sim \N{\vw}{\vzero}{\Sigma} \quad
@@ -655,9 +655,9 @@ k_a(\iva, \iva') \times k_b(\iva, \iva')
 & = \vecop{ \feata(\iva) \otimes \featb(\iva') } \tra \vecop{ \feata(\iva) \otimes \featb(\iva')} 
 \end{align}
 %
-In other words, the features of $k_a \times k_b$ are just the cartesian product (all possible combinations) of the original two sets of features.
+In other words, the features of $k_a \times k_b$ are just the Cartesian product (all possible combinations) of the original two sets of features.
 For example, a set of infinitely many radial-basis functions spread evenly along the real line gives rise to one-dimensional $\kSE$ kernel.
-The cartesian product of these features with another set spread along a different dimension gives a tiling of the plane with two-dimensional radial-basis functions.
+The Cartesian product of these features with another set spread along a different dimension gives a tiling of the plane with two-dimensional radial-basis functions.
 This tiling corresponds to a two-dimensional $\kSE$ kernel.
 
 
@@ -665,7 +665,7 @@ This tiling corresponds to a two-dimensional $\kSE$ kernel.
 
 
 
-\section{Expressing Symmetries and Invariances}
+\section{Expressing Symmetries and Invariants}
 
 When modeling functions, encoding known symmetries can improve predictive accuracy. 
 In this section, we'll look at different ways in which we can encode symmetries into a prior on functions.
@@ -677,7 +677,7 @@ By using these priors to define warpings from $\Reals^2 \to \Reals^3$, we'll als
 \citet{ginsbourger2012argumentwise} and \citet{Invariances13} characterized the set of \gp{} priors on functions which respect any given invariance.
 They showed that the only way to construct a prior on functions which respect a given invariance is to construct a kernel which respects the same invariance with respect to each of its two inputs.
 
-Formally, given a finite group of operations $G$ to which we wish our function to remain invariant, and $f \sim \GPt{0}{k(\vx,\vx')}$, $f$ is invariant under $G$ (up to a modification) if and only if $k(\cdot, \cdot)$ is argumentwise invariant:
+Formally, given a finite group of operations $G$ to which we wish our function to remain invariant, and $f \sim \GPt{0}{k(\vx,\vx')}$, $f$ is invariant under $G$ (up to a modification) if and only if $k(\cdot, \cdot)$ is argument-wise invariant:
 %
 \begin{align}
 k( g(\vx), g(\vx')) = k(\vx, \vx'), \quad \forall \vx, \vx' \in \InputSpace, \quad \forall g, g' \in G
@@ -698,7 +698,7 @@ However, it might not be clear how to find a kernel obeying these symmetries.
 
 \subsection{Three Recipes for Group Invariance}
 
-Fortunately, for finite groups, there are a few simple ways to transform any kernel into one which is argumentwise invariant to actions under any finite group:
+Fortunately, for finite groups, there are a few simple ways to transform any kernel into one which is argument-wise invariant to actions under any finite group:
 %
 %
 \begin{figure}
@@ -778,7 +778,7 @@ This method will often produce \gp{} priors with zero variance in some regions o
 %We include it here to show that each of these methods for enforcing symmetries modifies the resulting model in other ways as well.
 \end{enumerate}
 
-There are many possible ways to achive a given symmetry, but we must be careful to do so without compromising other qualities of the model we are constructing.
+There are many possible ways to achieve a given symmetry, but we must be careful to do so without compromising other qualities of the model we are constructing.
 For example, simply setting $k(\vx, \vx') = 0$ gives rise to a \gp{} prior which obeys \emph{all possible} symmetries, but this is presumably not a model we wish to use.
 
 
@@ -850,7 +850,7 @@ k_{\textnormal{symm axis}}(x, x') & = k(x, x') + k(x, -x') + k(-x, x') + k(-x, -
 \subsection{Translation Invariance in Images}
 
 Most models of images are invariant to spatial translations \citep{lecun1995convolutional}.
-Similarily, most models of sounds are also invariant to translation through time.
+Similarly, most models of sounds are also invariant to translation through time.
 
 This sort of translation-invariance is completely distinct from the stationarity of kernels such as $\kSE$ or $\kPer$.
 A stationary kernel implies that the prior is invariant to translations of the entire training and test set.
@@ -943,7 +943,7 @@ f(x, y) & = f( y, x )
 \end{align}
 
 If we imagine moving along the edge of a M\"{o}bius strip, that is equivalent to moving along a diagonal in the function generated.
-Figure~\ref{fig:mobius}a shows an example of a function drawn from such a prior.
+\Cref{fig:mobius}a shows an example of a function drawn from such a prior.
 %
 \begin{figure}
 \begin{tabular}[t]{ccc}
@@ -981,9 +981,9 @@ Image adapted from \citep{sudanesepict}.
 \label{fig:mobius}
 \end{figure}
 %
-Figure~\ref{fig:mobius}b shows an example of a 2D mesh mapped to 3D by functions drawn from such a prior.
-This surface doesn't resemble a typical M\"{o}bius strip, because the edge of the mobius strip is in roughly circular shape, as opposed to the double-loop that one obtains by gluing a strip of paper with a single twist.
-The surface shown resembles the Sudanese M\"{o}bius strip \citep{sudanese1984}, shown in Figure~\ref{fig:mobius}c.
+\Cref{fig:mobius}b shows an example of a 2D mesh mapped to 3D by functions drawn from such a prior.
+This surface doesn't resemble a typical M\"{o}bius strip, because the edge of the M\"{o}bius strip is in roughly circular shape, as opposed to the double-loop that one obtains by gluing a strip of paper with a single twist.
+The surface shown resembles the Sudanese M\"{o}bius strip \citep{sudanese1984}, shown in \Cref{fig:mobius}(c).
 
 %Another classic example of a function living on a Mobius strip is the auditory quality of 2-note intervals.  The harmony of a pair of notes is periodic (over octaves) for each note, and the 
 
@@ -1174,7 +1174,7 @@ Function on M\"{o}bius strip & \\
   \end{tikzpicture}
 \end{tabular}
 \end{center}
-\caption[The energy of a molecular configuration obeys the same symmetries as a M\"{o}bius strip]{An example of a function expressing the same symmetries as a M\"{o}bius strip in two of its arguments.  The energy of a molecular configuration $f(\theta_1, \theta_2)$ depends only on the relative angles between atoms, and because each atom is indistiguishable, is invariant to permuting the atoms. }
+\caption[The energy of a molecular configuration obeys the same symmetries as a M\"{o}bius strip]{An example of a function expressing the same symmetries as a M\"{o}bius strip in two of its arguments.  The energy of a molecular configuration $f(\theta_1, \theta_2)$ depends only on the relative angles between atoms, and because each atom is indistinguishable, is invariant to permuting the atoms. }
 \label{fig:molecule}
 \end{figure}
 

@@ -10,7 +10,7 @@ Historically, the type of kernel has been chosen by hand by experts.
 In this thesis, we show how to automate this task, creating an artificial statistician capable of systematically exploring a large space of models.
 
 The introductory chapters show many types of structure, such as periodicity, changepoints, additivity, and symmetries can be encoded by kernels, and that these structure can be combined by combining kernels.
-For example, compound kernels can produce priors over topological manifolds such as cylinders, toruses, and M\"{o}bius strips, as well as their higher-dimensional analogues.
+For example, compound kernels can produce priors over toplogical manifolds such as cylinders, toruses, and M\"{o}bius strips, as well as their higher-dimensional analogues.
 
 The main contribution of this thesis is to show how this open-ended space of models can be explored automatically.
 To do so, we define a simple grammar over kernels, a search criterion (marginal likelihood), and a breadth-first search procedure.
