@@ -162,6 +162,31 @@ We'll see examples of real datasets with this kind of structure in \cref{ch:gram
 %For instance, in multidimensional data, the multiplicative kernel $\SE_1 \kerntimes \SE_2$ represents a smoothly varying function of dimensions 1 and 2 which is not constrained to be additive.
 
 We can build flexible models of functions of more than one input simply by multiplying kernels between the different inputs.
+%
+\begin{figure}[ht!]
+\centering
+\begin{tabular}{ccccccc}
+$\kSE_1$ & \hspace{-0.4cm} $\kerntimes$ & $\kSE_2$ &  $=$ & \hspace{-0.4cm} $\kSE_1 \kerntimes \kSE_2$ & & \hspace{-0.5cm} $f \sim \GPt{\vzero}{\kSE_1 \kerntimes \kSE_2}$ \\
+\hspace{-0.2cm}\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel_sum_p1} 
+& \hspace{-0.4cm} \raisebox{1cm}{$\times$} \hspace{-0.2cm} & 
+\hspace{-0.2cm}\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel_sum_p2} \hspace{-0.4cm}
+& \hspace{-0.4cm} \raisebox{1cm}{=} \hspace{-0.4cm} & \hspace{-1cm}
+\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/sqexp_kernel} 
+& \hspace{-1cm} \raisebox{1cm}{$\rightarrow$} \hspace{-0.4cm} & \hspace{-0.4cm}
+\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/sqexp_draw}\\
+$k_1(x_1, x_1')$ & & $k_2(x_2, x_2')$ & & \hspace{-0.4cm}\parbox{4cm}{$k_1(x_1,x_1') \kerntimes k_2(x_2,x_2')$} & & $f(x_1, x_2)$ \\[1em]
+\end{tabular}
+\caption[Additive kernels correspond to additive functions]{
+%\emph{Top left:} An additive kernel is a sum of kernels.
+%\emph{Bottom left:}  A draw from an additive kernel corresponds to a sum of draws from independent \gp{} priors with the corresponding kernels.
+%\emph{Top right:} A product kernel.
+%\emph{Right:}  A \gp{} prior with a product of kernels does not correspond to a product of draws from \gp{}s.
+%In this example, both kernels are composed of one dimensional squared-exponential kernels, but this need not be the case in general.
+A product of two one-dimensional kernels gives rise to a prior on functions which depends on both dimensions.
+}
+\label{fig:product-of-se-kernels}
+\end{figure}
+%
 For example, products of $\kSE$ kernels, having a different lengthscale parameter for each dimension, are called the $\seard$ kernel:
 %
 \begin{align}
@@ -170,6 +195,7 @@ For example, products of $\kSE$ kernels, having a different lengthscale paramete
  = \exp \left( -\frac{1}{2} \sum_{d=1}^D \frac{\left( x_d - x'_d \right)^2}{\ell_d^2} \right)
 \end{align}
 %
+\Cref{fig:product-of-se-kernels} illustrates the \seard{} kernel in two dimensions.
 \ARD{} stands for Automatic Relevance Determination, so named because estimating the lengthscale parameters $\ell_1, \ell_2, \dots, \ell_D$, implicitly determines the ``relevance'' of each dimension.
 Input dimensions with relatively large lengthscales indicate relatively little variation along those dimensions in the function being modeled.
 
@@ -236,44 +262,39 @@ We can also sum any number of components this way.
 When modeling functions of multiple dimensions, summing kernels can give rise to additive structure across different dimensions.
 To be more precise, if the kernels being added together are functions only of a subset of input dimensions, then the implied prior over functions decomposes in the same way.
 %
-%\subsection{Additivity in a GP}
 \begin{figure}[h!]
 \centering
-\begin{tabular}{ccccc|c}
-\multicolumn{5}{c|}{A sum of two orthogonal} & \multicolumn{1}{c}{Multiplicative} \\
-\multicolumn{5}{c|}{ one-dimensional kernels} & \multicolumn{1}{c}{kernels} \\
-%\hline \\
+\begin{tabular}{ccccc}
+\multicolumn{5}{c}{A sum of two orthogonal one-dimensional kernels}\\
 \hspace{-0.2cm}\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel_sum_p2} 
 & \hspace{-0.4cm} \raisebox{1cm}{+} \hspace{-0.4cm} & 
 \includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel_sum_p1} 
 & \hspace{-0.4cm} \raisebox{1cm}{=} \hspace{-0.4cm} & 
-\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel} &
-\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/sqexp_kernel} \\
-$k_1(x_1, x_1')$ & & $k_2(x_2, x_2')$ & & $k_1(x_1,x_1') + k_2(x_2,x_2')$ &$k_1(x_1,x_1')k_2(x_2,x_2')$ \\[1em]
+\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel} \\
+$k_1(x_1, x_1')$ & & $k_2(x_2, x_2')$ & & $k_1(x_1,x_1') + k_2(x_2,x_2')$ \\[1em]
 %1D kernel & & 1D kernel & & 1st order kernel & 2nd order kernel \\ 
 %& & & & & \\
 %(Second Order) & & & & & Additive Kernel \\
 %&&&&& \\
-\large $\downarrow$ & & \large $\downarrow$ & & \large $\downarrow$ & \large $\downarrow$  \\[-0.2em]
+\large $\downarrow$ & & \large $\downarrow$ & & \large $\downarrow$ \\[-0.2em]
 \hspace{-0.2cm}\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel_draw_sum_p1}
 & \hspace{-0.4cm} \raisebox{1cm}{+} \hspace{-0.4cm} & 
 \includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel_draw_sum_p2}
 & \hspace{-0.4cm} \raisebox{1cm}{=} \hspace{-0.4cm} &
-\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel_draw_sum} &
-\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/sqexp_draw} \\
-$f_1 \sim \GP\left(0, k_1\right)$ & & $f_2 \sim \GP\left(0, k_2\right)$ & & $f_1(x_1) + f_2(x_2)$ & $f(x_1, x_2)$ \\
+\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel_draw_sum} \\
+$f_1(x_1) \sim \GP\left(0, k_1\right)$ & & $f_2(x_2) \sim \GP\left(0, k_2\right)$ & & $f_1(x_1) + f_2(x_2)$ \\
 %draw from & & draw from & & draw from & draw from\\
 %1D GP prior & & 1D GP prior & & 1st order GP prior & 2nd order GP prior\\
 %Draw from product kernel GP prior & Draw from additive kernel GP prior\\
 \end{tabular}
 \caption[Additive kernels correspond to additive functions]{
-\emph{Top left:} An additive kernel is a sum of kernels.
-\emph{Bottom left:}  A draw from an additive kernel corresponds to a sum of draws from independent \gp{} priors with the corresponding kernels.
-\emph{Top right:} A product kernel.
-\emph{Right:}  A \gp{} prior with a product of kernels does not correspond to a product of draws from \gp{}s.
+\emph{Top row:} An additive kernel is a sum of kernels.
+\emph{Bottom row:} A draw from an additive kernel corresponds to a sum of draws from independent \gp{} priors having the corresponding kernels.
+%\emph{Top right:} A product kernel.
+%\emph{Right:}  A \gp{} prior with a product of kernels does not correspond to a product of draws from \gp{}s.
 %In this example, both kernels are composed of one dimensional squared-exponential kernels, but this need not be the case in general.
 }
-\label{fig:kernels}
+\label{fig:sum-of-kernels}
 \end{figure}
 %
 For example, if
@@ -294,7 +315,7 @@ f(x_1, x_2) & = f_1(x_1) + f_2(x_2)
 %Then we can model the sum of those functions through another \gp{}:
 %
 
-\Cref{fig:kernels} illustrates a decomposition of this form.
+\Cref{fig:sum-of-kernels} illustrates a decomposition of this form.
 Note that the product of two kernels does not have an analogous interpretation as the product of two functions.
 
 
@@ -526,10 +547,8 @@ In high dimensions, we can also consider sums of functions of more than one dime
 
 
 
-
-
 \section{Changepoints}
-A simple example of how multiplication of kernels can give rise to more structure priors is given by changepoint kernels.
+A simple example of how combining kernels can give rise to more structured priors is given by changepoint kernels.
 Changepoints kernels can be defined through addition and multiplication with sigmoidal functions:
 %
 
