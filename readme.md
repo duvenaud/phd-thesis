@@ -7,16 +7,23 @@ Automatic Model Construction with Gaussian Processes
 
 I'm about 10 days from submitting my thesis.  In the spirit of radical openness, I've made the entire repo public.  Think I'm missing something?  Want me to cite you?  <a href="mailto: dkd23@cam.ac.uk">Let me know!</a>  Any feedback would be much appreciated.
 
-> Individual chapters:
+Individual chapters:
+
 -[Introduction](intro.pdf)
+
 -[Expressing Structure with Kernels](kernels.pdf)
+
 -[Automatic Model Building](grammar.pdf)
+
 -[Automatic Model Description](description.pdf)
+
 -[Deep Gaussian Processes](deeplimits.pdf)
+
 -[Additive Gaussian Processes](additive.pdf)
+
 -[Warped Mixture Models](warped.pdf)
 
--[One Big PDF](thesis.pdf)
+Or get the whole thing in [one big PDF](thesis.pdf)
 
 
 
