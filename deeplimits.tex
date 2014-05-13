@@ -80,27 +80,37 @@ We also present two related analyses:  first, we examine the properties of a arb
 %\vspace{-0.05in}
 \subsection{Single-layer Models}
 
-\def\layersep{1.75cm}
-\def\nodesep{.75cm}
-\def\nodesize{.45cm}
-\def\halfshift{0.65cm}
+
+% For tikz figures in deep limits
+\newcommand{\numdims}[0]{3}
+\newcommand{\numhidden}[0]{3}
+\newcommand{\upnodedist}[0]{1cm}
+\newcommand{\bardist}[0]{\hspace{-0.2cm}}
+
+\def\layersep{2.3cm}
+\def\nodesep{1.3cm}
+\def\nodesize{1cm}
+
 
 \newcommand{\neuronfunc}[2]{
 \FPeval{\result}{clip(#1+#2)}
 \includegraphics[width=1cm, clip, trim=0mm 0mm 0mm 0mm]{../figures/deep-limits/two-d-draws/sqexp-draw-\result}
 }
 
+\tikzstyle{input neuron}=[neuron, fill=green!15];
+\tikzstyle{output neuron}=[neuron, fill=red!15];
+\tikzstyle{hidden neuron}=[neuron, fill=blue!15];
 
+%\newcommand{\indfeat}{h}
+\newcommand{\indfeat}{\phi}
 
 \begin{figure}[t]
 \begin{tabular}{c|c}
 a) One-hidden-layer MLP & b) Two-hidden layer MLP \\
+\null\hspace{-0.25cm}
 \begin{tikzpicture}[shorten >=1pt,->,draw=black!50, node distance=\layersep]
     \tikzstyle{every pin edge}=[<-,shorten <=1pt]
     \tikzstyle{neuron}=[circle,fill=black!25,minimum size=17pt,inner sep=0pt]
-    \tikzstyle{input neuron}=[neuron, fill=green!50];
-    \tikzstyle{output neuron}=[neuron, fill=red!50];
-    \tikzstyle{hidden neuron}=[neuron, fill=blue!50];
     \tikzstyle{annot} = [text width=4em, text centered]
 
     % Draw the input layer nodes
@@ -108,21 +118,23 @@ a) One-hidden-layer MLP & b) Two-hidden layer MLP \\
     % This is the same as writing \foreach \name / \y in {1/1,2/2,3/3,4/4}
         \node[input neuron, minimum size=\nodesize
         %, pin=left:Input \#\y
-        ] (I-\name) at (0,-\nodesep*\y) {}; %{$x_\y$};
+        ] (I-\name) at (0,-\nodesep*\y) {$x_\y$};
 
     % Draw the hidden layer nodes
-    \foreach \name / \y in {1,...,\numhidden}
+    % Draw the hidden layer nodes
+    \foreach \name / \y in {1,2}
         \path[yshift=0.5cm]
-            node[hidden neuron, minimum size=\nodesize] (H-\name) at (\layersep,-\nodesep*\y) {}; %{$\phi_\y$};
+            node[hidden neuron, minimum size=\nodesize] (H-\name) at (\layersep,-\nodesep*\y) {$\indfeat_{\y}$};
+    
+	\foreach \name / \y in {3}
+	    \path[yshift=0.5cm]
+    	    node[hidden neuron, minimum size=\nodesize] (H-\name) at (\layersep,-\nodesep*4) {$\indfeat_K$};
 
     % Draw the output layer node
     \foreach \name / \y in {1,...,\numdims}
-    	\node[output neuron, minimum size=\nodesize
-    	%,pin={[pin edge={->}]right:Output }
-    	] (O-\name) at (2*\layersep,-\nodesep*\y) {};%{$f^{1}_\y$};
+    	\node[output neuron, minimum size=\nodesize] (O-\name) at (2*\layersep,-\nodesep*\y) {$f_{\y}$};
 
-    % Connect every node in the input layer with every node in the
-    % hidden layer.
+    % Connect every node in the input layer with every node in the hidden layer.
     \foreach \source in {1,...,\numdims}
         \foreach \dest in {1,...,\numhidden}
             \path (I-\source) edge (H-\dest);
@@ -133,6 +145,7 @@ a) One-hidden-layer MLP & b) Two-hidden layer MLP \\
     	    \path (H-\source) edge (O-\dest);
 
     % Annotate the layers
+    \node[annot,below of=H-2, node distance=1.15cm] {$\vdots$};
     \node[annot,above of=I-1, node distance=\upnodedist] {Inputs};
     \node[annot,above of=H-1, node distance=\upnodedist] {Hidden};
     \node[annot,above of=O-1, node distance=\upnodedist] {Outputs};
@@ -141,9 +154,6 @@ a) One-hidden-layer MLP & b) Two-hidden layer MLP \\
 \begin{tikzpicture}[shorten >=1pt,->,draw=black!50, node distance=\layersep]
     \tikzstyle{every pin edge}=[<-,shorten <=1pt]
     \tikzstyle{neuron}=[circle,fill=black!25,minimum size=17pt,inner sep=0pt]
-    \tikzstyle{input neuron}=[neuron, fill=green!50];
-    \tikzstyle{output neuron}=[neuron, fill=red!50];
-    \tikzstyle{hidden neuron}=[neuron, fill=blue!50];
     \tikzstyle{annot} = [text width=4em, text centered]
 
     % Draw the input layer nodes
@@ -151,24 +161,30 @@ a) One-hidden-layer MLP & b) Two-hidden layer MLP \\
     % This is the same as writing \foreach \name / \y in {1/1,2/2,3/3,4/4}
         \node[input neuron, minimum size=\nodesize
         %, pin=left:Input \#\y
-        ] (I-\name) at (0,-\nodesep*\y) {};
+        ] (I-\name) at (0,-\nodesep*\y) {$x_\y$};
 
-    % Draw the hidden layer nodes
-    \foreach \name / \y in {1,...,\numhidden}
+    % Draw the first hidden layer nodes
+    \foreach \name / \y in {1,2}%...,\numhidden}
         \path[yshift=0.5cm]
-            node[hidden neuron, minimum size=\nodesize] (H-\name) at (\layersep,-\nodesep*\y) {};
+            node[hidden neuron, minimum size=\nodesize] (H-\name) at (\layersep,-\nodesep*\y) {$\indfeat^1_{\y}$};
+	\foreach \name / \y in {3}
+	    \path[yshift=0.5cm]
+    	    node[hidden neuron, minimum size=\nodesize] (H-\name) at (\layersep,-\nodesep*4) {$\indfeat^1_K$};
+            
 
-    % Draw the hidden layer nodes
-    \foreach \name / \y in {1,...,\numhidden}
+    % Draw the secdond hidden layer nodes
+    \foreach \name / \y in {1,2}%...,\numhidden}
         \path[yshift=0.5cm]
-            node[hidden neuron, minimum size=\nodesize] (H2-\name) at (2*\layersep,-\nodesep*\y) {};
-
+            node[hidden neuron, minimum size=\nodesize] (H2-\name) at (2*\layersep,-\nodesep*\y) {$\indfeat^2_{\y}$};
+	\foreach \name / \y in {3}
+	    \path[yshift=0.5cm]
+    	    node[hidden neuron, minimum size=\nodesize] (H2-\name) at (2*\layersep,-\nodesep*4) {$\indfeat^2_K$};
 
     % Draw the output layer node
     \foreach \name / \y in {1,...,\numdims}
     	\node[output neuron, minimum size=\nodesize
     	%,pin={[pin edge={->}]right:Output }
-    	] (O-\name) at (3*\layersep,-\nodesep*\y) {};
+    	] (O-\name) at (3*\layersep,-\nodesep*\y) {$f_{\y}$};
 
     % Connect every node in the input layer with every node in the
     % hidden layer.
@@ -187,10 +203,28 @@ a) One-hidden-layer MLP & b) Two-hidden layer MLP \\
 
     % Annotate the layers
     \node[annot,above of=I-1, node distance=\upnodedist] {Inputs};
+    \node[annot,below of=H-2, node distance=1.15cm] {$\vdots$};    
     \node[annot,above of=H-1, node distance=\upnodedist] {Hidden};
+    \node[annot,below of=H2-2, node distance=1.15cm] {$\vdots$};
     \node[annot,above of=H2-1, node distance=\upnodedist] {Hidden};
     \node[annot,above of=O-1, node distance=\upnodedist] {Outputs};
-\end{tikzpicture} \\
+\end{tikzpicture}
+\end{tabular}
+\caption[Comparison of neural network architectures]
+{
+a): \sgp{}s can be understood as a one-hidden-layer \sMLP{} with infinitely many hidden units.
+There are two interpretations of deep \sgp{}s as neural networks:
+b): As a neural network with a finite number of hidden units, each with a different non-parametric activation function.
+c) Alternatively, we can consider every second layer to be a random linear combination of an infinite number of fixed, parametric hidden units.
+}
+\label{fig:architectures}
+\end{figure}
+
+
+\def\halfshift{0.65cm}
+
+\begin{figure}[t]
+\begin{tabular}{c|c}
 %\multicolumn{2}{c}{} \\
 %\multicolumn{2}{c}{
 c) Two-layer \gp{}: $\vy = \vf^{(2)} \left( \vf^{(1)}(\vx) \right)$ & \\
@@ -304,8 +338,8 @@ c) Two-layer \gp{}: $\vy = \vf^{(2)} \left( \vf^{(1)}(\vx) \right)$ & \\
     \node[annot,below of=I-\numdims, node distance=\upnodedist] {$\vx$};    
     \node[annot,above of=H-1, node distance=\upnodedist, text width = 1cm] {Hidden Layer};
     \node[annot,above of=H2-1, node distance=\upnodedist, text width = 1cm] {Hidden Layer};
-    \node[annot,below of=H-\numhidden, node distance=2.5cm, text width = 1cm] {$\vf^{(1)}(\vx)$};
-    \node[annot,below of=H2-\numhidden, node distance=2.5cm, text width = 1cm] {$\vf^{(2)}(\vf^{(1)}(\vx))$};
+    \node[annot,below of=H-\numhidden, node distance=0.5cm, text width = 1cm] {$\vf^{(1)}(\vx)$};
+    \node[annot,below of=H2-\numhidden, node distance=0.5cm, text width = 1cm] {$\vf^{(2)}(\vf^{(1)}(\vx))$};
     \node[annot,above of=O-1, node distance=\upnodedist] {Outputs};
     \node[annot,below of=O-\numdims, node distance=2.5cm, text width = 1cm] {$\vy$};
 \end{tikzpicture}
