@@ -9,19 +9,13 @@ I'm about 10 days from submitting my thesis.  In the spirit of radical openness,
 
 Individual chapters:
 
--[Introduction](intro.pdf)
-
--[Expressing Structure with Kernels](kernels.pdf)
-
--[Automatic Model Building](grammar.pdf)
-
--[Automatic Model Description](description.pdf)
-
--[Deep Gaussian Processes](deeplimits.pdf)
-
--[Additive Gaussian Processes](additive.pdf)
-
--[Warped Mixture Models](warped.pdf)
+1. [Introduction](intro.pdf)
+2. [Expressing Structure with Kernels](kernels.pdf)
+3. [Automatic Model Building](grammar.pdf)
+4. [Automatic Model Description](description.pdf)
+5. [Deep Gaussian Processes](deeplimits.pdf)
+6. [Additive Gaussian Processes](additive.pdf)
+7. [Warped Mixture Models](warped.pdf)
 
 Or get the whole thing in [one big PDF](thesis.pdf)
 
