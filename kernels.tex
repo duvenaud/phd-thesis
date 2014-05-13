@@ -914,11 +914,13 @@ The extension to two dimensions, $\shift(\vx, i, j)$ is straightforward, but not
 \label{sec:topological-manifolds}
 
 In this section we give a geometric illustration of the symmetries encoded by different compositions of kernels.
+The work presented in this section is based on a collaboration with David Reshef, Roger Grosse, Josh Tenenbaum, and Zoubin Ghahramani.
 
-Priors on functions exhibiting symmetries can be used to create a prior on topological manifolds, by warping a latent surface $\vx$ to an observed surface $f(\vx)$.
+Priors on functions exhibiting symmetries can be used to create a prior on topological manifolds, by warping a simply-connected surface into a higher-dimensional space using a mapping expressing symmetries. %from a latent space to an observed space.%surface $f(\vx)$.
 %The distribution on $\vf$ allows us to put mass on 
 %If we set the input $\vx$ to be a 2-dimensional plane, intro 3 dimensions using a \gp{} encoding certain symmetries, the resulting surfaces will correspon
-To build a prior on 2-dimensional manifolds embedded in 3-dimensional space, we simply need a prior on mappings from $\mathbb{R}^2$ to $\mathbb{R}^3$, which we can construct using 3 independent functions $[f_1(\vx), f_2(\vx), f_3(\vx)]$ mapping from $\mathbb{R}^2$ to $\mathbb{R}$, specified by \gp{} priors.
+To build a prior on 2-dimensional manifolds embedded in 3-dimensional space, we simply need a prior on mappings from $\mathbb{R}^2$ to $\mathbb{R}^3$, which we can construct using 3 independent functions $[f_1(\vx), f_2(\vx), f_3(\vx)]$, each mapping from $\mathbb{R}^2$ to $\mathbb{R}$.
+\gp{} priors on the mapping functions implictly give rise to a prior on warped surfaces.
 Symmetries in $[f_1, f_2, f_3]$ will connect different parts of the manifolds, giving rise to non-trivial topologies on the sampled surfaces.
 %
 \begin{figure}

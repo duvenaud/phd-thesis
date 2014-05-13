@@ -14,7 +14,16 @@
 
 
 
-Choosing appropriate architectures and regularization strategies of deep networks is crucial to good predictive performance.  To shed light on this problem, we analyze the analogous problem of constructing useful priors on compositions of functions.  Specifically, we study the deep Gaussian process, a type of infinitely-wide, deep neural network.  We show that in standard architectures, the representational capacity of the network tends to capture fewer degrees of freedom as the number of layers increases, retaining only a single degree of freedom in the limit.  We propose an alternate network architecture which does not suffer from this pathology.  We also examine deep covariance functions, obtained by composing infinitely many feature transforms.  Lastly, we characterize the class of models obtained by performing dropout on Gaussian processes.
+Choosing appropriate architectures and regularization strategies of deep networks is crucial to good predictive performance.
+To shed light on this problem, we analyze the analogous problem of constructing useful priors on compositions of functions.
+Specifically, we study the deep Gaussian process, a type of infinitely-wide, deep neural network.
+We show that in standard architectures, the representational capacity of the network tends to capture fewer degrees of freedom as the number of layers increases, retaining only a single degree of freedom in the limit.
+We propose an alternate network architecture which does not suffer from this pathology.
+We also examine deep covariance functions, obtained by composing infinitely many feature transforms
+
+The ideas contained in this chapter were developed through discussions with Oren Rippel, Ryan Adams and Zoubin Ghahramani, and appear in \citep{DuvRipAdaGha14}.
+The derivations, experiments and writing were done mainly by myself, with many helpful suggestions by my co-authors.
+%  Lastly, we characterize the class of models obtained by performing dropout on Gaussian processes.
 
 %This chapter was joint work with Oren Rippel, Ryan P. Adams and Zoubin Ghahramani.
 

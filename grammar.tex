@@ -2,7 +2,7 @@
 \inbpdocument
 
 
-\chapter{Automatically Building Structured Regression Models}
+\chapter{Automatic Model Construction}% Structured Regression Models}
 \label{ch:grammar}
 
 \begin{quotation}
@@ -16,8 +16,8 @@
 
 
 In \cref{ch:kernels}, we saw that the choice of kernel determines the type of structure that can be learned by a \gp{} model, and that a wide variety of models could be constructed through simply adding and multiplying a few base kernels together.
-However, we didn't answer the difficult question of how to tell which kernel to use for a given problem.
-Even for experts, choosing the kernel in nonparametric regression remains something of a black art.
+However, we didn't answer the difficult question of how which kernel to use for a given problem.
+Even for experts, choosing the kernel in \gp{} regression remains something of a black art.
 
 In this chapter, we'll automate the process of building kernels for \gp{} models.
 To do so, we'll need to define an open-ended space of kernels.
@@ -28,7 +28,22 @@ Searching over such a large, structured model class has two main benefits.
 First, this procedure has very good predictive accuracy, since it tries out a large number of different regression models.
 Second, this procedure can discover interpretable structure in datasets.
 Because \gp{} posteriors can be decomposed (as in \cref{sec:concrete}), we can also examine the resulting structures visually.
-In \cref{ch:description}, we'll even show how to automatically generate English-language descriptions of the resulting models.
+%In \cref{ch:description}, we'll even show how to automatically generate English-language descriptions of the resulting models.
+
+%\paragraph{Attribution}
+
+This chapter is based on work done in collaboration with James Robert Lloyd, Roger Grosse, Joshua B. Tenenbaum, and Zoubin Ghahramani.  It was published \citep{DuvLloGroetal13}, where James Lloyd was joint first author, and in \citep{LloDuvGroetal14}.
+%, where James Lloyd was joint first author, and in \citep{LloDuvGroetal14}.
+Myself, James Lloyd and Roger Grosse jointly developed the idea of searching through a grammar-based language of \gp{} models, inspired by \citet{grosse2012exploiting}, and wrote the first versions of the code together.
+James Lloyd ran most of the experiments.
+%I produced all of the figures.
+%Zoubin Ghahramani and Josh Tenenbaum provided many conceptual insights, as well as suggestions about how the resulting procedure could be most fruitfully applied.
+
+%\paragraph{Automatic statistician:} The work appearing in chapter \ref{ch:description} was written in collaboration with James Robert Lloyd, Roger Grosse, Joshua B. Tenenbaum, Zoubin Ghahramani, and was published in .
+%The procedure translating kernels into adjectives grew out of discussions between James and myself.
+%James Lloyd wrote the code to automatically generate reports, and ran all of the experiments.
+%The text was written mainly by myself, James Lloyd, and Zoubin Ghahramani, with many helpful contributions and suggestions from Roger Grosse and Josh Tenenbaum.
+
 
 %Section \ref{sec:Structure} outlines some commonly used kernel families as well as ways in which they can be composed. 
 %Our grammar over kernels and our proposed structure discovery algorithm are described in Section \ref{sec:Search}. 
@@ -92,13 +107,7 @@ The next four sections of this chapter describe the mechanisms we use to produce
 As shown in \cref{ch:kernels}, we can construct a wide variety of kernel structures compositionally by adding and multiplying a small number of base kernels.
 We can therefore define a language of \gp{} regression models simply by specifying a language of kernels.
 
-This language of models is made out of a set of base kernels which capture different properties of functions, and a set of composition rules which combine kernels to yield other valid kernels.
-In this chapter, we'll use such base kernels as white noise ($\kWN$), constant ($\kC$), linear ($\kLin$), squared-exponential ($\kSE$), rational-quadratic ($\kRQ$), sigmoidal ($\kSig$) and periodic ($\kPer$).
-We use a generalized form of $\kPer$ due to \citet{lloyd-periodic} which has $\cos(x - x')$ as a special case.
-\Cref{fig:basic_kernels_two} shows the new kernels introduced in this chapter.
-For precise definitions of all kernels, see appendix \ref{sec:kernel-definitions}.
-
-\begin{table}[h]%
+\begin{table}[ht!]%
 \centering
 \begin{tabular}{cccc}
 Kernel name: & Rational quadratic (\kRQ) & Cosine ($\cos$) & White noise (\kLin) \\[10pt]
@@ -130,7 +139,12 @@ k_1 \times k_2 = & \,\, k_1(\vx, \vx') \times k_2(\vx, \vx')
 %(k_1 \times k_2)(\vx, \vx') =& \,\, k_1(\vx, \vx') \times k_2(\vx, \vx')
 \end{align}
 %
-Table~\ref{table:motifs} lists common regression models that can be expressed by this language.
+This language of models is made out of a set of base kernels which capture different properties of functions, and a set of composition rules which combine kernels to yield other valid kernels.
+In this chapter, we'll use such base kernels as white noise ($\kWN$), constant ($\kC$), linear ($\kLin$), squared-exponential ($\kSE$), rational-quadratic ($\kRQ$), sigmoidal ($\kSig$) and periodic ($\kPer$).
+We use a generalized form of $\kPer$ due to \citet{lloyd-periodic} which has $\cos(x - x')$ as a special case.
+\Cref{fig:basic_kernels_two} shows the new kernels introduced in this chapter.
+For precise definitions of all kernels, see appendix \ref{sec:kernel-definitions}.
+\Cref{table:motifs} lists common regression models that can be expressed by this language.
 
 \begin{table}[ht]
 \centering
@@ -314,7 +328,7 @@ For example,
 \end{align}
 %
 This decomposition into additive components provides a method of visualizing the learned model, breaking down the different types of structure discovered in the data.
-In \cref{ch:description}, we'll extend this model visualization method to include automatically-generated English text explaining the meaning of each type of structure discovered.
+In \citep{LloDuvGroetal14}, we extended this model visualization method to include automatically-generated English text explaining the meaning of each type of structure discovered.
 
 
 
@@ -351,7 +365,7 @@ Long-term trend: $\Lin \kerntimes \SE$ & Yearly periodic: $\SE \kerntimes \Per$ 
 Short-term deviation: $\SE \kerntimes \RQ$ & Noise: \kWN \\
 \maunadgfx{3} & \maunadgfx{resid}
 \end{tabular}
-\caption[Model decomposition of the Mauna-Loa time-series]
+\caption[Decomposition of the Mauna Loa model]
 {\emph{First row:} The full posterior on the Mauna Loa dataset, after a search of depth 10.
 \emph{Subsequent rows:} The automatic decomposition of the time series.
 The decompositions is a sum of long-term, yearly periodic, medium-term components, and residual noise, respectively.
@@ -401,7 +415,7 @@ Long-term trend: $\kSE \kerntimes \Lin$ & Yearly Periodic: $\kPer \kerntimes \Li
 Short-term deviation $\kSE$ & Growing Noise: $\kWN \kerntimes \Lin$ \\
 \airdgfx{01-airline_3_extrap} & \airdgfx{01-airline_4_extrap}
 \end{tabular}
-\caption[Decomposition of model discovered on airline dataset]
+\caption[Decomposition of airline dataset model]
 {\emph{First row:} The airline dataset and posterior after a search of depth 10.
 \emph{Subsequent rows:} Additive decomposition of posterior into long-term smooth trend, yearly variation, and short-term deviations.
 Due to the linear kernel, the marginal variance grows over time, making this a heteroskedastic model. 

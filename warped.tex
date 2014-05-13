@@ -67,11 +67,14 @@ We derive an inference procedure for the \iwmm{} based on Markov chain Monte Car
 
 %In particular, we iteratively infer the infinite Gaussian mixture model in the latent space by using Gibbs sampling, the latent coordinates and nonlinear function by using the Hamiltonian Monte Carlo.
 
+The work comprising the bulk of this chapter was done in collaboration with Tomoharu Iwata and Zoubin Ghahramani, and appeared in \citep{IwaDuvGha12}.
+Specifically, the main idea was borne out of a conversation between Tomo and myself, and together we wrote almost all of the code together as well as the paper.
+Tomo ran most of the experiments.
+Zoubin Ghahramani provided guidance and many helpful suggestions throughout the project.
 
 
 
-
-\section{Gaussian Process Latent Variable Model}
+\section{The Gaussian Process Latent Variable Model}
 
 
 Besides being useful for modeling functions, a simple extension allows \gp{}s to be useful for general density modeling, at the cost of non-analytic inference.
@@ -146,7 +149,7 @@ Just as the \gplvm{} can be viewed as a manifold learning algorithm, the \iwmm{}
 
 
 
-\section{Infinite Warped Mixture Model}
+\section{The Infinite Warped Mixture Model}
 
 In this section, we define in detail the infinite warped mixture model (\iwmm{}).
 In the same way as the \gplvm{}, the \iwmm{} assumes a set of latent coordinates and a smooth, nonlinear mapping from the latent space to the observed space.
@@ -415,7 +418,7 @@ This procedure was used to generate the plots of posterior density in figures \r
 
 
 
-\section{Related work}
+\section{Related Work}
 
 The \gplvm{} is effective as a nonlinear latent variable model in a wide variety of applications ~\citep{lawrence2004gaussian,salzmann2008local,lawrence2009non}.
 The latent positions $\vX$ in the \gplvm{} are typically obtained by maximum a posteriori estimation or variational Bayesian inference~\citep{titsias2010bayesian}, placing a single fixed spherical Gaussian prior on $\vx$.
@@ -451,7 +454,7 @@ In contrast, the \iwmm{} infers the mapping function such that the latent co-ord
 
 
 
-\section{Experimental results}
+\section{Experimental Results}
 
 \subsection{Clustering Faces}
 
@@ -699,12 +702,12 @@ iGMM & $-3.28$ & $-2.26$ & $-2.21$ & $-2.12$ & $-1.91$ & $3.00$ & $\mathbf{-1.87
 \end{tabular}
 \end{table}
 
-\subsection{Source code}
-Code to reproduce all the above experiments is available at \url{http://github.com/duvenaud/warped-mixtures}.
+\subsubsection{Source Code}
+Code to reproduce all the above experiments is available at \url{github.com/duvenaud/warped-mixtures}.
 
 
 
-\section{Future work}
+\section{Future Work}
 
 %One design decision which may be worth revisiting is the use the same warping for all mixture components.  It would be simple, and typically faster, to use a separate set of GPs to model the warping of each latent cluster.  
 The Dirichlet process mixture of Gaussians in the latent space of our model could easily be replaced by a more sophisticated density model, such as a hierarchical Dirichlet process~\citep{teh2006hierarchical}, or a Dirichlet diffusion tree~\citep{neal2003density}.
