@@ -83,6 +83,14 @@ We also present two related analyses:  first, we examine the properties of a arb
 \def\layersep{1.75cm}
 \def\nodesep{.75cm}
 \def\nodesize{.45cm}
+\def\halfshift{0.65cm}
+
+\newcommand{\neuronfunc}[2]{
+\FPeval{\result}{clip(#1+#2)}
+\includegraphics[width=1cm, clip, trim=0mm 0mm 0mm 0mm]{../figures/deep-limits/two-d-draws/sqexp-draw-\result}
+}
+
+
 
 \begin{figure}[t]
 \begin{tabular}{c|c}
@@ -183,9 +191,10 @@ a) One-hidden-layer MLP & b) Two-hidden layer MLP \\
     \node[annot,above of=H2-1, node distance=\upnodedist] {Hidden};
     \node[annot,above of=O-1, node distance=\upnodedist] {Outputs};
 \end{tikzpicture} \\
-\multicolumn{2}{c}{} \\
-\multicolumn{2}{c}{c) Two-layer \gp{}: $\vy = \vf^{(2)} \left( \vf^{(1)}(\vx) \right)$} \\
-\multicolumn{2}{c}{
+%\multicolumn{2}{c}{} \\
+%\multicolumn{2}{c}{
+c) Two-layer \gp{}: $\vy = \vf^{(2)} \left( \vf^{(1)}(\vx) \right)$ & \\
+%\multicolumn{2}{c}{
 \begin{tikzpicture}[shorten >=1pt,->,draw=black!50, node distance=\layersep]
     \tikzstyle{every pin edge}=[<-,shorten <=1pt]
     \tikzstyle{neuron}=[circle,fill=black!25,minimum size=17pt,inner sep=0pt]
@@ -249,7 +258,59 @@ a) One-hidden-layer MLP & b) Two-hidden layer MLP \\
     \node[annot,above of=H2-1, node distance=\upnodedist] {Hidden};
     \node[annot,above of=O2-1, node distance=\upnodedist] {$\vf^{(1:2)}(\vx)$};
 \end{tikzpicture}
-}
+%}
+&
+%\begin{tabular}{c}
+\begin{tikzpicture}[draw=black, node distance=\layersep]
+    \tikzstyle{interarrows}=[->, thick, black!50]
+    \tikzstyle{neuron}=[circle, draw = black, inner sep=0pt, line width = 1pt]
+    \tikzstyle{input neuron}=[neuron, minimum size=\nodesize];
+    \tikzstyle{output neuron}=[neuron, minimum size=\nodesize, text width = 1cm];
+    \tikzstyle{hidden neuron}=[neuron, minimum size=\nodesize, text width = 1cm];
+    \tikzstyle{annot} = [text width=4em, text centered]
+
+    % Draw the input layer nodes
+    \foreach \name / \y in {1,...,\numdims}
+        \node[input neuron] (I-\name) at (0,-\nodesep*\y) {$x_\y$};
+
+    % Draw the hidden layer nodes
+    \foreach \name / \y in {1,...,\numhidden}
+        \path[yshift=\halfshift] node[hidden neuron] (H-\name) at (\layersep,-\nodesep*\y) { \neuronfunc{\y}{0}};
+
+    % Draw the hidden layer nodes
+    \foreach \name / \y in {1,...,\numhidden}
+        \path[yshift=\halfshift] node[hidden neuron] (H2-\name) at (2*\layersep,-\nodesep*\y) {\neuronfunc{\y}{4}};
+
+    % Draw the output layer node
+    \foreach \name / \y in {1,...,\numdims}
+    	\node[output neuron] (O-\name) at (3*\layersep,-\nodesep*\y) {\neuronfunc{\y}{8}};
+
+    % Connect every node in the input layer with every node in the hidden layer.
+    \foreach \source in {1,...,\numdims}
+        \foreach \dest in {1,...,\numhidden}
+            \path (I-\source) edge[interarrows] (H-\dest);
+            
+    \foreach \source in {1,...,\numhidden}
+        \foreach \dest in {1,...,\numhidden}
+            \path (H-\source) edge[interarrows] (H2-\dest);            
+
+    % Connect every node in the hidden layer with the output layer
+    \foreach \source in {1,...,\numhidden}
+        \foreach \dest in {1,...,\numdims}
+    	    \path (H2-\source) edge[interarrows] (O-\dest);
+
+    % Annotate the layers
+    \node[annot,above of=I-1, node distance=\upnodedist] {Inputs};
+    \node[annot,below of=I-\numdims, node distance=\upnodedist] {$\vx$};    
+    \node[annot,above of=H-1, node distance=\upnodedist, text width = 1cm] {Hidden Layer};
+    \node[annot,above of=H2-1, node distance=\upnodedist, text width = 1cm] {Hidden Layer};
+    \node[annot,below of=H-\numhidden, node distance=2.5cm, text width = 1cm] {$\vf^{(1)}(\vx)$};
+    \node[annot,below of=H2-\numhidden, node distance=2.5cm, text width = 1cm] {$\vf^{(2)}(\vf^{(1)}(\vx))$};
+    \node[annot,above of=O-1, node distance=\upnodedist] {Outputs};
+    \node[annot,below of=O-\numdims, node distance=2.5cm, text width = 1cm] {$\vy$};
+\end{tikzpicture}
+%\end{tabular}
+
 \end{tabular}
 \caption[Comparison of neural network architectures]
 {
