@@ -471,9 +471,12 @@ Two equivalent views of deep \gp{}s as neural networks.
 \label{fig:deep-gp-architectures}
 \end{figure}
 
+There are two equivalent neural net architectures which correspond to deep \gp{}s: one with fixed non-linearities, and another with \gp{}-distributed nonlinearties.
+
 To construct a neural network with fixed nonlinearities that corresponds to a deep \gp{}, 
 %with $D_\layerindex$ units for each layer corresponding to the outputs compositions of functions drawn from a \gp{} prior, 
-one must introduce a second layer in between each infinitely-wide set of fixed basis functions, as in the top of \cref{fig:deep-gp-architectures}.
+one can start with the infinitely-wide deep \gp{} shown in \cref{fig:gp-architectures}(right), and introduce a finite set of nodes in between each infinitely-wide set of fixed basis functions.
+This architecture is shown in the top of \cref{fig:deep-gp-architectures}.
 The $D_\layerindex$ outputs $\vf^{(\layerindex)}(\vx)$ in between each layer are weighted sums (with random weights) of the fixed hidden units of the layer below, and the next layer's hidden units depend only on these $D_\layerindex$ outputs.
 %Thus, the network architecture with fixed nonlinearities corresponding to deep \gp{}s has an extra set of layers that a \MLP{} doesn't have.
 %
@@ -490,7 +493,7 @@ Thus, ignoring the intermediate outputs $\vf^{(\layerindex)}(\vx)$, a deep \gp{}
 
 
 %There are two ways to relate deep \gp{}s to \MLP{}s.
-A more direct way to construct a network architecture corresponding to a deep \gp{} is to integrate out all $\vV^{(\layerindex)}$, and view deep \gp{}s as a neural network with a finite number of nonparametric, \gp{}-distributed basis functions at each layer, in which $\vf^{(1:\layerindex)}(\vx)$ represent the output of the hidden nodes at the $\layerindex^{th}$ layer.
+The second, more direct way to construct a network architecture corresponding to a deep \gp{} is to integrate out all $\vV^{(\layerindex)}$, and view deep \gp{}s as a neural network with a finite number of nonparametric, \gp{}-distributed basis functions at each layer, in which $\vf^{(1:\layerindex)}(\vx)$ represent the output of the hidden nodes at the $\layerindex^{th}$ layer.
 This second view lets us compare deep \gp{} models to standard neural net architectures more directly.
 \Cref{fig:gp-architectures}(bottom) shows this architecture.
 %, examining the activations and shapes of the finite number of basis functions at each layer.
@@ -571,15 +574,15 @@ This is a consequence of the distribution on derivatives becoming heavy-tailed.}
 \end{figure}
 %
 \begin{align}
-k_{\textnormal{SE}}(x, x') = \sigma^2 \exp \left( \frac{-(x - x')^2}{2\lengthscale^2} \right) \;.
+\kSE(x, x') = \sigma^2 \exp \left( \frac{-(x - x')^2}{2\lengthscale^2} \right) \;.
 \label{eq:se_kernel}
 \end{align}
 %
 The parameter $\sigma^2$ controls the variance of functions drawn from the prior, and the lengthscale parameter $\lengthscale$ controls the smoothness.  
 The derivative of a \gp{} with a squared-exp kernel is point-wise distributed as $\Nt{0}{\nicefrac{\sigma^2}{\lengthscale^2}}$.  
-Intuitively, a \gp{} is likely to have large derivatives if it has high variance and small lengthscales.
+Intuitively, a draw from a \gp{} is likely to have large derivatives if the kernel has high variance and small lengthscales.
  
- By the chain rule, the derivative of a one-dimensional deep \gp{} is simply a product of its (independent) derivatives.  
+ By the chain rule, the derivative of a one-dimensional deep \gp{} is simply a product of the derivatives of each layer, which are drawn independently.
  The distribution of the absolute value of this derivative is a product of half-normals, each with mean $\sqrt{\nicefrac{2 \sigma^2}{\pi \lengthscale^2}}$.
 %
 %\begin{align}
@@ -587,7 +590,7 @@ Intuitively, a \gp{} is likely to have large derivatives if it has high variance
 %\implies 
 %\left| \frac{\partial f(x)}{\partial x} \right| & \distas{iid} \textnormal{half}\Nt{\sqrt{\frac{2 \sigma^2_f}{\pi\lengthscale^2}}}{\frac{\sigma^2_f}{\lengthscale^2} \left( 1 - \frac{2}{\pi} \right)}
 %\end{align}
-
+%
 If we choose kernel parameters so that ${\nicefrac{\sigma^2}{\lengthscale^2} = \nicefrac{\pi}{2}}$, then the expected magnitude of the derivative remains constant regardless of the depth.
 
 %then ${\expectargs{}{\left| \nicefrac{\partial f(x)}{\partial x} \right|} = 1}$, and so ${\expectargs{}{\left| \nicefrac{\partial f^{(1:L)}(x)}{\partial x} \right|} = 1}$ for any $L$.
@@ -610,8 +613,8 @@ where $\gamma \approxeq 0.5772$ is Euler's constant.  Since the second moment is
 \end{align}
 %
 Even if the expected magnitude of the derivative remains constant, the variance of the log-normal distribution grows without bound as the depth increases.
-Because the log-normal distribution is heavy-tailed and its domain is bounded below by zero, the derivative will become very small almost everywhere, with rare but very large jumps.  
 
+Because the log-normal distribution is heavy-tailed and its domain is bounded below by zero, the derivative will become very small almost everywhere, with rare but very large jumps.  
 \Cref{fig:deep_draw_1d} shows this behavior in a draw from a 1D deep \gp{} prior, at varying depths.
 This figure also shows that once the derivative in one region of the input space becomes very large or very small, it is likely to remain that way in subsequent layers.
 %
@@ -628,7 +631,7 @@ This figure also shows that once the derivative in one region of the input space
 \subsection{Distribution of the Jacobian}
 \label{sec:theorem}
 
-We now derive the distribution on Jacobians of multivariate functions drawn from a deep \gp{} prior.
+Next, we characterize the distribution on Jacobians of multivariate functions drawn from a deep \gp{} prior.
 
 \begin{lemma}
 \label{thm:deriv-ind}
@@ -646,11 +649,13 @@ The covariance between partial derivatives with respect to input dimensions $d_1
 \label{eq:deriv-kernel}
 \end{align}
 %
-If our kernel is a product over individual dimensions $k(\vx, \vx') = \prod_d^D k_d(x_d, x_d')$, as in the case of the squared-exp kernel, then the off-diagonal entries are zero, implying that all elements are independent.
+If our kernel is a product over individual dimensions $k(\vx, \vx') = \prod_d^D k_d(x_d, x_d')$, 
+%as in the case of the squared-exp kernel, 
+then the off-diagonal entries are zero, implying that all elements are independent.
 \end{proof}
 
 %\vspace{-0.1in}
-In the case of the multivariate squared-exp kernel, the covariance between derivatives has the form:
+For example, in the case of the multivariate squared-exp kernel, the covariance between derivatives has the form:
 %
 \begin{align}
 %k_{SE}(\vx, \vx') = 
@@ -667,7 +672,7 @@ f(\vx) \sim \textnormal{GP}\left( 0,
 
 \begin{lemma}
 \label{thm:matrix}
-The Jacobian of a set of $D$ functions $\mathbb{R}^D \rightarrow \mathbb{R}$ drawn independently from a \gp{} prior with a product kernel is a $D \times D$ matrix of independent Gaussian R.V.'s
+The Jacobian of a set of $D$ functions $\mathbb{R}^D \rightarrow \mathbb{R}$ drawn from independent \gp{} priors, each having product kernel is a $D \times D$ matrix of independent Gaussian R.V.'s
 \end{lemma}
 %
 %\vspace{-0.2in}
@@ -682,7 +687,7 @@ The Jacobian of the vector-valued function $\vf(\vx)$ is a matrix $J$ with eleme
 %\end{align}
 %
 %
-Because we've assumed that the \gp{}s on each output dimension $\vf_d(\vx)$ are independent (see \cref{eq:deep-gp}), it follows that each row of $J$ is independent.
+Because the \gp{}s on each output dimension $\vf_d(\vx)$ are independent, it follows that each row of $J$ is independent.
 Lemma \ref{thm:deriv-ind} shows that the elements of each row are independent Gaussian.
 Thus all entries in the Jacobian of a \gp{}-distributed transform are independent Gaussian R.V.'s.
 \end{proof}
