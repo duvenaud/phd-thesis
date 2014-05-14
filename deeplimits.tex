@@ -15,49 +15,30 @@
 
 
 Choosing appropriate architectures and regularization strategies of deep networks is crucial to good predictive performance.
-To shed light on this problem, we analyze the analogous problem of constructing useful priors on compositions of functions.
-Specifically, we study the deep Gaussian process, a type of infinitely-wide, deep neural network.
-We show that in standard architectures, the representational capacity of the network tends to capture fewer degrees of freedom as the number of layers increases, retaining only a single degree of freedom in the limit.
-We propose an alternate network architecture which does not suffer from this pathology.
-We also examine deep covariance functions, obtained by composing infinitely many feature transforms
+In this chapter, we propose to study this problem by viewing deep nets as priors on functions.
+By viewing neural networks this way, we can analyze their properties without reference to any particular dataset, loss function, or training method.
+Instead, we can ask what sorts of information-processing structures these priors give rise to, and check whether those structures are the same sort which we expect to find in useful models.
+
+%To shed light on this problem, we analyze the analogous problem of constructing useful priors on compositions of functions.
+As a starting point, we'll examine a class of infinitely-wide, deep neural networks called \emph{deep Gaussian processes}.
+Deep \gp{}s are an attractive model class to study for several reasons.
+First, they abstract away some of the details of finite neural networks, such as the number of hidden units.
+Second, \citet{damianou2012deep} showed that the probabilistic nature of deep \gp{}s allows us to use the marginal likelihood to automatically tune the model architecture without the need for cross-validation.
+Third, \citet{hensman2014deep} showed that stochastic variational inference is possible in these models.
+
+In this chapter, we'll provide an analysis showing that in standard architectures, the representational capacity of standard deep networks tends to decrease as the number of layers increases, retaining only a single degree of freedom in the limit.
+We'll propose an alternate network architecture which does not suffer from this pathology.
+We'll also examine \emph{deep kernels}, obtained by composing infinitely-many feature transforms.
 
 The ideas contained in this chapter were developed through discussions with Oren Rippel, Ryan Adams and Zoubin Ghahramani, and appear in \citep{DuvRipAdaGha14}.
-The derivations, experiments and writing were done mainly by myself, with many helpful suggestions by my co-authors.
+%The derivations, experiments and writing were done mainly by myself, with many helpful suggestions by my co-authors.
 %  Lastly, we characterize the class of models obtained by performing dropout on Gaussian processes.
 
-%This chapter was joint work with Oren Rippel, Ryan P. Adams and Zoubin Ghahramani.
+%\section{Defining Deep Gaussian Processes}
 
+%By characterizing these models, this paper shows that representations based on repeated composition of independently-initialized functions exhibit a pathology where the representation becomes invariant to all but one direction of variation. This corresponds to an eventual debilitating decrease in the information capacity of networks as a function of their number of layers. However, we will demonstrate that a simple change in architecture --- namely, connecting the input to each layer --- fixes this problem. 
 
-
-
-
-\section{Introduction}
-
-Much recent work on deep networks has focused on weight initialization \citep{martens2010deep}, regularization \citep{lee2007sparse} and network architecture \citep{gens2013learning}.
-However, the interactions between these different design decisions can be complex and difficult to characterize.
-We propose to approach the design of deep architectures by examining the problem of assigning priors to nested compositions of functions.
-% Although inference in fully Bayesian models is generally challenging, well-defined priors allow us to encode our beliefs into models in a data-independent way. 
-Well-defined priors allow us to explicitly examine the assumptions being made about functions we may wish to learn.
-If we can identify classes of priors that give our models desirable properties, these in turn may suggest regularization, initialization, and architecture choices that also provide such properties.
-
-Fundamentally, a multilayer neural network implements a composition of vector-valued functions, one per layer.
-Hence, understanding properties of such function compositions helps us gain insight into deep networks.
-In this paper, we examine a simple and flexible class of priors on compositions of functions, namely deep Gaussian processes \citep{damianou2012deep}.
-Deep \gp{}s are simply priors on compositions of vector-valued functions, where each output of each layer is drawn independently from a GP prior:
-%
-\begin{align}
-\vf^{(1:L)}(\vx) = \vf^{(L)}(\vf^{(L-1)}(\dots \vf^{(2)}(\vf^{(1)}(\vx)) \dots)) \\
-%\nonumber\\
-\textnormal{with each} \quad \vf_d^{(\layerindex)}  \simind \gp{} \left( 0, k^\layerindex_d(\vx, \vx') \right) \nonumber
-\label{eq:deep-gp}
-\end{align}
-%
-%Although inference in these models is non-trivial,
-These models correspond to a certain type of infinitely-wide multi-layer perceptron (\MLP{}), and as such make canonical candidates for generative models of functions that closely relate to neural networks.
-
-By characterizing these models, this paper shows that representations based on repeated composition of independently-initialized functions exhibit a pathology where the representation becomes invariant to all but one direction of variation. This corresponds to an eventual debilitating decrease in the information capacity of networks as a function of their number of layers. However, we will demonstrate that a simple change in architecture --- namely, connecting the input to each layer --- fixes this problem. 
-
-We also present two related analyses:  first, we examine the properties of a arbitrarily deep fixed feature transforms (``deep kernels'').  Second, we characterise the prior obtained by performing dropout on \gp{}s, showing equivalences to existing models.
+%We also present two related analyses:  first, we examine the properties of a arbitrarily deep fixed feature transforms (``deep kernels'').  Second, we characterise the prior obtained by performing dropout on \gp{}s, showing equivalences to existing models.
 
 %Section \ref{sec:relating} will derive the precise relationship between deep \gp{}s and MLPs.  Section \ref{sec:1d} will examine the asymptotic behavior of arbitrarily deep one-dimensional \gp{}s.  Section \ref{sec:theorem} gives a theorem characterizing the Jacobian of a deep multidimensinal \gp{}.  Section 
 %Deep networks have become an important tool for machine learning [cite].  However, training these models are difficult, Many arguments have been made for the need for deep architectures [cite Bengio].  However, it is hard to know what effect the deepness of an architecture has.  Also, the weights don't necessarily move that much from their initialization.
@@ -77,9 +58,69 @@ We also present two related analyses:  first, we examine the properties of a arb
 
 %\cite{NIPS2005_424} showed that kernel machines such as \gp{}s have limited generalization ability when they are forced to use a 'local' kernel.
 
+
+%In this paper, we examine a simple and flexible class of priors on compositions of functions, namely deep Gaussian processes \citep{damianou2012deep}.
+Deep \gp{}s are simply priors on compositions of vector-valued functions, where each output of each layer is drawn independently from a GP prior:
+%
+\begin{align}
+\vf^{(1:L)}(\vx) = \vf^{(L)}(\vf^{(L-1)}(\dots \vf^{(2)}(\vf^{(1)}(\vx)) \dots)) \\
+%\nonumber\\
+\textnormal{with each} \quad \vf_d^{(\layerindex)}  \simind \gp{} \left( 0, k^\layerindex_d(\vx, \vx') \right) \nonumber
+\label{eq:deep-gp}
+\end{align}
+%
+%Although inference in these models is non-trivial,
+%These models correspond to a certain type of infinitely-wide multi-layer perceptron (\MLP{}), and as such make canonical candidates for generative models of functions that closely relate to neural networks.
+
+Fundamentally, a multilayer neural network implements a composition of vector-valued functions, one per layer.
+Hence, understanding properties of such function compositions helps us gain insight into deep networks.
+In this section, we'll show the precise relationship between Gaussian processes and neural nets, then show two equivalent ways of constructing neural networks which give rise to deep \gp{}s.
+
+
+
 %\subsection{A neural net with one hidden layer}
 %\vspace{-0.05in}
 \subsection{Single-layer Models}
+
+%To mmake the link between deep \gp{}s and deep neural nets more explicit, we'll first
+In the typical definition of an \MLP{}, the hidden units of the first layer are defined as:
+%
+\begin{align}
+\vh^{(1)}(\vx) = \sigma \left( \vb^{(1)} + \vW^{(1)}\vx \right)
+\end{align}
+%
+where $\vh$ are the hidden unit activations, $\vb$ is a bias vector, $\vW$ is a weight matrix and $\sigma$ is a one-dimensional nonlinear function applied element-wise. The output vector $f(\vx)$ is simply a weighted sum of these hidden unit activations:
+%
+\begin{align}
+f(\vx) = \vV^{(1)} \sigma \left( \vb^{(1)} + \vW^{(1)} \vx \right)  = \vV^{(1)} \vh^{(1)}(\vx)
+\label{eq:one-layer-nn}
+\end{align}
+%
+where $\vV^{(1)}$ is another weight matrix.
+
+There exists a correspondence between one-layer \MLP{}s and \gp{}s \citep{neal1995bayesian}.
+\gp{}s can be viewed as a prior on neural networks with infinitely many hidden units, and unknown weights.
+More precisely, for any model of the form
+%
+\begin{align}
+f(\vx) = \frac{1}{K}{\mathbf \vnetweights}\tra \hPhi(\vx) = \frac{1}{K} \sum_{i=1}^K \netweights_i \hphi_i(\vx),
+\label{eq:one-layer-gp}
+\end{align}
+%
+with fixed features $\left[ \hphi_1(\vx), \dots, \hphi_K(\vx) \right]\tra = \hPhi(\vx)$ and i.i.d. $\netweights$'s with zero mean and finite variance $\sigma^2$, the central limit theorem implies that as the number of features $K$ grows, any two function values $f(\vx), f(\vx')$ have a joint distribution approaching $\Nt{0}{\frac{\sigma^2}{K}\sum_{i=1}^K \hphi_i(\vx)\hphi_i(\vx')}$.
+A joint Gaussian distribution between any set of function values is the definition of a Gaussian process.
+%\TBD{DD: any two or any set?}
+
+The result is surprisingly general:
+it puts no constraints on the features (other than having uniformly bounded activation), nor does it require that the feature weights $\vnetweights$ be Gaussian distributed.  
+
+We can also work backwards to derive a one-layer \MLP{} from any \gp{}.
+Mercer's theorem implies that any positive-definite kernel function corresponds to an inner product of features: $k(\vx, \vx') = \hPhi(\vx) \tra \hPhi(\vx')$.
+%
+Thus in the one-hidden-layer case, the correspondence between \MLP{}s and \gp{}s is simple:
+the features $\hPhi(\vx)$ of the kernel correspond to the hidden units of the \MLP{}.
+
+
 
 
 % For tikz figures in deep limits
@@ -222,6 +263,40 @@ Neural net corresponding to a \gp{} & Net corresponding to a \gp{} with a deep k
 
 
 
+
+
+\subsection{Multiple Hidden Layers}
+
+%\paragraph{Fixed nonlinearities}
+In an \MLP{}, the $\layerindex$th layer units are given by the recurrence
+%
+\begin{align}
+\vh^{(\layerindex)}(\vx) = \sigma \left( \vb^{(\layerindex)} + \vW^{(\layerindex)} \vh^{(\layerindex-1)}(\vx) \right) \;.
+\label{eq:nextlayer}
+\end{align}
+This architecture is shown on the right of \cref{fig:gp-architectures}.
+%In this model, each hidden layer's output feeds directly into the next layer's input, weighted by the corresponding element of $\vW^{(\layerindex)}$.  
+%
+For example, if we extend the model given by \cref{eq:one-layer-nn} to have two layers of feature mappings,  the resulting model becomes
+%
+\begin{align}
+f(\vx) = \frac{1}{K}{\mathbf \vnetweights}\tra \hPhi^{(2)}\left( \hPhi^{(1)}(\vx) \right) \;.
+% = \frac{1}{K} \sum_{i=1}^K \netweights_i \hphi_i(\vx),
+\label{eq:mutli-layer-nn}
+\end{align}
+
+If the features $\vh(\vx)^{(1)}$ and $\vh(\vx)^{(2)}$ are considered fixed with only the last-layer weights ${\vnetweights}$ unknown, this model corresponds to a \gp{} with a ``deep kernel'' given by
+\begin{align}
+k(\vx, \vx') = \left( \hPhi^{(2)} ( \hPhi^{(1)}(\vx) ) \right) \tra \hPhi^{(2)} (\hPhi^{(1)}(\vx') )
+\end{align}
+These models, explored in \cref{sec:deep_kernels}, imply a fixed representation as opposed to a prior over representations.
+Unless we richly parameterize these kernels, their capacity to learn an appropriate representation is limited. %since only the output weights ${\vnetweights}$ can adapt to the problem  which is what we wish to analyze in this chapter.
+
+
+%In a neural net with multiple hidden layers, the correspondence is a little more complicated.
+ 
+\subsection{Two Network Archtectures Equivalent to Deep \sgp{}s}
+
 \def\halfshift{0.0cm}
 
 \begin{figure}[t!]
@@ -332,9 +407,7 @@ Neural net with fixed activation functions corresponding to a 3-layer deep \gp{}
 \end{tikzpicture}
 %}
 \\
-\\
 \hline
-\\
 \\
 Net with nonpararametric activation functions corresponding to a 3-layer deep \gp{}\\
 \\
@@ -391,85 +464,17 @@ Net with nonpararametric activation functions corresponding to a 3-layer deep \g
 \end{tabular}
 \caption[Comparison of neural network architectures giving rise to deep \sgp{}s]
 {
-There are two interpretations of deep \gp{}s as neural networks.
+Two equivalent views of deep \gp{}s as neural networks.
 \emph{Top:} A neural network whose every second layer is a weighted sum of an infinite number of fixed hidden units, where the weights are initially unkown.
 \emph{Bottom:} A neural network with a finite number of hidden units, each with a different unkown non-parametric activation function.
 }
 \label{fig:deep-gp-architectures}
 \end{figure}
 
-In the typical definition of an \MLP{}, the hidden units of the first layer are defined as:
-%
-\begin{align}
-\vh^{(1)}(\vx) = \sigma \left( \vb^{(1)} + \vW^{(1)}\vx \right)
-\end{align}
-%
-where $\vh$ are the hidden unit activations, $\vb$ is a bias vector, $\vW$ is a weight matrix and $\sigma$ is a one-dimensional nonlinear function applied element-wise. The output vector $f(\vx)$ is simply a weighted sum of these hidden unit activations:
-%
-\begin{align}
-f(\vx) = \vV^{(1)} \sigma \left( \vb^{(1)} + \vW^{(1)} \vx \right)  = \vV^{(1)} \vh^{(1)}(\vx)
-\label{eq:one-layer-nn}
-\end{align}
-%
-where $\vV^{(1)}$ is another weight matrix.
-
-There exists a correspondence between one-layer \MLP{}s and \gp{}s \citep{neal1995bayesian}.
-\gp{}s can be viewed as a prior on neural networks with infinitely many hidden units, and unknown weights.
-More precisely, for any model of the form
-%
-\begin{align}
-f(\vx) = \frac{1}{K}{\mathbf \vnetweights}\tra \hPhi(\vx) = \frac{1}{K} \sum_{i=1}^K \netweights_i \hphi_i(\vx),
-\label{eq:one-layer-gp}
-\end{align}
-%
-with fixed features $\left[ \hphi_1(\vx), \dots, \hphi_K(\vx) \right]\tra = \hPhi(\vx)$ and i.i.d. $\netweights$'s with zero mean and finite variance $\sigma^2$, the central limit theorem implies that as the number of features $K$ grows, any two function values $f(\vx), f(\vx')$ have a joint distribution approaching $\Nt{0}{\frac{\sigma^2}{K}\sum_{i=1}^K \hphi_i(\vx)\hphi_i(\vx')}$.
-A joint Gaussian distribution between any set of function values is the definition of a Gaussian process.
-%\TBD{DD: any two or any set?}
-
-The result is surprisingly general:
-it puts no constraints on the features (other than having uniformly bounded activation), nor does it require that the feature weights $\netweights$ be Gaussian distributed.  
-
-We can also work backwards to derive a one-layer \MLP{} from any \gp{}.
-Mercer's theorem implies that any positive-definite kernel function corresponds to an inner product of features: $k(\vx, \vx') = \hPhi(\vx) \tra \hPhi(\vx')$.
-%
-Thus in the one-hidden-layer case, the correspondence between \MLP{}s and \gp{}s is simple:
-the features $\hPhi(\vx)$ of the kernel correspond to the hidden units of the \MLP{}.
-
-
-\subsection{Multiple Hidden Layers}
-
-%\paragraph{Fixed nonlinearities}
-In an \MLP{}, the $\layerindex$th layer units are given by the recurrence
-%
-\begin{align}
-\vh^{(\layerindex)}(\vx) = \sigma \left( \vb^{(\layerindex)} + \vW^{(\layerindex)} \vh^{(\layerindex-1)}(\vx) \right) \;.
-\label{eq:nextlayer}
-\end{align}
-This architecture is shown on the right of \cref{fig:gp-architectures}.
-%In this model, each hidden layer's output feeds directly into the next layer's input, weighted by the corresponding element of $\vW^{(\layerindex)}$.  
-%
-For example, if we extend the model given by \cref{eq:one-layer-nn} to have two layers of feature mappings,  the resulting model becomes
-%
-\begin{align}
-f(\vx) = \frac{1}{K}{\mathbf \vnetweights}\tra \hPhi^{(2)}\left( \hPhi^{(1)}(\vx) \right) \;.
-% = \frac{1}{K} \sum_{i=1}^K \netweights_i \hphi_i(\vx),
-\label{eq:mutli-layer-nn}
-\end{align}
-
-If the features $\vh(\vx)$ are considered fixed with only the last layer weights ${\vnetweights}$ unknown, this model corresponds to a \gp{} with a ``deep kernel'': 
-\begin{align}
-k(\vx, \vx') = \left( \hPhi^{(2)} ( \hPhi^{(1)}(\vx) ) \right) \tra \hPhi^{(2)} (\hPhi^{(1)}(\vx') )
-\end{align}
-These models, examined in \cref{sec:deep_kernels}, imply a fixed representation as opposed to a prior over representations, which is what we wish to analyze in this chapter.
-
-
-%In a neural net with multiple hidden layers, the correspondence is a little more complicated.
- 
-
 To construct a neural network with fixed nonlinearities that corresponds to a deep \gp{}, 
 %with $D_\layerindex$ units for each layer corresponding to the outputs compositions of functions drawn from a \gp{} prior, 
 one must introduce a second layer in between each infinitely-wide set of fixed basis functions, as in the top of \cref{fig:deep-gp-architectures}.
-The $D_\layerindex$ outputs $\vf^{(\layerindex)}(\vx)$ in between each layer are weighted sums (with unknown weights) of the fixed hidden units of the layer below, and the next layer's hidden units depend only on these $D_\layerindex$ outputs.
+The $D_\layerindex$ outputs $\vf^{(\layerindex)}(\vx)$ in between each layer are weighted sums (with random weights) of the fixed hidden units of the layer below, and the next layer's hidden units depend only on these $D_\layerindex$ outputs.
 %Thus, the network architecture with fixed nonlinearities corresponding to deep \gp{}s has an extra set of layers that a \MLP{} doesn't have.
 %
 
@@ -1308,6 +1313,14 @@ The importance of network architectures relative to learning has been examined b
 
 
 \section{Conclusions}
+
+Much recent work on deep networks has focused on weight initialization \citep{martens2010deep}, regularization \citep{lee2007sparse} and network architecture \citep{gens2013learning}.
+However, the interactions between these different design decisions can be complex and difficult to characterize.
+%We propose to approach the design of deep architectures by examining the problem of assigning priors to nested compositions of functions.
+% Although inference in fully Bayesian models is generally challenging, well-defined priors allow us to encode our beliefs into models in a data-independent way. 
+Well-defined priors allow us to explicitly examine the assumptions being made about functions we may wish to learn.
+If we can identify classes of priors that give our models desirable properties, these in turn may suggest regularization, initialization, and architecture choices that also provide such properties.
+
 
 %In this work, we established a number of propositions which help us gain insight into the properties of very deep models, and allow making informed choices regarding their architecture.
 
