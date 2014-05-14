@@ -2,7 +2,7 @@
 \inbpdocument
 
 
-\chapter{Automatically Describing Structured Covariance Functions}
+\chapter{Automatic Model Description}
 \label{ch:description}
 
 
@@ -14,62 +14,95 @@
 %Second, the use of flexible nonparametric models and a rich language for composing them in an open-ended manner also results in state-of-the-art extrapolation performance evaluated over 13 real time series data sets from various domains.
 
 
-The compositional structure of the language allows us to develop a method for automatically translating components of the model into natural-language descriptions of patterns in the data.
-In this chapter, we describe how \procedurename{} can generate natural-language descriptions of the models found by the search procedure.
-We also show examples of automatically generated reports which highlight interpretable features discovered in a variety of data sets.
+%The compositional structure of the language described in the previous chapter 
+The previous chapter showed how to automatically build structured models through a language of kernels, how to decompose the resulting models into the different types of structure present, and how to visually illustrate the type of structure captured by each component.
+
+Most of the structure present in each component was determined by that component's kernel.
+Even across different datasets, the meaning of the individual parts of those kernels is relatively consistent.  For example, $\kPer$ usually indicates some sort of repeating structure, and $\kSE$ usually indicates smooth change over time.
+This chapter shows how to take advantage of this modularity to develop a method for automatically describing the structure represented by components of structured \gp{} models through text.
+The main idea is to treat every component of a product kernel as an adjective, or as a short phrase which modifies the description of a kernel.
+
+% descriptions of patterns in the data.
+%In this chapter, we describe how \procedurename{} can generate natural-language descriptions of the models found by the search procedure.
+Combining model search, plots, and text, we present a system which automatically generates reports which highlight interpretable features discovered in a variety of data sets.
+An example of a complete automatically-generated report can be found in \cref{ch:example-solar}.
+%Other example reports can be found at \url{mlg.eng.cam.ac.uk/Lloyd/abcdoutput/}
 % (e.g.\ figure~\ref{fig:periodic}).
 
+The work appearing in this chapter was written in collaboration with James Robert Lloyd, Roger Grosse, Joshua B. Tenenbaum, Zoubin Ghahramani, and was published in \citep{LloDuvGroetal14}.
+The procedure translating kernels into adjectives grew out of discussions between James and myself.
+James Lloyd wrote the code to automatically generate reports, and ran all of the experiments.
+%The text was written mainly by myself, James Lloyd, and Zoubin Ghahramani, with many helpful contributions and suggestions from Roger Grosse and Josh Tenenbaum.
 
 
-
-\section{Building Noun Phrases}
+\section{Generating Descriptions of Kernels}
 
 There are two main features of our language of \gp{} models that allow description to be performed automatically.
-First, the sometimes complicated kernel expressions found can be simplified into a sum of products.
-A sum of kernels corresponds to a sum of functions so each product can be described separately.
+First, the sometimes complicated kernel expressions found by the model search can always be simplified into a sum of products.
+As discussed in \cref{ch:kernels}, a sum of kernels corresponds to a sum of functions, so each product can be described separately.
 Second, each kernel in a product modifies the resulting model in a consistent way.
-Therefore, we can choose one kernel to be described as a noun, with all others described using adjectives.
+Therefore, to generate a description of a product of kernels, we can describe one kernel using a noun with all others described using adjectives.
+
+For example, we can describe the product of kernels $\kPer \kerntimes \kSE$ by representing $\kPer$ by a noun (``a periodic function'') modified by a phrase representing the effect of the $\kSE$ kernel (``whose shape varies smoothly over time'').
+To simplify the system, we restrict the base kernels to $\kC$, $\kLin$, $\kWN$, $\kSE$, $\kPer$, and $\vsigma$ (allowing changepoints and change-windows).
 
 
-\subsubsection{Simplification Rules}
-We convert each kernel expression into a standard, simplified form.
+\subsection{Simplification Rules}
+
+In order to be able to use the same adjectives to for each type of kernel in different circumstances, we must convert each kernel expression into a standard, simplified form.
+
 We do this by first distributing all products of sums into a sum of products.
-Next, we apply several simplifications to the kernel expression:
-The product of two $\kSE$ kernels is another $\kSE$ with different parameters. Multiplying $\kWN$ by any stationary kernel ($\kC$, $\kWN$, $\kSE$, or $\kPer$) gives another $\kWN$ kernel. Multiplying any kernel by $\kC$ only changes the parameters of the original kernel.
+Then, we apply several simplifications to the kernel expression:
 
-After applying these rules, the kernel can as be written as a sum of terms of the form:
+\begin{itemize}
+\item Products of two or more $\kSE$ kernels can be equivalently represented by a single $\kSE$ with different parameters.
+\item Multiplying the white-noise kernel $\kWN$ by any stationary kernel ($\kC$, $\kWN$, $\kSE$, or $\kPer$) gives another $\kWN$ kernel.
+\item Multiplying any kernel by $\kC$ only changes the parameters of the original kernel, and so can be factored out of any product in which it appears.
+\end{itemize}
+
+After applying these rules, any kernel can be written as a sum of terms of the form:
 \begin{align}
 K \prod_m \kLin^{(m)} \prod_n \boldsymbol\sigma^{(n)},
 \label{eq:sop}
 \end{align}
-where $K$ is one of \kWN, \kC, \kSE, $\prod_k \kPer^{(k)}$ or $\kSE \prod_k \kPer^{(k)}$
-and $\prod_i\kernel^{(i)}$ denotes a product of kernels, each with different parameters.
+where $K$ is one of $\{\kWN, \kC, \kSE, \prod_k \kPer^{(k)}\}$ or $\{\kSE \prod_k \kPer^{(k)}\}$, 
+where $\prod_i\kernel^{(i)}$ denotes a product of kernels, each with different parameters.
+We use superscripts to distinguish between different instances of the same kernel appearing in a product: $\SE^{(1)}$ can have different kernel parameters than $\kSE^{(2)}$.
 
 
 %\subsubsection{Sums of kernels are sums of functions}
 %Formally, if $f_1(x) \dist \gp{}(0, \kernel_1)$ and independently $f_2(x) \dist \gp{}(0, \kernel_2)$ then ${f_1(x) + f_2(x) \dist \gp{}(0, \kernel_1 + \kernel_2)}$.
-Because sums of kernels correspond to sums of functions, we can describe each product of kernels separately.
+%Because sums of kernels correspond to sums of functions, we can describe each product of kernels separately.
 
+\subsection{Describing Each Part}
 
-\subsubsection{Each kernel in a product modifies a model in a consistent way}
-This allows us to describe the contribution of each kernel in a product as an adjective, or more generally as a modifier of a noun.
-We now describe how each kernel modifies a model and how this can be described in natural language:
+Loosely speaking, each kernel in a product modifies the resulting \gp{} model in a consistent way.
+This allows us to describe the contribution of each kernel in a product as an adjective, or more generally as a post-modifier of a noun.
+We now describe how each of the kernels in our grammar modifies a \gp{} model.
+%, and how this effect can be described in natural language:
 
 \begin{itemize}
-\item {\bf Multiplication by $\kSE$} removes long range correlations from a model since $\kSE(x,x')$ decreases monotonically to 0 as $|x - x'|$ increases.
-This can be described as making an existing model's correlation structure `local' or `approximate'.
+\item {\bf Multiplication by $\kSE$} removes long range correlations from a model since, $\kSE(x,x')$ decreases monotonically to 0 as $|x - x'|$ increases.
+%This can be described as making an existing model's correlation structure `local' or `approximate'.
+This will convert any global correlation structure into local correlation only.
+
 \item {\bf Multiplication by $\kLin$} is equivalent to multiplying the function being modeled by a linear function.
-If $f(x) \dist \gp{}(0, \kernel)$, then $xf(x) \dist \gp{}\left(0, k \times \kLin \right)$.
-This causes the standard deviation of the model to vary linearly without affecting the correlation and can be described as \eg `with linearly increasing standard deviation'.
-\item {\bf Multiplication by $\boldsymbol\sigma$} is equivalent to multiplying the function being modeled by a sigmoid which means that the function goes to zero before or after some point.
-This can be described as \eg `from [time]' or `until [time]'.
+If $f(x) \dist \gp{}(0, \kernel)$, then $xf(x) \dist \gp{}\left(0, \kLin \kerntimes k \right)$.
+This causes the standard deviation of the model to vary linearly without affecting the correlation.
+% and can be described as \eg `with linearly increasing standard deviation'.
+
+\item {\bf Multiplication by $\boldsymbol\sigma$} is equivalent to multiplying the function being modeled by a sigmoid, which means that the function goes to zero before or after some point.
+%This can be described as \eg `from [time]' or `until [time]'.
+
 \item {\bf Multiplication by $\kPer$}
 modifies the correlation structure in the same way as multiplying the function by an independent periodic function.
-Formally, if ${f_1(x) \dist \gp{}(0, \kernel_1)}$ and ${f_2(x) \dist \gp{}(0, \kernel_2)}$ then
+If ${f_1(x) \dist \gp{}(0, \kernel_1)}$ and ${f_2(x) \dist \gp{}(0, \kernel_2)}$ then
 \begin{align}
 {\textrm{Cov} \left[f_1(x)f_2(x), f_1(x')f_2(x') \right] = k_1(x,x')k_2(x,x')}.\nonumber
 \end{align}
-This can be loosely described as \eg `modulated by a periodic function with a period of [period] [units]'.
+%This can be loosely described as \eg `modulated by a periodic function with a period of [period] [units]'.
+In plain english, this identity says that a \gp{} whose kernel is a product of kernels has the same covariance (but not necessarily the same higher moments) as a product of two functions, each drawing from the corresponding \gp{} prior.
+This identity holds for any two kernels, and can be used to generate a cumbersome ``worst-case'' description cases where a more meaningful description of the effect of a kernel is not obvious.
 \end{itemize}
 
 
@@ -221,7 +254,7 @@ We demonstrate the ability of our procedure to discover and describe a variety o
 \label{sec:solar}
 
 
-We show excerpts from the report automatically generated on annual solar irradiation data from 1610 to 2011 (figure~\ref{fig:solar}).
+We show excerpts from the report automatically generated on annual solar irradiation data from 1610 to 2011 (\cref{fig:solar}).
 %
 \begin{figure}[ht!]
 \centering
@@ -248,7 +281,7 @@ The dataset has been decomposed into diverse structures with simple descriptions
 Figure \ref{fig:exec} shows the natural-language summaries of the top four components chosen by \procedurename{}.
 From these short summaries, we can see that our system has identified the Maunder minimum (second component) and 11-year solar cycle (fourth component).
 These components are visualized in figures~\ref{fig:maunder} and \ref{fig:periodic}, respectively. 
-The third component corresponds to long-term trends, as visualized in figure~\ref{fig:smooth}.
+The third component corresponds to long-term trends, as visualized in \cref{fig:smooth}.
 
 \begin{figure}[ht!]
 \centering
@@ -275,6 +308,8 @@ The third component corresponds to long-term trends, as visualized in figure~\re
 \label{fig:periodic}
 \end{figure}
 
+The complete report generated on this dataset can be found in \cref{ch:example-solar}.
+
 
 
 \section{Describing Heteroscedasticity in Air Traffic Data}
@@ -288,8 +323,8 @@ The third component corresponds to long-term trends, as visualized in figure~\re
 \label{fig:airline}
 \end{figure}
 
-Next, we present the analysis generated by our procedure on international airline passenger data (figure~\ref{fig:airline}).
-The model constructed by \procedurename{} has four components: $\kLin + \kSE \times \kPer \times \kLin + \kSE + \kWN \times \kLin$, with descriptions given in figure~\ref{fig:exec-airline}.
+Next, we present the analysis generated by our procedure on international airline passenger data (\cref{fig:airline}).
+The model constructed by \procedurename{} has four components: $\kLin + \kSE \times \kPer \times \kLin + \kSE + \kWN \times \kLin$, with descriptions given in \cref{fig:exec-airline}.
 
 \begin{figure}[ht!]
 \centering
@@ -299,7 +334,7 @@ The model constructed by \procedurename{} has four components: $\kLin + \kSE \ti
 \label{fig:exec-airline}
 \end{figure}
 
-The second component (figure~\ref{fig:lin_periodic}) is accurately described as approximately ($\kSE$) periodic ($\kPer$) with linearly growing amplitude ($\kLin$).
+The second component, shown in \cref{fig:lin_periodic}, is accurately described as approximately ($\kSE$) periodic ($\kPer$) with linearly growing amplitude ($\kLin$).
 %
 \begin{figure}[ht!]
 \centering
@@ -319,7 +354,8 @@ By multiplying a white noise kernel by a linear kernel, the model is able to exp
 \label{fig:heteroscedastic}
 \end{figure}
 
-
+The complete report generated on this dataset can be found in the supplementary material of \citep{LloDuvGroetal14}.
+Other example reports can be found at \url{mlg.eng.cam.ac.uk/Lloyd/abcdoutput/}
 
 
 

@@ -28,11 +28,12 @@ Searching over such a large, structured model class has two main benefits.
 First, this procedure has very good predictive accuracy, since it tries out a large number of different regression models.
 Second, this procedure can discover interpretable structure in datasets.
 Because \gp{} posteriors can be decomposed (as in \cref{sec:concrete}), we can also examine the resulting structures visually.
-%In \cref{ch:description}, we'll even show how to automatically generate English-language descriptions of the resulting models.
+In \cref{ch:description}, we'll even show how to automatically generate English-language descriptions of the resulting models.
 
 %\paragraph{Attribution}
 
-This chapter is based on work done in collaboration with James Robert Lloyd, Roger Grosse, Joshua B. Tenenbaum, and Zoubin Ghahramani.  It was published \citep{DuvLloGroetal13}, where James Lloyd was joint first author, and in \citep{LloDuvGroetal14}.
+This chapter is based on work done in collaboration with James Robert Lloyd, Roger Grosse, Joshua B. Tenenbaum, and Zoubin Ghahramani.
+It was published \citep{DuvLloGroetal13}, where James Lloyd was joint first author, and in \citep{LloDuvGroetal14}.
 %, where James Lloyd was joint first author, and in \citep{LloDuvGroetal14}.
 Myself, James Lloyd and Roger Grosse jointly developed the idea of searching through a grammar-based language of \gp{} models, inspired by \citet{grosse2012exploiting}, and wrote the first versions of the code together.
 James Lloyd ran most of the experiments.
@@ -191,7 +192,7 @@ The basic operations we can perform on any part $k$ of a kernel are:
 These operators can generate all possible algebraic expressions involving addition and multiplication of base kernels.
 To see this, observe that if we restricted the addition and multiplication rules to only apply to base kernels, we would obtain a context-free grammar which generates the set of algebraic expressions.
 
-\begin{figure}[ht]
+\begin{figure}
 \centering
 %\begin{tabular}{cc}
 %\begin{minipage}[t][14cm][t]{0.65\columnwidth}
@@ -232,7 +233,7 @@ To see this, observe that if we restricted the addition and multiplication rules
 \label{fig:mauna_search_tree}
 \end{figure}
 
-\begin{figure}[ht!]
+\begin{figure}
 \centering
 \newcommand{\wmg}{0.31\columnwidth}  % width maunu growth
 \newcommand{\hmg}{3.2cm}  % height maunu growth
@@ -328,7 +329,7 @@ For example,
 \end{align}
 %
 This decomposition into additive components provides a method of visualizing the learned model, breaking down the different types of structure discovered in the data.
-In \citep{LloDuvGroetal14}, we extended this model visualization method to include automatically-generated English text explaining the meaning of each type of structure discovered.
+In \cref{ch:description}, we extend this model visualization method to include automatically-generated English text explaining the meaning of each type of structure discovered.
 
 
 
@@ -362,7 +363,7 @@ $\kLin \kerntimes \kSE + \kSE \kerntimes ( \kPer + \RQ ) + \kWN$ \\
 %\multicolumn{2}{c}{Decomposition} \\
 Long-term trend: $\Lin \kerntimes \SE$ & Yearly periodic: $\SE \kerntimes \Per$ \\
 \maunadgfx{1} & \maunadgfx{2_zoom} \\[1em]
-Short-term deviation: $\SE \kerntimes \RQ$ & Noise: \kWN \\
+Medium-term deviation: $\SE \kerntimes \RQ$ & Noise: \kWN \\
 \maunadgfx{3} & \maunadgfx{resid}
 \end{tabular}
 \caption[Decomposition of the Mauna Loa model]
@@ -381,7 +382,9 @@ While the data can be smoothly interpolated by a model with only a single base k
 \Cref{fig:mauna_decomp} shows the final model chosen by our method, together with its decomposition into additive components.
 The final model exhibits both plausible extrapolation and interpretable components: a long-term trend, annual periodicity, and medium-term deviations.
 These are the same components chosen in the kernel hand-constructed by \citet[Chapter 5]{rasmussen38gaussian}.
-We also plot the residual noise, showing that there is little obvious structure left in the data.  
+
+We also plot the residuals modeled by a white noise ($\kWN$) component, showing that there is little obvious structure left in the data.
+More generally, some components capture slowly-changing structure while others capture quickly-varying struture, but there is no hard distinction between ``signal'' components and ``noise'' components.
 
 
 
@@ -410,9 +413,9 @@ Complete Model: $\kSE \kerntimes \Lin \kernplus \kPer \kerntimes \kLin \kerntime
 \airdgfx{01-airline_all}
 \end{tabular}
 } \\
-Long-term trend: $\kSE \kerntimes \Lin$ & Yearly Periodic: $\kPer \kerntimes \Lin \kerntimes \kSE$ \\
+Long-term trend: $\kSE \kerntimes \Lin$ & Yearly periodic: $\kPer \kerntimes \Lin \kerntimes \kSE$ \\
 \airdgfx{01-airline_1_extrap} & \airdgfx{01-airline_2_extrap} \\
-Short-term deviation $\kSE$ & Growing Noise: $\kWN \kerntimes \Lin$ \\
+Medium-term deviation: $\kSE$ & Growing noise: $\kWN \kerntimes \Lin$ \\
 \airdgfx{01-airline_3_extrap} & \airdgfx{01-airline_4_extrap}
 \end{tabular}
 \caption[Decomposition of airline dataset model]

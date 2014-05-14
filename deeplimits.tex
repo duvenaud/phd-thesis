@@ -558,7 +558,7 @@ In this section, we derive the limiting distribution of the derivative of an arb
 \onedsamplepic{10}
 %& 6 layers \\ & largest , for unconnected layers & largest, for connected layers
 \end{tabular}
-\caption[One-dimensional draws from a deep gp prior]
+\caption[One-dimensional draws from a deep \sgp{} prior]
 {One-dimensional draws from a deep gp prior.
 After a few layers, the functions begin to be either nearly flat, or highly varying, everywhere.
 This is a consequence of the distribution on derivatives becoming heavy-tailed.}
@@ -798,7 +798,7 @@ $p(\vf^{(1:4)}(\vx))$ &  $p(\vf^{(1:6)}(\vx))$ \\
 %$p(f_3(f_2(f_1(\vx))))$ & $p(f_4(f_3(f_2(f_1(\vx)))))$ & $p(f_5(f_4(f_3(f_2(f_1(\vx)))))$
 %density of $\vf^{(1:4)}(\vX))$ & density of $\vf^{(1:6)}(\vX))$
 \end{tabular}
-\caption[Visualization of draws from a deep GP]
+\caption[Visualization of draws from a deep \sgp{}]
 {Visualization of draws from a deep GP.
 A 2-dimensional Gaussian distribution (top left) is warped by successive functions drawn from a GP prior.
 As the number of layers increases, the density concentrates along one-dimensional filaments.}
@@ -829,7 +829,7 @@ Identity Map: $\vy = \vx$ & 1 Layer: $\vy = f^{(1)}(\vx)$ \\
 %    \draw[pile, white] (D) -- (Dt) node[right, text width=5em] {};
 %\end{tikzpicture}
 \end{tabular}
-\caption[Feature mapping of a deep GP]
+\caption[Feature mapping of a deep \sgp{}]
 {Feature mapping of a deep GP.
 Colors correspond to the location $\vy = \vf(\vx)$ that each point is mapped to after being warped by a deep GP.
 %This figure can be seen as the inverse of figure \ref{fig:filamentation}.  
@@ -1018,7 +1018,7 @@ As depth increases, the density becomes more complex without concentrating along
 \hspace{-0.5cm} \begin{sideways} {\scriptsize \quad Normalized singular value} \end{sideways} & \hspace{-0.2in} \spectrumpiccon{25} & \hspace{-0.16in} \spectrumpiccon{50} \\
  & {\scriptsize Singular value number} & {\scriptsize Singular value number}
 \end{tabular}
-\caption[Distribution of singular values of an input-connected deep GP]
+\caption[Distribution of singular values of an input-connected deep \sgp{}]
 {The distribution of singular values drawn from 5-dimensional input-connected deep GP priors, 25 and 50 layers deep.
 The singular values remain roughly the same scale as one another.}
 \label{fig:good_spectrum}
@@ -1033,7 +1033,7 @@ Identity map: $\vy = \vx$ & 2 Connected layers \\
  10 Connected layers & 20 Connected layers \\
 \hspace{-0.07in} \mappiccon{10} & \mappiccon{20}
 \end{tabular}
-\caption[Feature mapping of an input-connected deep GP]
+\caption[Feature mapping of an input-connected deep \sgp{}]
 {Feature mapping of a deep GP with each layer connected to the input $\vx$.
 Just as the densities in figure \ref{fig:no_filamentation} remained locally two-dimensional even after many transformations, in this mapping there are often two directions that one can move locally in $\vx$ to in order to change the values of $\vf(\vx)$.
 This means that the prior puts mass on representations which sometimes depend on all aspects of the input.
