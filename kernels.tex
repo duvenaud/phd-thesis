@@ -31,13 +31,13 @@ The kernel specifies which functions are likely under the \gp{} prior, which in 
 
 
 \section{A Few Basic Kernels}
-\label{sec:based-kernels}
+\label{sec:basic-kernels}
 
 To begin understanding the types of structures expressible by \gp{}s, we'll start by briefly examining the types of structure encoded by a diverse set of commonly used kernels:
 the squared-exponential (\kSE), periodic (\kPer), and linear (\kLin) kernels.
-These kernels are defined in Table~\ref{fig:basic_kernels}.
+These kernels are defined in \cref{fig:basic_kernels}.
 %
-\begin{table}[h]%
+\begin{figure}[h]%
 \centering
 \begin{tabular}{cccc}
 Kernel name: & Squared-exp (\kSE) & Periodic (\kPer) & Linear (\kLin) \\[10pt]
@@ -58,7 +58,7 @@ Type of structure: & local variation & repeating structure & linear functions \\
 %The x-axis has the same range on all plots.
 }
 \label{fig:basic_kernels}
-\end{table}
+\end{figure}
 %
 %There is nothing special about these kernels in particular, except that they represent a diverse set.
 
@@ -97,7 +97,7 @@ k_a + k_b =& \,\, k_a(\vx, \vx') + k_b( \vx, \vx')\\
 k_a \times k_b =& \,\, k_a(\vx, \vx') \times k_b(\vx, \vx')
 \end{align}
 
-All of the basic kernels we considered in \cref{sec:based-kernels} are one-dimensional, but kernels over multidimensional inputs can be constructed by adding and multiplying between kernels on different dimensions.
+All of the basic kernels we considered in \cref{sec:basic-kernels} are one-dimensional, but kernels over multidimensional inputs can be constructed by adding and multiplying between kernels on different dimensions.
 The dimension on which a kernel operates is denoted by a subscripted integer.
 For example, $\SE_2$ represents an \kSE{} kernel over the second dimension of $\vx$.
 To remove clutter, we'll usually refer to a kernels without specifying their parameters.
@@ -214,7 +214,7 @@ Below, we'll investigate ways to encode more structure into our kernels.
 
 An additive function is one which can be expressed as $f(\vx) = f_a(\vx) + f_b(\vx)$.
 %
-\begin{table}
+\begin{figure}
 \centering
 \begin{tabular}{cccc}
 %Composite & Draws from \gp{} & \gp{} posterior \\ \toprule
@@ -233,7 +233,7 @@ Rows have the same meaning as in \cref{fig:basic_kernels}.
 $\kSE^{(\textnormal{long})}$ denotes a $\kSE$ kernel whose lengthscale is long relative to that of $\kSE^{(\textnormal{short})}$
 }
 \label{fig:kernels_plus}
-\end{table}
+\end{figure}
 %
 Additivity is a very useful modeling assumption in a wide variety of contexts, especially if it allows us to make strong assumptions about the individual component which make up the sum.
 Restricting the flexibility of the component functions often aids in building interpretable models, and sometimes enables extrapolation in high dimensions.
@@ -266,17 +266,12 @@ To be more precise, if the kernels being added together are functions only of a 
 \begin{figure}
 \centering
 \begin{tabular}{ccccc}
-%\multicolumn{5}{c}{A sum of two orthogonal one-dimensional kernels}\\
 \hspace{-0.2cm}\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel_sum_p2} 
 & \hspace{-0.4cm} \raisebox{1cm}{+} \hspace{-0.4cm} & 
 \includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel_sum_p1} 
 & \hspace{-0.4cm} \raisebox{1cm}{=} \hspace{-0.4cm} & 
 \includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel} \\
 $k_1(x_1, x_1')$ & & $k_2(x_2, x_2')$ & & $k_1(x_1,x_1') + k_2(x_2,x_2')$ \\[1em]
-%1D kernel & & 1D kernel & & 1st order kernel & 2nd order kernel \\ 
-%& & & & & \\
-%(Second Order) & & & & & Additive Kernel \\
-%&&&&& \\
 \large $\downarrow$ & & \large $\downarrow$ & & \large $\downarrow$ \\[-0.2em]
 \hspace{-0.2cm}\includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel_draw_sum_p1}
 & \hspace{-0.4cm} \raisebox{1cm}{+} \hspace{-0.4cm} & 
@@ -284,17 +279,11 @@ $k_1(x_1, x_1')$ & & $k_2(x_2, x_2')$ & & $k_1(x_1,x_1') + k_2(x_2,x_2')$ \\[1em
 & \hspace{-0.4cm} \raisebox{1cm}{=} \hspace{-0.4cm} &
 \includegraphics[width=0.2\textwidth]{\additivefigsdir/2d-kernel/additive_kernel_draw_sum} \\
 $f_1(x_1) \sim \GP\left(0, k_1\right)$ & & $f_2(x_2) \sim \GP\left(0, k_2\right)$ & & $f_1(x_1) + f_2(x_2)$ \\[1em]
-%draw from & & draw from & & draw from & draw from\\
-%1D GP prior & & 1D GP prior & & 1st order GP prior & 2nd order GP prior\\
-%Draw from product kernel GP prior & Draw from additive kernel GP prior\\
 \end{tabular}
 \caption[Additive kernels correspond to additive functions]{
 A sum of two orthogonal one-dimensional kernels.
 \emph{Top row:} An additive kernel is any sum of kernels.
 \emph{Bottom row:} A draw from an additive kernel corresponds to a sum of draws from independent \gp{} priors, each having the corresponding kernel.
-%\emph{Top right:} A product kernel.
-%\emph{Right:}  A \gp{} prior with a product of kernels does not correspond to a product of draws from \gp{}s.
-%In this example, both kernels are composed of one dimensional squared-exponential kernels, but this need not be the case in general.
 }
 \label{fig:sum-of-kernels}
 \end{figure}
@@ -828,7 +817,7 @@ A fundamental domain of the symmetry group is a circle, so the kernel
 %
 %We can also apply rotational symmetry repeatedy to a single dimension.
 achieves the invariance in Equation~\eqref{eq:periodic_invariance}.
-Simple algebra reduces this kernel to the form shown in Table~\ref{fig:basic_kernels}.
+Simple algebra reduces this kernel to the form shown in \cref{fig:basic_kernels}.
 
 We could also build a periodic kernel with period $\tau$ by the mapping $A(x) = \mod(x, \tau)$.
 However, samples from this prior would be discontinuous at every integer multiple of $\tau$.

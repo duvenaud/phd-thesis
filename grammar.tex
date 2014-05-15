@@ -16,7 +16,7 @@
 
 
 In \cref{ch:kernels}, we saw that the choice of kernel determines the type of structure that can be learned by a \gp{} model, and that a wide variety of models could be constructed through simply adding and multiplying a few base kernels together.
-However, we didn't answer the difficult question of how which kernel to use for a given problem.
+However, we didn't answer the difficult question of which kernel to use for a given problem.
 Even for experts, choosing the kernel in \gp{} regression remains something of a black art.
 
 In this chapter, we'll automate the process of building kernels for \gp{} models.
@@ -152,16 +152,17 @@ For precise definitions of all kernels, see appendix \ref{sec:kernel-definitions
 Regression model & Kernel & Related work\\
 \midrule
 Linear regression & $\kC \kernplus \kLin \kernplus \kWN$ & \\
-Kernel ridge regression & $\kSE \kernplus \kWN$ & \\
-Linear Semi-parametric & $\kLin \kernplus \kSE \kernplus \kWN$ & \citep[e.g.][]{ruppert2003semiparametric} \\
+Polynomial regression & $\kC \kernplus \prod \kLin \kernplus \kWN$ & \\
+%Kernel ridge regression & $\kSE \kernplus \kWN$ & \\
+Semi-parametric & $\kLin \kernplus \kSE \kernplus \kWN$ & \citep[e.g.][]{ruppert2003semiparametric} \\
 Multiple kernel learning & $\sum \kSE \kernplus \kWN$ & \citep[e.g.][]{bach2004multiple} \\
 Trend, cyclical, irregular   & $\sum \kSE \kernplus \sum \kPer \kernplus \kWN$ & \citep{lind2006basic}\\
 Fourier decomposition & $\kC \kernplus \sum \cos \kernplus \kWN$ & \\
 Sparse spectrum \gp{}s & $\sum \cos \kernplus \kWN$ & \citep{lazaro2010sparse} \\
-Spectral mixture & $\sum \SE \times \cos \kernplus \kWN$ & \citep{WilAda13} \\
+Spectral mixture & $\sum \SE \kerntimes \cos \kernplus \kWN$ & \citep{WilAda13} \\
 Changepoints & \eg $\kCP(\kSE, \kSE) \kernplus \kWN$ & \citep[e.g.][]{garnett2010sequential} \\
-Heteroscedasticity & \eg $\kSE \kernplus \kLin \kerntimes \kWN$ & \\
-Additive \kernplus Flexible & $ \sum_d \kSE_d \kernplus \prod_d \kSE_d$ & \citep{plate1999accuracy} 
+Time-changing variance & \eg $\kSE \kernplus \kLin \kerntimes \kWN$ & \\
+Additive + Flexible & $ \sum_d \kSE_d \kernplus \prod_d \kSE_d$ & \citep{plate1999accuracy} 
 \end{tabular}
 \caption[Common regression models expressible in the kernel language]
 {Common regression models expressible by sums and products of base kernels.

@@ -317,7 +317,7 @@ This dataset is shown in \cref{fig:solar}.
 %
 \begin{figure}[ht!]
 \centering
-\includegraphics[trim=0.2cm 18.0cm 8cm 2cm, clip, width=0.8\columnwidth]{\grammarfiguresdir/solarpages/pg_0002-crop}
+\includegraphics[trim=0.2cm 18.0cm 8cm 2cm, clip, width=0.7\columnwidth]{\grammarfiguresdir/solarpages/pg_0002-crop}
 \caption[Solar irradiance dataset]
 {Solar irradiance data.}
 \label{fig:solar}
@@ -332,9 +332,9 @@ The Maunder minimum is an example of the type of structure which can be captured
 
 \begin{figure}[ht!]
 \centering
-\fbox{\includegraphics[trim=0cm 10.8cm 0cm 6.3cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/solarpages/pg_0002-crop}}
+\fbox{\includegraphics[trim=0cm 10.8cm 0cm 9.3cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/solarpages/pg_0002-crop}}
 \caption[Automatically-generated descriptions of the solar irradiance data set]
-{Automatically generated descriptions of the components discovered by \procedurename{} on the solar irradiance data set.
+{Automatically generated descriptions of the first four components discovered by \procedurename{} on the solar irradiance data set.
 The dataset has been decomposed into diverse structures with simple descriptions.}
 \label{fig:exec}
 \end{figure}
@@ -345,7 +345,12 @@ The third component, visualized in \cref{fig:smooth}, captures long-term trends.
 
 \begin{figure}[ht!]
 \centering
-\fbox{\includegraphics[trim=0cm 4.75cm 0cm 0.7cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/solarpages/pg_0005-crop}}
+\fbox{
+\begin{tabular}{@{}c@{}}
+\includegraphics[trim=0cm 10.5cm 0cm 0.7cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/solarpages/pg_0005-crop} \\
+\includegraphics[trim=0cm 4.75cm 0cm 3.12cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/solarpages/pg_0005-crop}
+\end{tabular}
+}
 \caption[A learned component corresponding to the Maunder minimum]
 {One of the learned components corresponds to the Maunder minimum.}
 \label{fig:maunder}
@@ -353,18 +358,30 @@ The third component, visualized in \cref{fig:smooth}, captures long-term trends.
 
 \begin{figure}[ht!]
 \centering
-\fbox{\includegraphics[trim=0cm 4.75cm 0cm 1cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/solarpages/pg_0006-crop}}
+\fbox{
+\begin{tabular}{@{}c@{}}
+\includegraphics[trim=0cm 10.5cm 0cm 1cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/solarpages/pg_0006-crop} \\
+\includegraphics[trim=0cm 4.75cm 0cm 3.9cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/solarpages/pg_0006-crop}
+\end{tabular}
+}
 \caption[\procedurename{} isolating the part of the signal explained by a slowly-varying trend]
-{Characterizing the medium-term smoothness of solar activity levels.  By allowing other components to explain the periodicity, noise, and the Maunder minimum, \procedurename{} can isolate the part of the signal best explained by a slowly-varying trend.}
+{Characterizing the medium-term smoothness of solar activity levels.
+By allowing other components to explain the periodicity, noise, and the Maunder minimum, \procedurename{} can isolate the part of the signal best explained by a slowly-varying trend.}
 \label{fig:smooth}
 \end{figure}
 
 
 \begin{figure}[ht!]
 \centering
-\fbox{\includegraphics[trim=0cm 4.75cm 0cm 1.0cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/solarpages/pg_0007-crop}}
+\fbox{
+\begin{tabular}{@{}c@{}}
+\includegraphics[trim=0cm 10.5cm 0cm 1.0cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/solarpages/pg_0007-crop} \\
+\includegraphics[trim=0cm 4.75cm 0cm 4.66cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/solarpages/pg_0007-crop}
+\end{tabular}
+}
 \caption[Extract from an automatically-generated report]
-{Extract from an automatically-generated report describing the model components discovered by automatic model search.  This part of the report isolates and describes the approximately 11-year sunspot cycle, also noting its disappearance during the 16th century, a time known as the Maunder minimum \citep{lean1995reconstruction}.}
+{Extract from an automatically-generated report describing the model components discovered by automatic model search.
+This part of the report isolates and describes the approximately 11-year sunspot cycle, also noting its disappearance during the 16th century, a time known as the Maunder minimum \citep{lean1995reconstruction}.}
 \label{fig:periodic}
 \end{figure}
 
@@ -372,7 +389,7 @@ The complete report generated on this dataset can be found in \cref{ch:example-s
 
 
 
-\subsection{Describing Varying Noise Levels in Air Traffic Data}
+\subsection{Describing Changing Noise Levels} % in Air Traffic Data}
 \label{sec:airline}
 
 %\begin{figure}[ht!]
@@ -391,7 +408,7 @@ High-level descriptions of the four components discovered are shown in \cref{fig
 %
 \begin{figure}[ht!]
 \centering
-\fbox{\includegraphics[trim=0cm 6.8cm 0cm 6cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/airlinepages/pg_0002-crop}}
+\fbox{\includegraphics[trim=0cm 9.5cm 0cm 9.25cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/airlinepages/pg_0002-crop}}
 \caption[Short descriptions of the four components of the airline model]
 {Short descriptions and summary statistics for the four components of the airline model.}
 \label{fig:exec-airline}
@@ -401,17 +418,28 @@ The second component, shown in \cref{fig:lin_periodic}, is accurately described 
 %
 \begin{figure}[ht!]
 \centering
-\fbox{\includegraphics[trim=0cm 4.75cm 0cm 0cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/airlinepages/pg_0004-crop}}
+\fbox{
+\begin{tabular}{@{}c@{}}
+\includegraphics[trim=0cm 10.5cm 0cm 1cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/airlinepages/pg_0004-crop} \\
+\includegraphics[trim=0cm 4.7cm 0cm 4.3cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/airlinepages/pg_0004-crop}
+\end{tabular}
+}
 \caption[Capturing non-stationary periodicity in the airline data]
 {Capturing non-stationary periodicity in the airline data}
 \label{fig:lin_periodic}
 \end{figure}
 %
-By multiplying a white noise kernel by a linear kernel, the model is able to express heteroscedasticity (covariance which changes over time).  This component is described in \cref{fig:heteroscedastic}.
+By multiplying a white noise kernel by a linear kernel, the model is able to express heteroscedasticity (covariance which changes over time).
+This component is described in \cref{fig:heteroscedastic}.
 %
 \begin{figure}[ht!]
 \centering
-\fbox{\includegraphics[trim=0cm 0cm 0cm 0cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/airlinepages/pg_0006-crop}}
+\fbox{
+\begin{tabular}{@{}c@{}}
+\includegraphics[trim=0cm 6.7cm 0cm 0.6cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/airlinepages/pg_0006-crop} \\
+\includegraphics[trim=0cm 0cm 0cm 3.98cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/airlinepages/pg_0006-crop}
+\end{tabular}
+}
 \caption[Modeling heteroscedasticity in the airline dataset]
 {Modeling heteroscedasticity in the airline dataset.}
 \label{fig:heteroscedastic}
