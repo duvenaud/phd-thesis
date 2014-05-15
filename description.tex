@@ -5,8 +5,11 @@
 \chapter{Automatic Model Description}
 \label{ch:description}
 
+\begin{quotation}
+``When I write, I feel like an armless, legless man with a crayon in his mouth.''
 
-
+\hspace*{\fill} \emph{ -- Kurt Vonnegut}
+\end{quotation}
 
 %First, Gaussian processes model functions in terms of high-level properties (e.g.\ smoothness, trends, periodicity,
 %changepoints).
@@ -16,6 +19,7 @@
 
 %The compositional structure of the language described in the previous chapter 
 The previous chapter showed how to automatically build structured models through a language of kernels, how to decompose the resulting models into the different types of structure present, and how to visually illustrate the type of structure captured by each component.
+This chapter will show how automatically describe the resulting model structures with English text.
 
 Most of the structure present in each component was determined by that component's kernel.
 Even across different datasets, the meaning of the individual parts of those kernels is relatively consistent.  For example, $\kPer$ usually indicates some sort of repeating structure, and $\kSE$ usually indicates smooth change over time.
@@ -405,7 +409,7 @@ The model being described is the same as that shown in \cref{fig:airline_decomp}
 %constructed by \procedurename{} has four components: $\kLin \kernplus \kSE \kerntimes \kPer \kerntimes \kLin \kernplus \kSE \kernplus \kWN \kerntimes \kLin$, with 
 
 High-level descriptions of the four components discovered are shown in \cref{fig:exec-airline}.
-%
+
 \begin{figure}[ht!]
 \centering
 \fbox{\includegraphics[trim=0cm 9.5cm 0cm 9.25cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/airlinepages/pg_0002-crop}}
@@ -440,8 +444,8 @@ This component is described in \cref{fig:heteroscedastic}.
 \includegraphics[trim=0cm 0cm 0cm 3.98cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/airlinepages/pg_0006-crop}
 \end{tabular}
 }
-\caption[Modeling heteroscedasticity in the airline dataset]
-{Modeling heteroscedasticity in the airline dataset.}
+\caption[Modeling time-changing variance in the airline dataset]
+{Modeling time-changing variance in the airline dataset.}
 \label{fig:heteroscedastic}
 \end{figure}
 
@@ -464,8 +468,11 @@ Source code to perform all experiments is available at \url{github.com/jamesrobe
 
 \section{Conclusion}
 Towards the goal of automating statistical modeling we have presented a system which, given a structured \gp{} model, automatically generates detailed reports that describe patterns in the data captured by the model.
-Combined with the automatic model-search of \cref{ch:grammar}, we demonstrate a procedure which can discover and describe a variety of patterns on several time series.
+Combined with the automatic model-search of \cref{ch:grammar} gives a procedure which can discover and describe a variety of patterns on several time series.
 
+%\section{Discussion and Future Work}
+
+%Obviously, the rule-based system for generating English text presented in this chapter is limited in scope.
 
 
 
