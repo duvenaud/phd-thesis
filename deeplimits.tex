@@ -6,7 +6,7 @@
 \label{ch:deep-limits}
 
 \begin{quotation}
-``On a given day, would I rather be wrestling with a sampler, or proving theorems?''
+``I asked myself: On any given day, would I rather be wrestling with a sampler, or proving theorems?''
 
 \hspace*{\fill} \emph{Peter Orbanz}, personal communication
 \end{quotation}
@@ -14,53 +14,32 @@
 
 
 
-Choosing appropriate architectures and regularization strategies of deep networks is crucial to good predictive performance.
+Choosing appropriate architectures and regularization strategies of deep networks is important for good predictive performance.
 In this chapter, we propose to study this problem by viewing deep nets as priors on functions.
 By viewing neural networks this way, we can analyze their properties without reference to any particular dataset, loss function, or training method.
 Instead, we can ask what sorts of information-processing structures these priors give rise to, and check whether those structures are the same sort which we expect to find in useful models.
 
 %To shed light on this problem, we analyze the analogous problem of constructing useful priors on compositions of functions.
-As a starting point, we'll examine a class of infinitely-wide, deep neural networks called \emph{deep Gaussian processes}.
+As a starting point, we'll relate neural networks to Gaussian processes, and examine a class of infinitely-wide, deep neural networks called \emph{deep Gaussian processes}.
 Deep \gp{}s are an attractive model class to study for several reasons.
-First, they abstract away some of the details of finite neural networks, such as the number of hidden units.
-Second, \citet{damianou2012deep} showed that the probabilistic nature of deep \gp{}s allows us to use the marginal likelihood to automatically tune the model architecture without the need for cross-validation.
-Third, \citet{hensman2014deep} showed that stochastic variational inference is possible in these models.
+\citet{damianou2012deep} showed that the probabilistic nature of deep \gp{}s gaurds against overfitting, and allows us to use the marginal likelihood to automatically tune the model architecture without the need for cross-validation.
+\citet{hensman2014deep} showed that stochastic variational inference is possible in deep \gp{}s.
+Together, these results suggest that deep \gp{}s are a promising alternative to neural nets.
+For the analysis in this chapter, deep \gp{}s are attractive because they abstract away some of the details of finite neural networks. %, such as the number of hidden units
 
-In this chapter, we'll provide an analysis showing that in standard architectures, the representational capacity of standard deep networks tends to decrease as the number of layers increases, retaining only a single degree of freedom in the limit.
-We'll propose an alternate network architecture which does not suffer from this pathology.
-We'll also examine \emph{deep kernels}, obtained by composing infinitely-many feature transforms.
+Our analysis will show that in standard architectures, the representational capacity of standard deep networks tends to decrease as the number of layers increases, retaining only a single degree of freedom in the limit.
+We'll propose an alternate network architecture -- one which connects the input to each layer -- which does not suffer from this pathology.
+We'll also examine \emph{deep kernels}, obtained by composing infinitely-many fixed feature transforms.
 
 The ideas contained in this chapter were developed through discussions with Oren Rippel, Ryan Adams and Zoubin Ghahramani, and appear in \citep{DuvRipAdaGha14}.
-%The derivations, experiments and writing were done mainly by myself, with many helpful suggestions by my co-authors.
-%  Lastly, we characterize the class of models obtained by performing dropout on Gaussian processes.
-
-%\section{Defining Deep Gaussian Processes}
-
-%By characterizing these models, this paper shows that representations based on repeated composition of independently-initialized functions exhibit a pathology where the representation becomes invariant to all but one direction of variation. This corresponds to an eventual debilitating decrease in the information capacity of networks as a function of their number of layers. However, we will demonstrate that a simple change in architecture --- namely, connecting the input to each layer --- fixes this problem. 
-
-%We also present two related analyses:  first, we examine the properties of a arbitrarily deep fixed feature transforms (``deep kernels'').  Second, we characterise the prior obtained by performing dropout on \gp{}s, showing equivalences to existing models.
-
-%Section \ref{sec:relating} will derive the precise relationship between deep \gp{}s and MLPs.  Section \ref{sec:1d} will examine the asymptotic behavior of arbitrarily deep one-dimensional \gp{}s.  Section \ref{sec:theorem} gives a theorem characterizing the Jacobian of a deep multidimensinal \gp{}.  Section 
-%Deep networks have become an important tool for machine learning [cite].  However, training these models are difficult, Many arguments have been made for the need for deep architectures [cite Bengio].  However, it is hard to know what effect the deepness of an architecture has.  Also, the weights don't necessarily move that much from their initialization.
-
-%Good initialization schemes can help, but we are interested in creating distributions on deep functions so that most of the mass is on functions without any pathologies.  Also, we might be able to show that the pathologies we show that most functions exhibit means that it will be hard to learn them by gradient descent.
 
 
 
 
-
-
-
-\section{Relating Deep Neural Nets and Deep Gaussian Processes}
+\section{Relating Neural Networks to Deep Gaussian Processes}
 \label{sec:relating}
-%There are two ways to view deep Gaussian processes as neural networks.  First, we can
-%We introduce a generative non-parametric model to address this problem.  Our approach is based on the GP-LVM ~\cite{lawrence2004gaussian,salzmann2008local,lawrence2009non}, a flexible nonparametric density model.  
 
-%\cite{NIPS2005_424} showed that kernel machines such as \gp{}s have limited generalization ability when they are forced to use a 'local' kernel.
-
-
-%In this paper, we examine a simple and flexible class of priors on compositions of functions, namely deep Gaussian processes \citep{damianou2012deep}.
-Deep \gp{}s are simply priors on compositions of vector-valued functions, where each output of each layer is drawn independently from a GP prior:
+Deep \gp{}s are simply priors on compositions of vector-valued functions, where each function in each layer is drawn independently from a GP prior:
 %
 \begin{align}
 \vf^{(1:L)}(\vx) = \vf^{(L)}(\vf^{(L-1)}(\dots \vf^{(2)}(\vf^{(1)}(\vx)) \dots)) \\
@@ -69,11 +48,9 @@ Deep \gp{}s are simply priors on compositions of vector-valued functions, where 
 \label{eq:deep-gp}
 \end{align}
 %
-%Although inference in these models is non-trivial,
-%These models correspond to a certain type of infinitely-wide multi-layer perceptron (\MLP{}), and as such make canonical candidates for generative models of functions that closely relate to neural networks.
 
-Fundamentally, a multilayer neural network implements a composition of vector-valued functions, one per layer.
-Hence, understanding properties of such function compositions helps us gain insight into deep networks.
+A multilayer neural network also implements a composition of vector-valued functions, one per layer.
+%Therefore, understanding properties of function compositions helps us gain insight into deep networks.
 In this section, we'll show the precise relationship between Gaussian processes and neural nets, then show two equivalent ways of constructing neural networks which give rise to deep \gp{}s.
 
 
@@ -83,6 +60,8 @@ In this section, we'll show the precise relationship between Gaussian processes 
 \subsection{Single-layer Models}
 
 %To mmake the link between deep \gp{}s and deep neural nets more explicit, we'll first
+First, we'll relate neural networks with one hidden layer to Gaussian processes, using the
+standard neural network architecture known as the multi-layer perceptrion (\MLP{}).
 In the typical definition of an \MLP{}, the hidden units of the first layer are defined as:
 %
 \begin{align}
@@ -98,8 +77,8 @@ f(\vx) = \vV^{(1)} \sigma \left( \vb^{(1)} + \vW^{(1)} \vx \right)  = \vV^{(1)} 
 %
 where $\vV^{(1)}$ is another weight matrix.
 
-There exists a correspondence between one-layer \MLP{}s and \gp{}s \citep{neal1995bayesian}.
-\gp{}s can be viewed as a prior on neural networks with infinitely many hidden units, and unknown weights.
+%There exists a correspondence between one-layer \MLP{}s and \gp{}s 
+\citet{neal1995bayesian} showed that \gp{}s can be viewed as a prior on neural networks with infinitely many hidden units and unknown weights.
 More precisely, for any model of the form
 %
 \begin{align}
@@ -107,7 +86,17 @@ f(\vx) = \frac{1}{K}{\mathbf \vnetweights}\tra \hPhi(\vx) = \frac{1}{K} \sum_{i=
 \label{eq:one-layer-gp}
 \end{align}
 %
-with fixed features $\left[ \hphi_1(\vx), \dots, \hphi_K(\vx) \right]\tra = \hPhi(\vx)$ and i.i.d. $\netweights$'s with zero mean and finite variance $\sigma^2$, the central limit theorem implies that as the number of features $K$ grows, any two function values $f(\vx), f(\vx')$ have a joint distribution approaching $\Nt{0}{\frac{\sigma^2}{K}\sum_{i=1}^K \hphi_i(\vx)\hphi_i(\vx')}$.
+with fixed features $\left[ \hphi_1(\vx), \dots, \hphi_K(\vx) \right]\tra = \hPhi(\vx)$ and i.i.d. $\netweights$'s with zero mean and finite variance $\sigma^2$, the central limit theorem implies that as the number of features $K$ grows, any two function values $f(\vx), f(\vx')$ have a joint distribution approaching a Gaussian:
+%
+\begin{align}
+\lim_{K \to \infty} p\left( \colvec{f(\vx)}{f(\vx')} \right) = \Nt{\colvec{0}{0}}{
+\frac{\sigma^2}{K} \left[ \begin{array}{cc}
+\sum_{i=1}^K \hphi_i(\vx)\hphi_i(\vx) &
+\sum_{i=1}^K \hphi_i(\vx)\hphi_i(\vx') \\
+\sum_{i=1}^K \hphi_i(\vx')\hphi_i(\vx) &
+\sum_{i=1}^K \hphi_i(\vx')\hphi_i(\vx')
+\end{array} \right] }
+\end{align}
 A joint Gaussian distribution between any set of function values is the definition of a Gaussian process.
 %\TBD{DD: any two or any set?}
 
@@ -209,19 +198,19 @@ Neural net corresponding to a \gp{} & Net corresponding to a \gp{} with a deep k
     % Draw the first hidden layer nodes
     \foreach \name / \y in {1,2}%...,\numhidden}
         \path[yshift=0.5cm]
-            node[hidden neuron, minimum size=\nodesize] (H-\name) at (\layersep,-\nodesep*\y) {$\indfeat^1_{\y}$};
+            node[hidden neuron, minimum size=\nodesize] (H-\name) at (\layersep,-\nodesep*\y) {$\indfeat^{(1)}_{\y}$};
 	\foreach \name / \y in {3}
 	    \path[yshift=0.5cm]
-    	    node[hidden neuron, minimum size=\nodesize] (H-\name) at (\layersep,-\nodesep*4) {$\indfeat^1_K$};
+    	    node[hidden neuron, minimum size=\nodesize] (H-\name) at (\layersep,-\nodesep*4) {$\indfeat^{(1)}_K$};
             
 
     % Draw the secdond hidden layer nodes
     \foreach \name / \y in {1,2}%...,\numhidden}
         \path[yshift=0.5cm]
-            node[hidden neuron, minimum size=\nodesize] (H2-\name) at (2*\layersep,-\nodesep*\y) {$\indfeat^2_{\y}$};
+            node[hidden neuron, minimum size=\nodesize] (H2-\name) at (2*\layersep,-\nodesep*\y) {$\indfeat^{(2)}_{\y}$};
 	\foreach \name / \y in {3}
 	    \path[yshift=0.5cm]
-    	    node[hidden neuron, minimum size=\nodesize] (H2-\name) at (2*\layersep,-\nodesep*4) {$\indfeat^2_K$};
+    	    node[hidden neuron, minimum size=\nodesize] (H2-\name) at (2*\layersep,-\nodesep*4) {$\indfeat^{(2)}_K$};
 
     % Draw the output layer node
     \foreach \name / \y in {1,...,\numdims}
@@ -268,7 +257,8 @@ Neural net corresponding to a \gp{} & Net corresponding to a \gp{} with a deep k
 \subsection{Multiple Hidden Layers}
 
 %\paragraph{Fixed nonlinearities}
-In an \MLP{}, the $\layerindex$th layer units are given by the recurrence
+In an \MLP{} with multiple hidden layers, activation of the $\layerindex$th layer units are given by
+% the recurrence
 %
 \begin{align}
 \vh^{(\layerindex)}(\vx) = \sigma \left( \vb^{(\layerindex)} + \vW^{(\layerindex)} \vh^{(\layerindex-1)}(\vx) \right) \;.
@@ -277,7 +267,7 @@ In an \MLP{}, the $\layerindex$th layer units are given by the recurrence
 This architecture is shown on the right of \cref{fig:gp-architectures}.
 %In this model, each hidden layer's output feeds directly into the next layer's input, weighted by the corresponding element of $\vW^{(\layerindex)}$.  
 %
-For example, if we extend the model given by \cref{eq:one-layer-nn} to have two layers of feature mappings,  the resulting model becomes
+For example, if we extend the model given by \cref{eq:one-layer-nn} to have two layers of feature mappings,  the resulting model would become
 %
 \begin{align}
 f(\vx) = \frac{1}{K}{\mathbf \vnetweights}\tra \hPhi^{(2)}\left( \hPhi^{(1)}(\vx) \right) \;.
@@ -285,17 +275,17 @@ f(\vx) = \frac{1}{K}{\mathbf \vnetweights}\tra \hPhi^{(2)}\left( \hPhi^{(1)}(\vx
 \label{eq:mutli-layer-nn}
 \end{align}
 
-If the features $\vh(\vx)^{(1)}$ and $\vh(\vx)^{(2)}$ are considered fixed with only the last-layer weights ${\vnetweights}$ unknown, this model corresponds to a \gp{} with a ``deep kernel'' given by
+If the features $\vh^{(1)}(\vx)$ and $\vh^{(2)}(\vx)$ are considered fixed with only the last-layer weights ${\vnetweights}$ unknown, this model corresponds to a (non-deep) \gp{} with a ``deep kernel'', given by
 \begin{align}
 k(\vx, \vx') = \left( \hPhi^{(2)} ( \hPhi^{(1)}(\vx) ) \right) \tra \hPhi^{(2)} (\hPhi^{(1)}(\vx') )
 \end{align}
-These models, explored in \cref{sec:deep_kernels}, imply a fixed representation as opposed to a prior over representations.
-Unless we richly parameterize these kernels, their capacity to learn an appropriate representation is limited. %since only the output weights ${\vnetweights}$ can adapt to the problem  which is what we wish to analyze in this chapter.
+\gp{}s with deep kernels, explored in \cref{sec:deep_kernels}, imply a fixed representation as opposed to a prior over representations.
+Thus, unless we richly parameterize these kernels, their capacity to learn an appropriate representation is limited in comparison to more flexible models such as deep neural networks, or deep \gp{}s. %since only the output weights ${\vnetweights}$ can adapt to the problem  which is what we wish to analyze in this chapter.
 
 
 %In a neural net with multiple hidden layers, the correspondence is a little more complicated.
  
-\subsection{Two Network Archtectures Equivalent to Deep \sgp{}s}
+\subsection{Two Network Architectures Equivalent to Deep \sgp{}s}
 
 \def\halfshift{0.0cm}
 
@@ -304,7 +294,7 @@ Unless we richly parameterize these kernels, their capacity to learn an appropri
 \begin{tabular}{c}
 %\multicolumn{2}{c}{} \\
 %\multicolumn{2}{c}{
-Neural net with fixed activation functions corresponding to a 3-layer deep \gp{}\\ %$\vy = \vf^{(2)} \left( \vf^{(1)}(\vx) \right)$ \\
+A neural net with fixed activation functions corresponding to a 3-layer deep \gp{}\\ %$\vy = \vf^{(2)} \left( \vf^{(1)}(\vx) \right)$ \\
 \\
 %\multicolumn{2}{c}{
 \begin{tikzpicture}[shorten >=1pt,->,draw=black!50, node distance=\layersep]
@@ -322,45 +312,45 @@ Neural net with fixed activation functions corresponding to a 3-layer deep \gp{}
     % Draw the hidden layer nodes
     \foreach \name / \y in {1,2}%...,\numhidden}
         \path[yshift=0.5cm]
-            node[hidden neuron, minimum size=\nodesize] (H-\name) at (\layersep,-\nodesep*\y) {$\indfeat^1_{\y}$};
+            node[hidden neuron, minimum size=\nodesize] (H-\name) at (\layersep,-\nodesep*\y) {$\indfeat^{(1)}_{\y}$};
    	\foreach \name / \y in {3}
 	    \path[yshift=0.5cm]
-    	    node[hidden neuron, minimum size=\nodesize] (H-\name) at (\layersep,-\nodesep*4) {$\indfeat^1_K$};
+    	    node[hidden neuron, minimum size=\nodesize] (H-\name) at (\layersep,-\nodesep*4) {$\indfeat^{(1)}_K$};
 
 
     % Draw the hidden layer nodes
     \foreach \name / \y in {1,2}%...,\numhidden}
         \path[yshift=0.5cm]
-            node[hidden neuron, minimum size=\nodesize] (H2-\name) at (3*\layersep,-\nodesep*\y) {$\indfeat^2_{\y}$};
+            node[hidden neuron, minimum size=\nodesize] (H2-\name) at (3*\layersep,-\nodesep*\y) {$\indfeat^{(2)}_{\y}$};
    	\foreach \name / \y in {3}
 	    \path[yshift=0.5cm]
-    	    node[hidden neuron, minimum size=\nodesize] (H2-\name) at (3*\layersep,-\nodesep*4) {$\indfeat^1_K$};
+    	    node[hidden neuron, minimum size=\nodesize] (H2-\name) at (3*\layersep,-\nodesep*4) {$\indfeat^{(2)}_K$};
     	    
     % Draw the hidden layer nodes
     \foreach \name / \y in {1,2}%...,\numhidden}
         \path[yshift=0.5cm]
-            node[hidden neuron, minimum size=\nodesize] (H3-\name) at (5*\layersep,-\nodesep*\y) {$\indfeat^2_{\y}$};
+            node[hidden neuron, minimum size=\nodesize] (H3-\name) at (5*\layersep,-\nodesep*\y) {$\indfeat^{(3)}_{\y}$};
    	\foreach \name / \y in {3}
 	    \path[yshift=0.5cm]
-    	    node[hidden neuron, minimum size=\nodesize] (H3-\name) at (5*\layersep,-\nodesep*4) {$\indfeat^1_K$};    	    
+    	    node[hidden neuron, minimum size=\nodesize] (H3-\name) at (5*\layersep,-\nodesep*4) {$\indfeat^{(3)}_K$};    	    
 
     % Draw the output layer node
     \foreach \name / \y in {1,...,\numdims}
     	\node[output neuron, minimum size=\nodesize
     	%,pin={[pin edge={->}]right:Output }
-    	] (O1-\name) at (2*\layersep,-\nodesep*\y) {$f^{1}_{\y}$};
+    	] (O1-\name) at (2*\layersep,-\nodesep*\y) {$f^{(1)}_{\y}$};
 
     % Draw the output layer node
     \foreach \name / \y in {1,...,\numdims}
     	\node[output neuron, minimum size=\nodesize
     	%,pin={[pin edge={->}]right:Output }
-    	] (O2-\name) at (4*\layersep,-\nodesep*\y) {$f^{2}_{\y}$};
+    	] (O2-\name) at (4*\layersep,-\nodesep*\y) {$f^{(2)}_{\y}$};
     	
     % Draw the output layer node
     \foreach \name / \y in {1,...,\numdims}
     	\node[output neuron, minimum size=\nodesize
     	%,pin={[pin edge={->}]right:Output }
-    	] (O3-\name) at (6*\layersep,-\nodesep*\y) {$f^{3}_{\y}$};    	
+    	] (O3-\name) at (6*\layersep,-\nodesep*\y) {$f^{(3)}_{\y}$};    	
 
     % Connect every node in the input layer with every node in the
     % hidden layer.
@@ -409,13 +399,15 @@ Neural net with fixed activation functions corresponding to a 3-layer deep \gp{}
 \\
 \hline
 \\
-Net with nonpararametric activation functions corresponding to a 3-layer deep \gp{}\\
+A net with nonpararametric activation functions corresponding to a 3-layer deep \gp{}\\
 \\
 %\begin{tabular}{c}
-\begin{tikzpicture}[draw=black, node distance=\layersep]
-    \tikzstyle{interarrows}=[->, thick, black!50]
+\begin{tikzpicture}[shorten >=1pt,->,draw=black!50, node distance=\layersep]
+%    \tikzstyle{interarrows}=[->, thick, black!50]
+    \tikzstyle{every pin edge}=[<-,shorten <=1pt]
+%    \tikzstyle{input neuron}=[neuron, minimum size=\nodesize];
     \tikzstyle{neuron}=[circle, draw = black, inner sep=0pt, line width = 1pt]
-    \tikzstyle{input neuron}=[neuron, minimum size=\nodesize];
+    \tikzstyle{input neuron}=[circle, minimum size=\nodesize, fill=green!15]
     \tikzstyle{output neuron}=[neuron, minimum size=\nodesize, text width = 1cm];
     \tikzstyle{hidden neuron}=[neuron, minimum size=\nodesize, text width = 1cm];
     \tikzstyle{annot} = [text width=4em, text centered]
@@ -439,16 +431,17 @@ Net with nonpararametric activation functions corresponding to a 3-layer deep \g
     % Connect every node in the input layer with every node in the hidden layer.
     \foreach \source in {1,...,\numdims}
         \foreach \dest in {1,...,\numhidden}
-            \path (I-\source) edge[interarrows] (H-\dest);
+            \path (I-\source) edge (H-\dest);
             
     \foreach \source in {1,...,\numhidden}
         \foreach \dest in {1,...,\numhidden}
-            \path (H-\source) edge[interarrows] (H2-\dest);            
+            \path (H-\source) edge (H2-\dest);            
 
     % Connect every node in the hidden layer with the output layer
     \foreach \source in {1,...,\numhidden}
         \foreach \dest in {1,...,\numdims}
-    	    \path (H2-\source) edge[interarrows] (O-\dest);
+    	    \path (H2-\source) edge (O-\dest);
+    	    %arrows={-angle 90}
 
     % Annotate the layers
     \node[annot,above of=I-1, node distance=\upnodedist] {Inputs};
@@ -462,11 +455,11 @@ Net with nonpararametric activation functions corresponding to a 3-layer deep \g
 \end{tikzpicture}
 %\end{tabular}
 \end{tabular}
-\caption[Comparison of neural network architectures giving rise to deep \sgp{}s]
+\caption[Neural network architectures giving rise to deep \sgp{}s]
 {
 Two equivalent views of deep \gp{}s as neural networks.
-\emph{Top:} A neural network whose every second layer is a weighted sum of an infinite number of fixed hidden units, where the weights are initially unkown.
-\emph{Bottom:} A neural network with a finite number of hidden units, each with a different unkown non-parametric activation function.
+\emph{Top:} A neural network whose every second layer is a weighted sum of an infinite number of fixed hidden units, where the weights are initially unknown.
+\emph{Bottom:} A neural network with a finite number of hidden units, each with a different unknown non-parametric activation function.
 }
 \label{fig:deep-gp-architectures}
 \end{figure}
@@ -477,7 +470,7 @@ To construct a neural network with fixed nonlinearities that corresponds to a de
 %with $D_\layerindex$ units for each layer corresponding to the outputs compositions of functions drawn from a \gp{} prior, 
 one can start with the infinitely-wide deep \gp{} shown in \cref{fig:gp-architectures}(right), and introduce a finite set of nodes in between each infinitely-wide set of fixed basis functions.
 This architecture is shown in the top of \cref{fig:deep-gp-architectures}.
-The $D_\layerindex$ outputs $\vf^{(\layerindex)}(\vx)$ in between each layer are weighted sums (with random weights) of the fixed hidden units of the layer below, and the next layer's hidden units depend only on these $D_\layerindex$ outputs.
+The $D^{(\layerindex)}$ outputs $\vf^{(\layerindex)}(\vx)$ in between each layer are weighted sums (with random weights) of the fixed hidden units of the layer below, and the next layer's hidden units depend only on these $D^{(\layerindex)}$ outputs.
 %Thus, the network architecture with fixed nonlinearities corresponding to deep \gp{}s has an extra set of layers that a \MLP{} doesn't have.
 %
 
@@ -721,7 +714,8 @@ By lemma \ref{thm:matrix}, each ${J^\layerindex_{i,j} \simind \mathcal{N}}$, so 
 \end{proof}
 
 \vspace{-0.1in}
-Theorem \ref{thm:prodjacob} allows us to analyze the representational properties of a deep Gaussian process by simply examining the properties of products of independent Gaussian matrices, a well-studied object.
+\Cref{thm:prodjacob} allows us to analyze the representational properties of a deep Gaussian process by examining the properties of products of independent Gaussian matrices.
+%, a well-studied object.
 
 
 
@@ -732,10 +726,12 @@ Theorem \ref{thm:prodjacob} allows us to analyze the representational properties
 \label{sec:formalizing-pathology}
 %\subsection{Jacobian Singular Value Spectrum}
 
-\cite{rifai2011higher} argue that a good latent representation is invariant in directions orthogonal to the manifold on which the data lie.  Conversely, a good latent representation must also change in directions tangent to the data manifold, in order to preserve relevant information.  Figure \ref{fig:hidden} visualizes this idea.
-%
+\citet{rifai2011higher} argue that good representations of data manifolds are invariant in directions orthogonal to the manifold.
+Conversely, a good representation must also change in directions tangent to the data manifold, in order to preserve relevant information.
+\Cref{fig:hidden} visualizes this idea.
+
 %\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
-\begin{figure}[t]
+\begin{figure}[h]
 \centering
 %\begin{tabular}{L{\columnwidth}}
 %\includegraphics[width=0.45\columnwidth]{\deeplimitsfiguresdir/hidden_good} &
@@ -759,20 +755,19 @@ Theorem \ref{thm:prodjacob} allows us to analyze the representational properties
 %A representation is a function mapping the input space to some set of outputs.
 Colors correspond to the computed representation as a function of the input space.
 The representation (blue \& green) varies in directions tangent to the data manifold (white), preserving information for later layers. 
-The representation is also invariant to directions orthogonal to the manifold, making it robust to noise in those directions.
+The representation changes little in directions orthogonal to the manifold, making it robust to noise in those directions.
 %, and reducing the number of parameters needed to represent a datapoint.
 %Representation b) changes in all directions, preserving potentially useless information.}% The representation on the right might be useful if the data were spread out in over plane.
 }
 \label{fig:hidden}
 \end{figure}
+
+As in \citep{rifai2011contractive}, we characterize the representational properties of a function by the singular value spectrum of the Jacobian.
+The number of relatively large singular values of the Jacobian roughly correspond to the number of directions in which the representation varies.
+\citet{rifai2011contractive} analyzed the Jacobian at location of the training points, but because the priors we are examining are stationary, the distribution of the Jacobian is identical everywhere.
 %
-As in \cite{rifai2011contractive}, we characterize the representational properties of a function by the singular value spectrum of the Jacobian.
-In their experiments, the Jacobian was computed at the training points.
-Because the priors we are examining are stationary, the distribution of the Jacobian is identical everywhere.
-%
-\newcommand{\spectrumpic}[1]{
-%\hspace{-0.2in}
-\includegraphics[trim=4mm 1mm 4mm 2.5mm, clip, width=0.475\columnwidth]{\deeplimitsfiguresdir/spectrum/layer-#1}} 
+\newcommand{\spectrumpic}[1]{%
+\includegraphics[trim=4mm 1mm 4mm 2.5mm, clip, width=0.475\columnwidth]{\deeplimitsfiguresdir/spectrum/layer-#1}}%
 \begin{figure}[t]
 \centering
 \begin{tabular}{ccc}
@@ -780,18 +775,18 @@ Because the priors we are examining are stationary, the distribution of the Jaco
 \hspace{-0.3cm} \begin{sideways} { \quad Normalized singular value} \end{sideways} & \hspace{-0.2in} \spectrumpic{2} & \hspace{-0.2in} \spectrumpic{6} \\
  & { Singular value index} & { Singular value index}
 \end{tabular}
-\caption[Singular value spectrum of the Jacobian of a deep \sgp{}]
+\caption[Distribution of singular values of the Jacobian of a deep \sgp{}]
 {%The normalized singular value spectrum of the Jacobian of a deep \gp{} warping $\Reals^5 \to \Reals^5$.
-The distribution of singular values relative to the largest, of the Jacobian of a function drawn from 5-dimensional deep \sgp{} prior, at 25 and 50 layers deep.
-As the net gets deeper, the largest singular value becomes much larger than the others.
-This implies that with high probability, there is only one effective degree of freedom in the representation being computed.
+The distribution of normalized singular values of the Jacobian of a function drawn from a 5-dimensional deep \gp{} prior 25 layers deep~(\emph{Left}) and 50 layers deep~(\emph{Right}).
+As nets get deeper, the largest singular value tends to become much larger than the others.
+This implies that with high probability, these functions vary little in all directions but one, making them insuitable for computing representations of manifolds of more than one dimension.
 %direction in which we can vary the input in order to make the function vary
 %As depth increases, the distribution on singular values also becomes heavy-tailed.
 }
 \label{fig:deep_spectrum}
-\end{figure}
+\end{figure}%
 %
-\begin{figure}[h!]
+\begin{figure}[t!]
 \centering
 \begin{tabular}{cc}
 $p(\vx)$ & $p(\vf^{(1)}(\vx))$ \\
@@ -808,22 +803,23 @@ $p(\vf^{(1:4)}(\vx))$ &  $p(\vf^{(1:6)}(\vx))$ \\
 %$p(f_3(f_2(f_1(\vx))))$ & $p(f_4(f_3(f_2(f_1(\vx)))))$ & $p(f_5(f_4(f_3(f_2(f_1(\vx)))))$
 %density of $\vf^{(1:4)}(\vX))$ & density of $\vf^{(1:6)}(\vX))$
 \end{tabular}
-\caption[Visualization of draws from a deep \sgp{}]
-{Visualization of draws from a deep GP.
-A 2-dimensional Gaussian distribution (top left) is warped by successive functions drawn from a GP prior.
+\caption[Points warped by a draw from a deep \sgp{}]
+{Points warped by a function drawn from a deep \gp{} prior.
+\emph{Top left:} Points drawn from a 2-dimensional Gaussian distribution, color-coded by their location.
+\emph{Subsequent panels:} Those same points, successively warped by functions drawn from a \gp{} prior.
 As the number of layers increases, the density concentrates along one-dimensional filaments.}
 \label{fig:filamentation}
 \end{figure}
 %
-Figure \ref{fig:deep_spectrum} shows the singular value spectrum for 5-dimensional deep GPs of different depths.
+\Cref{fig:deep_spectrum} shows the singular value spectrum for 5-dimensional deep GPs of different depths.
 As the net gets deeper, the largest singular value dominates, implying there is usually only one effective degree of freedom in representation being computed.
 
-Figure \ref{fig:filamentation} demonstrates a related pathology that arises when composing functions to produce a deep density model.
-The density in the observed space eventually becomes locally concentrated onto one-dimensional manifolds, or \emph{filaments}, implying that such models are unsuitable to model manifolds whose underlying dimensionality is greater than one.
+\Cref{fig:filamentation} demonstrates a related pathology that arises when composing functions to produce a deep density model.
+The density in the observed space eventually becomes locally concentrated onto one-dimensional manifolds, or \emph{filaments}, again implying that such models are unsuitable to model manifolds whose underlying dimensionality is greater than one.
 
 \newcommand{\mappic}[1]{\hspace{-0.05in}\includegraphics[width=0.465\columnwidth]{\deeplimitsfiguresdir/map/latent_coord_map_layer_#1}} 
 \newcommand{\mappiccon}[1]{\hspace{-0.05in} \includegraphics[width=0.465\columnwidth]{\deeplimitsfiguresdir/map_connected/latent_coord_map_layer_#1}}
-\begin{figure}[h!]
+\begin{figure}
 \centering
 \begin{tabular}{cc}
 Identity Map: $\vy = \vx$ & 1 Layer: $\vy = f^{(1)}(\vx)$ \\
@@ -839,19 +835,22 @@ Identity Map: $\vy = \vx$ & 1 Layer: $\vy = f^{(1)}(\vx)$ \\
 %    \draw[pile, white] (D) -- (Dt) node[right, text width=5em] {};
 %\end{tikzpicture}
 \end{tabular}
-\caption[Feature mapping of a deep \sgp{}]
-{Feature mapping of a deep GP.
-Colors correspond to the location $\vy = \vf(\vx)$ that each point is mapped to after being warped by a deep GP.
-%This figure can be seen as the inverse of figure \ref{fig:filamentation}.  
+\caption[Visualization of a feature map drawn from a deep \sgp{}]
+{A vizualization of the feature map implied by a draw from a deep \gp{}.
+Colors correspond to the location $\vy = \vf(\vx)$ that each point is mapped to after being warped by a deep \gp{}.
 The number of directions in which the color changes rapidly corresponds to the number of large singular values in the Jacobian.
-Just as the densities in figure \ref{fig:filamentation} became locally one-dimensional, there is usually only one direction that one can move $\vx$ in locally to change $\vy$.
+Just as the densities in \cref{fig:filamentation} became locally one-dimensional, there is usually only one direction that one can move $\vx$ in locally to change $\vy$.
 This means that $\vf$ is unlikely to be a suitable representation for decision tasks that depend on more than one aspect of $\vx$.}
 \label{fig:deep_map}
 \end{figure}
 %
-To visualize this pathology in another way, figure \ref{fig:deep_map} illustrates a colour-coding of the representation computed by a deep \gp{}, evaluated at each point in the input space.  After 10 layers, we can see that locally, there is usually only one direction that one can move in $\vx$-space in order to change the value of the computed representation.  This means that such representations are likely to be unsuitable for decision tasks that depend on more than one property of the input.
+To visualize this pathology in another way, \cref{fig:deep_map} illustrates a color-coding of the representation computed by a deep \gp{}, evaluated at each point in the input space.
+After 10 layers, we can see that locally, there is usually only one direction that one can move in $\vx$-space in order to change the value of the computed representation.
+This means that such representations are likely to be unsuitable for decision tasks that depend on more than one property of the input.
 
-To what extent are these pathologies present in nets being used today?  In simulations, we found that for deep functions with a fixed latent dimension $D$, the singular value spectrum remained relatively flat for hundreds of layers as long as $D > 100$.  Thus, these pathologies are unlikely to severely affect relatively shallow, wide networks.
+To what extent are these pathologies present in the types of neural networks commonly used in practice?
+In simulations, we found that for deep functions with a fixed latent dimension $D$, the singular value spectrum remained relatively flat for hundreds of layers as long as $D > 100$.
+Thus, these pathologies are unlikely to severely effect the relatively shallow, wide networks most commonly used in practice.
 
 %This pathology stems from the independence of the layer-wise transformations.  Because
 %As such, in the limit of the network depth approaching infinity, with probability 1 there exists at most a single eigenvalue with magnitude greater than zero, as was suggested by our empirical observations.
@@ -940,24 +939,24 @@ b) Input-connected architecture\\
 \end{tabular}
 \caption[Two different architectures for deep neural networks]
 {Two different architectures for deep neural networks.
-The standard architecture connects each layer's outputs to the next layer's inputs.
-The input-connected architecture also connects the original input $\vx$ to each layer.}
+\emph{Left:} The standard architecture connects each layer's outputs to the next layer's inputs.
+\emph{Right:} The input-connected architecture also connects the original input $\vx$ to each layer.}
 \label{fig:input-connected}
 \end{figure}
 
 
-Following a suggestion from \cite{neal1995bayesian}, we can fix the pathologies exhibited in figures \ref{fig:filamentation} and \ref{fig:deep_map} by simply making each layer depend not only on the output of the previous layer, but also on the original input $\vx$.  
+Following \citet{neal1995bayesian}, we can fix the pathologies exhibited in figures \cref{fig:filamentation} and \ref{fig:deep_map} by simply making each layer depend not only on the output of the previous layer, but also on the original input $\vx$.  
 We refer to these models as \emph{input-connected} networks, and denote deep functions having this architecture with the subscript $C$, as in $f_C(\vx)$.
-Figure \ref{fig:input-connected} shows a graphical representation of the two connectivity architectures.
+\Cref{fig:input-connected} shows a graphical representation of the two connectivity architectures.
 Similar connections between non-adjacent layers can also be found the primate visual cortex \citep{maunsell1983connections}.
 Formally, this functional dependence can be written as
 \begin{align}
 \vf_C^{(1:L)}(\vx) = \vf^{(L)} \left( \vf_C^{(1:L-1)}(\vx), \vx \right), \quad \forall L
 \end{align}
 %
-Draws from the resulting prior are shown in figures \ref{fig:deep_draw_1d_connected}, \ref{fig:no_filamentation} and \ref{fig:deep_map_connected}.
+Visualizations of the resulting prior on functions are shown in \cref{fig:deep_draw_1d_connected,fig:no_filamentation,fig:deep_map_connected}.
 %
-\begin{figure}[t]
+\begin{figure}
 \centering
 \begin{tabular}{cccc}
 \hspace{-0.1in} One layer & \hspace{-0.2in} 2 Layers & \hspace{-0.2in}  5 Layers & \hspace{-0.25in} 10 Layers \\
@@ -968,9 +967,9 @@ Draws from the resulting prior are shown in figures \ref{fig:deep_draw_1d_connec
 \onedsamplepiccon{10}
 \end{tabular}
 \caption[Draws from a 1D deep \sgp{} prior with each layer connected to the input]
-{Draws from a 1D deep \sgp{} prior with each layer connected to the input.
+{Draws from a 1D deep \gp{} prior with each layer connected to the input.
 Even after many layers, the functions remain smooth in some regions, while varying rapidly in other regions.
-Compare to standard-connectivity deep \sgp{} draws shown in figure \ref{fig:deep_draw_1d}.}
+Compare to standard-connectivity deep \gp{} draws shown in \cref{fig:deep_draw_1d}.}
 \label{fig:deep_draw_1d_connected}
 \end{figure}
 %
@@ -997,7 +996,7 @@ Compare to standard-connectivity deep \sgp{} draws shown in figure \ref{fig:deep
 \includegraphics[width=0.464\columnwidth]{\deeplimitsfiguresdir/deep_draws_connected/deep_sample_connected_layer#1}
 }}
 %
-\begin{figure}[h!]
+\begin{figure}
 \centering
 \begin{tabular}{cc}
 %\includegraphics[width=0.3\columnwidth]{\deeplimitsfiguresdir/deep_draws/deep_gp_sample_layer_1} &
@@ -1009,8 +1008,10 @@ Compare to standard-connectivity deep \sgp{} draws shown in figure \ref{fig:deep
 \gpdrawboxcon{3} &
 \gpdrawboxcon{6}
 \end{tabular}
-\caption[Densities defined by a draw from a deep \sgp{}]
-{Densities defined by a draw from a deep \sgp{}, with each layer connected to the input $\vx$.
+\caption[Points warped by a draw from an input-connected deep \sgp{}]
+{Points warped by a draw from a deep \sgp{}, with each layer connected to the input $\vx$.
+\emph{Top left:} Points drawn from a 2-dimensional Gaussian distribution, color-coded by their location.
+\emph{Subsequent panels:} Those same points, successively warped by functions drawn from a \gp{} prior.
 As depth increases, the density becomes more complex without concentrating along filaments.}
 \label{fig:no_filamentation}
 \end{figure}
@@ -1019,7 +1020,7 @@ As depth increases, the density becomes more complex without concentrating along
 %
 %\gpdrawboxcon{6} \\
 %$p(f_3(f_2(f_1(\vx),\vx),\vx))$ & $p(f_4(f_3(f_2(f_1(\vx), \vx),\vx),\vx))$ & $p(f_5(f_4(f_3(f_2(f_1(\vx),\vx),\vx),\vx),\vx))$
-\begin{figure}[h!]
+\begin{figure}
 \centering
 \newcommand{\spectrumpiccon}[1]{
 \includegraphics[trim=4mm 1mm 4mm 2.5mm, clip, width=0.475\columnwidth]{\deeplimitsfiguresdir/spectrum/con-layer-#1}} 
@@ -1035,7 +1036,7 @@ The singular values remain roughly the same scale as one another.}
 \end{figure}
 %
 %
-\begin{figure}[h!]
+\begin{figure}
 \centering
 \begin{tabular}{cc}
 Identity map: $\vy = \vx$ & 2 Connected layers \\
@@ -1044,17 +1045,15 @@ Identity map: $\vy = \vx$ & 2 Connected layers \\
 \hspace{-0.07in} \mappiccon{10} & \mappiccon{20}
 \end{tabular}
 \caption[Feature mapping of an input-connected deep \sgp{}]
-{Feature mapping of a deep GP with each layer connected to the input $\vx$.
-Just as the densities in figure \ref{fig:no_filamentation} remained locally two-dimensional even after many transformations, in this mapping there are often two directions that one can move locally in $\vx$ to in order to change the values of $\vf(\vx)$.
-This means that the prior puts mass on representations which sometimes depend on all aspects of the input.
-Compare to figure \ref{fig:deep_map}.
+{Feature mapping of a deep \gp{} with each layer connected to the input $\vx$.
+Compare to the mappings shown in \cref{fig:deep_map}.
+Just as the densities in \cref{fig:no_filamentation} remained locally two-dimensional even after many warpings, in the mapping shown here there are sometimes two directions that one can move locally in $\vx$ to in order to change the values of $\vf(\vx)$.
+This means that the prior puts mass on a greater variety of types of representations, some of which depend on all aspects of the input.
 }
 \label{fig:deep_map_connected}
 \end{figure}
-%
-%
-%
-%\paragraph{Jacobian of input-connected deep networks}
+
+
 The Jacobian of an input-connected deep function is defined by the recurrence
 %
 \newcommand{\sbi}[2]{\left[ \! \begin{array}{c} #1 \\ #2 \end{array} \! \right]} 
@@ -1069,7 +1068,8 @@ The Jacobian of an input-connected deep function is defined by the recurrence
 %J^{1:L}(x) = J^L \sbi{ J^{L-1} \sbi{ \dots J^{4} \sbi{ J^{3} \sbi{ J^2 J^1 }{ I_D }}{ I_D } \dots }{ I_D \\ %\vdots }}{ I_D}
 %\end{align}
 %
-Figure \ref{fig:good_spectrum} shows that with this architecture, even 50-layer deep \gp{}s have well-behaved singular value spectra.
+which, in the case of a deep \gp{}, is still a product of independent Gaussian matrices.
+\Cref{fig:good_spectrum} shows that with this architecture, even 50-layer deep \gp{}s have well-behaved singular value spectra.
 
 %Connecting the input to each layer is a simple method to correct the pathology exhibited, but it may not
 
