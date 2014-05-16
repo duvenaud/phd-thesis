@@ -706,14 +706,37 @@ iGMM & $-3.28$ & $-2.26$ & $-2.21$ & $-2.12$ & $-1.91$ & $3.00$ & $\mathbf{-1.87
 Code to reproduce all the above experiments is available at \url{github.com/duvenaud/warped-mixtures}.
 
 
+\section{Conclusion}
+
+In this chapter, we introduced a simple generative model of non-Gaussian density manifolds which can infer nonlinearly separable clusters, low-dimensional representations of varying dimension per cluster, and density estimates which smoothly follow data contours.
+We then introduced an efficient sampler for this model which integrates out both the cluster parameters and the warping function exactly.
+We further demonstrated that allowing non-parametric cluster shapes improves clustering performance over the Dirichlet process Mixture of Gaussians.
+
+Many methods have been proposed which can perform some combination of clustering, manifold learning, density estimation and visualization.
+We demonstrated that a simple but flexible probabilistic generative model can perform well at all these tasks.
+
+
 
 \section{Future Work}
 
 %One design decision which may be worth revisiting is the use the same warping for all mixture components.  It would be simple, and typically faster, to use a separate set of GPs to model the warping of each latent cluster.  
+
+\subsubsection{More Sophisticated Latent Density Models}
 The Dirichlet process mixture of Gaussians in the latent space of our model could easily be replaced by a more sophisticated density model, such as a hierarchical Dirichlet process~\citep{teh2006hierarchical}, or a Dirichlet diffusion tree~\citep{neal2003density}.
 Another straightforward extension of our model would be making inference more scalable by using sparse Gaussian processes~\citep{quinonero2005unifying,snelson2006sparse} or more advanced Hamiltonian Monte Carlo methods~\citep{zhang2011quasi}.
 An interesting but more complex extension of the \iwmm{} would be a semi-supervised version of the model.
-The \iwmm{} could allow label propagation along regions of high density in the latent space, even if those regions were stretched along low-dimensional manifolds in the observed space.  Another natural extension would be to allow a separate warping for each cluster, which would also improve inference speed.
+The \iwmm{} could allow label propagation along regions of high density in the latent space, even if the individual points in those regions are stretched far apart along low-dimensional manifolds in the observed space.
+Another natural extension would be to allow a separate warping for each cluster, producing a mixture of warped Gaussians, rather than a warped mixture of Gaussians.% which would also improve inference speed.
+
+
+\subsubsection{Learning the Topology of Data Manifolds}
+
+Some datasets naturally live on manifolds which aren't simply connected.
+For example, motion capture data or video of a person walking in a circle naturally lives on a torus, with one coordinate specifying the phase of the person's step, and another specifying how far around the circle they've walked.
+
+%What if we were to use the structured kernels of \cref{ch:kernels,ch:grammar} to specify the prior on warpings?
+As shown in \cref{sec:topological-manifolds}, using structured kernels to specify the warping of a latent space gives rise to interesting topologies on the observed density manifold.
+If a suitable method for computing the marginal likelihood of a \gplvm{} is available, an automatic search similar to that of \cref{ch:grammar} would be possible, automatically finding the topology of the data manifold.
 
 % Todo:  Cite paper from Jeff's talk that suggests using DP mixtures to estimate the number of clusters.
 
@@ -743,14 +766,6 @@ The \iwmm{} could allow label propagation along regions of high density in the l
 %\end{table*}
 %
 
-\section{Conclusion}
-
-In this chapter, we introduced a simple generative model of non-Gaussian density manifolds which can infer nonlinearly separable clusters, low-dimensional representations of varying dimension per cluster, and density estimates which smoothly follow data contours.
-We then introduced an efficient sampler for this model which integrates out both the cluster parameters and the warping function exactly.
-We further demonstrated that allowing non-parametric cluster shapes improves clustering performance over the Dirichlet process Mixture of Gaussians.
-
-Many methods have been proposed which can perform some combination of clustering, manifold learning, density estimation and visualization.
-We demonstrated that a simple but flexible probabilistic generative model can perform well at all these tasks.
 
 %In contrast to the many somewhat ad-hoc clustering, manifold learning, density estimation, and visualization methods introduced recently, we show that a simple generative model can perform well at all of these tasks.
 

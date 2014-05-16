@@ -162,7 +162,8 @@ Sparse spectrum \gp{}s & $\sum \cos \kernplus \kWN$ & \citep{lazaro2010sparse} \
 Spectral mixture & $\sum \SE \kerntimes \cos \kernplus \kWN$ & \citep{WilAda13} \\
 Changepoints & \eg $\kCP(\kSE, \kSE) \kernplus \kWN$ & \citep[e.g.][]{garnett2010sequential} \\
 Time-changing variance & \eg $\kSE \kernplus \kLin \kerntimes \kWN$ & \\
-Additive + Flexible & $ \sum_d \kSE_d \kernplus \prod_d \kSE_d$ & \citep{plate1999accuracy} 
+Additive + Flexible & $ \sum_d \kSE_d \kernplus \prod_d \kSE_d$ & \citep{plate1999accuracy} \\
+Additive \gp{}s & $ \sum_{\vr \in \{0,1\}^D} \prod_{d \in \vr} \kSE_d$ & \cref{ch:additive}
 \end{tabular}
 \caption[Common regression models expressible in the kernel language]
 {Common regression models expressible by sums and products of base kernels.
