@@ -219,6 +219,12 @@ Other example reports can be found at \url{mlg.eng.cam.ac.uk/Lloyd/abcdoutput/},
 
 \subsubsection{Detailed Definition of Model}
 
+The \iwmm{} assumes that the latent density is an infinite mixture of Gaussians:
+\begin{align}
+p(\vx ) = \sum_{c=1}^{\infty} \lambda_c \, {\cal N}(\vx|\bm{\mu}_{c},\vR_{c}\inv)
+\end{align}
+where $\lambda_{c}$, $\bm{\mu}_{c}$ and $\vR_{c}$ is the mixture weight, mean, and precision matrix of the $c^{\text{\tiny th}}$ mixture component.
+%
 To ensure a conjugate likelihood, we place Gaussian-Wishart priors on the Gaussian parameters
 $\{\bm{\mu}_{c},\vR_{c}\}$,
 \begin{align}
@@ -288,7 +294,7 @@ p(\vY,\vX,\vZ|\bm{\theta},\bm{S},\nu,\vu,r,\eta)
 \label{eq:joint}
 \end{align}
 %
-where factors in the right hand side can be calculated by (\ref{eq:py_x}), (\ref{eq:px_z}) and (\ref{eq:pz}), respectively.
+where factors in the right hand side can be calculated by equations \eqref{eq:py_x}, \eqref{eq:px_z} and \eqref{eq:pz}, respectively.
 
 \subsubsection{Generative Model}
 
@@ -325,8 +331,8 @@ $m(\vx)$ is the mean function of the Gaussian process, and $\vx,\vx'\in{\mathbb 
 \subsubsection{Details of Inference}
 \label{sec:iwmm-inference-details}
 
-First, by placing conjugate Gaussian-Wishart priors on the parameters of the Gaussian mixture components, we can analytically integrate out those parameters given the assignments of points to clusters.
-The only remaining variables to infer will be the latent points $\vX$, the cluster assignments $Z$, and the kernel parameters $\vtheta$.
+By placing conjugate Gaussian-Wishart priors on the parameters of the Gaussian mixture components, we can analytically integrate out those parameters given the assignments of points to clusters.
+The only remaining variables to infer will be the latent points $\vX$, the cluster assignments $\vZ$, and the kernel parameters $\vtheta$.
 
 We can then infer the posterior distribution of the latent coordinates $\vX$ and cluster assignments $\vZ$ using Markov chain Monte Carlo (\mcmc{}).
 In particular, we'll alternate collapsed Gibbs sampling of $\vZ$ and Hamiltonian Monte Carlo sampling of $\vX$.
@@ -375,12 +381,14 @@ Hamiltonian Monte Carlo (\HMC{}) sampling of $\vX$ from posterior ${p(\vX|\vZ,\v
 %
 \begin{align}
 \log p(\vY|\vX,\bm{\theta}) + \log p(\vX|\vZ,\bm{S},\nu,\vu,r)
+\label{eq:warped-hmc1}
 \end{align}
 %
 The first term of the gradient can be calculated by
 %
 \begin{align}
-\pderiv{\log p(\vY | \vX,\bm{\theta})}{\vX} =  \pderiv{\log p(\vY | \vX,\bm{\theta})}{\vK} \pderiv{\vK}{\vX} = \left[ -\frac{1}{2}D\vK\inv+\frac{1}{2}\vK\inv \vY \vY^{T} \vK\inv \right]\left[\pderiv{\vK}{\vX}\right], 
+\pderiv{\log p(\vY | \vX,\bm{\theta})}{\vX} =  \pderiv{\log p(\vY | \vX,\bm{\theta})}{\vK} \pderiv{\vK}{\vX} = \left[ -\frac{1}{2}D\vK\inv+\frac{1}{2}\vK\inv \vY \vY^{T} \vK\inv \right]\left[\pderiv{\vK}{\vX}\right],
+\label{eq:warped-hmc2}
 \end{align}
 %
 where for an $\kSE + \kWN$ kernel with the same lengthscale $\ell$ on all dimensions,
@@ -388,6 +396,7 @@ where for an $\kSE + \kWN$ kernel with the same lengthscale $\ell$ on all dimens
 \begin{align}
 \pderiv{k(\vx_{n},\vx_{m})}{\vx_n}
  & = -\frac{\sigma^2_f}{\ell^2} \exp \left( - \frac{1}{2 \ell^2} (\vx_n - \vx_m)\tra (\vx_n - \vx_m) \right) (\vx_n - \vx_m).
+ \label{eq:warped-hmc3}
 \end{align}
 %
 %using the chain rule.
@@ -395,6 +404,7 @@ The second term can be calculated as follows:
 \begin{align}
 \frac{\partial \log p(\vX|\vZ,\bm{S},\nu,\vu,r)}{\partial \vx_{n}} 
 = -\nu_{z_{n}}\bm{S}_{z_{n}}\inv(\vx_{n}-\vu_{z_{n}}).
+\label{eq:warped-hmc4}
 \end{align}
 We also infer kernel parameters $\vtheta$ via \HMC{}, using the gradient of the log unnormalized posterior with respect to the kernel parameters, and an improper uniform prior.
 
@@ -405,7 +415,7 @@ We also infer kernel parameters $\vtheta$ via \HMC{}, using the gradient of the 
 \label{sec:iwmm-predictive-density}
 
 In the \gplvm{}, the predictive density of at test point $\vy_\star$ is usually computed by finding the point $\vx_\star$ which which is most likely to be mapped to $\vy_\star$, then using the density of $p(\vx_\star)$ and the Jacobian of the warping at that point to approximately compute the density at $\vy_\star$.
-When inference is done by simply optimizing the location of the latent points, this estimation method simply requires solving a single optimization for each $\vy_\star$.  
+When inference is done by optimizing the location of the latent points, this estimation method only requires solving a single optimization for each $\vy_\star$.  
 
 For our model, we use approximate integration to estimate $p(\vy_\star)$.
 This is done for two reasons:
@@ -413,7 +423,7 @@ First, multiple latent points (possibly from different clusters) can map to the 
 Second, because we do not optimize the latent coordinates but rather sample them, we would need to perform optimizations for each $p(\vy_\star)$ seperately for each sample.
 Our method gives estimates for all $p(\vy_\star)$ at once, but may not be accurate in very high dimensions.
 
-The posterior density in the observed space given the training data is simply:
+The posterior density in the observed space given the training data is
 \begin{align}
 p(\vy_\star | \vY)
 & = \int \!\!\! \int p(\vy_\star,\vx_\star, \vX | \vY)d\vx_\star d\vX \nonumber\\
@@ -448,149 +458,12 @@ $\vk_\star=( k(\vx_\star, \vx_1), \cdots, k(\vx_\star, \vx_N))\tra$.
 Each step of this sampling procedure draws from the exact conditional distribution, so the Monte Carlo estimate of the predictive density $p(\vy_\star | \vX, \vY)$ will converge to the true marginal distribution.
 Since the observations $\vy_\star$ are conditionally normally distributed, each one adds a smooth contribution to the empirical Monte Carlo estimate of the posterior density, as opposed to a collection of point masses.
 
+\subsubsection{Source Code}
+
+A reference implementation of the above algorithms is available at \url{github.com/duvenaud/warped-mixtures}.
 
 \outbpdocument{
 \bibliographystyle{plainnat}
 \bibliography{references.bib}
 }
-
-
-\iffalse
-
-\section{Guide to the automatically generated reports}
-
-Additional supplementary material to this paper is 13 reports automatically generated by \procedurename{}.
-A link to these reports will be maintained at \url{http://mlg.eng.cam.ac.uk/lloyd/}.
-We recommend that you read the report for `01-airline' first and review the reports that follow afterwards more briefly.
-`02-solar' is discussed in the main text.
-`03-mauna' analyses a dataset mentioned in the related work.
-`04-wheat' demonstrates changepoints being used to capture heteroscedasticity.
-`05-temperature' extracts an exactly periodic pattern from noisy data.
-`07-call-centre' demonstrates a large discontinuity being modeled by a changepoint.
-`10-sulphuric' combines many changepoints to create a highly structured model of the data.
-`12-births' discovers multiple periodic components.
-
-\fi
-
-
-\iffalse
-
-
-\section{Comparison of Predictive Accuracy}
-\label{sec:accuracy-appendix}
-
-
-\subsection{Interpolation}
-\label{sec:interpolation-appendix}
-
-To test the ability of the methods to interpolate, we randomly divided each data set into equal amounts of training data and testing data.
-We trained each algorithm on the training half of the data, produced predictions for the remaining half and then computed the root mean squared error (\RMSE{}).
-The values of the \RMSE{}s are then standardised by dividing by the smallest RMSE for each data set \ie the best performance on each data set will have a value of 1.
-
-\Cref{fig:box_interp} shows the standardised \RMSE{}s for the different algorithms.
-The box plots show that all quartiles of the distribution of standardised RMSEs are lower for both versions of \procedurename{}.
-The median for \procedurename{}-accuracy is 1; it is the best performing algorithm on 7 datasets.
-The largest outliers of \procedurename{} and spectral kernels are similar in value.
-
-\begin{figure*}[ht]
-\centering
-\includegraphics[width=\textwidth]{\grammarfiguresdir/comparison/box_interp}
-\caption[Comparision of interpolation error of all methods on 13 time-series datasets.]
-{Box plot of standardised \RMSE{} (best performance = 1) on 13 interpolation tasks.}
-\label{fig:box_interp}
-\end{figure*}
-
-Changepoints performs slightly worse than \MKL{} despite being strictly more general than Changepoints.
-The introduction of changepoints allows for more structured models, but it introduces parametric forms into the regression models (\ie the sigmoids expressing the changepoints).
-This results in worse interpolations at the locations of the change points, suggesting that a more robust modeling language would require a more flexible class of changepoint shapes or improved inference (\eg fully Bayesian inference over the location and shape of the changepoint).
-
-Eureqa is not suited to this task and performs poorly.
-The models learned by Eureqa tend to capture only broad trends of the data since the fine details are not well explained by parametric forms.
-
-\subsection{Tabels of standardised RMSEs}
-
-See table~\ref{table:interp} for raw interpolation results and table~\ref{table:extrap} for raw extrapolation results. 
-The rows follow the order of the datasets in the rest of the supplementary material.
-The following abbreviations are used: \procedurename{}-accuracy (\procedurename{}-acc), \procedurename{}-interpretability ((\procedurename{}-int), Spectral kernels (SP), Trend-cyclical-irregular (TCI), Bayesian MKL (MKL), Eureqa (EL), Changepoints (CP), Squared exponential (SE) and Linear regression (Lin).
-
-\begin{table*}[ht]
-\center
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
-\hline
-\procedurename{}-acc & \procedurename{}-int & SP & TCI & MKL & EL & CP & SE & Lin \\
-\hline
-1.04 & 1.00 & 2.09 & 1.32 & 3.20 & 5.30 & 3.25 & 4.87 & 5.01\\
-1.00 & 1.27 & 1.09 & 1.50 & 1.50 & 3.22 & 1.75 & 2.75 & 3.26\\
-1.00 & 1.00 & 1.09 & 1.00 & 2.69 & 26.20 & 2.69 & 7.93 & 10.74\\
-1.09 & 1.04 & 1.00 & 1.00 & 1.00 & 1.59 & 1.37 & 1.33 & 1.55\\
-1.00 & 1.06 & 1.08 & 1.06 & 1.01 & 1.49 & 1.01 & 1.07 & 1.58\\
-1.50 & 1.00 & 2.19 & 1.37 & 2.09 & 7.88 & 2.23 & 6.19 & 7.36\\
-1.55 & 1.50 & 1.02 & 1.00 & 1.00 & 2.40 & 1.52 & 1.22 & 6.28\\
-1.00 & 1.30 & 1.26 & 1.24 & 1.49 & 2.43 & 1.49 & 2.30 & 3.20\\
-1.00 & 1.09 & 1.08 & 1.06 & 1.30 & 2.84 & 1.29 & 2.81 & 3.79\\
-1.08 & 1.00 & 1.15 & 1.19 & 1.23 & 42.56 & 1.38 & 1.45 & 2.70\\
-1.13 & 1.00 & 1.42 & 1.05 & 2.44 & 3.29 & 2.96 & 2.97 & 3.40\\
-1.00 & 1.15 & 1.76 & 1.20 & 1.79 & 1.93 & 1.79 & 1.81 & 1.87\\
-1.00 & 1.10 & 1.03 & 1.03 & 1.03 & 2.24 & 1.02 & 1.77 & 9.97\\
-\hline
-\end{tabular}
-\caption[Interpolation error]{Interpolation standardised RMSEs}
-\label{table:interp}
-\end{table*}
-
-\begin{table*}[ht]
-\center
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
-\hline
-\procedurename{}-acc & \procedurename{}-int & SP & TCI & MKL & EL & CP & SE & Lin \\
-\hline
-1.14 & 2.10 & 1.00 & 1.44 & 4.73 & 3.24 & 4.80 & 32.21 & 4.94\\
-1.00 & 1.26 & 1.21 & 1.03 & 1.00 & 2.64 & 1.03 & 1.61 & 1.07\\
-1.40 & 1.00 & 1.32 & 1.29 & 1.74 & 2.54 & 1.74 & 1.85 & 3.19\\
-1.07 & 1.18 & 3.00 & 3.00 & 3.00 & 1.31 & 1.00 & 3.03 & 1.02\\
-1.00 & 1.00 & 1.03 & 1.00 & 1.35 & 1.28 & 1.35 & 2.72 & 1.51\\
-1.00 & 2.03 & 3.38 & 2.14 & 4.09 & 6.26 & 4.17 & 4.13 & 4.93\\
-2.98 & 1.00 & 11.04 & 1.80 & 1.80 & 493.30 & 3.54 & 22.63 & 28.76\\
-3.10 & 1.88 & 1.00 & 2.31 & 3.13 & 1.41 & 3.13 & 8.46 & 4.31\\
-1.00 & 2.05 & 1.61 & 1.52 & 2.90 & 2.73 & 3.14 & 2.85 & 2.64\\
-1.00 & 1.45 & 1.43 & 1.80 & 1.61 & 1.97 & 2.25 & 1.08 & 3.52\\
-2.16 & 2.03 & 3.57 & 2.23 & 1.71 & 2.23 & 1.66 & 1.89 & 1.00\\
-1.06 & 1.00 & 1.54 & 1.56 & 1.85 & 1.93 & 1.84 & 1.66 & 1.96\\
-3.03 & 4.00 & 3.63 & 3.12 & 3.16 & 1.00 & 5.83 & 5.35 & 4.25\\
-\hline
-\end{tabular}
-\caption[Extrapolation error]{Extrapolation standardised RMSEs}
-\label{table:extrap}
-\end{table*}
-
-\fi
-
-
-\iffalse
-
-\subsection{Comparison to Equation Learning}
-\label{sec:eqn-learning-comp}
-
-We now compare the descriptions generated by \procedurename{} to parametric functions produced by an equation learning system.
-We show equations produced by Eureqa \citep{Eureqa} for the data sets shown above, using the default mean absolute error performance metric.
-
-The learned function for the solar irradiance data is
-\begin{align*}
-\textrm{Irradiance($t$)} = 1361 + \alpha\sin(\beta + \gamma t)\sin(\delta + \epsilon t^2 - \zeta t)
-\end{align*}
-where $t$ is time and constants are replaced with symbols for brevity.
-This equation captures the constant offset of the data, and models the long-term trend with a product of sinusoids, but fails to capture the solar cycle or the Maunder minimum.
-
-The learned function for the airline passenger data is
-\begin{align*}
-\textrm{Passengers($t$)} = \alpha t + \beta\cos(\gamma - \delta t)\textrm{logistic}(\epsilon t - \zeta) - \eta
-\end{align*}
-which captures the approximately linear trend, and the periodic component with approximately linearly (logistic) increasing amplitude.
-However, the annual cycle is heavily approximated by a sinusoid and the model does not capture heteroscedasticity.
-
-\fi
-
-
-
-
 
