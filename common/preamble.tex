@@ -35,15 +35,16 @@
 \usepackage{array}
 \usepackage{fp}
 \usepackage[hyperpageref]{backref}
-\def\foo{\hspace{\fill}\mbox{}\linebreak[0]\hspace*{\fill}}
+%\def\foo{\hspace{\fill}\mbox{}\linebreak[0]\hspace*{\fill}}
+%\def\foo{\parbox{3cm}{\hfill}
 \renewcommand*{\backref}[1]{}
 \renewcommand*{\backrefalt}[4]{%
 \ifcase #1 %
 %
 \or
-\foo(page #2)%
+\mbox{(page #2)}%
 \else
-\foo(pages #2)%
+\mbox{(pages #2)}%
 \fi
 }
 

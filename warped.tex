@@ -285,7 +285,7 @@ This procedure was used to generate the plots of posterior density in \cref{fig:
 \section{Related Work}
 \label{sec:iwmm-related-work}
 
-The literature on manifold learning and dimensionality reduction is extensive.
+The literature on manifold learning, clustering and dimensionality reduction is extensive.
 In this section, we try to highlight the most relevant related work.
 
 \subsubsection{Extensions to the \sgplvm{}}
@@ -328,14 +328,17 @@ In contrast, the \iwmm{} infers the mapping function such that the latent co-ord
 %mixture of ppca \citep{tipping1999mixtures}
 %one Gaussian process function
 
+\subsubsection{Nonparametric Cluster Shapes}
+
+To the best of our knowledge, the only other Bayesian clustering method with nonparametric cluster shapes is due to \citet{rodriguez2012univariate}, who for one-dimensional data introduce a nonparametric model of \emph{unimodal} clusters, where each cluster's density function strictly decreases away from its mode.
+
+
 \subsubsection{Deep Gaussian Processes}
 
 If we wish to construct a \gplvm{} with a more structured density $p(\vx)$ in the latent space, one elegant solution is to use another \gplvm{} to model the latent coordinates $\vX$.
 This latent \gplvm{} can have another \gplvm{} modeling its latent space, etc.
 This is exactly the model class considered by \cite{damianou2012deep}, who also test to what extent each layer's latent representation implicitly forms clusters.
 They found that when modeling \MNIST{} hand-written digits, nearest-neighbour classification performed best in the 4th layer of a 5-layer deep nested \gplvm{}, suggesting that the latent density might have implicitly been forming clusters at that level.
-
-
 
 
 \section{Experimental Results}
