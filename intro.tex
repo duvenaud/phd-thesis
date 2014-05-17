@@ -176,7 +176,7 @@ There are, unfortunately, several issues which make usage of \gp{}s sometimes di
 
 \item {\bf Slow inference.}
 Computing the matrix inverse in \cref{eq:gp_marg_lik,eq:predictive} takes $\mathcal{O}(N^3)$ time, making inference slow for more than about 1000 datapoints.
-However, this problem can be addressed by approximate inference schemes \citep{snelson2006sparse, quinonero2005unifying, hensman2013gaussian}.  Most \gp{} software packages implement several of these methods \citep{GPML, VanRiiHarJylVeh14}.
+However, this problem can be addressed by approximate inference schemes \citep{snelson2006sparse, quinonero2005unifying, hensman2013gaussian}.  Most \gp{} software packages implement several of these methods \citep{GPy, GPML, VanRiiHarJylVeh14}.
 
 \item {\bf Light tails of the predictive distribution.}
 The predictive distribution of a standard \gp{} model is Gaussian.
