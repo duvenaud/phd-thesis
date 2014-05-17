@@ -10,13 +10,31 @@
 \hspace*{\fill} - Bernhard Sch\"{o}lkopf, personal communication
 \end{quotation}
 
+Previous chapters showed how the probabilistic nature of \gp{}s lets us automatically include an appropriate amount of structure, and the right kind, when building models of functions.
+In this chapter, we'll show that we can also take advantage of this property when we compose \gp{}s with other models.
+Besides simply learning the right amount of complexity of the function modeled by a \gp{}, we can automatically trade off complexity between the \gp{} and the other parts of the model.
 
-A mixture of Gaussians fit to a single curved or heavy-tailed cluster will report that the data contains many clusters.  
-To produce more appropriate clusterings, we introduce a model which warps a latent mixture of Gaussians to produce nonparametric cluster shapes.  
-The possibly low-dimensional latent mixture model allows us to summarize the properties of the high-dimensional clusters (or density manifolds) describing the data.  
-The number of manifolds, as well as the shape and dimension of each manifold is automatically inferred.
-We derive a simple inference scheme for this model which analytically integrates out both the mixture parameters and the warping function.  
-We show that our model is effective for density estimation, performs better than infinite Gaussian mixture models at recovering the true number of clusters, and produces interpretable summaries of high-dimensional datasets.
+We'll consider a simple example: a Gaussian mixture model, warped by a draw from a \gp{}.
+This model will produce clusters with arbitrary shapes, depending on the warping.
+More generalliy, this model lets us automatically infer the number, dimension, and shape of a set of nonlinear manifolds, and summarize those manifolds in a low-dimensional latent space.
+We call the proposed model the {\it infinite warped mixture model} (\iwmm{}).
+\Cref{fig:generative} shows a set of manifolds and datapoints sampled from the prior defined by this model.
+
+
+
+%The possibly low-dimensional latent mixture model allows us to summarize the properties of the high-dimensional clusters (or density manifolds) describing the data.  
+%The number of manifolds, as well as the shape and dimension of each manifold is automatically inferred.
+%We derive a simple inference scheme for this model which analytically integrates out both the mixture parameters and the warping function.  
+%We show that our model is effective for density estimation, performs better than infinite Gaussian mixture models at recovering the true number of clusters, and produces interpretable summaries of high-dimensional datasets.
+
+
+
+The work comprising the bulk of this chapter was done in collaboration with Tomoharu Iwata and Zoubin Ghahramani, and appeared in \citep{IwaDuvGha12}.
+Specifically, the main idea was borne out of a conversation between Tomo and myself, and together we wrote almost all of the code together as well as the paper.
+Tomo ran most of the experiments.
+Zoubin Ghahramani provided guidance and many helpful suggestions throughout the project.
+
+
 %We introduce a flexible class of mixture models for clustering and density estimation. Our model 
 %describes clusters as nonlinear manifolds, automatically infers the number of clusters, produces a potentially low-dimensional latent representation, and produces a density estimate. Our approach makes use of two tools from Bayesian nonparametrics: a Dirichlet process mixture model to allow an unbounded number of clusters, and a Gaussian process warping function to allow each cluster to have a complex shape. We derive a simple inference scheme for this model 
 %which analytically integrates out both the mixture parameters and the warping function.  We show that our model is effective for density estimation, and performs better than infinite Gaussian mixture models at discovering meaningful clusters.
@@ -25,11 +43,138 @@ We show that our model is effective for density estimation, performs better than
 
 
 
-Probabilistic mixture models are often used for clustering.
-However, if the mixture components are parametric (e.g. Gaussian), then the clustering obtained can be heavily dependent on how well each actual cluster can be modeled by a Gaussian.
-For example, a heavy tailed or curved cluster may need many components to model it.
-Thus, although mixture models are widely used for probabilistic clustering, their assumptions are generally inappropriate if the primary goal is to discover clusters in data.
-Dirichlet process mixture models can alleviate the problem of an unknown number of clusters, but this does not address the problem that real clusters may not be well matched by any parametric density.
+%Probabilistic mixture models are often used for clustering.
+%However, if the mixture components are parametric (e.g. Gaussian), then the clustering obtained can be heavily dependent on how well each actual cluster can be modeled by a Gaussian.
+%For example, a heavy tailed or curved cluster may need many components to model it.
+%Thus, although mixture models are widely used for probabilistic clustering, their assumptions are generally inappropriate if the primary goal is to discover clusters in data.
+%Dirichlet process mixture models can alleviate the problem of an unknown number of clusters, but this does not address the problem that real clusters may not be well matched by any parametric density.
+
+%\section{Introduction}
+
+
+%In this chapter, we propose a nonparametric Bayesian model that can find non-linearly separable clusters with complex shapes.
+%The proposed model assumes that each observation has coordinates in a latent space, and is generated by warping the latent coordinates via a nonlinear function from the latent space to the observed space.
+%By this warping, complex shapes in the observed space can be modeled by simpler shapes in the latent space.
+
+%In the latent space, we assume an infinite Gaussian mixture model~\citep{rasmussen2000infinite}, which allows us to automatically infer the number of clusters.
+%
+%By using infinite mixture models 
+%based on Dirichlet processes~\citep{ferguson1973bayesian},
+%we can automatically infer the number of components from the data.
+%For the prior on the nonlinear mapping function, we use a \gp{}.
+%Gaussian processes~\citep{rasmussen38gaussian}, which enable us to flexibly infer the nonlinear warping function from the data.
+%, when the observed and latent spaces are both two-dimensional.
+
+%The proposed model is nonparametric Bayesian in two senses: it uses a Dirichlet process to model the number of mixture components, and Gaussian processes to model the shape of each component.
+%To our knowledge this is the first probabilistic generative model for clustering with flexible nonparametric component densities.
+
+%This chapter has the standard structure of a Bayesian nonparametric machine learning paper.
+%First, we describe the model in \cref{sec:gplvm,sec:iwmm-definition}.
+%Then we derive a Markov chain Monte Carlo (\mcmc{}) inference procedure for the \iwmm{} in \cref{sec:iwmm-inference}.
+%\Cref{sec:iwmm-related-work} reviews related work, and \cref{sec:iwmm-experiments} demonstrates the new abilities of the model.
+
+%In particular, we sample the cluster assignments using Gibbs sampling, sample the latent coordinates using Hamiltonian Monte Carlo, and analytically integrate out both the mixture parameters (weights, means and covariance matrices), and the nonlinear warping function. 
+
+%In particular, we iteratively infer the infinite Gaussian mixture model in the latent space by using Gibbs sampling, the latent coordinates and nonlinear function by using the Hamiltonian Monte Carlo.
+
+
+
+
+
+\section{The Gaussian Process Latent Variable Model}
+\label{sec:gplvm}
+
+Besides being useful for modeling functions, a simple extension allows \gp{}s to be useful for general density modeling, at the cost of inference becoming non-analytic.
+The \gplvm{} can also be thought of as a method for modeling the covariance between rows of $Y$, using a number of parameters which grows only linearly with $N$.
+
+
+\begin{figure}[t]
+\begin{centering}
+\includegraphics[width=\textwidth]{\gplvmfiguresdir/gplvm_1d_draw_9}
+\end{centering}
+\caption[One-dimensional Gaussian process latent variable model]{A visual representation of the Gaussian process latent variable model (\gplvm). 
+\emph{Bottom:} the density of a set of samples from a 1D Gaussian, specifying the distribution $p(\vX)$ in the latent space.
+\emph{Top Right:} A function drawn from a \gp{} prior.
+\emph{Left:} A nonparametric density defined by warping the latent density through the sampled function.} 
+\label{fig:oned-gplvm}
+\end{figure}
+
+
+
+\begin{figure}
+\begin{centering}
+{\begin{tabular}{cccc}
+\phantom{h} & Latent space $p(\vX)$ & & Observed space $p(\vY)$ \\
+& \fbox{\includegraphics[height=15em,width=15em]{\gplvmfiguresdir/gplvm-latent-crop}} &
+\raisebox{7em}{$\overset{\mathlarger{f(x)}}{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\rightarrow}}}}}}}}$} &
+%\raisebox{7em}{\Huge $\overset{\textnormal{\Large{GP}}}\rightarrow$} &
+\fbox{\includegraphics[height=15em,width=15em]{\gplvmfiguresdir/gplvm-draw-crop}}
+\end{tabular}}
+\end{centering}
+\caption[Two-dimensional Gaussian process latent variable model]{A visual representation of the Gaussian process latent variable model.
+\emph{Left:}  Isocontours and samples from a 2D Gaussian, specifying the distribution $p(\vX)$ in the latent space. 
+\emph{Right:} Density and samples from a nonparametric density defined by warping the latent density through a function drawn from a \gp{} prior.}  
+\label{fig:twod-gplvm}
+\end{figure}
+
+
+
+The \iwmm{} can be viewed as an extension to the \gplvm{}, a probabilistic model of nonlinear manifolds.
+% which can be viewed as a special case of the \iwmm{}.
+%The \iwmm{} can be viewed as an extension of the Gaussian process latent variable model (GPLVM)~\citep{lawrence2004gaussian}.  
+%The \gplvm{} is a probabilistic model of nonlinear manifolds.
+%While not typically thought of as a density model, the \gplvm{} does in fact define a posterior density over observations~\citep{nickisch2010gaussian}.
+The \gplvm{} smoothly warps a Gaussian density into a more complicated distribution, using a draw from a \gp{}.
+Usually, we think of the Gaussian density as living in a latent space having $Q$ dimensions, and the warped density living in the observed space having $D$ dimensions.
+
+A standard definition of the \gplvm{} is as follows:
+%
+\begin{align}
+\textnormal{latent coordinates } \vX = (\vx_1, \vx_2, \ldots, \vx_{N})\tra & \simiid \N{\vx}{0}{\vI_Q} \\
+\textnormal{warping functions } \vf = (f_1, f_2, \ldots, f_D)\tra & \simiid \GPt{0}{\kSE \kernplus \kWN} \\
+\textnormal{observed datapoints } \vY = (\vy_1, \vy_2, \ldots, \vy_N)\tra & = \vf(\vX)
+\end{align}
+
+
+%Suppose that we have a set of observations
+%$\vY = (\vy_1,\ldots,\vy_N)\tra$,
+%where $\vy_n \in {\mathbb R}^D$,
+%and they are associated with a set of latent coordinates
+%$\vX = (\vx_1,\ldots,\vx_{N})\tra$,
+%where $\vx_n \in {\mathbb R}^Q$.
+%The \gplvm{} assumes that observations are generated by mapping the latent coordinates through a set of smooth functions, over which Gaussian process priors are placed.
+Under the \gplvm{}, the probability of observations given the latent coordinates integrating out the mapping functions, is simply a product of multivariate normals:
+\begin{align}
+p(\vY | \vX, \vtheta) 
+& = \prod_{d=1}^D p(\vY_{:,d} | \vX, \vtheta) = \prod_{d=1}^D \N{\vY_{:,d}}{0}{\vK_\vtheta} \\ 
+& = (2 \pi)^{-\frac{DN}{2}}  |\vK|^{-\frac{D}{2}} \exp \left( -\frac{1}{2} {\rm tr}( \vY\tra \vK\inv \vY) \right),
+\label{eq:py_x}
+\end{align}
+%where $\vK$ is the $N \times N$ covariance matrix defined 
+%by the kernel function $k(\vx_{n},\vx_{m})$,
+where $\vtheta$ are the kernel parameters and $\vK$ is the Gram matrix $k(\vX, \vX)$.
+%In this chapter, we use an \kSE + \kWN kernel.
+% with an additive noise term:
+%\begin{align}
+%k(\vx_{n},\vx_{m}) &= \alpha \exp\left( - \frac{1}{2 \ell^2}(\vx_n - \vx_m)\tra (\vx_n - \vx_m) \right) 
+%+ \delta_{nm} \beta\inv.
+%\end{align}
+%where $\alpha$ is 
+%$\ell$ is the length scale,
+%and $\beta$ is the variance of the additive noise.
+%This likelihood is simply the product of $D$ independent Gaussian process likelihoods, one for each output dimension.
+
+Typically, the \gplvm{} is used for dimensionality reduction or visualization, and the latent coordinates are set by maximizing \eqref{eq:py_x}.
+In that setting, the Gaussian prior density on $\vx$ is essentially a regularizer which keeps the latent coordinates from spreading arbitrarily far apart.  
+In contrast, we'll integrate out the latent coordinates, and place a more flexible parameterization on $p(\vx)$ than a single isotropic Gaussian.
+Just as the \gplvm{} can be viewed as a manifold learning algorithm, the \iwmm{} can be viewed as learning a set of manifolds, one for each cluster.
+
+
+
+
+
+\section{The Infinite Warped Mixture Model}
+\label{sec:iwmm-definition}
 
 \begin{figure}
 \centering
@@ -47,234 +192,43 @@ A sample from the \iwmm{} prior.
 \label{fig:generative}
 \end{figure}
 
-In this chapter, we propose a nonparametric Bayesian model that can find non-linearly separable clusters with complex shapes.
-The proposed model assumes that each observation has coordinates in a latent space, and is generated by warping the latent coordinates via a nonlinear function from the latent space to the observed space.
-By this warping, complex shapes in the observed space can be modeled by simpler shapes in the latent space.
-In the latent space, we assume an infinite Gaussian mixture model~\citep{rasmussen2000infinite}, which allows us to automatically infer the number of clusters.
-%
-%By using infinite mixture models 
-%based on Dirichlet processes~\citep{ferguson1973bayesian},
-%we can automatically infer the number of components from the data.
-For the prior on the nonlinear mapping function, we use Gaussian processes~\citep{rasmussen38gaussian}, which enable us to flexibly infer the nonlinear warping function from the data.
-We call the proposed model the {\it infinite warped mixture model} (iWMM).
-Figure \ref{fig:generative} shows a set of manifolds and datapoints sampled from the prior defined by this model.%, when the observed and latent spaces are both two-dimensional.
-
-%The proposed model is nonparametric Bayesian in two senses: it uses a Dirichlet process to model the number of mixture components, and Gaussian processes to model the shape of each component.
-To our knowledge this is the first probabilistic generative model for clustering with flexible nonparametric component densities.
-Since the proposed model is generative, it can be used for density estimation as well as clustering. It can also be extended to handle missing data, integrate with other probabilistic models, and use other families of distributions for the latent components.
-
-We derive an inference procedure for the \iwmm{} based on Markov chain Monte Carlo (MCMC).  In particular, we sample the cluster assignments using Gibbs sampling, sample the latent coordinates using Hamiltonian Monte Carlo, and analytically integrate out both the mixture parameters (weights, means and covariance matrices), and the nonlinear warping function. 
-
-%In particular, we iteratively infer the infinite Gaussian mixture model in the latent space by using Gibbs sampling, the latent coordinates and nonlinear function by using the Hamiltonian Monte Carlo.
-
-The work comprising the bulk of this chapter was done in collaboration with Tomoharu Iwata and Zoubin Ghahramani, and appeared in \citep{IwaDuvGha12}.
-Specifically, the main idea was borne out of a conversation between Tomo and myself, and together we wrote almost all of the code together as well as the paper.
-Tomo ran most of the experiments.
-Zoubin Ghahramani provided guidance and many helpful suggestions throughout the project.
-
-
-
-\section{The Gaussian Process Latent Variable Model}
-
-
-Besides being useful for modeling functions, a simple extension allows \gp{}s to be useful for general density modeling, at the cost of non-analytic inference.
-The \gplvm{} can also be thought of as a method for modeling the covariance between rows of $Y$, using a number of parameters which grows only linearly with $N$.
-
-
-\begin{figure}[t]
-\begin{centering}
-\includegraphics[width=\textwidth]{\gplvmfiguresdir/gplvm_1d_draw_9}
-\end{centering}
-\caption[One-dimensional Gaussian process latent variable model]{A visual representation of the Gaussian process latent variable model.  Bottom: density and samples from a 1D Gaussian, specifying the distribution $p(\vX)$ in the latent space.  Top Right: A function drawn from a \gp{} prior.  Left: A nonparametric density defined by warping the latent density through the function drawn from a \gp{} prior.}  
-\label{fig:oned-gplvm}
-\end{figure}
-
-
-
-\begin{figure}
-\begin{centering}
-{\begin{tabular}{cccc}
-\phantom{h} & Latent space $p(\vX)$ & & Observed space $p(\vY)$ \\
-& \fbox{\includegraphics[height=15em,width=15em]{\gplvmfiguresdir/gplvm-latent-crop}} &
-\raisebox{7em}{$\overset{\mathlarger{f(x)}}{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\rightarrow}}}}}}}}$} &
-%\raisebox{7em}{\Huge $\overset{\textnormal{\Large{GP}}}\rightarrow$} &
-\fbox{\includegraphics[height=15em,width=15em]{\gplvmfiguresdir/gplvm-draw-crop}}
-\end{tabular}}
-\end{centering}
-\caption[Two-dimensional Gaussian process latent variable model]{A visual representation of the Gaussian process latent variable model.  Left:  Isocontours and samples from a 2D Gaussian, specifying the distribution $p(\vX)$ in the latent space.  Right: Density and samples from a nonparametric density defined by warping the latent density through a function drawn from a GP prior.}  
-\label{fig:twod-gplvm}
-\end{figure}
-
-
-
-In this section, we give a brief introduction to the \gplvm{}, which can be viewed as a special case of the \iwmm{}.
-%The \iwmm{} can be viewed as an extension of the Gaussian process latent variable model (GPLVM)~\citep{lawrence2004gaussian}.  
-The \gplvm{} is a probabilistic model of nonlinear manifolds.
-While not typically thought of as a density model, the \gplvm{} does in fact define a posterior density over observations~\citep{nickisch2010gaussian}.
-It does this by smoothly warping a single, isotropic Gaussian density in the latent space into a more complicated distribution in the observed space.  
-
-
-Suppose that we have a set of observations
-$\vY = (\vy_1,\cdots,\vy_N)\tra$,
-where $\vy_n \in {\mathbb R}^D$,
-and they are associated with a set of latent coordinates
-$\vX = (\vx_1,\cdots,\vx_{N})\tra$,
-where $\vx_n \in {\mathbb R}^Q$.
-The \gplvm{} assumes that observations are generated by mapping the latent coordinates through a set of smooth functions, over which Gaussian process priors are placed.
-Under the \gplvm{}, the probability of observations given the latent coordinates, integrating out the mapping functions, is
-\begin{align}
-p(\vY | \vX,\bm{\theta})  = (2 \pi)^{-\frac{DN}{2}}  |\vK|^{-\frac{D}{2}} \exp \left( -\frac{1}{2} {\rm tr}( \vY\tra \vK\inv \vY) \right),
-\label{eq:py_x}
-\end{align}
-where $\vK$ is the $N \times N$ covariance matrix defined 
-by the kernel function $k(\vx_{n},\vx_{m})$,
-and $\bm{\theta}$ is the kernel hyperparameter vector.
-In this chapter, we use an \kSE kernel with an additive noise term:
-\begin{align}
-k(\vx_{n},\vx_{m}) &= \alpha \exp\left( - \frac{1}{2 \ell^2}(\vx_n - \vx_m)\tra (\vx_n - \vx_m) \right) 
-+ \delta_{nm} \beta\inv.
-\end{align}
-%where $\alpha$ is 
-%$\ell$ is the length scale,
-%and $\beta$ is the variance of the additive noise.
-This likelihood is simply the product of $D$ independent Gaussian process likelihoods, one for each output dimension.
-
-Typically, the \gplvm{} is used for dimensionality reduction or visualization, and the latent coordinates are determined by maximizing the posterior probability of the latent coordinates, while integrating out the warping function.  
-In that setting, the Gaussian prior density on $\vx$ is essentially a regularizer which keeps the latent coordinates from spreading arbitrarily far apart.  
-In contrast, we instead integrate out the latent coordinates as well as the warping function, and place a more flexible parameterization on $p(\vx)$ than a single isotropic Gaussian.
-
-Just as the \gplvm{} can be viewed as a manifold learning algorithm, the \iwmm{} can be viewed as learning a set of manifolds, one for each cluster.
-
-
-
-
-
-\section{The Infinite Warped Mixture Model}
 
 In this section, we define in detail the infinite warped mixture model (\iwmm{}).
-In the same way as the \gplvm{}, the \iwmm{} assumes a set of latent coordinates and a smooth, nonlinear mapping from the latent space to the observed space.
-In addition, the \iwmm{} assumes that the latent coordinates
-are generated from a Dirichlet process mixture model.
-In particular, we use the following infinite Gaussian mixture model,
+Just like the \gplvm{}, the \iwmm{} assumes a smooth nonlinear mapping from a latent density to an observed density.
+The only difference is that the \iwmm{} assumes that the latent density is an infinite mixture of Gaussians~\citep{rasmussen2000infinite}:
 \begin{align}
-p(\vx|\{\lambda_{c},\bm{\mu}_{c},\vR_{c}\}) = \sum_{c=1}^{\infty} \lambda_{c} {\cal N}(\vx|\bm{\mu}_{c},\vR_{c}\inv),
+p(\vx ) = \sum_{c=1}^{\infty} \lambda_c \, {\cal N}(\vx|\bm{\mu}_{c},\vR_{c}\inv)
 \end{align}
-where $\lambda_{c}$, $\bm{\mu}_{c}$ and $\vR_{c}$ is the mixture weight, 
-mean, and precision matrix of the $c^{\text{\tiny th}}$ mixture component.
-We place Gaussian-Wishart priors on the Gaussian parameters
-$\{\bm{\mu}_{c},\vR_{c}\}$,
-\begin{align}
-p(\bm{\mu}_{c},\vR_{c})
-= {\cal N}(\bm{\mu}_{c}|\vu,(r\vR_{c})\inv)
-{\cal W}(\vR_{c}|\vS\inv,\nu),
-\end{align}
-%
-where $\vu$ is the mean of $\vmu_c$, $r$ is the relative precision of $\vmu_{c}$, $\vS\inv$ is the scale matrix for $\vR_c$, and $\nu$ is the number of degrees of freedom for $\vR_c$.
-The Wishart distribution is defined as follows:
-%
-\begin{align}
-{\cal W}(\vR|\vS\inv,\nu)
-=\frac{1}{G}|\vR|^{\frac{\nu-Q-1}{2}}\exp\left(-\frac{1}{2}{\rm tr}(\vS\vR)\right),
-\end{align}
-%
-where $G$ is the normalizing constant.
-Because we use conjugate Gaussian-Wishart priors for the parameters of the Gaussian mixture components, we can analytically integrate out those parameters, given the assignments of points to components.
-Let $z_{n}$ be the latent assignment of the $n^{\text{\tiny th}}$ point.
-The probability of latent coordinates $\vX$ given latent assignments $\vZ=(z_1, z_2, \dots, z_N)$ is obtained by integrating out the Gaussian parameters $\{\vmu_c,\vR_c\}$ as follows:
-%
-\begin{align}
-p(\vX|\vZ,\vS,\nu,r) &= \prod_{c=1}^{\infty}
-\pi^{-\frac{N_{c}Q}{2}}\frac{r^{Q/2}|\vS|^{\nu/2}}{r_{c}^{Q/2}|\vS_{c}|^{\nu_{c}/2}}
-\times \prod_{q=1}^{Q}\frac{\Gamma(\frac{\nu_{c}+1-q}{2})}{\Gamma(\frac{\nu+1-q}{2})},
-\label{eq:px_z}
-\end{align}
-%
-where
-$N_c$ is the number of data points assigned to the $c^{\text{\tiny th}}$ component,
-$\Gamma(\cdot)$ is the Gamma function, and
-%
-\begin{align}
-r_{c}=r+N_{c}, \hspace{2em}
-\nu_{c}=\nu+N_{c}, 
-\quad
-%\nonumber
-%\end{align}
-%\begin{align}
-\vu_{c}=\frac{r\vu+\sum_{n:z_{n}=c}\vx_{n}}{r+N_{c}}, 
-\nonumber
-\end{align}
-%
-\begin{align}
-\vS_{c}=\vS+\sum_{n:z_{n}=c}\vx_{n}\vx_{n}\tra + r\vu\vu\tra
- - r_{c}\vu_{c}\vu_{c}\tra,
-\end{align}
-%
-are the posterior Gaussian-Wishart parameters of the $c^{\text{\tiny th}}$ component.
-We use a Dirichlet process with concentration parameter $\eta$ for infinite mixture modeling~\citep{maceachern1998estimating} in the latent space.
-Then, the probability of $\vZ$ is given as follows:
-%
-\begin{align}
-p(\vZ|\eta) = 
-\frac{\eta^{C}\prod_{c=1}^{C}(N_{c}-1)!}
-{\eta(\eta+1)\cdots(\eta+N-1)},
-\label{eq:pz}
-\end{align}
-%
-where $C$ is the number of components for which $N_{c}>0$.
-The joint distribution is given by
-%
-\begin{align}
-p(\vY,\vX,\vZ|\bm{\theta},\bm{S},\nu,\vu,r,\eta)
- = p(\vY|\vX,\bm{\theta})
- p(\vX|\vZ,\bm{S},\nu,\vu,r)p(\vZ|\eta),
-\label{eq:joint}
-\end{align}
-%
-where factors in the right hand side can be calculated by (\ref{eq:py_x}), (\ref{eq:px_z}) and (\ref{eq:pz}), respectively.
-
-In summary, the infinite warped mixture model generates observations $\vY$ according to the following generative process:
-%
-\begin{enumerate}
-\item Draw mixture weights $\bm{\lambda} \sim {\rm \GEM{}}(\eta)$
-\item For each component $c=1, 2, \dots, \infty$
-\begin{enumerate}
-\item Draw precision $\vR_c \sim {\mathcal W}(\vS\inv, \nu)$
-\item Draw mean $\vmu_c \sim {\mathcal N}(\vu,(r\vR_c)\inv)$
-\end{enumerate}
-\item For each observed dimension $d=1, 2, \dots, D$
-\begin{enumerate}
-\item Draw function $f_{d}(\vx) \sim {\rm GP}(m(\vx),k(\vx,\vx'))$
-\end{enumerate}
-\item For each observation $n=1, 2, \dots,N$
-\begin{enumerate}
-\item Draw latent assignment $z_n \sim {\rm Mult}(\bm{\lambda})$
-\item Draw latent coordinates $\vx_n \sim {\mathcal N}(\vmu_{z_n},\vR_{z_n}\inv)$
-\item For each observed dimension $d=1, 2, \dots, D$
-\begin{enumerate}
-\item Draw feature $y_{nd} \sim {\cal N}(f_d(\vx_n), \beta\inv)$
-\end{enumerate}
-\end{enumerate}
-\end{enumerate}
-%
-Here, ${\rm GEM}(\eta)$ is the stick-breaking process \citep{sethuraman94} that generates mixture weights for a Dirichlet process with parameter $\eta$, %${\rm Mult}(\cdot)$ represents a multinomial distribution,
-${\rm Mult}(\bm{\lambda})$ represents a multinomial distribution with parameter $\bm{\lambda}$,
-$m(\vx)$ is the mean function of the Gaussian process, and $\vx,\vx'\in{\mathbb R}^{Q}$.
-%
-\begin{figure}[t!]
-\centering
-\includegraphics[height=12em]{\warpedfiguresdir/iWMM}
-\caption[Graphical model of the infinite warped mixture model]{A graphical model representation of the infinite warped mixture model, where the shaded and unshaded nodes indicate observed and latent variables, respectively, and plates indicate repetition.}
-\label{fig:graphical}
-\end{figure}
-%
-Figure~\ref{fig:graphical} shows the graphical model representation of the proposed model.
-Here, we assume a Gaussian for the mixture component, although we could in principle use other distributions such as Student's t-distribution or the Laplace distribution.
+where $\lambda_{c}$, $\bm{\mu}_{c}$ and $\vR_{c}$ is the mixture weight, mean, and precision matrix of the $c^{\text{\tiny th}}$ mixture component.
+%To ensure a conjugate likelihood, we place Gaussian-Wishart priors on the Gaussian parameters.
 
 The \iwmm{} can be seen as a generalization of either the \gplvm{} or the infinite Gaussian mixture model (\iGMM{}).
 To be precise, the \iwmm{} with a single fixed spherical Gaussian density on the latent coordinates corresponds to the \gplvm{}, while the \iwmm{} with fixed direct mapping function $f_{d}(\vx)=x_{d}$ and 
 $Q=D$ corresponds to the \iGMM{}.
 
-The \iwmm{} offers attractive properties that do not exist in other probabilistic models; principally, the ability to model clusters with nonparametric densities, and to infer a separate dimension for manifold.
+The need for a clustering model that doesn't have a fixed set of cluster shapes is motivated by fact that
+a mixture of Gaussians fit to a single non-Gaussian cluster (such as one that is curved or heavy-tailed) will report that the data contains many Gaussian clusters.
+If we care about getting the number of clusters right, then we need a flexible model of cluster shapes.
+
+
+
+
+
+
+%
+%\begin{figure}[t!]
+%\centering
+%\includegraphics[height=12em]{\warpedfiguresdir/iWMM}
+%\caption[Graphical model of the infinite warped mixture model]{A graphical model representation of the infinite warped mixture model, where the shaded and unshaded nodes indicate observed and latent variables, respectively, and plates indicate repetition.}
+%\label{fig:graphical}
+%\end{figure}
+%
+%Figure~\ref{fig:graphical} shows the graphical model representation of the proposed model.
+%Here, we assume a Gaussian for the mixture component, although we could in principle use other distributions such as Student's t-distribution or the Laplace distribution.
+
+
+
+%The \iwmm{} offers attractive properties that do not exist in other probabilistic models; principally, the ability to model clusters with nonparametric densities, and to infer a separate dimension for manifold.
 % todo: move this sentence somewhere else.
 
 
@@ -282,143 +236,53 @@ The \iwmm{} offers attractive properties that do not exist in other probabilisti
 
 
 \section{Inference}
+\label{sec:iwmm-inference}
 
-We infer the posterior distribution of the latent coordinates $\vX$ and cluster assignments $\vZ$ using Markov chain Monte Carlo (MCMC).
-In particular, we alternate collapsed Gibbs sampling of $\vZ$, and Hamiltonian Monte Carlo sampling of $\vX$.
-Given $\vX$,
-%the proposed model is simply a standard infinite mixture model with conjugate priors. Therefore, 
-we can efficiently sample $\vZ$ using collapsed Gibbs sampling, integrating out the mixture parameters.
-Given $\vZ$, we can calculate the gradient of the un-normalized posterior distribution of $\vX$, integrating over warping functions.
-This gradient allows us to sample $\vX$ using Hamiltonian Monte Carlo.
+As discussed in \cref{sec:useful-properties}, one of the main advantages of \gp{} priors is that, given inputs $\vX$, outputs $\vY$ and kernel parameters $\vtheta$, we can analytically integrate over functions mapping $\vX$ to $\vY$.
+However, if we introduce uncertainty about any of these parameters, or add extra latent variables, then there's usually no analytic method to integrate out these extra parameters.
+In this section, we'll outline how we can infer all the parameters in the \iwmm{} given only a set of observations $\vY$.
+Details can be found in \cref{sec:iwmm-inference-details}.
 
-First, we explain collapsed Gibbs sampling for $\vZ$.
-Given a sample of $\vX$, $p(\vZ | \vX, \vS, \nu, \vu, r, \eta)$ does not depend on $\vY$.
-This lets us resample cluster assignments, integrating out the iGMM likelihood in closed form.
-Given the current state of all but one latent component $z_{n}$, a new value for $z_{n}$ is sampled with the following probability:
+By placing conjugate priors on the parameters of the Gaussian mixture components, we can analytically integrate out the cluster shapes, given the assignments of points to clusters.
+The only remaining variables to infer are the latent points $\vX$, the cluster assignments $\vZ$, and the kernel parameters $\vtheta$.
+%In particular, we'll alternate collapsed Gibbs sampling of $\vZ$ and Hamiltonian Monte Carlo sampling of $\vX$.
 %
-\begin{align}
-p(z_{n}=c|\vX,\vZ_{\setminus n},\bm{S},\nu,\vu,r,\eta)
- & \propto\!
-\left\{
-\begin{array}{ll}
-\!\!N_{c\setminus n}\cdot p(\vx_{n}|\vX_{c\setminus n},\bm{S},\nu,\vu,r) & \text{{\small existing components}}\\
-\!\!\eta\cdot p(\vx_{n}|\bm{S},\nu,\vu,r) & \text{{\small a new component}}
-\end{array}
-\right.
-\label{eq:gibbs}
-\end{align}
+%Given $\vZ$, we can calculate the gradient of the un-normalized posterior distribution of $\vX$, integrating over warping functions.
+%This gradient allows us to sample $\vX$ using Hamiltonian Monte Carlo (\HMC{}).
 %
-where $\vX_{c}=\{\vx_{n}|z_{n}=c\}$ 
-is the set of latent coordinates assigned to the $c^{\text{\tiny th}}$ component,
-and $\setminus n$ represents the value or set
-when excluding the $n^{\text{\tiny th}}$ data point.
-We can analytically calculate $p(\vx_{n}|\vX_{c\setminus n},\bm{S},\nu,\vu,r)$
-as follows:
-%
-\begin{align}
-p(\vx_{n}|\vX_{c\setminus n},\bm{S},\nu,\vu,r)
- & =\pi^{-\frac{N_{c\setminus n}Q}{2}}\frac{r_{c\setminus n}^{Q/2}|\vS_{c\setminus n}|^{\nu_{c\setminus n}/2}}{r_{c\setminus n}'^{Q/2}|\vS_{c\setminus n}'|^{\nu_{c\setminus n}'/2}}\prod_{d=1}^{Q}\frac{\Gamma(\frac{\nu_{c\setminus n}'+1-d}{2})}{\Gamma(\frac{\nu_{c\setminus n}+1-d}{2})},
-\end{align}
-%
-where $r_{c}'$, $\nu_{c}'$, $\vu_{c}'$ and $\vS_{c}'$ represent the posterior Gaussian-Wishart parameters of the $c^{\text{\tiny th}}$ component when the $n^{\text{\tiny th}}$ data point is assigned to the $c^{\text{\tiny th}}$ component.
-We can efficiently calculate the determinant by using the rank one Cholesky update.
-In the same way, we can analytically calculate the likelihood for a new component $p(\vx_{n}|\bm{S},\nu,\vu,r)$.
+We can obtain samples from their posterior 
+%$p(\vX,\vZ|\vY,\bm{\theta},\vS,\nu,\vu,r,\eta)$ 
+$p(\vX,\vZ, \vtheta | \vY)$ 
+by iterating two steps:
+\begin{enumerate}
+\item
+Given the latent points $\vX$, we sample the discrete cluster memberships $\vZ$ using collapsed Gibbs sampling, integrating out the mixture parameters \eqref{eq:gibbs}.
+%The conditional probability of $\vZ$ given $\vX$ is given by \eqref{eq:gibbs}.
+%For each observation $n=1,\cdots,N$,
+%sample the component assignment $z_{n}$ by collapsed Gibbs sampling 
+\item 
+Given the cluster assignments $\vZ$, we sample the continuous latent coordinates $\vX$ and kernel parameters $\vtheta$ using Hamiltonian Monte Carlo.
+\end{enumerate}
 
-Hamiltonian Monte Carlo (\HMC{}) sampling of $\vX$ from posterior ${p(\vX|\vZ,\vY,\bm{\theta},\bm{S},\nu,\vu,r)}$, requires computing the gradient of the log of the unnormalized posterior
-%
-\begin{align}
-\log p(\vY|\vX,\bm{\theta}) + \log p(\vX|\vZ,\bm{S},\nu,\vu,r)
-\end{align}
-%
-The first term of the gradient can be calculated by
-%
-\begin{align}
-\pderiv{\log p(\vY | \vX,\bm{\theta})}{\vK} = -\frac{1}{2}D\vK\inv+\frac{1}{2}\vK\inv \vY \vY^{T} \vK\inv, 
-\end{align}
-%
-and
-%
-\begin{align}
-\pderiv{k(\vx_{n},\vx_{m})}{\vx_n}
- & = -\frac{\alpha}{\ell^2} \exp \left( - \frac{1}{2 \ell^2} (\vx_n - \vx_m)\tra (\vx_n - \vx_m) \right) (\vx_n - \vx_m),
-\end{align}
-%
-using the chain rule.
-The second term can be calculated as follows:
-\begin{align}
-\frac{\partial \log p(\vX|\vZ,\bm{S},\nu,\vu,r)}{\partial \vx_{n}} 
-= -\nu_{z_{n}}\bm{S}_{z_{n}}\inv(\vx_{n}-\vu_{z_{n}}).
-\end{align}
-We also infer kernel parameters $\bm{\theta}=\{\alpha,\beta,\ell\}$ via HMC, using the gradient of the log unnormalized posterior with respect to the kernel parameters.
-The complexity of each iteration of HMC is dominated by the $\mathcal{O}(N^3)$ computation of $\vK\inv$.
+The complexity of each iteration of \HMC{} is dominated by the $\mathcal{O}(N^3)$ computation of $\vK\inv$.
 This complexity could be improved by making use of an inducing-point approximation such as \citep{quinonero2005unifying,snelson2006sparse}.
 
 
-In summary, we obtain samples from the posterior $p(\vX,\vZ|\vY,\bm{\theta},\vS,\nu,\vu,r,\eta)$ 
-by iterating the following steps:
-\begin{enumerate}
-\item For each observation $n=1,\cdots,N$,
-%\begin{enumerate}
-sample the component assignment $z_{n}$ by collapsed Gibbs sampling (\ref{eq:gibbs}).
-%\end{enumerate}
-\item Sample latent coordinates $\vX$ and kernel parameters $\bm{\theta}$ using Hamiltonian Monte Carlo.
-\end{enumerate}
 
+\subsubsection{Posterior Predictive Density}
 
-
-
-\subsection{Posterior Predictive Density}
-
-In the GP-LVM, the predictive density of at test point $\vy_\star$ is usually computed by finding the point $\vx_\star$ which which is most likely to be mapped to $\vy_\star$, then using the density of $p(\vx_\star)$ and the Jacobian of the warping at that point to approximately compute the density at $\vy_\star$.
-When inference is done by simply optimizing the location of the latent points, this estimation method simply requires solving a single optimization for each $\vy_\star$.  
-
-For our model, we use approximate integration to estimate $p(\vy_\star)$.
-This is done for two reasons:
-First, multiple latent points (possibly from different clusters) can map to the same observed point, meaning the standard method can underestimate $p(\vy_\star)$.
-Second, because we do not optimize the latent coordinates but rather sample them, we would need to perform optimizations for each $p(\vy_\star)$ seperately for each sample.
-Our method gives estimates for all $p(\vy_\star)$ at once, but may not be accurate in very high dimensions.
-
-The posterior density in the observed space given the training data is simply:
-\begin{align}
-p(\vy_\star | \vY)
-& = \int \!\!\! \int p(\vy_\star,\vx_\star, \vX | \vY)d\vx_\star d\vX \nonumber\\
-& = \int\!\!\! \int p(\vy_\star | \vx_\star, \vX, \vY)p(\vx_\star|\vX,\vY)p(\vX|\vY)d\vx_\star d\vX.
-\label{eq:density}
-\end{align}
-We approximate $p(\vX | \vY)$ using the samples from the Gibbs and Hamiltonian Monte Carlo samplers.
-We approximate $p(\vx_\star | \vX, \vY)$ by sampling points from the latent mixture and warping them, using the following procedure:
-\begin{enumerate}
-\item Draw latent assignments
-$z_\star \sim {\rm Mult}(\frac{N_{1}}{N+\eta},\cdots,\frac{N_{C}}{N+\eta},\frac{\eta}{N+\eta})$
-\item Draw precision matrix
-$\vR_\star \sim {\cal W}(\vS\inv_{z_\star},\nu_{z_\star})$
-\item Draw mean
-$\vmu_\star \sim {\cal N}(\vu_{z_\star},(r_{z_\star}\vR_\star)\inv)$
-\item Draw latent coordinates
-$\vx_\star \sim {\cal N}(\vmu_\star,\vR_\star\inv)$
-\end{enumerate}
-%
-When a new component $C+1$ is assigned to $z_\star$, the prior Gaussian-Wishart distribution is used for sampling in steps 2 and 3.
-The first factor of (\ref{eq:density}) can be calculated by
-%
-\begin{align}
-p(\vy_\star | \vx_\star, \vX, \vY)
-& = {\cal N}(\vk_\star\tra \vK\inv \vY, k(\vx_\star,\vx_\star)-\vk_\star\tra \vK\inv \vk_\star),
-\end{align}
-%
-where
-%
-$\vk_\star=( k(\vx_\star, \vx_1), \cdots, k(\vx_\star, \vx_N))\tra$.
-%  
-Each step of this sampling procedure draws from the exact conditional distribution, so the Monte Carlo estimate of the predictive density $p(\vy_\star | \vX, \vY)$ will converge to the true marginal distribution.
-Since the observations $\vy_\star$ are conditionally normally distributed, each one adds a smooth contribution to the empirical Monte Carlo estimate of the posterior density, as opposed to a collection of point masses.
-This procedure was used to generate the plots of posterior density in figures \ref{fig:generative}, \ref{fig:warping}, and \ref{fig:posterior}.
+One disadvantage of this model class is that its predictive density has no closed form.
+To approximate the predictive density, we sample latent points from the posterior on the latent density, and map them through warpings drawn from the corresponding posterior density.
+The Gaussian noise added to each observation means that each sample adds a Gaussian to the Monte Carlo estimate of the predictive density.
+Details can be found in \cref{sec:iwmm-predictive-density}.
+This procedure was used to generate the plots of posterior density in \cref{fig:generative,fig:warping,fig:posterior}.
 
 
 
 
 
 \section{Related Work}
+\label{sec:iwmm-related-work}
 
 The \gplvm{} is effective as a nonlinear latent variable model in a wide variety of applications ~\citep{lawrence2004gaussian,salzmann2008local,lawrence2009non}.
 The latent positions $\vX$ in the \gplvm{} are typically obtained by maximum a posteriori estimation or variational Bayesian inference~\citep{titsias2010bayesian}, placing a single fixed spherical Gaussian prior on $\vx$.
@@ -455,6 +319,7 @@ In contrast, the \iwmm{} infers the mapping function such that the latent co-ord
 
 
 \section{Experimental Results}
+\section{sec:iwmm-experiments}
 
 \subsection{Clustering Faces}
 
@@ -715,6 +580,8 @@ We further demonstrated that allowing non-parametric cluster shapes improves clu
 Many methods have been proposed which can perform some combination of clustering, manifold learning, density estimation and visualization.
 We demonstrated that a simple but flexible probabilistic generative model can perform well at all these tasks.
 
+Since the proposed model is generative, it can be used for density estimation as well as clustering.
+It can also be extended to handle missing data, integrate with other probabilistic models, and use other families of distributions for the latent components.
 
 
 \section{Future Work}

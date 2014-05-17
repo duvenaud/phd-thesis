@@ -214,6 +214,240 @@ Other example reports can be found at \url{mlg.eng.cam.ac.uk/Lloyd/abcdoutput/},
 %\solarreportpage{22}
 
 
+\chapter{Inference in the Warped Mixture Model}
+\label{ch:warped-appendix}
+
+\subsubsection{Detailed Definition of Model}
+
+To ensure a conjugate likelihood, we place Gaussian-Wishart priors on the Gaussian parameters
+$\{\bm{\mu}_{c},\vR_{c}\}$,
+\begin{align}
+p(\bm{\mu}_{c},\vR_{c})
+= {\cal N}(\bm{\mu}_{c}|\vu,(r\vR_{c})\inv)
+{\cal W}(\vR_{c}|\vS\inv,\nu),
+\end{align}
+%
+where $\vu$ is the mean of $\vmu_c$, $r$ is the relative precision of $\vmu_{c}$, $\vS\inv$ is the scale matrix for $\vR_c$, and $\nu$ is the number of degrees of freedom for $\vR_c$.
+
+The Wishart distribution is defined as follows:
+
+\begin{align}
+{\cal W}(\vR|\vS\inv,\nu)=\frac{1}{G}|\vR|^{\frac{\nu-Q-1}{2}}\exp\left(-\frac{1}{2}{\rm tr}(\vS\vR)\right),
+\end{align}
+
+where $G$ is the normalizing constant.
+Because we use conjugate Gaussian-Wishart priors for the parameters of the Gaussian mixture components, we can analytically integrate out those parameters, given the assignments of points to components.
+Let $z_{n}$ be the latent assignment of the $n^{\text{\tiny th}}$ point.
+The probability of latent coordinates $\vX$ given latent assignments $\vZ=(z_1, z_2, \dots, z_N)$ is obtained by integrating out the Gaussian parameters $\{\vmu_c,\vR_c\}$ as follows:
+%
+\begin{align}
+p(\vX|\vZ,\vS,\nu,r) &= \prod_{c=1}^{\infty}
+\pi^{-\frac{N_{c}Q}{2}}\frac{r^{Q/2}|\vS|^{\nu/2}}{r_{c}^{Q/2}|\vS_{c}|^{\nu_{c}/2}}
+\times \prod_{q=1}^{Q}\frac{\Gamma(\frac{\nu_{c}+1-q}{2})}{\Gamma(\frac{\nu+1-q}{2})},
+\label{eq:px_z}
+\end{align}
+%
+where
+$N_c$ is the number of data points assigned to the $c^{\text{\tiny th}}$ component,
+$\Gamma(\cdot)$ is the Gamma function, and
+%
+\begin{align}
+r_{c}=r+N_{c}, \hspace{2em}
+\nu_{c}=\nu+N_{c}, 
+\quad
+%\nonumber
+%\end{align}
+%\begin{align}
+\vu_{c}=\frac{r\vu+\sum_{n:z_{n}=c}\vx_{n}}{r+N_{c}}, 
+\nonumber
+\end{align}
+%
+\begin{align}
+\vS_{c}=\vS+\sum_{n:z_{n}=c}\vx_{n}\vx_{n}\tra + r\vu\vu\tra
+ - r_{c}\vu_{c}\vu_{c}\tra,
+\end{align}
+%
+are the posterior Gaussian-Wishart parameters of the $c^{\text{\tiny th}}$ component.
+We use a Dirichlet process with concentration parameter $\eta$ for infinite mixture modeling~\citep{maceachern1998estimating} in the latent space.
+Then, the probability of $\vZ$ is given as follows:
+%
+\begin{align}
+p(\vZ|\eta) = 
+\frac{\eta^{C}\prod_{c=1}^{C}(N_{c}-1)!}
+{\eta(\eta+1)\cdots(\eta+N-1)},
+\label{eq:pz}
+\end{align}
+%
+where $C$ is the number of components for which $N_{c}>0$.
+The joint distribution is given by
+%
+\begin{align}
+p(\vY,\vX,\vZ|\bm{\theta},\bm{S},\nu,\vu,r,\eta)
+ = p(\vY|\vX,\bm{\theta})
+ p(\vX|\vZ,\bm{S},\nu,\vu,r)p(\vZ|\eta),
+\label{eq:joint}
+\end{align}
+%
+where factors in the right hand side can be calculated by (\ref{eq:py_x}), (\ref{eq:px_z}) and (\ref{eq:pz}), respectively.
+
+\subsubsection{Generative Model}
+
+In summary, the infinite warped mixture model generates observations $\vY$ according to the following generative process:
+%
+\begin{enumerate}
+\item Draw mixture weights $\bm{\lambda} \sim \GEM(\eta)$
+\item For each component $c=1, 2, \dots, \infty$
+\begin{enumerate}
+\item Draw precision $\vR_c \sim {\mathcal W}(\vS\inv, \nu)$
+\item Draw mean $\vmu_c \sim {\mathcal N}(\vu,(r\vR_c)\inv)$
+\end{enumerate}
+\item For each observed dimension $d=1, 2, \dots, D$
+\begin{enumerate}
+\item Draw function $f_{d}(\vx) \sim {\rm GP}(m(\vx),k(\vx,\vx'))$
+\end{enumerate}
+\item For each observation $n=1, 2, \dots,N$
+\begin{enumerate}
+\item Draw latent assignment $z_n \sim {\rm Mult}(\bm{\lambda})$
+\item Draw latent coordinates $\vx_n \sim {\mathcal N}(\vmu_{z_n},\vR_{z_n}\inv)$
+\item For each observed dimension $d=1, 2, \dots, D$
+\begin{enumerate}
+\item Draw feature $y_{nd} \sim {\cal N}(f_d(\vx_n), \beta\inv)$
+\end{enumerate}
+\end{enumerate}
+\end{enumerate}
+%
+Here, $\GEM(\eta)$ is the stick-breaking process \citep{sethuraman94} that generates mixture weights for a Dirichlet process with parameter $\eta$, %${\rm Mult}(\cdot)$ represents a multinomial distribution,
+${\rm Mult}(\bm{\lambda})$ represents a multinomial distribution with parameter $\bm{\lambda}$,
+$m(\vx)$ is the mean function of the Gaussian process, and $\vx,\vx'\in{\mathbb R}^{Q}$.
+
+
+
+\subsubsection{Details of Inference}
+\label{sec:iwmm-inference-details}
+
+First, by placing conjugate Gaussian-Wishart priors on the parameters of the Gaussian mixture components, we can analytically integrate out those parameters given the assignments of points to clusters.
+The only remaining variables to infer will be the latent points $\vX$, the cluster assignments $Z$, and the kernel parameters $\vtheta$.
+
+We can then infer the posterior distribution of the latent coordinates $\vX$ and cluster assignments $\vZ$ using Markov chain Monte Carlo (\mcmc{}).
+In particular, we'll alternate collapsed Gibbs sampling of $\vZ$ and Hamiltonian Monte Carlo sampling of $\vX$.
+Given $\vX$,
+%the proposed model is simply a standard infinite mixture model with conjugate priors. Therefore, 
+we can efficiently sample $\vZ$ using collapsed Gibbs sampling, integrating out the mixture parameters.
+Given $\vZ$, we can calculate the gradient of the un-normalized posterior distribution of $\vX$, integrating over warping functions.
+This gradient allows us to sample $\vX$ using Hamiltonian Monte Carlo.
+
+First, we explain collapsed Gibbs sampling for $\vZ$.
+Given a sample of $\vX$, $p(\vZ | \vX, \vS, \nu, \vu, r, \eta)$ does not depend on $\vY$.
+This lets us resample cluster assignments, integrating out the \iGMM{} likelihood in closed form.
+Given the current state of all but one latent component $z_n$, a new value for $z_n$ is sampled with the following probability:
+%
+\begin{align}
+p(z_{n}=c|\vX,\vZ_{\setminus n},\bm{S},\nu,\vu,r,\eta)
+ & \propto\!
+\left\{
+\begin{array}{ll}
+\!\!N_{c\setminus n}\cdot p(\vx_{n}|\vX_{c\setminus n},\bm{S},\nu,\vu,r) & \text{{\small existing components}}\\
+\!\!\eta\cdot p(\vx_{n}|\bm{S},\nu,\vu,r) & \text{{\small a new component}}
+\end{array}
+\right.
+\label{eq:gibbs}
+\end{align}
+%
+where $\vX_{c}=\{\vx_{n}|z_{n}=c\}$ 
+is the set of latent coordinates assigned to the $c^{\text{\tiny th}}$ component,
+and $\setminus n$ represents the value or set
+when excluding the $n^{\text{\tiny th}}$ data point.
+We can analytically calculate $p(\vx_{n}|\vX_{c\setminus n},\bm{S},\nu,\vu,r)$
+as follows:
+%
+\begin{align}
+p(\vx_{n}|\vX_{c\setminus n},\bm{S},\nu,\vu,r)
+ & =\pi^{-\frac{N_{c\setminus n}Q}{2}}\frac{r_{c\setminus n}^{Q/2}|\vS_{c\setminus n}|^{\nu_{c\setminus n}/2}}{r_{c\setminus n}'^{Q/2}|\vS_{c\setminus n}'|^{\nu_{c\setminus n}'/2}}\prod_{d=1}^{Q}\frac{\Gamma(\frac{\nu_{c\setminus n}'+1-d}{2})}{\Gamma(\frac{\nu_{c\setminus n}+1-d}{2})},
+\end{align}
+%
+where $r_{c}'$, $\nu_{c}'$, $\vu_{c}'$ and $\vS_{c}'$ represent the posterior Gaussian-Wishart parameters of the $c^{\text{\tiny th}}$ component when the $n^{\text{\tiny th}}$ data point is assigned to the $c^{\text{\tiny th}}$ component.
+We can efficiently calculate the determinant by using the rank one Cholesky update.
+In the same way, we can analytically calculate the likelihood for a new component $p(\vx_{n}|\bm{S},\nu,\vu,r)$.
+
+\subsubsection{Gradients for Hamiltonian Monte Carlo}
+
+Hamiltonian Monte Carlo (\HMC{}) sampling of $\vX$ from posterior ${p(\vX|\vZ,\vY,\bm{\theta},\bm{S},\nu,\vu,r)}$, requires computing the gradient of the log of the unnormalized posterior
+%
+\begin{align}
+\log p(\vY|\vX,\bm{\theta}) + \log p(\vX|\vZ,\bm{S},\nu,\vu,r)
+\end{align}
+%
+The first term of the gradient can be calculated by
+%
+\begin{align}
+\pderiv{\log p(\vY | \vX,\bm{\theta})}{\vX} =  \pderiv{\log p(\vY | \vX,\bm{\theta})}{\vK} \pderiv{\vK}{\vX} = \left[ -\frac{1}{2}D\vK\inv+\frac{1}{2}\vK\inv \vY \vY^{T} \vK\inv \right]\left[\pderiv{\vK}{\vX}\right], 
+\end{align}
+%
+where for an $\kSE + \kWN$ kernel with the same lengthscale $\ell$ on all dimensions,
+%
+\begin{align}
+\pderiv{k(\vx_{n},\vx_{m})}{\vx_n}
+ & = -\frac{\sigma^2_f}{\ell^2} \exp \left( - \frac{1}{2 \ell^2} (\vx_n - \vx_m)\tra (\vx_n - \vx_m) \right) (\vx_n - \vx_m).
+\end{align}
+%
+%using the chain rule.
+The second term can be calculated as follows:
+\begin{align}
+\frac{\partial \log p(\vX|\vZ,\bm{S},\nu,\vu,r)}{\partial \vx_{n}} 
+= -\nu_{z_{n}}\bm{S}_{z_{n}}\inv(\vx_{n}-\vu_{z_{n}}).
+\end{align}
+We also infer kernel parameters $\vtheta$ via \HMC{}, using the gradient of the log unnormalized posterior with respect to the kernel parameters, and an improper uniform prior.
+
+
+
+
+\subsubsection{Posterior Predictive Density}
+\label{sec:iwmm-predictive-density}
+
+In the \gplvm{}, the predictive density of at test point $\vy_\star$ is usually computed by finding the point $\vx_\star$ which which is most likely to be mapped to $\vy_\star$, then using the density of $p(\vx_\star)$ and the Jacobian of the warping at that point to approximately compute the density at $\vy_\star$.
+When inference is done by simply optimizing the location of the latent points, this estimation method simply requires solving a single optimization for each $\vy_\star$.  
+
+For our model, we use approximate integration to estimate $p(\vy_\star)$.
+This is done for two reasons:
+First, multiple latent points (possibly from different clusters) can map to the same observed point, meaning the standard method can underestimate $p(\vy_\star)$.
+Second, because we do not optimize the latent coordinates but rather sample them, we would need to perform optimizations for each $p(\vy_\star)$ seperately for each sample.
+Our method gives estimates for all $p(\vy_\star)$ at once, but may not be accurate in very high dimensions.
+
+The posterior density in the observed space given the training data is simply:
+\begin{align}
+p(\vy_\star | \vY)
+& = \int \!\!\! \int p(\vy_\star,\vx_\star, \vX | \vY)d\vx_\star d\vX \nonumber\\
+& = \int\!\!\! \int p(\vy_\star | \vx_\star, \vX, \vY)p(\vx_\star|\vX,\vY)p(\vX|\vY)d\vx_\star d\vX.
+\label{eq:density}
+\end{align}
+We approximate $p(\vX | \vY)$ using the samples from the Gibbs and Hamiltonian Monte Carlo samplers.
+We approximate $p(\vx_\star | \vX, \vY)$ by sampling points from the latent mixture and warping them, using the following procedure:
+\begin{enumerate}
+\item Draw latent assignments
+$z_\star \sim {\rm Mult}(\frac{N_{1}}{N+\eta},\cdots,\frac{N_{C}}{N+\eta},\frac{\eta}{N+\eta})$
+\item Draw precision matrix
+$\vR_\star \sim {\cal W}(\vS\inv_{z_\star},\nu_{z_\star})$
+\item Draw mean
+$\vmu_\star \sim {\cal N}(\vu_{z_\star},(r_{z_\star}\vR_\star)\inv)$
+\item Draw latent coordinates
+$\vx_\star \sim {\cal N}(\vmu_\star,\vR_\star\inv)$
+\end{enumerate}
+%
+When a new component $C+1$ is assigned to $z_\star$, the prior Gaussian-Wishart distribution is used for sampling in steps 2 and 3.
+The first factor of (\ref{eq:density}) can be calculated by
+%
+\begin{align}
+p(\vy_\star | \vx_\star, \vX, \vY)
+& = {\cal N}(\vk_\star\tra \vK\inv \vY, k(\vx_\star,\vx_\star)-\vk_\star\tra \vK\inv \vk_\star),
+\end{align}
+%
+where
+%
+$\vk_\star=( k(\vx_\star, \vx_1), \cdots, k(\vx_\star, \vx_N))\tra$.
+%  
+Each step of this sampling procedure draws from the exact conditional distribution, so the Monte Carlo estimate of the predictive density $p(\vy_\star | \vX, \vY)$ will converge to the true marginal distribution.
+Since the observations $\vy_\star$ are conditionally normally distributed, each one adds a smooth contribution to the empirical Monte Carlo estimate of the posterior density, as opposed to a collection of point masses.
+
 
 \outbpdocument{
 \bibliographystyle{plainnat}
