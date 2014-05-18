@@ -1,16 +1,15 @@
 % ************************** Thesis Abstract *****************************
 % Use `abstract' as an option in the document class to print only the titlepage and the abstract.
 \begin{abstract}
-This thesis develops a broad class of models useful for learning and making predictions about time series, geological formations, and physical dynamics.
-These models, based on Gaussian processes, can express a wide variety of statistical structure depending on the choice of kernel.
-Historically, the type of kernel has been chosen by trial and error.
-We show how to automate this task, creating a system capable of exploring a large space of models and reporting the types of structure discovered.
+This thesis shows how to automatically construct and describe a large class of models, useful for forecasting and finding structure in domains such as time series, geological formations, and physical dynamics.
+These models, based on Gaussian processes, can capture many types of statistical structure, such as periodicity, changepoints, additivity, and symmetries.
+Such structure is usually encoded through a \emph{kernel}, which has historically been chosen by hand by experts.
+We show how to automate this task, creating a system which explores a large space of models and reports the structures discovered.
 
-The introductory chapters show ways in which many types of structure, such as periodicity, changepoints, additivity, and symmetries can be encoded by kernels, and how different structures can be combined by combining kernels.
-For example, composite kernels can produce priors over topological manifolds such as cylinders, toruses, and M\"{o}bius strips, as well as their higher-dimensional analogues.
+The introductory chapters show how to express many types of structure through kernels, and how combining together different kernels combines their properties.
+Among several examples, we show how composite kernels can produce priors over topological manifolds such as cylinders, toruses, and M\"{o}bius strips, as well as their higher-dimensional analogues.
 
-The main contribution of this thesis is to show how this open-ended space of models can be explored automatically.
-To do so, we define a simple grammar over kernels, a search criterion (marginal likelihood), and a breadth-first search procedure.
+To automatically search over an open-ended space of models, we define a simple grammar over kernels, a search criterion (marginal likelihood), and a breadth-first search procedure.
 Combining these, we present a procedure which takes in a dataset and outputs an automatically-constructed model, along with a detailed report with graphs and automatically-generated text illustrating the qualitatively different, and potentially novel, types of structure discovered in that dataset.
 This system automates parts of the model-building and analysis currently performed by expert statisticians.
 

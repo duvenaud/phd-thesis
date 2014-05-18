@@ -337,7 +337,7 @@ To the best of our knowledge, the only other Bayesian clustering method with non
 
 If we wish to construct a \gplvm{} with a more structured density $p(\vx)$ in the latent space, one elegant solution is to use another \gplvm{} to model the latent coordinates $\vX$.
 This latent \gplvm{} can have another \gplvm{} modeling its latent space, etc.
-This is exactly the model class considered by \cite{damianou2012deep}, who also test to what extent each layer's latent representation implicitly forms clusters.
+This is exactly the model class considered by \citet{damianou2012deep}, who also test to what extent each layer's latent representation implicitly forms clusters.
 They found that when modeling \MNIST{} hand-written digits, nearest-neighbour classification performed best in the 4th layer of a 5-layer deep nested \gplvm{}, suggesting that the latent density might have implicitly been forming clusters at that level.
 
 

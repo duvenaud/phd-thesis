@@ -4,7 +4,47 @@
 \chapter{Discussion}
 \label{ch:discussion}
 
+\section{Structured versus Unstructured \sgp{} Models}
 
+One question left unanswered by this thesis is when to prefer the highly structured models of \cref{ch:kernels,ch:grammar,ch:additive} to the relatively unstructured models of \cref{ch:deep-limits}.
+
+The warped mixture model of \cref{ch:warped} represents a compromise between these two approaches, combining a discrete clustering model with an unstructured warping function.
+However, the results of \citep{damianou2012deep} suggest that clustering can be automatically accomplished by a sufficiently deep, unstructured \gp{}.
+
+\subsubsection{Difficulty of Optimization}
+The discrete nature of the search over composite kernel structures can be seen as a blessing and a curse.
+Certainly, a mixed discrete and continuous optimization requires more complex procedures compared to the continuous-only optimization possible in deep \gp{}s.
+
+However, the discrete nature of the space of composite kernels offers the possibility of learning heuristics to suggest which types of structure to add.
+For example, finding periodic structure or growing variance in the residuals of a model suggests adding periodic or linear components to the kernel, respectively.
+It is not clear whether such heuristics can easily be found for optimizing the variational parameters of a deep \gp{}.
+
+\subsubsection{Extrapolation}
+Another question is whether, and how, an equally rich inductive bias can be encoded into relatively unstructured models such as deep \gp{}s.
+As an example, consider the problem of extrapolating a periodic function.
+A deep \gp{} could learn a latent representation similar to that of the periodic kernel, projecting into a basis eqeuivalent to $[\sin(x), \cos(x)]$ in the first hidden layer.
+However, to extrapolate a periodic function, the $\sin$ and $\cos$ functions would have to continue to repeat beyond the range of the training data, which would not happen if each layer assumed only local smoothness.
+
+One obvious possibility is to marry the two approaches, learning deep \gp{}s with structured kernels.
+However, we may lose some of the advantages of interpretability by this approach.
+
+Another point to consider is that, in high dimensions, the line between interpolation and extrapolation is blurred, and that learning a suitable representation of the data manifold may be sufficient for most purposes.
+
+\subsubsection{Ease of Interpretation}
+For summarizing the learned structure on low-dimensional datasets, \cref{ch:description} showed that the composite kernels allow a simple recipe for visualizing and desribing the learned structure.
+On the other hand, \citet{damianou2012deep} showed that deep \gplvm{}s allow summarization of the learned structure through sampling from the posterior, examining the dimension of the different latent layers, visualizing the latent coordinates, or examining how the predictive distribution changes as one moves in different directions in the latent space.
+
+\section{Automating Machine Learning and Statistics}
+
+It seems clear that, one way or another, large parts of the existing practice of model-building will be eventually automated.
+The machine learning community has so far mostly focused on producing efficient inference strategies for powerful model classes, which is sufficient for improving predictive performance.
+Historically, the statistics community has put much more emphasis on the interpretabilty and meaning of models.
+To begin to automate the practice of statistics, developing more sophisticated model-description procedures seems like the direction with the most low-hanging fruit.
+
+
+
+
+\iffalse
 \section{Why Assume Zero Mean?}
 
 In literature, as well as in practice, it is common to construct \gp{} priors with a zero mean function.
@@ -105,7 +145,7 @@ However, in many other cases, we with to de-trend our data to see more clearly h
 %\subsubsection{Student's $t$ processes}
 
 %One shortcoming of the
-
+\fi
 
 
 %\section{Why does everyone use squared-exp?}
