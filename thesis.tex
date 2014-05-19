@@ -126,7 +126,10 @@
 
 % *********************** Adding TOC and List of Figures ***********************
 
+% Added lines to remove 'Contents' from table of contents - DD
+\addtocontents{toc}{\protect\setcounter{tocdepth}{-1}}
 \tableofcontents
+\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
 
 \listoffigures
 

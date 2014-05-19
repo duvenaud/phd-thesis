@@ -107,7 +107,7 @@ The next four sections of this chapter describe the mechanisms we use to produce
 As shown in \cref{ch:kernels}, we can construct a wide variety of kernel structures compositionally by adding and multiplying a small number of base kernels.
 We can therefore define a language of \gp{} regression models simply by specifying a language of kernels.
 
-\begin{table}[ht!]%
+\begin{figure}[ht!]%
 \centering
 \begin{tabular}{cccc}
 Kernel name: & Rational quadratic (\kRQ) & Cosine ($\cos$) & White noise (\kLin) \\[10pt]
@@ -121,7 +121,7 @@ $\delta(\inputVar - \inputVar')$ \\[14pt]
 \raisebox{1cm}{Samples from prior:} & \kernpic{rq_kernel_draws_s4} & \kernpic{cos_kernel_draws_s1} & \kernpic{wn_kernel_draws_s1} \\
 Type of structure: & multiscale variation & sine waves & uncorrelated noise\\[10pt]
 \end{tabular}
-\caption[Some other basic kernels]
+\caption[Another set of basic kernels]
 {New base kernels introduced in this chapter, and the types of structure they encode.
 More interesting kernels can be constructed by adding and multiplying base kernels together.
 %Left and third columns: base kernels $k(\cdot,0)$.
@@ -129,7 +129,7 @@ More interesting kernels can be constructed by adding and multiplying base kerne
 %The x-axis has the same range on all plots.
 }
 \label{fig:basic_kernels_two}
-\end{table}
+\end{figure}
 %
 To specify an open-ended language of structured kernels, we'll consider the set of all kernels that can be built by adding and multiplying these base kernels together:
 \begin{align}
@@ -583,7 +583,7 @@ The \RMSE{}s are then standardised by dividing by the smallest \RMSE{} for each 
 
 \begin{figure}[h!]
 \includegraphics[width=1.02\textwidth]{\grammarfiguresdir/comparison/box_extrap_wide}
-\caption[Comparison of extrapolation error of all methods on 13 time-series datasets.]
+\caption[Extrapolation error of all methods on 13 time-series datasets]
 {Box plot (showing median and quartiles) of standardised extrapolation \RMSE{} (best performance = 1) on 13 time-series.
 The methods are ordered by median.
 }
@@ -716,132 +716,4 @@ Building languages of models that support efficient search as well and interpret
 
 
 
-
-\iffalse
-
-
-\paragraph{Solar irradiance Data} 
-Finally, we analyzed annual solar irradiation data from 1610 to 2011 \citep{lean1995reconstruction}.
-%
-\begin{figure}
-\newcommand{\wsd}{0.5\columnwidth}  % width solar decomp
-\newcommand{\hsd}{4cm}  % height solar decomp
-\newcommand{\srd}{\grammarfiguresdir/decomposition/11-Feb-02-solar-s}  % solar decomp results dir
-\newcommand{\mbs}{\hspace{-0.3cm}}  % move back
-\begin{tabular}{cc}
-\mbs \includegraphics[width=\wsd,height=\hsd]{\srd/02-solar-s_all} &
-\mbs \includegraphics[width=\wsd,height=\hsd]{\srd/02-solar-s_resid}
-\end{tabular}
-\caption[Decomposition of model discovered on solar irradiance dataset]
-{Full posterior and residuals on the solar irradiance dataset.}
-\label{fig:solar_decomp}
-\end{figure}
-%
-The posterior and residuals of the learned kernel are shown in figure \ref{fig:solar_decomp}.
-%The composite kernel captures the periodic structure in the data, but does not capture the flat structure from 1645 to 1715 during which sunspots were extremely rare.
-%but it misses out on another aspect of the data: the flat period from 1645 to 1715 which contains no periodicity and has much smaller variance than the rest of the dataset.
-%This corresponds to the Maunder minimum, a period in which sunspots were extremely rare.
-%
-None of the models in our search space are capable of parsimoniously representing the lack of variation from 1645 to 1715. %, since all of the base kernels apart from \kLin{} are stationary.
-%, and it is hard to see how Lin would help in modeling this structure.
-%
-%
-Despite this, our approach fails gracefully: the learned kernel still captures the periodic structure, and the quickly growing posterior variance demonstrates that the model is uncertain about long term structure.
-\fi
-
-
-\iffalse
-
-\subsection{Extrapolation}
-
-\begin{figure}
-\centering
-\begin{tabular}{c}
-\hspace{-0.5cm}
-\includegraphics[width=0.5\columnwidth,height=7cm]{\grammarfiguresdir/extrapolation_curves/01-airline-s-ex-curve_hint.pdf}
-\end{tabular}
-\caption[Comparison of extrapolation performance]
-{Extrapolation performance on the airline dataset.  We plot test-set MSE as a function of the fraction of the dataset used for training. 
-%\TBD{RBG: Are we using a fixed test set, or the complement of the training set?  It seems like we should do the former, so that the results are less noisy.}
-}
-\label{fig:extrapolation}
-\end{figure}
-
-We compared the extrapolation capabilities of our model against standard baselines\footnotemark.
-Dividing the airline dataset into contiguous training and test sets, we computed the predictive mean-squared-error (MSE) of each method.
-We varied the size of the training set from the first 10\% to the first 90\% of the data.
-
-Figure \ref{fig:extrapolation} shows the learning curves of linear regression, a variety of fixed kernel family \gp{} models, and our method.  
-\gp{} models with only \kSE{} and \kPer{} kernels did not capture the long-term trends, since the best parameter values in terms of \gp{} marginal likelihood only capture short term structure. 
-Linear regression approximately captured the long-term trend, but quickly plateaued in predictive performance.
-The more richly structured \gp{} models (${\kSE + \kPer}$ and ${\kSE \times \kPer}$) eventually captured more structure and performed better, but the full structures discovered by our search outperformed the other approaches in terms of predictive performance for all data amounts.
-%In contrast, a \gp{} with an SE or RQ kernel has unbounded capacity.  However, simply having unbounded capacity does not necessarily translate into the ability to extrapolate, as demonstrate in Figure \ref{fig:extrapolation}.  Only by increasing the amount of structure expressible in a model can we capture the regularities in the data that allow long-range extrapolation.
-
-\footnotetext{
-%\NA{
-In one dimension, the predictive means of all baseline methods in table \ref{tbl:Regression Mean Squared Error} are identical to that of a \gp{} with an $\kSE{}$ kernel.}
-%}
-
-
-
-The comparison included three methods with fixed kernel families: Additive \gp{}s, Generalized Additive Models (\GAM{}), and a \gp{} with a standard \kSE{} kernel using Automatic Relevance Determination (\gp{} \kSE{}-\ARD{}).  Also included was the related kernel-search method of Hierarchical Kernel Learning (\HKL{}).
-%We compared 5 methods on 5 datasets in terms of mean-squared (MSE) error and predictive likelihood, averaging across 10 data folds.
-
-Results are presented in table \ref{tbl:Regression Mean Squared Error}.
-%
-% --- Automatically generated by resultsToLatex2.m ---
-% Exported at 28-Jan-2013 15:53:45
-\begin{table}[h]
-\vspace{-0.1cm}
-\caption[Comparison of multidimensional regression performance]
-{Comparison of multidimensional regression performance.
-Bold results are not significantly different from the best-performing method in each experiment, in a paired t-test with a $p$-value of 5\%.
-}
-\label{tbl:Regression Mean Squared Error}
-{\small
-\begin{center}
-\begin{tabularx}{\textwidth}{l | XXXXX | XXXXX}
- & \multicolumn{5}{c}{Mean Squared Error (\MSE{})} & \multicolumn{5}{c}{Negative Log-Likelihood} \\
- Method & bach & \hspace{-3mm}\parbox{1cm}{concrete} & puma & servo & \hspace{-3mm}\parbox{1cm}{housing}
-& bach  & \hspace{-3mm}\parbox{1cm}{concrete} & puma & servo & \hspace{-3mm}\parbox{1cm}{housing}
-\\ \hline
-Linear reg.
-& $1.031$ & $0.404$ & $0.641$ & $0.523$ & $0.289$
-& $3.430$ & $1.403$ & $1.881$ & $2.678$ & $1.052$ \\
-\GAM
-& $1.259$ & $0.149$ & $0.598$ & $0.281$ & $0.161$ 
-& $2.708$ & $0.467$ & $1.195$ & $1.800$ & $0.457$ \\
-\HKL
-& $\mathbf{0.199}$ & $0.147$ & $0.346$ & $0.199$ & $0.151$ 
-& - & - & - & - & -\\
-\gp{} \acro{\kSE{}-\ARD{}}
-& $\mathbf{0.045}$ & $0.157$ & $\mathbf{0.317}$ & $\mathbf{0.126}$ & $\mathbf{0.092}$
-& $\mathbf{0.869}$ & $0.398$ & $\mathbf{0.843}$ & $1.429$ & $0.207$ \\
-Additive \gp{}
-& $\mathbf{0.045}$ & $\mathbf{0.089}$ & $\mathbf{0.316}$ & $\mathbf{0.110}$ & $0.102$
-& $\mathbf{0.869}$ & $\mathbf{0.114}$ & $\mathbf{0.841}$ & $1.309$ & $0.194$ \\
-\hline
-%$\SE{}$ 
-%Structure Search & & &&&&&&&&\\
-%& $\mathbf{0.044}$ & $0.089$ & $\mathbf{0.315}$ & $\mathbf{0.101}$ & $\mathbf{0.092}$ 
-%& $\mathbf{-0.141}$ & $\mathbf{0.054}$ & $\mathbf{0.840}$ & $0.249$ & $\mathbf{0.147}$ \\
-%\multirow{2}{1cm}{Search - $\SE{}, \RQ{}$}
-%\begin{tabular}{@{}l@{}}Search \\ $\SE{}, \RQ{}$\end{tabular}
-$\SE{}, \RQ{}$ Search
-& $\mathbf{0.044}$ & $\mathbf{0.087}$ & $\mathbf{0.315}$ & $\mathbf{0.102}$ & $\mathbf{0.082}$
-& $\mathbf{0.859}$ & $\mathbf{0.065}$ & $\mathbf{0.840}$ & $1.265$ & $\mathbf{0.059}$ \\
-% - All kernels%$\SE{}, \RQ{}, \Lin{}, \Per{}$
-%\begin{tabular}{@{}l@{}}Structure Search \\ $\SE{}, \RQ{}, \Lin{}, \Per{}$\end{tabular}
-$\SE{}, \RQ{}, \Lin{}, \Per{}$
-& $\mathbf{0.509}$ & $\mathbf{0.079}$ & $\mathbf{0.321}$ & $\mathbf{0.094}$ & $\mathbf{0.112}$
-& $\mathbf{1.357}$ & $\mathbf{0.114}$ & $\mathbf{0.837}$ & $\mathbf{0.573}$ & $\mathbf{0.151}$ \\
-\end{tabularx}
-\end{center}
-}
-\end{table}
-% End automatically generated LaTeX
-%
-
-\fi
-
-
+C

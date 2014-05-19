@@ -3,14 +3,14 @@
 \begin{abstract}
 This thesis shows how to automatically construct and describe a large class of models, useful for forecasting and finding structure in domains such as time series, geological formations, and physical dynamics.
 These models, based on Gaussian processes, can capture many types of statistical structure, such as periodicity, changepoints, additivity, and symmetries.
-Such structure is usually encoded through a \emph{kernel}, which has historically been chosen by hand by experts.
+Such structure can be encoded through a \emph{kernel}, which has historically been chosen by hand by experts.
 We show how to automate this task, creating a system which explores a large space of models and reports the structures discovered.
 
 The introductory chapters show how to express many types of structure through kernels, and how combining together different kernels combines their properties.
 Among several examples, we show how composite kernels can produce priors over topological manifolds such as cylinders, toruses, and M\"{o}bius strips, as well as their higher-dimensional analogues.
 
 To automatically search over an open-ended space of models, we define a simple grammar over kernels, a search criterion (marginal likelihood), and a breadth-first search procedure.
-Combining these, we present a procedure which takes in a dataset and outputs an automatically-constructed model, along with a detailed report with graphs and automatically-generated text illustrating the qualitatively different, and potentially novel, types of structure discovered in that dataset.
+Combining these, we present a procedure which takes in a dataset and outputs an automatically-constructed model, along with a detailed report with graphs and automatically generated text illustrating the qualitatively different, and sometimes novel, types of structure discovered in that dataset.
 This system automates parts of the model-building and analysis currently performed by expert statisticians.
 
 This thesis also explores several extensions to Gaussian process models.
