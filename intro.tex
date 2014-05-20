@@ -90,7 +90,7 @@ The marginal likelihood allows us to compare models and automatically discover t
 Choosing a kernel, or kernel parameters, by maximizing the marginal likelihood will typically result in selecting the \emph{least} flexible model which still captures all the structure in the data.
 For example, if a kernel has a parameter which controls the smoothness of the functions it models, the maximum-likelihood estimate of that parameter will usually correspond to the smoothest family of functions which still go through all the observed function values.
 
-Here is the marginal likelihood under a \gp{} prior of observing a set of function values $\left[ f(\vx_1), f(\vx_2), \ldots f(\vx_N)  \right] = \vf(\vX)$ at locations $[\vx_1, \vx_2, \ldots, \vx_N]\tra = \vX$:
+Here is the marginal likelihood under a \gp{} prior of observing a set of function values $\left[ f(\vx_1), f(\vx_2), \ldots f(\vx_N)  \right] \defeq \vf(\vX)$ at locations $[\vx_1, \vx_2, \ldots, \vx_N]\tra \defeq \vX$:
 % given by the rows of $\vX$:
 %
 \begin{align}

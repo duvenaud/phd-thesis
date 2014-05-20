@@ -102,15 +102,14 @@ Zoubin Ghahramani provided guidance and many helpful suggestions throughout the 
 
 
 \begin{figure}
-\begin{centering}
-{\begin{tabular}{cccc}
-\phantom{h} & Latent space $p(\vX)$ & & Observed space $p(\vY)$ \\
-& \fbox{\includegraphics[height=15em,width=15em]{\gplvmfiguresdir/gplvm-latent-crop}} &
-\raisebox{7em}{$\overset{\mathlarger{f(x)}}{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\rightarrow}}}}}}}}$} &
+\centering
+\begin{tabular}{ccc}
+Latent space $p(\vX)$ & & Observed space $p(\vY)$ \\
+\fbox{\includegraphics[height=15em,width=15em]{\gplvmfiguresdir/gplvm-latent-crop}} &
+\raisebox{7em}{$\overset{\mathlarger{\vf(\vx)}}{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\rightarrow}}}}}}}}$} &
 %\raisebox{7em}{\Huge $\overset{\textnormal{\Large{GP}}}\rightarrow$} &
 \fbox{\includegraphics[height=15em,width=15em]{\gplvmfiguresdir/gplvm-draw-crop}}
-\end{tabular}}
-\end{centering}
+\end{tabular}
 \caption[Two-dimensional Gaussian process latent variable model]{A visual representation of the Gaussian process latent variable model.
 \emph{Left:}  Isocontours and samples from a 2D Gaussian, specifying the distribution $p(\vX)$ in the latent space. 
 \emph{Right:} Density and samples from a nonparametric density defined by warping the latent density through a function drawn from a \gp{} prior.}  
@@ -178,13 +177,20 @@ Just as the \gplvm{} can be viewed as a manifold learning algorithm, the \iwmm{}
 
 \begin{figure}
 \centering
-\tabcolsep=0.1em
-{\begin{tabular}{ccc}
-\fbox{\includegraphics[trim=2em 0em 0em 0em, clip, height=13.5em,width=13.5em]{\warpedfiguresdir/iwmm_latent_N200_seed2155_darker}} &
-\raisebox{5em}{$\rightarrow$} &
-\fbox{\includegraphics[trim=8em 6em 6em 2em, clip, height=13.5em,width=13.5em]{\warpedfiguresdir/iwmm_N200_seed2155_points1000000}}\\
-Latent space & & Observed space \\
-\end{tabular}}
+%\tabcolsep=0.1em
+%{\begin{tabular}{ccc}
+%\fbox{\includegraphics[trim=2em 0em 0em 0em, clip, height=13.5em,width=13.5em]{\warpedfiguresdir/iwmm_latent_N200_seed2155_darker}} &
+%\raisebox{5em}{$\rightarrow$} &
+%\fbox{\includegraphics[trim=8em 6em 6em 2em, clip, height=13.5em,width=13.5em]{\warpedfiguresdir/%iwmm_N200_seed2155_points1000000}}\\
+%Latent space & & Observed space \\
+%\end{tabular}}
+\begin{tabular}{ccc}
+Latent space $p(\vX)$ & & Observed space $p(\vY)$ \\
+\fbox{\includegraphics[trim=2em 0em 0em 0em, clip, height=15em,width=15em]{\warpedfiguresdir/iwmm_latent_N200_seed2155_darker}} &
+\raisebox{7em}{$\overset{\mathlarger{\vf(\vx)}}{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\rightarrow}}}}}}}}$} &
+%\raisebox{7em}{\Huge $\overset{\textnormal{\Large{GP}}}\rightarrow$} &
+\fbox{\includegraphics[trim=8em 6em 6em 2em, clip, height=15em,width=15em]{\warpedfiguresdir/iwmm_N200_seed2155_points1000000}}
+\end{tabular}
 \caption[A draw from the infinite warped mixture model prior]{
 A sample from the \iwmm{} prior.
 \emph{Left:} In the latent space, a mixture distribution is sampled from a Dirichlet process mixture of Gaussians.
@@ -568,7 +574,7 @@ Both variants of the \iwmm{} usually outperformed the \iGMM{} on this measure.
 \subsection{Density Estimation}
 
 Next, we compared the \iwmm{} in terms of predictive density against kernel density estimation (\KDE{}) and the (\iGMM{}).
-For \KDE{}, the kernel width was estimated by maximizing the leave-one-out log densities.
+For \KDE{}, the kernel width was estimated by maximizing the leave-one-out density.
 
 Although all these methods are consistent density estimators, we might hope that the \iwmm{} will have an advantage for finite datasets, since its density contours can follow the data density.
 %With WM and \iwmm{}, we set the dimensionality of the latent space
