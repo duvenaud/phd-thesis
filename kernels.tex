@@ -4,17 +4,22 @@
 \chapter{Expressing Structure with Kernels}
 \label{ch:kernels}
 
-In this chapter, we'll show how to use kernels to build many different kinds of models of functions.
-By combining a few simple kernels through addition and multiplication, we'll be able to express many different kinds of structure: additivity, symmetry, periodicity, interactions between variables, and changepoints.
-We'll also show several ways to encode group invariants into kernels.
-Combining kernels in these simple ways will give us a rich, open-ended language of models.
+This chapter shows how to use kernels to build models of functions with many different kinds of structure: additivity, symmetry, periodicity, interactions between variables, and changepoints.
+We will also show several ways to encode group invariants into kernels.
+Combining a few simple kernels through addition and multiplication will give us a rich, open-ended language of models.
+
+The properties of kernels discussed in this chapter are mostly known in the literature.
+The contribution of this chapter is to gather them into a coherent whole and to offer a tutorial showing the implications of different kernel choices, and some of the structures which can be obtained by combining them.
+To the best of our knowledge, the different types of structure that could be obtained by through taking sums and products of kernels had not been systematically explored before \citet{DuvLloGroetal13}.
+%TODO: Add more about contribution here.
 
 
 \section{Definition}
 
-Since we'll be discussing kernels at length, we now give a precise definition.
-A kernel (also called a covariance function, kernel function, or covariance kernel), is a positive-definite function between two points $\inputVar, \inputVar'$ in some space $\InputSpace$. Formally, $\kernel(\vx, \vx'): \InputSpace \times \InputSpace \to \Reals$.
-In this chapter, $\InputSpace$ is usually a Euclidean space, but it could just as easily correspond to the space of images, document, categories, or points on a sphere.
+%Since we'll be discussing kernels at length, we now give a precise definition.
+A kernel (also called a covariance function, kernel function, or covariance kernel), is a positive-definite function of two inputs $\vx, \vx'$. % in some space $\InputSpace$. 
+%Formally, we write $\kernel(\vx, \vx'): \InputSpace \times \InputSpace \to \Reals$.
+In this chapter, $\vx$ and $\vx'$ are usually vectors in a Euclidean space, but kernels can also be defined on graphs, images, discrete or categorical inputs, or even text.
 
 Gaussian process models use a kernel to define the prior covariance between any two function values:
 %
@@ -33,7 +38,7 @@ The kernel specifies which functions are likely under the \gp{} prior, which in 
 \section{A Few Basic Kernels}
 \label{sec:basic-kernels}
 
-To begin understanding the types of structures expressible by \gp{}s, we'll start by briefly examining the types of structure encoded by a diverse set of commonly used kernels:
+To begin understanding the types of structures expressible by \gp{}s, we will start by briefly examining the priors on functions encoded by some commonly used kernels:
 the squared-exponential (\kSE), periodic (\kPer), and linear (\kLin) kernels.
 These kernels are defined in \cref{fig:basic_kernels}.
 %
@@ -81,8 +86,8 @@ In contrast, the linear kernel $\kLin$ is non-stationary, meaning that the corre
 
 \section{Combining Kernels}
 
-What if the kind of structure we need isn't expressed by any existing kernel?
-For many types of structure, it's possible to build a ``made to order'' kernel with the desired properties.
+What if the kind of structure we need is not expressed by any existing kernel?
+For many types of structure, it is possible to build a ``made to order'' kernel with the desired properties.
 The next few sections of this chapter will explore ways in which kernels can be combined to create new ones with different properties.
 This will allow us to include as much high-level structure as necessary into our models.
 %For an overview, see \cite[Chapter~4]{rasmussen38gaussian}.
@@ -90,8 +95,8 @@ This will allow us to include as much high-level structure as necessary into our
 
 \subsection{Notation}
 
-Below, we'll focus on two ways of combining kernels: addition and multiplication.
-We'll often write these operations in shorthand, without arguments:
+Below, we will focus on two ways of combining kernels: addition and multiplication.
+We will often write these operations in shorthand, without arguments:
 %
 \begin{align}
 k_a + k_b =& \,\, k_a(\vx, \vx') + k_b( \vx, \vx')\\
@@ -101,10 +106,7 @@ k_a \times k_b =& \,\, k_a(\vx, \vx') \times k_b(\vx, \vx')
 All of the basic kernels we considered in \cref{sec:basic-kernels} are one-dimensional, but kernels over multidimensional inputs can be constructed by adding and multiplying between kernels on different dimensions.
 The dimension on which a kernel operates is denoted by a subscripted integer.
 For example, $\SE_2$ represents an \kSE{} kernel over the second dimension of $\vx$.
-To remove clutter, we'll usually refer to kernels without specifying their parameters.
-
-
-
+To remove clutter, we will usually refer to kernels without specifying their parameters.
 
 
 
@@ -137,8 +139,8 @@ Plots have same meaning as in figure \ref{fig:basic_kernels}.}
 %
 \Cref{fig:kernels_times} shows some more interesting kernels that one can obtain by multiplying two basic kernels together.
 
-Working with kernels rather than the parametric form of the function itself allows us to express high-level properties of functions that don't necessarily have a simple parametric form.
-Here, we'll discuss a few examples.
+Working with kernels rather than the parametric form of the function itself allows us to express high-level properties of functions that do not necessarily have a simple parametric form.
+Here, we discuss a few examples:
 
 \begin{itemize}
 \item {\bf Polynomial Regression.}
@@ -156,7 +158,7 @@ The third and fourth columns of \cref{fig:kernels_times} show two examples.
 
 We can multiply any number of kernels together in this way to produce kernels combining several high-level properties.
 For example, the kernel $\kSE \kerntimes \kLin \kerntimes \kPer$ is a prior on functions which are locally periodic with linearly growing amplitude.
-We'll see examples of real datasets with this kind of structure in \cref{ch:grammar}.
+We will see examples of real datasets with this kind of structure in \cref{ch:grammar}.
 
 
 \subsection{Building Flexible Multidimensional Models}
@@ -207,8 +209,8 @@ This may be partly because they have relatively few parameters to estimate, and 
 In addition, there is a theoretical reason to use them: they are \emph{universal} kernels~\citep{micchelli2006universal}, capable of learning any continuous function given enough data, under some conditions.
 
 However, this flexibility means that they can sometimes be relatively slow to learn, due to the \emph{curse of dimensionality} \citep{bellman1956dynamic}.
-In general, the more structure we account for, the less data we'll need - the \emph{blessing of abstraction} \citep{goodman2011learning} counters the curse of dimensionality.
-Below, we'll investigate ways to encode more structure into kernels.
+In general, the more structure we account for, the less data we need - the \emph{blessing of abstraction} \citep{goodman2011learning} counters the curse of dimensionality.
+Below, we will investigate ways to encode more structure into kernels.
 
 
 
@@ -354,7 +356,7 @@ In high dimensions, we can also consider sums of functions of more than one dime
 \subsection{Example: An Additive Model of Concrete Strength}
 \label{sec:concrete}
 
-To illustrate how additive kernels give rise to interpretable models, we'll build an additive model of the strength of concrete as a function of the amount of seven different ingredients, plus the age of the concrete \citep{yeh1998modeling}.
+To illustrate how additive kernels give rise to interpretable models, we will build an additive model of the strength of concrete as a function of the amount of seven different ingredients, plus the age of the concrete \citep{yeh1998modeling}.
 %We model measurements of the compressive strength of concrete, as a function of the concentration of 7 ingredients, plus the age of the concrete.
 
 Our simple additive model looks like
@@ -415,8 +417,8 @@ Here we derive the posterior variance and covariance of all of the additive comp
 These formulas allow us to make plots such as \cref{fig:interpretable functions}.
 %These formulas let us plot the marginal variance of each component separately.  These formulas can also be used to examine the posterior covariance between pairs of components.
 
-First, we'll write down the joint prior over the sum of two functions drawn from \gp{} priors.
-We'll distinguish between $\vecf(\vX)$ (the function values at the training locations) and  $\vecf(\vX^\star)$ (the function values at some set of query locations).
+First, we will write down the joint prior over the sum of two functions drawn from \gp{} priors.
+We distinguish between $\vecf(\vX)$ (the function values at the training locations) and  $\vecf(\vX^\star)$ (the function values at some set of query locations).
 % so that it's clear which matrices to use to extrapolate.
 
 If $f_1$ and $f_2$ are \emph{a priori} independent, and $f_1 \sim \gp( \mu_1, k_1)$ and $f_2 \sim \gp( \mu_2, k_2)$, then
@@ -475,8 +477,7 @@ To extend these formulas to a sum of more than two functions, the term $\vK_1 + 
 
 %One of the advantages of using a generative, model-based approach is that we can examine any aspect of the model we wish to.
 We can also compute the posterior covariance between any two components, conditioned on their sum:
-%
-If this quantity is negative, it means that there is ambiguity about which of the two components explains the data at that location.
+if this quantity is negative, it means that there is ambiguity about which of the two components explains the data at that location.
 \begin{figure}
 \centering
 \renewcommand{\tabcolsep}{1mm}
@@ -681,11 +682,11 @@ h_{ij}(x_1, x_2) \propto \exp \left( -\frac{1}{2} \frac{(x_1 - c_i)^2}{2\ell_1^2
 \label{sec:expressing-symmetries}
 
 When modeling functions, encoding known symmetries can improve predictive accuracy. 
-In this section, we'll look at different ways in which we can encode symmetries into a prior on functions.
+This section looks at different ways to encode symmetries into a prior on functions.
 Many types of symmetry can be enforced through operations on the kernel.
 
-We'll demonstrate the properties of the resulting models by sampling functions from their priors.
-By using these functions to define warpings from $\Reals^2 \to \Reals^3$, we'll show how to build a nonparametric prior on an open-ended family of topological manifolds, such as cylinders, toruses, and M\"{o}bius strips.
+We will demonstrate the properties of the resulting models by sampling functions from their priors.
+By using these functions to define warpings from $\Reals^2 \to \Reals^3$, we will show how to build a nonparametric prior on an open-ended family of topological manifolds, such as cylinders, toruses, and M\"{o}bius strips.
 
 \subsection{Three Recipes for Group Invariance}
 
@@ -703,8 +704,8 @@ As a simple example, consider the symmetry $f(x, y) = f(y,x)$, or the set of fun
 The elements of the group $\gswitch$ describing this symmetry are
 %
 \begin{align}
-g_1(f(x,y)) & = f(x,y) \qquad \textnormal{(identity)}\\
-g_2(f(x,y)) & = f(y,x) \qquad \textnormal{(swap)}
+g_1(f(x_1, x_2)) & = f(x_1, x_2) \qquad \textnormal{(identity)}\\
+g_2(f(x_1, x_2)) & = f(x_2, x_1) \qquad \textnormal{(swap)}
 \end{align}
 %
 It might not be clear how to find a kernel obeying these symmetries.
@@ -721,16 +722,16 @@ Additive method & Projection method & Product method \\[0.5ex]
 %$k(x, y, x', y') + k(x, y, y', x')$ & $k(x, y, x', y') \times k(x, y, y', x')$ & $k( \min(x, y), \max(x,y),$ \\
 % $+ k(y, x, x', y') + k(y, x, y', x')$ & $\times k(y, x, x', y') \times k(y, x, y', x')$ & $\min(x', y'), \max(x',y') )$
 $\begin{array}{r@{}l@{}}
-& \kSE(x, y, x', y') \\ + \,\, & \kSE(x, y, y', x')
+& \kSE(x_1, x_2, x_1', x_2') \\ + \,\, & \kSE(x_1, x_2, x_2', x_1')
 \end{array}$
 &
 $\begin{array}{r@{}l@{}}
-\kSE( \!\! &{}\min(x, y), \max(x,y), \\
-           &{}\min(x', y'), \max(x',y') )
+\kSE( \!\! &{}\min(x_1, x_2), \max(x_1, x_2), \\
+           &{}\min(x_1', x_2'), \max(x_1',x_2') )
 \end{array}$
 &
 $\begin{array}{r@{}l@{}}
-& \kSE(x, y, x', y') \\ \times \,\, & \kSE(x, y, y', x') 
+& \kSE(x_1, x_2, x_1', x_2') \\ \times \,\, & \kSE(x_1, x_2, x_2', x_1')
 \end{array}$
 \end{tabular}
 \caption[Three ways to introduce symmetry]{Three methods of introducing symmetry, illustrated through draws from the corresponding priors.
@@ -757,7 +758,8 @@ For the group $\gswitch$, this operation results in the kernel:
 \begin{align}
 k_\textnormal{switch}(\vx, \vx')
 & = \sum_{g, \in \gswitch} \sum_{g' \in \gswitch} k( g( \vx ), g'( \vx') ) \\
-& = k(x, y, x', y') + k(x, y, y', x') + k(y, x, x', y') + k(y, x, y', x')
+& = k(x_1, x_2, x_1', x_2') + k(x_1, x_2, x_2', x_1')  \nonumber \\ 
+& \quad + k(x_2, x_1, x_1', x_2') + k(x_2, x_1, x_2', x_1')
 \end{align}
 %
 For stationary kernels, some pairs of elements in this sum will be identical, and can be ignored.
@@ -778,7 +780,7 @@ Constructing a kernel using this method introduces a non-differentiable  ``seam'
 The projection method also works for infinite groups, as we shall see below.
 
 \item {\bf Multiply over the Orbit.}
-Ryan P. Adams (personal communication) suggests a construction enforcing invariants through products over the orbits:
+\citet{adams2013product} suggests a construction enforcing invariants through products over the orbits:
 %
 \begin{align}
 k_\textnormal{sum}(\vx, \vx') = \prod_{g, \in G} \prod_{g' \in G} k( g( \vx ), g'( \vx') )
@@ -912,7 +914,7 @@ The work presented in this section is based on a collaboration with David Reshef
 Priors on functions exhibiting symmetries can be used to create a prior on topological manifolds, by warping a simply-connected surface into a higher-dimensional space using a mapping expressing symmetries. %from a latent space to an observed space.%surface $f(\vx)$.
 %The distribution on $\vf$ allows us to put mass on 
 %If we set the input $\vx$ to be a 2-dimensional plane, intro 3 dimensions using a \gp{} encoding certain symmetries, the resulting surfaces will correspon
-To build a prior on 2-dimensional manifolds embedded in 3-dimensional space, we simply need a prior on mappings from $\mathbb{R}^2$ to $\mathbb{R}^3$, which we can construct using 3 independent functions $[f_1(\vx), f_2(\vx), f_3(\vx)]$, each mapping from $\mathbb{R}^2$ to $\mathbb{R}$.
+To build a prior on 2-dimensional manifolds embedded in 3-dimensional space, we simply need a prior on mappings from $\mathbb{R}^2$ to $\mathbb{R}^3$, which we can construct using three independent functions $[f_1(\vx), f_2(\vx), f_3(\vx)]$, each mapping from $\mathbb{R}^2$ to $\mathbb{R}$.
 \gp{} priors on the mapping functions implictly give rise to a prior on warped surfaces.
 Symmetries in $[f_1, f_2, f_3]$ will connect different parts of the manifolds, giving rise to non-trivial topologies on the sampled surfaces.
 %
@@ -1008,8 +1010,8 @@ but instead resembles an embedding known as the Sudanese M\"{o}bius strip \citep
 
 %There is a simple way to do \gp{} regression over categorical variables:
 Categorical variables are variables which can take values only from a discrete, unordered set, such as $\{\texttt{blue}, \texttt{green}, \texttt{red}\}$.
-A flexible way to construct a kernel over categorical variables is simply to represent that variable through a set of binary variables, using a one-of-k encoding.
-For example, if $\vx$ can take one of 4 values, $x \in \{ \texttt{A}, \texttt{B}, \texttt{C}, \texttt{D}\}$, then a one-of-k encoding of $x$ will correspond to 4 binary inputs, and $\oneofk(\texttt{C}) = [0, 0, 1, 0]$.
+A flexible way to construct a kernel over categorical variables is to represent that variable by a set of binary variables, using a one-of-k encoding.
+For example, if $\vx$ can take one of four values, $x \in \{ \texttt{A}, \texttt{B}, \texttt{C}, \texttt{D}\}$, then a one-of-k encoding of $x$ will correspond to four binary inputs, and $\oneofk(\texttt{C}) = [0, 0, 1, 0]$.
 Given a one-of-k encoding, we can place any multidimensional kernel on that space, such as the \seard{}:
 %
 \begin{align}
@@ -1018,7 +1020,7 @@ k_{\textnormal{categorical}}( x, x') = \seard( \oneofk(x), \oneofk(x') )
 %
 Short lengthscales on any particular dimension in the $\seard$ kernel indicate that the function value corresponding to that category is uncorrelated with the others.
 
-A more flexible parameterization suggested by Kevin Swersky (personal communication) allows complete flexibility about which pairs of categories are similar to one another, replacing the $\seard$ kernel with a fully-parameterized kernel, $\sefull$:
+A more flexible parameterization suggested by \citet{swersky2013categorical} allows complete flexibility about which pairs of categories are similar to one another, replacing the $\seard$ kernel with a fully-parameterized kernel, $\sefull$:
 %
 \begin{align}
 \sefull( \vx, \vx') = \exp \left( -\frac{1}{2} \vx\tra \vL \vx' \right)
@@ -1105,10 +1107,10 @@ The kernel parameters estimated in the examples above were optimized using the \
 %The quantities represent the relative amount of evidence that the data provide for each of these possibilities, providing the assumptions of the model are correct.
 %To do so, we simple need to compare the marginal likelihood of the data
 %We demonstrate that marginal likeihood an be used to automatically search over such structures.
-In the next chapter, we'll see how to perform such a search not just over the kernel paramaters, but also over the open-ended space of kernel expressions.
+The next chapter will show how to perform such a search not just over the kernel parameters, but also over the open-ended space of kernel expressions.
 
 \subsubsection{Source Code}
-Source code to produce all figures is available at \url{github.com/duvenaud/pdh-thesis}.
+Source code to produce all figures is available at \url{github.com/duvenaud/phd-thesis}.
 
 %\section{Conclusion}
 
