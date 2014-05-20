@@ -7,13 +7,17 @@
 
 \section{Summary of Contributions}
 
-The main contribution of this thesis is to show how to automate the discovery and explanation of structure in functions, simply by searching an open-ended language of regression models.
+The main contribution of this thesis is to show how to automate the construction of interpretable nonparametric models using Gaussian processes.
+
+\Cref{ch:kernels} is a tutorial showing how to build a wide variety of structured models of functions by constructing appropriate covariance functions.
+%TODO: Expand this description.
+We'll also show how \gp{}s can produce nonparametric models of manifolds with diverse topological structures, such as cylinders, toruses and M\"obius strips.
+
+
+
 This thesis also includes a set of related results showing how Gaussian processes can be extended, or composed with other models.
 %Furthermore, the fact that the marginal likelihood is available means that we can evaluate how much evidence the data provides for one structure over another, allowing an automatic search to construct models for us.
 
-{\bf Chapter~\ref{ch:kernels}} is a tutorial showing how to build a wide variety of structured models of functions by constructing appropriate covariance functions.
-%TODO: Expand this description.
-We'll also show how \gp{}s can produce nonparametric models of manifolds with diverse topological structures, such as cylinders, toruses and M\"obius strips.
 
 {\bf Chapter~\ref{ch:grammar}} shows how to search over a general, open-ended language of models, built by composing together different kernels.
 Since we can evaluate each model by the marginal likelihood, we can automatically construct custom models for each dataset by a breadth-first search.

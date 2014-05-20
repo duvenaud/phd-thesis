@@ -17,14 +17,14 @@
 \end{quotation}
 
 Prediction, extrapolation, and induction are all examples of learning a function from data.
-There are many ways to learn functions, but one particularly nice way is by \emph{inference}.
+There are many ways to learn functions, but one particularly elegant way is by \emph{inference}.
 Inference procedures set up a group of hypotheses -- a \emph{model}, then weight those hypotheses based on how well their predictions match the data.
 Keeping around all the hypotheses that match the data helps guard against over-fitting.
 We can also compare different models to find what sorts of structure are present in a dataset.
 
-To be able to learn a wide variety of types of structure, we'd like to have an expressive language of models of functions.
-We'd like to be able to represent simple kinds of functions, such as linear functions or polynomials.
-We'd also like to have models of arbitrarily complex functions, specified in terms of high-level properties such as how smooth they are, whether they repeat over time, or which symmetries they have.
+To be able to learn a wide variety of types of structure, we would like to have an expressive language of models of functions.
+We would like to be able to represent simple kinds of functions, such as linear functions or polynomials.
+We would also like to have models of arbitrarily complex functions, specified in terms of high-level properties such as how smooth they are, whether they repeat over time, or which symmetries they have.
 
 This thesis will show how to build such a language using Gaussian processes (\gp{}s), a tractable set of models of very different types of functions.
 This chapter will introduce the basic properties of \gp{}s.
@@ -78,7 +78,7 @@ The kernel determines how the model generalizes, or extrapolates to new data.
 
 There are many possible choices of covariance function, and we can specify a wide range of models just by specifying the kernel of a \gp{}.
 For example, linear regression, splines, and Kalman filters are all examples of \gp{}s with particular kernels.
-However, these are just a few examples of the many possible models we can express through choosing a kernel.
+However, these are just a few familiar examples out of a wide range of possibilities. %of the many possible models we can express through choosing a kernel.
 One of the main difficulties in using \gp{}s is constructing a kernel which represents the particular structure present in the data being modelled.
 
 
@@ -99,13 +99,13 @@ p(\funcval | \vX, \mu(\cdot), k(\cdot, \cdot)) & = \N{\funcval}{\mu(\vX)}{k(\vX,
  & \qquad \times \underwrite{\exp \left\{ -\frac{1}{2} \left( \funcval - \boldsymbol\mu(\vX) \right)\tra k(\vX, \vX)\inv \left(\funcval - \boldsymbol\mu(\vX) \right) \right\}}{\footnotesize encourages fit with data} \nonumber
 \end{align}
 %
-This multivariate Gaussian density is referred to as the \emph{marginal} likelihood because it implicitly integrates (marginalizes) over all possible functions values $\vf( \bar \vX)$, where $\bar \vX$ is the set of all locations where we haven't observed the function.
+This multivariate Gaussian density is referred to as the \emph{marginal} likelihood because it implicitly integrates (marginalizes) over all possible functions values $\vf( \bar \vX)$, where $\bar \vX$ is the set of all locations where we have not observed the function.
 % Talk about the meaning of the different terms in the equation?
 
 \subsection{Prediction}
 %Even though we don't need to consider locations other than at the data when computing the marginal likelihood, 
-We can ask the model which function values are likely to occur at any location, given the observations.
-By the formula for Gaussian conditionals (given in appendix \ref{ch:appendix-gaussians}), the predictive distribution of a function value $f(\vx^\star)$ at a test point $\testpoint$ has the form:
+We can ask the model which function values are likely to occur at any location, given the observations seen so far.
+By the formula for Gaussian conditionals (given in appendix~\ref{ch:appendix-gaussians}), the predictive distribution of a function value $f(\vx^\star)$ at a test point $\testpoint$ has the form:
 %
 \begin{align}
 p( f(\testpoint) | \funcval, \vX, \mu(\cdot), k(\cdot, \cdot))
@@ -179,7 +179,8 @@ There are, unfortunately, several issues which make usage of \gp{}s sometimes di
 
 \item {\bf Slow inference.}
 Computing the matrix inverse in \cref{eq:gp_marg_lik,eq:predictive} takes $\mathcal{O}(N^3)$ time, making inference prohibitively slow for more than a few thousand datapoints.
-However, this problem can be addressed by approximate inference schemes \citep{snelson2006sparse, quinonero2005unifying, hensman2013gaussian}.  Most \gp{} software packages implement several of these methods \citep{GPy, GPML, VanRiiHarJylVeh14}.
+However, this problem can be addressed by approximate inference schemes \citep{snelson2006sparse, quinonero2005unifying, hensman2013gaussian}. 
+Most \gp{} software packages implement several of these methods \citep{GPy, GPML, VanRiiHarJylVeh14}.
 
 \item {\bf Light tails of the predictive distribution.}
 The predictive distribution of a standard \gp{} model is Gaussian.
@@ -213,7 +214,7 @@ This thesis also includes a set of related results showing how Gaussian processe
 
 {\bf Chapter~\ref{ch:kernels}} is a tutorial showing how to build a wide variety of structured models of functions by constructing appropriate covariance functions.
 %TODO: Expand this description.
-We'll also show how \gp{}s can produce nonparametric models of manifolds with diverse topological structures, such as cylinders, toruses and M\"obius strips.
+We will also show how \gp{}s can produce nonparametric models of manifolds with diverse topological structures, such as cylinders, toruses and M\"obius strips.
 
 {\bf Chapter~\ref{ch:grammar}} shows how to search over a general, open-ended language of models, built by composing together different kernels.
 Since we can evaluate each model by the marginal likelihood, we can automatically construct custom models for each dataset by a breadth-first search.
@@ -222,7 +223,7 @@ Capturing this high-level structure sometimes even allows us to extrapolate beyo
 
 One benefit of using a compositional model class is that the resulting models are interpretable.
 {\bf Chapter~\ref{ch:description}} demonstrates a system which automatically describes the structure implied by a given kernel on a given dataset, generating reports with graphs and English-language text describing the resulting model.
-We'll show several automatic analyses of time-series.
+We willl show several automatic analyses of time-series.
 Combined with the automatic model search developed in chapter~\ref{ch:grammar}, this system represents the beginnings of an ``automatic statistician''.
 
 
@@ -234,12 +235,12 @@ A simple change to the network architecture fixes this pathology.
 We relate these models to neural networks, and as a side effect derive several forms of \emph{infinitely deep kernels}.
 
 {\bf Chapter~\ref{ch:additive}} examines a more limited, but much faster way of discovering structure using \gp{}s.
-Specifying a kernel with many different types of structure, we use kernel parameters to discard whichever types of structure \emph{aren't} found in the current dataset.
+Specifying a kernel with many different types of structure, we use kernel parameters to discard whichever types of structure are \emph{not} found in the current dataset.
 The model class we examine is called \emph{additive Gaussian processes}, a model summing over exponentially-many \gp{}s, each depending on a different subset of the input variables.
 We give a polynomial-time inference algorithm for this model class, and relate it to other model classes.
 For example, additive \gp{}s are shown to have the same covariance as a \gp{} that uses \emph{dropout}, a recently discovered regularization technique for neural networks.
 
-{\bf Chapter~\ref{ch:warped}} develops a Bayesian clustering model in which the clusters have nonparametric shapes - the infinite Warped Mixture Model.
+{\bf Chapter~\ref{ch:warped}} develops a Bayesian clustering model in which the clusters have nonparametric shapes, called the infinite warped mixture model.
 The density manifolds learned by this model follow the contours of the data density, and have interpretable, parametric forms in the latent space.
 The marginal likelihood lets us infer the effective dimension and shape of each cluster separately, as well as the number of clusters.
 
