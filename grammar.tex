@@ -109,7 +109,7 @@ We can therefore define a language of \gp{} regression models simply by specifyi
 
 \begin{figure}[ht!]%
 \centering
-\begin{tabular}{cccc}
+\begin{tabular}{r|ccc}
 Kernel name: & Rational quadratic (\kRQ) & Cosine ($\cos$) & White noise (\kLin) \\[10pt]
 $k(x, x') =$ & $ \left( 1 + \frac{(\inputVar - \inputVar')^2}{2\alpha\ell^2}\right)^{-\alpha}$ &
 $\cos\left(2 \pi \frac{ (x - x')}{p}\right)$ &
@@ -118,9 +118,10 @@ $\delta(\inputVar - \inputVar')$ \\[14pt]
 & $x -x'$ & $x -x'$ & \fixedx \\
 %& & & \\
  & \large $\downarrow$ & \large $\downarrow$ & \large $\downarrow$  \\
-\raisebox{1cm}{Samples from prior:} & \kernpic{rq_kernel_draws_s4} & \kernpic{cos_kernel_draws_s1} & \kernpic{wn_kernel_draws_s1} \\
-Type of structure: & multiscale variation & sine waves & uncorrelated noise\\[10pt]
+\raisebox{1cm}{\parbox{2.5cm}{Samples from \gp{} prior:}} & \kernpic{rq_kernel_draws_s4} & \kernpic{cos_kernel_draws_s1} & \kernpic{wn_kernel_draws_s1} \\
+Type of structure: & multiscale variation & sine waves & uncorrelated noise
 \end{tabular}
+\vspace{6pt}
 \caption[Another set of basic kernels]
 {New base kernels introduced in this chapter, and the types of structure they encode.
 More interesting kernels can be constructed by adding and multiplying base kernels together.

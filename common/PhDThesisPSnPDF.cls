@@ -397,7 +397,7 @@ pdftitle = {DRAFT}
 	\addcontentsline=\nocontentsline#1{#2}
 	\egroup}
 % Removes pagenumber appearing from TOC
-%\addtocontents{toc}{\protect\thispagestyle{empty}}
+\addtocontents{toc}{\protect\thispagestyle{empty}}
 
 
 % ***************************** Header Formatting ******************************

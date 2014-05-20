@@ -35,8 +35,9 @@ The ideas contained in this chapter were developed through discussions with Oren
 
 
 
-
-\section{Relating Neural Networks to Deep Gaussian Processes}
+%\section{Relations to Neural Networks}
+%\section{Relating Neural Networks to Deep Gaussian\\ \mbox{Processes}}
+\section{Definition and Relation to Neural Networks}
 \label{sec:relating}
 
 Deep \gp{}s are simply priors on compositions of vector-valued functions, where each function in each layer is drawn independently from a GP prior:
@@ -823,7 +824,7 @@ Identity Map: $\vy = \vx$ & 1 Layer: $\vy = f^{(1)}(\vx)$ \\
 Colors correspond to the location $\vy = \vf(\vx)$ that each point is mapped to after being warped by a deep \gp{}.
 The number of directions in which the color changes rapidly corresponds to the number of large singular values in the Jacobian.
 Just as the densities in \cref{fig:filamentation} became locally one-dimensional, there is usually only one direction that one can move $\vx$ in locally to change $\vy$.
-This means that $\vf$ is unlikely to be a suitable representation for decision tasks that depend on more than one aspect of $\vx$.}
+This means that $\vf$ is unlikely to be a suitable representation for decision tasks that depend on more than one aspect of $\vx$.  Also note that the overall shape of the mapping remains the same as the number of layers increase -- for example, the roughly circular shape remains in the top-left corner even after 40 independent warpings.}
 \label{fig:deep_map}
 \end{figure}
 %
@@ -1028,6 +1029,10 @@ which, in the case of a deep \gp{}, is still a product of independent Gaussian m
 \Cref{fig:good_spectrum} shows that with this architecture, even 50-layer deep \gp{}s have well-behaved singular value spectra.
 
 The pathology examined in this section is an example of the sort of analysis made possible by a well-defined prior on functions.
+As explained in \cref{sec:relating}, \gp{}s are examples of a particular limit of Bayesian neural networks.
+The figures and analysis done in this section could have also been done using Bayesian neural networks with finite numbers of nodes, but would have been more difficult.
+In particular, care would need to be taken to ensure that the networks don't produce degenerate mappings due to the hidden units saturating.
+
 
 
 
@@ -1049,10 +1054,10 @@ Can we construct other useful kernels by composing fixed feature maps several ti
 In principle, we can compose the feature mapping of any two kernels to get a new one:
 %
 \begin{align}
-k_{1}(\vx, \vx') & = \hPhi_1(\vx) \tra \hPhi_1(\vx') \\
-k_{2}(\vx, \vx') & = \hPhi_2(\vx) \tra \hPhi_2(\vx') \\
-\left( k_2 \circ k_1 \right)(\vx, \vx') & = k_2 \left(\hPhi_1(\vx), \hPhi_1(\vx') \right) \\
-& = \left[ \hPhi_2 \left( \hPhi_1(\vx) \right)\right] \tra \hPhi_2 \left(\hPhi_1(\vx') \right) 
+k_a(\vx, \vx') & = \hPhi_a(\vx) \tra \hPhi_a(\vx') \\
+k_b(\vx, \vx') & = \hPhi_b(\vx) \tra \hPhi_b(\vx') \\
+\left( k_b \circ k_a \right)(\vx, \vx') & = k_b \left(\hPhi_1(\vx), \hPhi_a(\vx') \right) 
+ = \left[ \hPhi_b \left( \hPhi_a(\vx) \right)\right] \tra \hPhi_b \left(\hPhi_a(\vx') \right) 
 \end{align}
 %
 However, this composition might not always have a closed form.
@@ -1126,13 +1131,6 @@ Starting with the squared-exp kernel, this repeated mapping satisfies
 k^{(\infty)}(\vx, \vx') - \log \left( k^{(\infty)}(\vx, \vx') \right) = 1 + \frac{1}{2} || \vx - \vx' ||_2^2
 \end{align}
 %
-The solution to this recurrence has no closed form, but has a similar shape to the Ornstein-Uhlenbeck covariance ${\OU(x,x') = \exp( -|x - x'| )}$ but with lighter tails.
-%
-Samples from a \gp{} prior with this kernel are not differentiable, and are locally fractal.
-\Cref{fig:deep_kernel_connected} shows this kernel at different depths, as well as samples from the resulting \gp{} prior.
-%\item This kernel has smaller correlation than the squared-exp everywhere except at $\vx = \vx'$.  
-%\item The tails have the same form as the squared-exp.
-
 \begin{figure}
 \centering
 \begin{tabular}{cc}
@@ -1151,6 +1149,13 @@ By connecting the inputs $\vx$ to each layer, the kernel can still depend on its
 \emph{Right:} Draws from \gp{}s with deep input-connected kernels.}
 \label{fig:deep_kernel_connected}
 \end{figure}
+%
+The solution to this recurrence has no closed form, but has a similar shape to the Ornstein-Uhlenbeck covariance ${\OU(x,x') = \exp( -|x - x'| )}$ but with lighter tails.
+%
+Samples from a \gp{} prior with this kernel are not differentiable, and are locally fractal.
+\Cref{fig:deep_kernel_connected} shows this kernel at different depths, as well as samples from the resulting \gp{} prior.
+%\item This kernel has smaller correlation than the squared-exp everywhere except at $\vx = \vx'$.  
+%\item The tails have the same form as the squared-exp.
 
 We can also consider two other connectivity architectures: one in which each layer is connected to the output layer, and another in which every layer is connected to all subsequent layers.
 It is easy to show that in the limit of infinite depth, both these architectures converge to $k(\vx, \vx') = \delta( \vx, \vx' )$, a white noise kernel.
@@ -1294,8 +1299,11 @@ However, the interactions between these different design decisions can be comple
 % Although inference in fully Bayesian models is generally challenging, well-defined priors allow us to encode our beliefs into models in a data-independent way. 
 If we can identify classes of priors that give our models desirable properties, these in turn may suggest regularization, initialization, and architecture choices that also provide such properties.
 
+
+
 \subsubsection{Source Code}
-Source code to produce all figures is available at \url{github.com/duvenaud/deep-limits/}. 
+Source code to produce all figures is available at \url{github.com/duvenaud/deep-limits/}.
+The source code is also capable of producing visualizations of mappings such as \cref{fig:deep_map,fig:deep_map_connected}, using neural nets instead of \gp{}s at each layer.
 
 
 

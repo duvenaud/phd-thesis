@@ -11,18 +11,17 @@
 \hspace*{\fill} \emph{ -- Kurt Vonnegut}
 \end{quotation}
 
-%First, Gaussian processes model functions in terms of high-level properties (e.g.\ smoothness, trends, periodicity,
-%changepoints).
-%Taken together with the compositional structure of our language of models, this allows us to automatically describe functions through a decomposition into additive parts.
-%Second, the use of flexible nonparametric models and a rich language for composing them in an open-ended manner also results in state-of-the-art extrapolation performance evaluated over 13 real time series data sets from various domains.
+
 
 
 %The compositional structure of the language described in the previous chapter 
-The previous chapter showed how to automatically build structured models through a language of kernels, how to decompose the resulting models into the different types of structure present, and how to visually illustrate the type of structure captured by each component.
+The previous chapter showed how to automatically build structured models through a language of kernels.
+It also showed how to decompose the resulting models into the different types of structure present, and how to visually illustrate the type of structure captured by each component.
 This chapter will show how automatically describe the resulting model structures with English text.
 
-Most of the structure present in each component was determined by that component's kernel.
-Even across different datasets, the meaning of the individual parts of those kernels is relatively consistent.  For example, $\kPer$ usually indicates some sort of repeating structure, and $\kSE$ usually indicates smooth change over time.
+The model decomposition plots of \cref{ch:grammar}, show that most of the structure present in each component was determined by that component's kernel.
+Even across different datasets, the meaning of the individual parts of those kernels is relatively consistent.
+For example, $\kPer$ usually indicates some sort of repeating structure, and $\kSE$ usually indicates smooth change over time.
 This chapter shows how to take advantage of this modularity to develop a method for automatically describing the structure represented by components of structured \gp{} models through text.
 The main idea is to treat every component of a product kernel as an adjective, or as a short phrase which modifies the description of a kernel.
 
@@ -173,6 +172,8 @@ The head noun is chosen according to the following ordering:
 %\ie $\kPer$ is always chosen as the head noun when present.
 Combining \cref{table:modifiers,table:nouns,eq:noun-ordering} provides a general method to produce descriptions of kernels.
 
+\subsubsection{Extensions}
+
 %\subsubsection{Refinements to the Descriptions}
 In practice, we also incorporate a number of other rules which help to make the descriptions shorter, easier to parse, or clearer:
 %There are a number of ways in which the descriptions of the kernels can be made more interpretable and informative:
@@ -220,87 +221,6 @@ The second component is described as ``A smooth function with a lengthscale of [
 %
 Finally, the third component is described as ``An approximately periodic function with a period of [period] [units] which applies from [changepoint]''.
 
-%Descriptions are sometimes modified depending on kernel parameters.  
-%Also, a separate description procedure is used to produce the detailed descriptions of each component, which operates on the same principles.
-
-%\fTBD{JL: We should also mention that the detailed descriptions are less modular - but not necessarily so}
-%\fTBD{JL: Talk about different templates based on parameters?}
-
-
-
-
-
-
-
-
-%Automating the process of statistical modeling would have a tremendous impact on fields that currently rely on expert statisticians, machine learning researchers, and data scientists.
-%While fitting simple models (such as linear regression) is largely automated by standard software packages, there has been little work on the automatic construction of flexible but interpretable models. 
-%What are the ingredients required for an artificial intelligence system to be able to perform statistical modeling automatically? 
-%In this paper we conjecture that the following ingredients may be useful for building an AI system for statistics, and we develop a working system which incorporates them:
-%\begin{itemize}
-%\item {\bf An open-ended language of models} expressive enough to
-%  capture many of the modeling assumptions and model composition
-%  techniques  applied by human statisticians to capture real-world phenomena
-%\item {\bf A search procedure} to efficiently explore the space of
-%  models spanned by the language
-%\item {\bf A principled method for evaluating models} in terms of their complexity and their degree of fit to the
-%  data
-%\item {\bf A procedure for automatically generating reports} which
-%  explain and visualize different factors underlying the data, make
-%  the chosen modeling assumptions explicit, and quantify how each
-%  component improves the predictive power of the model 
-%\end{itemize}
-
-
-
-
-%The supplementary material to this paper includes 13 complete reports automatically generated by \procedurename{}.
-
-%Good statistical modeling requires not only
-%interpretability but predictive accuracy.
-
-
-
-
-
-%\subsection{Airline passenger data}
-
-%Figure \ref{fig:airline_decomp} shows the decomposition produced by applying our method to monthly totals of international airline passengers~\citep{box2011time}.
-%We observe similar components to the previous dataset: a long term trend, annual periodicity and medium-term deviations.
-%In addition, the composite kernel captures the near-linearity of the long-term trend, and the linearly growing amplitude of the annual oscillations.
-%The discovery of linear structure allows for a growing uncertainty highly plausible extrapolation.\fTBD{Mention heteroskedasticity?}
-
-%Discovering this linearity results in very plausible extrapolations of the data.
-%Figure~\ref{fig:airline_grow} demonstrates this by ploting the full posterior of the kernel discovered at sequential levels of the search.
-%The first plot shows that the first kernel has discovered onyl short term continuity.
-%The second kernel discovers periodicity that varies with time.
-%The third kernel has discovered that the periodicity is growing approximately linearly.
-%Finally, the fourth kernel has split the data into an approximately linear trend and growing oscillations.
-
-%\begin{figure}[h!]
-%\centering
-%\newcommand{\wag}{4.8cm}  % width airline growth
-%\newcommand{\hag}{4cm}  % height airline growth
-%\begin{tabular}{cc}
-%\includegraphics[width=\wag,height=\hag]{../figures/decomposition/01-airline-s_max_level_0/01-airline-s_all_small}
-%\hspace{-1cm} \includegraphics[width=\wag,height=\hag]{../figures/decomposition/01-airline-s_max_level_1/01-airline-s_all_small} \\
-%\hspace{-1cm} \includegraphics[width=\wag,height=\hag]{../figures/decomposition/01-airline-s_max_level_2/01-airline-s_all_small} 
-%\hspace{-1cm} \includegraphics[width=\wag,height=\hag]{../figures/decomposition/01-airline-s_max_level_3/01-airline-s_all_small}
-%\end{tabular}
-%\caption{Posterior mean and variance for different levels of kernel search on the airline dataset. \TBD{RBG: it looks like the figures on the left got clipped.}}
-%\label{fig:airline_grow}
-%\end{figure}
-
-% Created by the command:
-% postprocessing.make_all_1d_figures(folder='../results/31-Jan-1d/', prefix='31-Jan-v3', rescale=False)
-
-%To evaluate the effectiveness of our method we performed two types of experiments.
-%First, we examined the ability of our algorithm to discover useful structure in one-dimensional datasets.  Second, we examined the predictive performance of our model on multi-dimensional datasets.
-% testing the ability of the algorithm to infer both an accurate regression function estimate and to produce an interpretable decomposition of a regression function.
-%The accuracy experiments show that our method consistently matches or beats previous state of the art regression methods (\TBD{not yet statistically significantly within each experiment - more experiments currently running\ldots}).
-%The decomposition experiments produce highly interpretable decompositions of time series data and highly plausible extrapolations; a particularly rare property of naively applied (linear) smoothers (\TBD{justify comment - e.g.~local linear is just linear, GP Sq-Exp nose dives towards the mean}).
-
-%\paragraph{Multidimensional decomposition}  Decomposition of multi-dimensional posteriors into sums of one-dimensional functions is possible as well, and was demonstrated in \cite{duvenaud2011additive11}.  \fTBD{Probably citing myself too much...}
 
 
 
@@ -462,25 +382,49 @@ Other example reports describing a wide variety of time-series can be found at \
 To the best of our knowledge, our procedure is the first example of automatic description of nonparametric statistical models.
 However, systems with natural language output have been built in the areas of video interpretation \citep{barbu2012video} and automated theorem proving \citep{GanesalingamG13}.
 
+%\subsubsection{Assessing Validity}
+
+%Describing an infinite-dimensional object, such as a \gp{} posterior, using only text presents a difficult challenge.
+
+%We do not claim that
+
 \subsubsection{Source Code}
 Source code to perform all experiments is available at \url{github.com/jamesrobertlloyd/gpss-research}. 
 
 
 \section{Conclusion}
 Towards the goal of automating statistical modeling we have presented a system which, given a structured \gp{} model, automatically generates detailed reports that describe patterns in the data captured by the model.
-Combined with the automatic model-search of \cref{ch:grammar} gives a procedure which can discover and describe a variety of patterns on several time series.
+This, combined with the automatic model search of \cref{ch:grammar}, gives a procedure which can discover and describe a variety of patterns on several time series.
 
 %\section{Discussion and Future Work}
 
 %Obviously, the rule-based system for generating English text presented in this chapter is limited in scope.
 
 
+%Automating the process of statistical modeling would have a tremendous impact on fields that currently rely on expert statisticians, machine learning researchers, and data scientists.
+%While fitting simple models (such as linear regression) is largely automated by standard software packages, there has been little work on the automatic construction of flexible but interpretable models. 
+%What are the ingredients required for an artificial intelligence system to be able to perform statistical modeling automatically? 
+%In this paper we conjecture that the following ingredients may be useful for building an AI system for statistics, and we develop a working system which incorporates them:
+%\begin{itemize}
+%\item {\bf An open-ended language of models} expressive enough to
+%  capture many of the modeling assumptions and model composition
+%  techniques  applied by human statisticians to capture real-world phenomena
+%\item {\bf A search procedure} to efficiently explore the space of
+%  models spanned by the language
+%\item {\bf A principled method for evaluating models} in terms of their complexity and their degree of fit to the
+%  data
+%\item {\bf A procedure for automatically generating reports} which
+%  explain and visualize different factors underlying the data, make
+%  the chosen modeling assumptions explicit, and quantify how each
+%  component improves the predictive power of the model 
+%\end{itemize}
+
+
+%\paragraph{Multidimensional decomposition}  Decomposition of multi-dimensional posteriors into sums of one-dimensional functions is possible as well, and was demonstrated in \cite{duvenaud2011additive11}.  \fTBD{Probably citing myself too much...}
+
+
 
 %We believe this procedure has the potential to make powerful statistical model-building techniques accessible to non-experts.
-
-
-%\paragraph{Source Code}
-%Source code to perform all experiments is available on github.
 
 
 
