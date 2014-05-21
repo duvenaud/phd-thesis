@@ -31,7 +31,7 @@ Our analysis will show that in standard architectures, the representational capa
 We'll propose an alternate network architecture -- one which connects the input to each layer -- which does not suffer from this pathology.
 We'll also examine \emph{deep kernels}, obtained by composing infinitely-many fixed feature transforms.
 
-The ideas contained in this chapter were developed through discussions with Oren Rippel, Ryan Adams and Zoubin Ghahramani, and appear in \citep{DuvRipAdaGha14}.
+The ideas contained in this chapter were developed through discussions with Oren Rippel, Ryan Adams and Zoubin Ghahramani, and appear in \citet{DuvRipAdaGha14}.
 
 
 
@@ -762,7 +762,7 @@ The representation changes little in directions orthogonal to the manifold, maki
 \label{fig:hidden}
 \end{figure}
 
-As in \citep{rifai2011contractive}, we characterize the representational properties of a function by the singular value spectrum of the Jacobian.
+As in \citet{rifai2011contractive}, we characterize the representational properties of a function by the singular value spectrum of the Jacobian.
 The number of relatively large singular values of the Jacobian roughly correspond to the number of directions in which the representation varies.
 \citet{rifai2011contractive} analyzed the Jacobian at location of the training points, but because the priors we are examining are stationary, the distribution of the Jacobian is identical everywhere.
 %
@@ -1190,12 +1190,10 @@ It is easy to show that in the limit of infinite depth, both these architectures
 \subsection{When are Deep Kernels Useful Models?}
 
 Kernels correspond to fixed feature maps, and so kernel learning is an example of implicit representation learning. %can compute %useful representations.
-As we saw in \cref{ch:kernels,ch:grammar}, kernels can capture rich structure,
-% \citep{DuvLloGroetal13}
- and can enable many types of generalization.
+As we saw in \cref{ch:kernels,ch:grammar}, kernels can capture rich structure, and can enable many types of generalization.
  %, such as affine invariance in images \citep{kondor2008group}.
 %\cite{salakhutdinov2008using} used a deep neural network to learn feature transforms for kernels, which learn invariants in an unsupervised manner.
-The relatively uninteresting properties of the kernels derived in this section simply reflect the fact that an arbitrary computation, even if it is ``deep'', is not likely to give rise to a useful representation, unless combined with learning.
+The relatively uninteresting properties of the deep kernels derived in this section simply reflect the fact that an arbitrary computation, even if it is ``deep'', is not likely to give rise to a useful representation, unless combined with learning.
 To put it another way, any fixed representation is unlikely to be useful unless it has been chosen specifically for the problem at hand.
 
 

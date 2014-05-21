@@ -84,16 +84,9 @@ More generally, an automatic statistician should be able to question the models 
 %, and formal procedures from model checking provide a way for it to do this.
 \citet{gelman2012philosophy} review the literature on model checking.
 
-
 \paragraph{4. A model description procedure.}
 Part of the value of statistical models comes from helping humans to understand a dataset or a phenomenon.
 Furthermore, a clear description of the statistical structure found in a dataset helps a user to notice when the dataset has errors, the wrong question was asked, the model-building procedure failed to capture known structure, a relevant piece of data or constraint is missing, or when a novel statistical structure has been found.
-%In this chapter, we'll show how the additive decomposition of \gp{} posteriors allows a visual description of composite \gp{} models.
-%In \cref{ch:description}, we'll further show how to automatically generate english-language descriptions of the resulting models.
-
-
-
-
 
 In this chapter, we introduce a system containing all the above ingredients.
 We call this system the Automatic Bayesian Covariance Discovery (\procedurename{}) system.
@@ -461,7 +454,7 @@ These models have a limited compositional form, but one which is interpretable a
 In our grammar, we can capture such structure through sums of base kernels along different dimensions, although we have not yet tried incorporating a warping function $g(\cdot)$.
 
 It is possible to add more flexibility to additive models by considering higher-order interactions between different dimensions. 
-In \cref{ch:additive}, we'll consider \gp{} models whose kernel implicitly sums over all possible products of one-dimensional base kernels.
+\Cref{ch:additive} considers \gp{} models whose kernel implicitly sums over all possible interactions of input variables.
 \citet{plate1999accuracy} constructs a special case of this model class, summing an \kSE{} kernel along each dimension, with a single \seard{} kernel (a product of \kSE{} over all dimensions).
 Both of these models can be expressed in our grammar.
 
@@ -474,8 +467,9 @@ This model class can be represented through the kernel ${\kSE \kernplus \kLin}$.
 
 
 \rwsheader{Kernel Learning}
-There is a large body of work attempting to construct a rich kernel through a weighted sum of base kernels \citep[e.g.][]{christoudias2009bayesian, Bach_HKL}.
-These approaches find the optimal solution in polynomial time, however the component kernels, as well as their parameters, must be specified in advance.
+There is a large body of work attempting to construct a rich kernel through a weighted sum of many base kernels \citep[e.g.][]{gonen2011multiple, Bach_HKL}.
+These approaches usually admit a convex objective function.
+However the component kernels, as well as their parameters, must be specified in advance.
 
 %Another approach to kernel learning is to learn an embedding of the data points. 
 %\citet{lawrence2005probabilistic} learns an embedding of the data into a low-dimensional space, using a fixed kernel structure over that space.
@@ -497,7 +491,7 @@ We compare to a Bayesian variant of \MKL{} in \cref{sec:numerical}, expressed as
 
 \rwsheader{Equation Learning}
 \cite{todorovski1997declarative}, \cite{washio1999discovering} and \cite{Schmidt2009b} learn parametric forms of functions specifying time series, or relations between quantities.
-In contrast, \procedurename{} learns a parametric form for the covariance, allowing it to model functions which don't have a simple parametric form but still have high-level structure.
+In contrast, \procedurename{} learns a parametric form for the covariance, allowing it to model functions which do not have a simple parametric form but still have high-level structure.
 An examination of the structure discovered by the automatic equation-learning software Eureqa \citep{Eureqa} on the airline and Mauna Loa datasets can be found in \citet{LloDuvGroetal14}.
 %\Cref{sec:eqn-learning-comp}.
 
@@ -561,7 +555,7 @@ We evaluate the performance of the algorithms listed below on 13 real time-serie
 We compare \procedurename{} to equation learning using Eureqa \citep{Eureqa}, as well as six other regression algorithms:
 linear regression,
 \gp{} regression with a single $\kSE$ kernel (squared exponential),
-a Bayesian variant of multiple kernel learning (\MKL{}) \citep[e.g.][]{bach2004multiple},
+a Bayesian variant of multiple kernel learning (\MKL{}) \citep[e.g.][]{gonen2011multiple, bach2004multiple},
 changepoint modeling \citep[e.g.][]{garnett2010sequential, saatcci2010gaussian, FoxDunson:NIPS2012},
 spectral mixture kernels \citep{WilAda13} (spectral kernels),
 and trend-cyclical-irregular models \citep[e.g.][]{lind2006basic}.
@@ -681,7 +675,7 @@ We found that the learned structures are often capable of accurate extrapolation
 The learned kernels often yield decompositions of a signal into diverse and interpretable components, enabling model-checking by humans.
 We hope that this procedure has the potential to make powerful statistical model-building techniques accessible to non-experts.
 
-In the next chapter, we'll see how the model components found by this procedure can be automatically described in terms of English-language text.
+The next chapter will show how the model components found by this procedure can be automatically described in terms of English-language text.
 
 \iffalse
 \section{Open Questions}
