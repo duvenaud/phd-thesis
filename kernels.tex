@@ -346,7 +346,8 @@ In this example, the additive model is able to correctly predict the height of t
 The product-kernel model is more flexible, and so remains uncertain about the function away from the data.
 %The ability of additive GPs to discover long-range structure suggests that this model may be well-suited to deal with covariate-shift problems.
 
-These types of additive models have been well-explored in the statistics literature.  For example, generalized additive models~\citep{hastie1990generalized} have seen wide adoption.
+These types of additive models have been well-explored in the statistics literature.
+For example, generalized additive models~\citep{hastie1990generalized} have seen wide adoption.
 In high dimensions, we can also consider sums of functions of more than one dimension.
 \Cref{ch:additive} considers this model class in more detail.
 
@@ -645,12 +646,12 @@ k_a(\iva, \iva') & = \feata(\iva)\tra \feata(\iva')\\
 k_b(\iva, \iva') & = \featb(\iva)\tra \featb(\iva')
 \end{align}
 %
-and we consider their addition, then
+then their addition has the form:
 %
 \begin{align}
-k_a(\iva, \iva') + k_b(\iva, \iva)
-& = \feata(\iva)\tra \featb(\iva') + \feata(\iva)\tra \featb(\iva') \\
-& = \colvec{\feata(\iva)}{\featb(\iva)}\tra \colvec{\feata(\iva')}{\featb(\iva')}
+k_a(\iva, \iva') + k_b(\iva, \iva')
+& = \feata(\iva)\tra \featb(\iva') + \feata(\iva)\tra \featb(\iva') 
+ = \colvec{\feata(\iva)}{\featb(\iva)}\tra \colvec{\feata(\iva')}{\featb(\iva')}
 \end{align}
 %
 meaning that the features of $k_a + k_b$ are the concatenation of the features of each kernel.
@@ -681,6 +682,8 @@ h_{ij}(x_1, x_2) \propto \exp \left( -\frac{1}{2} \frac{(x_1 - c_i)^2}{2\ell_1^2
 \section{Expressing Symmetries and Invariants}
 \label{sec:expressing-symmetries}
 
+\def\gswitch{G_\textnormal{swap}}
+
 When modeling functions, encoding known symmetries can improve predictive accuracy. 
 This section looks at different ways to encode symmetries into a prior on functions.
 Many types of symmetry can be enforced through operations on the kernel.
@@ -688,27 +691,34 @@ Many types of symmetry can be enforced through operations on the kernel.
 We will demonstrate the properties of the resulting models by sampling functions from their priors.
 By using these functions to define warpings from $\Reals^2 \to \Reals^3$, we will show how to build a nonparametric prior on an open-ended family of topological manifolds, such as cylinders, toruses, and M\"{o}bius strips.
 
-\subsection{Three Recipes for Group Invariance}
+\subsection{Three Recipes for Invariant Priors}
 
-\citet{ginsbourger2012argumentwise} and \citet{Invariances13} showed that the only way to construct a \gp{} prior on functions which respect a given invariance is to construct a kernel which respects the same invariance with respect to each of its two inputs.
-
-Formally, given a finite group of operations $G$ to which we wish our function to remain invariant, and $f \sim \GPt{0}{k(\vx,\vx')}$, $f$ is invariant under $G$ (up to a modification) if and only if $k(\cdot, \cdot)$ is argument-wise invariant:
+Consider the scenario where we have a finite set of transformations of the input space $\{g_1, g_2, \ldots \}$ to which we wish our function to remain invariant:
 %
 \begin{align}
-k( g(\vx), g(\vx')) = k(\vx, \vx'), \quad \forall \vx, \vx' \in \InputSpace, \quad \forall g, g' \in G
+f(\vx) = f(g(\vx))  \quad \forall \vx \in \mathcal{X}, \quad \forall g \in G
 \end{align}
-
-\def\gswitch{G_\textnormal{swap}}
-
-As a simple example, consider the symmetry $f(x, y) = f(y,x)$, or the set of functions invariant to swapping their two arguments.
-The elements of the group $\gswitch$ describing this symmetry are
+%
+As an example, imagine we want to build a model of functions invariant to swapping their inputs: $f(x_1, x_2) = f(x_2, x_1)$.
+Being invariant to a set of operations is equivalent to being invariant to all compositions of those operations, the set of which form a group. \citep[chapter 21]{armstrong1988groups}.
+The elements of the group $\gswitch$ containing the operations these functions are invariant to has two elements:%, and is an example of the symmetric group $S2$:
 %
 \begin{align}
-g_1(f(x_1, x_2)) & = f(x_1, x_2) \qquad \textnormal{(identity)}\\
-g_2(f(x_1, x_2)) & = f(x_2, x_1) \qquad \textnormal{(swap)}
+g_1([x_1, x_2]) & = [x_2, x_1] \qquad \textnormal{(swap)} \\
+g_2([x_1, x_2]) & = [x_1, x_2] \qquad \textnormal{(identity)}
 \end{align}
 %
-It might not be clear how to find a kernel obeying these symmetries.
+How can we construct a prior on functions which respect these symmetries?
+
+\citet{ginsbourger2012argumentwise} and \citet{Invariances13} showed that the only way to construct a \gp{} prior on functions which respect a set of invariants is to construct a kernel which respects the same invariants with respect to each of its two inputs:
+%
+\begin{align}
+k(\vx, \vx') = k( g(\vx), g(\vx')), \quad \forall \vx, \vx' \in \InputSpace, \quad \forall g, g' \in G
+\end{align}
+%
+Formally, given a finite group $G$ whose elements are operations to which we wish our function to remain invariant, and $f \sim \GPt{0}{k(\vx,\vx')}$, then every $f$ is invariant under $G$ (up to a modification) if and only if $k(\cdot, \cdot)$ is argument-wise invariant under $G$.
+
+It might not always be clear how to construct a kernel respecting such argument-wise invariances.
 Fortunately, for finite groups, there are a few simple ways to transform any kernel into one which is argument-wise invariant to actions under any finite group:
 %
 %
@@ -777,7 +787,7 @@ k_\textnormal{proj}(\vx, \vx') = k( A_G(\vx), A_G( \vx') )
 %
 For the group $\gswitch$, a fundamental domain is $\{x, y : x < y\}$, which can be mapped to using $A_{\gswitch}( x, y ) = \big[ \min(x,y), \max(x,y) \big]$.
 Constructing a kernel using this method introduces a non-differentiable  ``seam'' along $x = y$, as shown in \cref{fig:add_vs_min}(center).
-The projection method also works for infinite groups, as we shall see below.
+%The projection method also works for infinite groups, as we shall see below.
 
 \item {\bf Multiply over the Orbit.}
 \citet{adams2013product} suggests a construction enforcing invariants through products over the orbits:
@@ -799,7 +809,7 @@ For example, simply setting $k(\vx, \vx') = 0$ gives rise to a \gp{} prior which
 %In this section, we give recipes for expressing several classes of symmetries.  Later, we will show how these can be combined to produce more interesting structures.
 
 
-\subsection{Periodicity}
+\subsection{Example: Periodicity}
 
 %We can enforce periodicity on any subset of the dimensions:
 Periodicity in a one-dimensional function corresponds to the invariance
@@ -827,7 +837,7 @@ Simple algebra reduces this kernel to the form shown in \cref{fig:basic_kernels}
 We could also build a periodic kernel with period $\tau$ by the mapping $A(x) = \mod(x, \tau)$.
 However, samples from this prior would be discontinuous at every integer multiple of $\tau$.
 
-\subsection{Symmetry About Zero}
+\subsection{Example: Symmetry About Zero}
 
 Another simple example of an easily-enforceable symmetry is symmetry about zero:
 %
@@ -860,7 +870,7 @@ k_{\textnormal{reflect}}(x, x') & = k(x, x') + k(x, -x') + k(-x, x') + k(-x, -x'
 
 
 
-\subsection{Translation Invariance in Images}
+\subsection{Example:  Translation Invariance in Images}
 
 Most models of images are invariant to spatial translations \citep{lecun1995convolutional}.
 Similarly, most models of sounds are also invariant to translation through time.
