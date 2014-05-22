@@ -161,7 +161,7 @@ However, simple models can be used as well-understood building blocks for constr
 
 For example, consider linear models.
 Although they form an extremely limited model class, they are simple, easy to analyze, and easy to incorporate into other models or procedures.
-Gaussian processes can be seen as an extension of linear models which retain these attractive properties \citep{rasmussen38gaussian}.
+Gaussian processes can be seen as an extension of linear models which retain these attractive properties~\citep{rasmussen38gaussian}.
 %Linear models may seem like a hopelessly simple model class, but they're arguably the most useful modeling tools in existence.
 
 %\citet{rasmussen38gaussian} give a thorough introduction to \gp{}s, including many different types of analysis of the properties of this model.
@@ -179,8 +179,8 @@ There are, unfortunately, several issues which make usage of \gp{}s sometimes di
 
 \item {\bf Slow inference.}
 Computing the matrix inverse in \cref{eq:gp_marg_lik,eq:predictive} takes $\mathcal{O}(N^3)$ time, making inference prohibitively slow for more than a few thousand datapoints.
-However, this problem can be addressed by approximate inference schemes \citep{snelson2006sparse, quinonero2005unifying, hensman2013gaussian}. 
-Most \gp{} software packages implement several of these methods \citep{GPy, GPML, VanRiiHarJylVeh14}.
+However, this problem can be addressed by approximate inference schemes~\citep{snelson2006sparse, quinonero2005unifying, hensman2013gaussian}. 
+Most \gp{} software packages implement several of these methods~\citep{GPy, GPML, VanRiiHarJylVeh14}.
 
 \item {\bf Light tails of the predictive distribution.}
 The predictive distribution of a standard \gp{} model is Gaussian.
@@ -243,49 +243,6 @@ For example, additive \gp{}s are shown to have the same covariance as a \gp{} th
 {\bf Chapter~\ref{ch:warped}} develops a Bayesian clustering model in which the clusters have nonparametric shapes, called the infinite warped mixture model.
 The density manifolds learned by this model follow the contours of the data density, and have interpretable, parametric forms in the latent space.
 The marginal likelihood lets us infer the effective dimension and shape of each cluster separately, as well as the number of clusters.
-
-
-
-\iffalse
-% Moved to individual chapters
-
-\section{Attribution}
-
-This thesis was made possible by the substantial contributions of the many co-authors I was fortunate to work with.
-In this section, I attempt to give proper credit to my tireless co-authors, who made this research enjoyable.
-
-\paragraph{Structure through kernels:}
-%Chapter \ref{ch:kernels} contains a wide-ranging overview of many of the types of structured priors on functions that can be easily expressed by constructing appropriate covariance functions.
-Section \ref{sec:deep_kernels} of chapter \ref{ch:kernels}, describing how kernel symmetries give rise to priors on manifolds with interesting topologies, is based on a collaboration with David Reshef, Roger Grosse, Josh Tenenbaum, and Zoubin Ghahramani.
-
-\paragraph{Structure search:}
-The research upon which Chapter \ref{ch:grammar} is based was done in collaboration with James Robert Lloyd, Roger Grosse, Joshua B. Tenenbaum, and Zoubin Ghahramani, and was published in \citep{DuvLloGroetal13}, where James Lloyd was joint first author.
-Myself, James Lloyd and Roger Grosse jointly developed the idea of searching through a grammar-based language of \gp{} models, inspired by \citet{grosse2012exploiting}, and wrote the first versions of the code together.
-James Lloyd ran most of the experiments.
-I produced all of the figures.
-Carl Rasmussen, Zoubin Ghahramani and Josh Tenenbaum provided many conceptual insights, as well as suggestions about how the resulting procedure could be most fruitfully applied.
-
-\paragraph{Automatic statistician:} The work appearing in chapter \ref{ch:description} was written in collaboration with James Robert Lloyd, Roger Grosse, Joshua B. Tenenbaum, Zoubin Ghahramani, and was published in \citep{LloDuvGroetal14}.
-The procedure translating kernels into adjectives grew out of discussions between James and myself.
-James Lloyd wrote the code to automatically generate reports, and ran all of the experiments.
-The text was written mainly by myself, James Lloyd, and Zoubin Ghahramani, with many helpful contributions and suggestions from Roger Grosse and Josh Tenenbaum.
-
-\paragraph{Deep Gaussian processes:}
-The ideas contained in chapter \ref{ch:deep-limits} were developed through discussions with Oren Rippel, Ryan Adams and Zoubin Ghahramani, and appear in \citep{DuvRipAdaGha14}.  The derivations, experiments and writing were done mainly by myself, with many helpful suggestions by my co-authors.
-
-\paragraph{Additive Gaussian processes:}
-The work in chapter \ref{ch:additive} was done in collaboration with Hannes Nickisch and Carl Rasmussen, who derived and coded up the initial model.
-My role in the project was to examine the properties of the resulting model, clarify the connections to existing methods, to create all figures and run all experiments.
-This work was published in \citep{duvenaud2011additive11}.
-The connection to dropout regularization was my own contribution.
-
-\paragraph{Warped mixtures:}
-The work comprising the bulk of chapter \ref{ch:warped} was done in collaboration with Tomoharu Iwata and Zoubin Ghahramani, and appeared in \citep{IwaDuvGha12}.
-Specifically, the main idea was borne out of a conversation between Tomo and myself, and together we wrote almost all of the code together as well as the paper.
-Tomo ran most of the experiments.
-Zoubin Ghahramani provided guidance and many helpful suggestions throughout the project.
-
-\fi
 
 \outbpdocument{
 \bibliographystyle{plainnat}

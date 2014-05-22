@@ -89,13 +89,13 @@ Zoubin Ghahramani provided guidance and many helpful suggestions throughout the 
 %The \gplvm{} can also be thought of as a method for modeling the covariance between rows of $Y$, using a number of parameters which grows only linearly with $N$.
 
 
-\begin{figure}
+\begin{figure}[t]
 \centering
-\begin{tabular}{cc}
-& \qquad \qquad \qquad \qquad \qquad Warping function $y = f(x)$ \\
-\raisebox{3cm}{\rotatebox{90}{Warped density $p(y)$}} & 
-\includegraphics[width=0.8\textwidth,clip,trim=1.3cm 0.79cm 0cm 0cm]{\gplvmfiguresdir/gplvm_1d_draw_9} \\
-& \qquad \qquad \qquad \qquad \qquad Latent density $p(x)$
+\begin{tabular}{ll}
+\qquad \qquad \qquad Warping function: $y = f(x)$ & \\
+\reflectbox{\includegraphics[width=0.8\textwidth,clip,trim=1.3cm 0.79cm 0cm 0cm]{\gplvmfiguresdir/gplvm_1d_draw_9} } &
+\raisebox{3cm}{\rotatebox{90}{Warped density: $p(y)$}} \\
+\qquad \qquad \qquad Latent density: $p(x)$ & 
 \end{tabular}
 \caption[One-dimensional Gaussian process latent variable model]{
 A draw from a one-dimensional Gaussian process latent variable model. 
@@ -108,18 +108,18 @@ Grey lines show points being mapped through $f$.
 
 
 
-\begin{figure}
+\begin{figure}[t]
 \centering
 \begin{tabular}{ccc}
-Latent space $p(\vX)$ & & Observed space $p(\vY)$ \\
+Latent space $p(\vx)$ & & Observed space $p(\vy)$ \\
 \fbox{\includegraphics[height=15em,width=15em]{\gplvmfiguresdir/gplvm-latent-crop}} &
 \raisebox{7em}{$\overset{\mathlarger{\vf(\vx)}}{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\rightarrow}}}}}}}}$} &
 %\raisebox{7em}{\Huge $\overset{\textnormal{\Large{GP}}}\rightarrow$} &
 \fbox{\includegraphics[height=15em,width=15em]{\gplvmfiguresdir/gplvm-draw-crop}}
 \end{tabular}
 \caption[Two-dimensional Gaussian process latent variable model]{A draw from a multi-dimensional Gaussian process latent variable model.
-\emph{Left:}  Isocontours and samples from a 2D Gaussian, specifying the distribution $p(\vX)$ in the latent space. 
-\emph{Right:} Density and samples from a nonparametric density defined by warping the latent density through a function drawn from a \gp{} prior.}  
+\emph{Left:}  Isocontours and samples from a 2D Gaussian, specifying the distribution $p(\vx)$ in the latent space. 
+\emph{Right:} Observed density $p(\vy)$ has a nonparametric shape, defined by warping the latent density through a function drawn from a \gp{} prior.}  
 \label{fig:twod-gplvm}
 \end{figure}
 
@@ -188,7 +188,7 @@ Just as the \gplvm{} can be viewed as a manifold learning algorithm, the \iwmm{}
 %Latent space & & Observed space \\
 %\end{tabular}}
 \begin{tabular}{ccc}
-Latent space $p(\vX)$ & & Observed space $p(\vY)$ \\
+Latent space $p(\vx)$ & & Observed space $p(\vy)$ \\
 \fbox{\includegraphics[trim=2em 0em 0em 0em, clip, height=15em,width=15em]{\warpedfiguresdir/iwmm_latent_N200_seed2155_darker}} &
 \raisebox{7em}{$\overset{\mathlarger{\vf(\vx)}}{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\rightarrow}}}}}}}}$} &
 %\raisebox{7em}{\Huge $\overset{\textnormal{\Large{GP}}}\rightarrow$} &
@@ -197,7 +197,7 @@ Latent space $p(\vX)$ & & Observed space $p(\vY)$ \\
 \caption[A draw from the infinite warped mixture model prior]{
 A sample from the \iwmm{} prior.
 \emph{Left:} In the latent space, a mixture distribution is sampled from a Dirichlet process mixture of Gaussians.
-\emph{Right:} The latent mixture is smoothly warped to produce non-Gaussian manifolds in the observed space.}
+\emph{Right:} The latent mixture is smoothly warped to produce a set of non-Gaussian manifolds in the observed space.}
 \label{fig:generative}
 \end{figure}
 
