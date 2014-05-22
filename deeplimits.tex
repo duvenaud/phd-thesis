@@ -20,7 +20,7 @@ By viewing neural networks this way, we can analyze their properties without ref
 Instead, we can ask what sorts of information-processing structures these priors give rise to, and check whether those structures are the same sort which we expect to find in useful models.
 
 %To shed light on this problem, we analyze the analogous problem of constructing useful priors on compositions of functions.
-As a starting point, we'll relate neural networks to Gaussian processes, and examine a class of infinitely-wide, deep neural networks called \emph{deep Gaussian processes}.
+As a starting point, we will relate neural networks to Gaussian processes, and examine a class of infinitely-wide, deep neural networks called \emph{deep Gaussian processes}.
 Deep \gp{}s are an attractive model class to study for several reasons.
 \citet{damianou2012deep} showed that the probabilistic nature of deep \gp{}s gaurds against overfitting, and allows us to use the marginal likelihood to automatically tune the model architecture without the need for cross-validation.
 \citet{hensman2014deep} showed that stochastic variational inference is possible in deep \gp{}s.
@@ -28,8 +28,8 @@ Together, these results suggest that deep \gp{}s are a promising alternative to 
 For the analysis in this chapter, deep \gp{}s are attractive because they abstract away some of the details of finite neural networks. %, such as the number of hidden units
 
 Our analysis will show that in standard architectures, the representational capacity of standard deep networks tends to decrease as the number of layers increases, retaining only a single degree of freedom in the limit.
-We'll propose an alternate network architecture -- one which connects the input to each layer -- which does not suffer from this pathology.
-We'll also examine \emph{deep kernels}, obtained by composing infinitely-many fixed feature transforms.
+We propose an alternate network architecture that connects the input to each layer that does not suffer from this pathology.
+We also examine \emph{deep kernels}, obtained by composing arbitrarily many fixed feature transforms.
 
 The ideas contained in this chapter were developed through discussions with Oren Rippel, Ryan Adams and Zoubin Ghahramani, and appear in \citet{DuvRipAdaGha14}.
 
@@ -52,7 +52,7 @@ Deep \gp{}s are simply priors on compositions of vector-valued functions, where 
 
 A multilayer neural network also implements a composition of vector-valued functions, one per layer.
 %Therefore, understanding properties of function compositions helps us gain insight into deep networks.
-In this section, we'll show the precise relationship between Gaussian processes and neural nets, then show two equivalent ways of constructing neural networks which give rise to deep \gp{}s.
+In this section, we show the precise relationship between Gaussian processes and neural nets, then show two equivalent ways of constructing neural networks which give rise to deep \gp{}s.
 
 
 
@@ -60,8 +60,7 @@ In this section, we'll show the precise relationship between Gaussian processes 
 %\vspace{-0.05in}
 \subsection{Single-layer Models}
 
-%To mmake the link between deep \gp{}s and deep neural nets more explicit, we'll first
-First, we'll relate neural networks with one hidden layer to Gaussian processes, using the
+First, we will relate neural networks with one hidden layer to Gaussian processes, using the
 standard neural network architecture known as the multi-layer perceptrion (\MLP{}).
 In the typical definition of an \MLP{}, the hidden units of the first layer are defined as:
 %
@@ -468,12 +467,9 @@ Two equivalent views of deep \gp{}s as neural networks.
 There are two equivalent neural net architectures which correspond to deep \gp{}s: one with fixed non-linearities, and another with \gp{}-distributed nonlinearties.
 
 To construct a neural network with fixed nonlinearities that corresponds to a deep \gp{}, 
-%with $D_\layerindex$ units for each layer corresponding to the outputs compositions of functions drawn from a \gp{} prior, 
 one can start with the infinitely-wide deep \gp{} shown in \cref{fig:gp-architectures}(right), and introduce a finite set of nodes in between each infinitely-wide set of fixed basis functions.
 This architecture is shown in the top of \cref{fig:deep-gp-architectures}.
 The $D^{(\layerindex)}$ outputs $\vf^{(\layerindex)}(\vx)$ in between each layer are weighted sums (with random weights) of the fixed hidden units of the layer below, and the next layer's hidden units depend only on these $D^{(\layerindex)}$ outputs.
-%Thus, the network architecture with fixed nonlinearities corresponding to deep \gp{}s has an extra set of layers that a \MLP{} doesn't have.
-%
 
 This alternating-layer architecture has an interpretation as a series of linear information bottlenecks.
 To see this, we can simply substitute \cref{eq:one-layer-nn} into \cref{eq:nextlayer} to get
@@ -484,18 +480,9 @@ To see this, we can simply substitute \cref{eq:one-layer-nn} into \cref{eq:nextl
 %
 Thus, ignoring the intermediate outputs $\vf^{(\layerindex)}(\vx)$, a deep \gp{} is an infinitely-wide, deep \MLP{} with each pair of layers connected by random, rank-$D_\layerindex$ matrices $\vW^{(\layerindex)} \vV^{(\layerindex-1)}$. %connecting the layers.
 
-
-
-%There are two ways to relate deep \gp{}s to \MLP{}s.
 The second, more direct way to construct a network architecture corresponding to a deep \gp{} is to integrate out all $\vV^{(\layerindex)}$, and view deep \gp{}s as a neural network with a finite number of nonparametric, \gp{}-distributed basis functions at each layer, in which $\vf^{(1:\layerindex)}(\vx)$ represent the output of the hidden nodes at the $\layerindex^{th}$ layer.
 This second view lets us compare deep \gp{} models to standard neural net architectures more directly.
 \Cref{fig:gp-architectures}(bottom) shows this architecture.
-%, examining the activations and shapes of the finite number of basis functions at each layer.
-
-
-%Figure \ref{fig:architectures} compares these two architectures.  If we stick to the correspondence between neural nets and \gp{}s as defined in \eqref{eq:one-layer-nn}, we notice that the deep \gp{} architecture forces the linear connections between hidden layers go be squeezed through a finite set of nodes, corresponding to the output of the independent \gp{}s at each layer.  
-
-
 
 
 %\subsection{Relating initialization strategies, regularization, and priors}
@@ -531,7 +518,7 @@ In this section, we develop several theoretical results that explore the behavio
 This will allow us in \cref{sec:formalizing-pathology} to formally identify a pathology that emerges in very deep networks.
 
 Specifically, we will show that the size of the derivative of a one-dimensional deep \gp{} becomes log-normal distributed as the network becomes deeper.
-We'll also show that the Jacobian of a multivariate deep \gp{} is a product of independent Gaussian matrices with independent entries.
+We will also show that the Jacobian of a multivariate deep \gp{} is a product of independent Gaussian matrices with independent entries.
 
 
 \subsection{One-dimensional Asymptotics}
@@ -695,7 +682,7 @@ The Jacobian of a deep \gp{} with a product kernel is a product of independent G
 %
 %\vspace{-0.2in}
 \begin{proof}
-When composing $L$ different functions, we'll denote the \emph{immediate} Jacobian of the function mapping from layer $\layerindex -1$ to layer $\layerindex$ as $J^{\layerindex}(\vx)$, and the Jacobian of the entire composition of $L$ functions by $J^{1:L}(\vx)$.
+When composing $L$ different functions, we denote the \emph{immediate} Jacobian of the function mapping from layer $\layerindex -1$ to layer $\layerindex$ as $J^{\layerindex}(\vx)$, and the Jacobian of the entire composition of $L$ functions by $J^{1:L}(\vx)$.
 %
 By the multivariate chain rule, the Jacobian of a composition of functions is simply the product of the immediate Jacobian matrices of each function.  
 %
@@ -1031,7 +1018,7 @@ which, in the case of a deep \gp{}, is still a product of independent Gaussian m
 The pathology examined in this section is an example of the sort of analysis made possible by a well-defined prior on functions.
 As explained in \cref{sec:relating}, \gp{}s are examples of a particular limit of Bayesian neural networks.
 The figures and analysis done in this section could have also been done using Bayesian neural networks with finite numbers of nodes, but would have been more difficult.
-In particular, care would need to be taken to ensure that the networks don't produce degenerate mappings due to the hidden units saturating.
+In particular, care would need to be taken to ensure that the networks do not produce degenerate mappings due to saturation of the hidden units.
 
 
 

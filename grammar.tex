@@ -138,7 +138,9 @@ In this chapter, we will use such base kernels as white noise ($\kWN$), constant
 We use a generalized form of $\kPer$ due to \citet{lloyd-periodic} which has $\cos(x - x')$ as a special case.
 \Cref{fig:basic_kernels_two} shows the new kernels introduced in this chapter.
 For precise definitions of all kernels, see appendix \ref{sec:kernel-definitions}.
-\Cref{table:motifs} lists common regression models that can be expressed by this language.
+
+The space of kernels produced by adding and multiplying the above set of kernels contains many existing regression models.
+\Cref{table:motifs} lists some of these, which are discussed in more detail in \cref{sec:gpss-related-work}. % regression models that can be expressed by this language.
 
 \begin{table}[ht]
 \centering
@@ -148,15 +150,15 @@ Regression model & Kernel & Related work\\
 Linear regression & $\kC \kernplus \kLin \kernplus \kWN$ & \\
 Polynomial regression & $\kC \kernplus \prod \kLin \kernplus \kWN$ & \\
 %Kernel ridge regression & $\kSE \kernplus \kWN$ & \\
-Semi-parametric & $\kLin \kernplus \kSE \kernplus \kWN$ & \citet[e.g.][]{ruppert2003semiparametric} \\
-Multiple kernel learning & $\sum \kSE \kernplus \kWN$ & \citet[e.g.][]{bach2004multiple} \\
+Semi-parametric & $\kLin \kernplus \kSE \kernplus \kWN$ & \citet{ruppert2003semiparametric} \\
+Multiple kernel learning & $\sum \kSE \kernplus \kWN$ & \citet{gonen2011multiple} \\
 Trend, cyclical, irregular   & $\sum \kSE \kernplus \sum \kPer \kernplus \kWN$ & \citet{lind2006basic}\\
 Fourier decomposition & $\kC \kernplus \sum \cos \kernplus \kWN$ & \\
 Sparse spectrum \gp{}s & $\sum \cos \kernplus \kWN$ & \citet{lazaro2010sparse} \\
 Spectral mixture & $\sum \SE \kerntimes \cos \kernplus \kWN$ & \citet{WilAda13} \\
-Changepoints & \eg $\kCP(\kSE, \kSE) \kernplus \kWN$ & \citet[e.g.][]{garnett2010sequential} \\
+Changepoints & \eg $\kCP(\kSE, \kSE) \kernplus \kWN$ & \citet{garnett2010sequential} \\
 Time-changing variance & \eg $\kSE \kernplus \kLin \kerntimes \kWN$ & \\
-Additive + Flexible & $ \sum_d \kSE_d \kernplus \prod_d \kSE_d$ & \citet{plate1999accuracy} \\
+Interpretable + flexible & $ \sum_d \kSE_d \kernplus \prod_d \kSE_d$ & \citet{plate1999accuracy} \\
 Additive \gp{}s & $ \sum_{\vr \in \{0,1\}^D} \prod_{d \in \vr} \kSE_d$ & \cref{ch:additive}
 \end{tabular}
 \caption[Common regression models expressible in the kernel language]
@@ -187,7 +189,7 @@ The basic operations we can perform on any part $k$ of a kernel are:
 These operators can generate all possible algebraic expressions involving addition and multiplication of base kernels.
 To see this, observe that if we restricted the addition and multiplication rules to only apply to base kernels, we would obtain a context-free grammar which generates the set of algebraic expressions.
 
-\begin{figure}[t!]
+\begin{figure}
 \centering
 %\begin{tabular}{cc}
 %\begin{minipage}[t][14cm][t]{0.65\columnwidth}
@@ -237,6 +239,7 @@ To see this, observe that if we restricted the addition and multiplication rules
 \begin{tabular}{ccc}
 Level 1: & Level 2: & Level 3: \\
 \RQ & $\Per + \RQ$ & $\SE \kerntimes (\Per + \RQ )$ \\[0.5em]
+%Level 1: \RQ & Level 2: $\Per + \RQ$ & Level 3: $\SE \kerntimes (\Per + \RQ )$ \\[0.5em]
 \maunadecomp{0} & \maunadecomp{1} & \maunadecomp{2} \\[0.5em]
 \end{tabular}
 \caption[Progression of models as the search depth increases]
@@ -324,7 +327,10 @@ For example,
 \end{align}
 %
 This decomposition into additive components provides a method of visualizing the learned model, breaking down the different types of structure discovered in the data.
-In \cref{ch:description}, we extend this model visualization method to include automatically-generated English text explaining the meaning of each type of structure discovered.
+
+For products of kernels which all apply to the same dimension, we can use the formulas in \cref{sec:posterior-variance} to visualize the marginal posterior distribution of each component.
+The following section shows examples of such decomposition plots.
+In \cref{ch:description}, we extend this model visualization method to include automatically generated English text explaining the meaning of each type of structure discovered.
 
 
 
@@ -351,7 +357,7 @@ Since this dataset was analyzed in detail by \citet{rasmussen38gaussian}, we can
 \multicolumn{2}{c}{
 \begin{tabular}{c}
 Complete model: 
-$\kLin \kerntimes \kSE + \kSE \kerntimes ( \kPer + \RQ ) + \kWN$ \\
+$\kLin \kerntimes \kSE + \kSE \kerntimes ( \kPer + \RQ ) \kernplus \kWN$ \\
 \maunadgfx{all}
 \end{tabular}
 } \\\\
@@ -634,19 +640,21 @@ Dashes (--) indicate no structure was found.
 Each kernel implicitly has a \kWN{} kernel included.
 }
 \label{tbl:synthetic}
+\addtolength{\tabcolsep}{1pt}
+\setlength\extrarowheight{2pt}
 \begin{center}
 {\small
 \begin{tabular}{c c | c c c}
-True Kernel & $D$ & \SNR{} = 10 & \SNR{} = 1 & \hspace{-1cm} \SNR{} = 0.1 \\
+True kernel & $D$ & \SNR{} = 10 & \SNR{} = 1 & \hspace{-1cm} \SNR{} = 0.1 \\
 \hline
-$\SE + \RQ$        & 1 & $\SE$ & $\SE \times \Per$ & $\SE$ \\
-$\Lin \times \Per$ & 1 & $\Lin \times \Per$ & $\Lin \times \Per$ & $\SE$ \\
-$\SE_1 + \RQ_2$    & 2 & $\SE_1 + \SE_2$ & $\Lin_1 + \SE_2$ & $\Lin_1$ \\
-$\SE_1 + \SE_2 \times \Per_1 + \SE_3$ & 3 & $\SE_1 + \SE_2 \times \Per_1 + \SE_3$ & $\SE_2 \times \Per_1 + \SE_3$ & - \\
-$\SE_1 \times \SE_2$ & 4 & $\SE_1 \times \SE_2$ & $\Lin_1 \times \SE_2$ & $\Lin_2$ \\
-$\SE_1 \times \SE_2 + \SE_2 \times \SE_3$ & 4 & $\SE_1 \times \SE_2 + \SE_2 \times \SE_3$ & $\SE_1 + \SE_2 \times \SE_3$ & $\SE_1$ \\
-\multirow{2}{*}{ $(\SE_1 + \SE_2) \times (\SE_3 + \SE_4)$ } & \multirow{2}{*}{4} & $(\SE_1 + \SE_2) \times$ \dots & $(\SE_1 + \SE_2) \times$ \dots & \multirow{2}{*}{-} \\
- & & $(\SE_3\times\Lin_3\times\Lin_1 + \SE_4)$ & $\SE_3 \times \SE_4$ &
+$\SE \kernplus \RQ$        & 1 & $\SE$ & $\SE \kerntimes \Per$ & $\SE$ \\
+$\Lin \kerntimes \Per$ & 1 & $\Lin \kerntimes \Per$ & $\Lin \kerntimes \Per$ & $\SE$ \\
+$\SE_1 \kernplus \RQ_2$    & 2 & $\SE_1 \kernplus \SE_2$ & $\Lin_1 \kernplus \SE_2$ & $\Lin_1$ \\
+$\SE_1 \kernplus \SE_2 \kerntimes \Per_1 \kernplus \SE_3$ & 3 & $\SE_1 \kernplus \SE_2 \kerntimes \Per_1 \kernplus \SE_3$ & $\SE_2 \kerntimes \Per_1 \kernplus \SE_3$ & -- \\
+$\SE_1 \kerntimes \SE_2$ & 4 & $\SE_1 \kerntimes \SE_2$ & $\Lin_1 \kerntimes \SE_2$ & $\Lin_2$ \\
+$\SE_1 \kerntimes \SE_2 \kernplus \SE_2 \kerntimes \SE_3$ & 4 & $\SE_1 \kerntimes \SE_2 \kernplus \SE_2 \kerntimes \SE_3$ & $\SE_1 \kernplus \SE_2 \kerntimes \SE_3$ & $\SE_1$ \\
+\multirow{2}{*}{ $(\SE_1 \kernplus \SE_2) \kerntimes (\SE_3 \kernplus \SE_4)$ } & \multirow{2}{*}{4} & $(\SE_1 \kernplus \SE_2) \, \kerntimes$ \dots & $(\SE_1 \kernplus \SE_2) \, \kerntimes$ \dots & \multirow{2}{*}{--} \\
+ & & $(\SE_3\kerntimes\Lin_3\kerntimes\Lin_1 \kernplus \SE_4)$ & $\SE_3 \kerntimes \SE_4$ &
 \end{tabular}
 }
 \end{center}
