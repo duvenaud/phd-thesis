@@ -374,7 +374,7 @@ After learning the kernel parameters by maximizing the marginal likelihood of th
 %
 %
 \newcommand{\concretepic}[1]{\includegraphics[width=0.31\columnwidth]{\decompfigsdir/concrete-component-#1}}
-\newcommand{\concretelegend}[0]{\raisebox{5mm}{\includegraphics[trim=56mm 1mm 6mm 33mm, clip, width=0.2\columnwidth]{\decompfigsdir/concrete-component-1-legend}}}
+\newcommand{\concretelegend}[0]{\raisebox{5mm}{\includegraphics[trim=56mm 1mm 2mm 34.1mm, clip, width=0.24\columnwidth]{\decompfigsdir/concrete-component-8-legend}}}
 %
 \begin{figure}[t!]
 \centering
@@ -389,8 +389,8 @@ Cement & Slag & Fly Ash\\
  \concretepic{7} & \concretepic{8} & \concretelegend \\
 \end{tabular}
 \caption[Decomposition of posterior into interpretable one-dimensional functions]
-{By considering only one-dimensional terms of the additive kernel, we can plot the predictive distribution as a function of each dimension separately.
-Blue points indicate the original data, green points are data after the average contribution from all other terms has been subtracted.
+{The predictive distribution of each component of a multidimensional additive model.
+Blue crosses indicate the original data projected on to each dimension, red indicates the marginal posterior density, and colored lines are samples from the posterior of each component.
 The vertical axis is the same for all plots.
 %The black line is the posterior mean of a \sgp{} with only one term in its kernel.
 %Right:  the posterior mean of a \sgp{} with only one second-order term in its kernel.

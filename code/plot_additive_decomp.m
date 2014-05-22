@@ -85,8 +85,23 @@ for i = 1:num_components
     % Plot posterior mean and variance.
     figure(i); clf;
     filename = sprintf( '%s-component-%d', fileprefix, d );
-    nice_oned_plot( X(:,d), y, data_mean, xrange, component_mean, component_var, show_samples, savefigs, filename)
+    [h_data_orig, h_gp_post, h_sample] = nice_oned_plot( X(:,d), y, data_mean, xrange, component_mean, component_var, show_samples, savefigs, filename);
 end
+
+% Plot legend
+if savefigs
+    set(h_data_orig,'Visible','off');
+    set(h_sample,'Visible','off');
+    set(h_gp_post,'Visible','off');
+    axis off
+    h_legend = legend([h_data_orig, h_gp_post, h_sample], ...
+       'Data', 'Posterior density', 'Posterior samples', 'Location', 'Best');
+    set(h_legend,'FontSize',12);
+    set(h_legend,'FontName','Times');
+
+    save2pdf([filename '-legend.pdf'], gcf, 600, true );
+end
+
 
 complete_mean = (complete_sigma - noise_cov) / complete_sigma * y;
 rs = 1 - var(complete_mean - y)/ var(y)
@@ -96,7 +111,7 @@ rs = 1 - var(complete_mean - y)/ var(y)
 end
 
 
-function nice_oned_plot( X, y, y_adjusted, xstar, mean, full_variance, show_samples, savefigs, filename)
+function [h_data_orig, h_gp_post, h_sample] = nice_oned_plot( X, y, y_adjusted, xstar, mean, full_variance, show_samples, savefigs, filename)
 % Makes a nice plot of a GP posterior.
 %
 % David Duvenaud
@@ -123,7 +138,8 @@ function nice_oned_plot( X, y, y_adjusted, xstar, mean, full_variance, show_samp
                    'EdgeColor', 'none'); hold on;
     end    
     
-    h_data_orig = plot( X, y, 'ko', 'Linewidth', 1.5, 'Markersize', 10, 'Color', colorbrew(2)); hold on;
+    h_data_orig = plot( X, y, 'kx', 'Linewidth', 1.5, 'Markersize', 10, 'Color', colorbrew(2)); hold on;
+    %h_data_orig = plot( X, y, 'kx', 'Linewidth', 1.5, 'Markersize', 10); hold on;
 
     if show_samples
         % Plot posterior samples
@@ -137,14 +153,15 @@ function nice_oned_plot( X, y, y_adjusted, xstar, mean, full_variance, show_samp
             L = chol(full_variance + eye(length(xstar)).*max(full_variance(:)).*0.0001);
             sample = mean + L'*randn(length(xstar),1);
             %sample = mvnrnd( mean, full_variance + eye(length(xstar)).*max(full_variance(:)).*0.0001, 1);
-            hs = plot( xstar, sample, '-', 'Color', colorbrew(n_sample), 'Linewidth', 1); hold on;
+            h_sample = plot( xstar, sample, '-', 'Color', colorbrew(n_sample), 'Linewidth', 1); hold on;
             %
         end
     end
     
-    
-    h_data_adjust = plot( X, y_adjusted, 'k+', 'Linewidth', 1.5, 'Markersize', 10, 'Color', colorbrew(3)); hold on;
-    
+    show_mean = false;
+    if show_mean
+        h_data_adjust = plot( X, y_adjusted, 'k+', 'Linewidth', 1.5, 'Markersize', 10, 'Color', colorbrew(3)); hold on;
+    end
     
     %ylim( ylimits);
     xlim( [xstar(1), xstar(end)]);
@@ -172,22 +189,6 @@ function nice_oned_plot( X, y, y_adjusted, xstar, mean, full_variance, show_samp
         %myaa('publish');
         %savepng(gcf, filename);
         save2pdf([filename '.pdf'], gcf, dpi, true );
-        
-        % Plot separate legend
-   %     if d == D
-        if false
-            set(h_data_orig,'Visible','off');
-            set(h_data_adjust,'Visible','off');
-            set(h_gp_post,'Visible','off');
-            axis off
-            h_legend = legend([h_data_orig, h_data_adjust, h_gp_post], ...
-               'Original data', 'Adjusted', 'GP posterior', 'Location', 'Best');
-            set(h_legend,'FontSize',12);
-            set(h_legend,'FontName','Times');
-        
-            %set(gcf, 'color', 'white');
-            save2pdf([filename '-legend.pdf'], gcf, dpi, true );
-        end
     end
 end
 

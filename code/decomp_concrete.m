@@ -7,7 +7,7 @@ function decomp_concrete(savefigs)
 
 if nargin < 1; savefigs = false; end
 
-show_samples = false;
+show_samples = true;
 
 % How to save figure.
 decompfigsdir = '../figures/decomp/';
@@ -57,13 +57,16 @@ hyp = minimize(hyp, @gp, -100, inference, meanfunc, complete_cov, likfunc, X, y)
 kernel_hypers = rewrap(kernel_hypers, hyp.cov);
 
 
-%plot_additive_decomp( X, y, kernel_components, kernel_hypers, hyp.lik, ...
-%                      show_samples, savefigs, fileprefix )
+plot_additive_decomp( X, y, kernel_components, kernel_hypers, hyp.lik, ...
+                      show_samples, savefigs, fileprefix )
 
-% Remove coarse and fine
-remove = [6,7];
-kernel_components(remove) = [];
-kernel_hypers(remove) = [];
-feature_names(remove) = [];
-plot_additive_decomp_cov( X, y, kernel_components, kernel_hypers, hyp.lik, ...
-                      savefigs, fileprefix, feature_names )
+plot_cov = false;
+if plot_cov
+    % Remove coarse and fine
+    remove = [6,7];
+    kernel_components(remove) = [];
+    kernel_hypers(remove) = [];
+    feature_names(remove) = [];
+    plot_additive_decomp_cov( X, y, kernel_components, kernel_hypers, hyp.lik, ...
+                          savefigs, fileprefix, feature_names )
+end
