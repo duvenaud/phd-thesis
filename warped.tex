@@ -11,10 +11,11 @@
 \end{quotation}
 
 Previous chapters showed how the probabilistic nature of \gp{}s lets us automatically include an appropriate amount of structure, and the right kind, when building models of functions.
-In this chapter, we'll show that we can also take advantage of this property when we compose \gp{}s with other models.
-Besides simply learning the right amount of complexity of the function modeled by a \gp{}, we can automatically trade off complexity between the \gp{} and the other parts of the model.
+In this chapter, we show how to take advantage of this property when composing \gp{}s with other models,
+%Besides simply learning the right amount of complexity of the function modeled by a \gp{}, we can
+automatically balancing between the complexity of the \gp{} and the other parts of the model.
 
-We'll consider a simple example: a Gaussian mixture model, warped by a draw from a \gp{}.
+This chapter considers a simple example: a Gaussian mixture model, warped by a draw from a \gp{}.
 This model will produce clusters with arbitrary shapes, depending on the warping.
 More generally, this model lets us automatically infer the number, dimension, and shape of a set of nonlinear manifolds, and summarize those manifolds in a low-dimensional latent space.
 We call the proposed model the {\it infinite warped mixture model} (\iwmm{}).
@@ -29,9 +30,9 @@ We call the proposed model the {\it infinite warped mixture model} (\iwmm{}).
 
 
 
-The work comprising the bulk of this chapter was done in collaboration with Tomoharu Iwata and Zoubin Ghahramani, and appeared in \citep{IwaDuvGha12}.
+The work comprising the bulk of this chapter was done in collaboration with Tomoharu Iwata and Zoubin Ghahramani, and appeared in \citet{IwaDuvGha12}.
 Specifically, the main idea was borne out of a conversation between Tomo and myself, and together we wrote almost all of the code together as well as the paper.
-Tomo ran most of the experiments.
+Tomoharu ran most of the experiments.
 Zoubin Ghahramani provided guidance and many helpful suggestions throughout the project.
 
 
@@ -88,14 +89,20 @@ Zoubin Ghahramani provided guidance and many helpful suggestions throughout the 
 %The \gplvm{} can also be thought of as a method for modeling the covariance between rows of $Y$, using a number of parameters which grows only linearly with $N$.
 
 
-\begin{figure}[t]
-\begin{centering}
-\includegraphics[width=\textwidth]{\gplvmfiguresdir/gplvm_1d_draw_9}
-\end{centering}
-\caption[One-dimensional Gaussian process latent variable model]{A visual representation of the Gaussian process latent variable model (\gplvm). 
-\emph{Bottom:} the density of a set of samples from a 1D Gaussian, specifying the distribution $p(\vX)$ in the latent space.
-\emph{Top Right:} A function drawn from a \gp{} prior.
-\emph{Left:} A nonparametric density defined by warping the latent density through the sampled function.} 
+\begin{figure}
+\centering
+\begin{tabular}{cc}
+& \qquad \qquad \qquad \qquad \qquad Warping function $y = f(x)$ \\
+\raisebox{3cm}{\rotatebox{90}{Warped density $p(y)$}} & 
+\includegraphics[width=0.8\textwidth,clip,trim=1.3cm 0.79cm 0cm 0cm]{\gplvmfiguresdir/gplvm_1d_draw_9} \\
+& \qquad \qquad \qquad \qquad \qquad Latent density $p(x)$
+\end{tabular}
+\caption[One-dimensional Gaussian process latent variable model]{
+A draw from a one-dimensional Gaussian process latent variable model. 
+\emph{Bottom:} the density of a set of samples from a 1D Gaussian, specifying the distribution $p(x)$ in the latent space.
+\emph{Top Right:} A function $y = f(x)$ drawn from a \gp{} prior.
+Grey lines show points being mapped through $f$.
+\emph{Left:} A nonparametric density $p(y)$ defined by warping the latent density through the sampled function.} 
 \label{fig:oned-gplvm}
 \end{figure}
 
@@ -110,7 +117,7 @@ Latent space $p(\vX)$ & & Observed space $p(\vY)$ \\
 %\raisebox{7em}{\Huge $\overset{\textnormal{\Large{GP}}}\rightarrow$} &
 \fbox{\includegraphics[height=15em,width=15em]{\gplvmfiguresdir/gplvm-draw-crop}}
 \end{tabular}
-\caption[Two-dimensional Gaussian process latent variable model]{A visual representation of the Gaussian process latent variable model.
+\caption[Two-dimensional Gaussian process latent variable model]{A draw from a multi-dimensional Gaussian process latent variable model.
 \emph{Left:}  Isocontours and samples from a 2D Gaussian, specifying the distribution $p(\vX)$ in the latent space. 
 \emph{Right:} Density and samples from a nonparametric density defined by warping the latent density through a function drawn from a \gp{} prior.}  
 \label{fig:twod-gplvm}
@@ -118,11 +125,7 @@ Latent space $p(\vX)$ & & Observed space $p(\vY)$ \\
 
 
 
-The \iwmm{} can be viewed as an extension to the \gplvm{}, a probabilistic model of nonlinear manifolds.
-% which can be viewed as a special case of the \iwmm{}.
-%The \iwmm{} can be viewed as an extension of the Gaussian process latent variable model (GPLVM)~\citep{lawrence2004gaussian}.  
-%The \gplvm{} is a probabilistic model of nonlinear manifolds.
-%While not typically thought of as a density model, the \gplvm{} does in fact define a posterior density over observations~\citep{nickisch2010gaussian}.
+The \iwmm{} can be viewed as an extension to the Gaussian process latent variable model (\gplvm{})~\citep{lawrence2004gaussian}, a probabilistic model of nonlinear manifolds.
 The \gplvm{} smoothly warps a Gaussian density into a more complicated distribution, using a draw from a \gp{}.
 Usually, we think of the Gaussian density as living in a ``latent space'' having $Q$ dimensions, and the warped density living in the observed space having $D$ dimensions.
 
@@ -165,7 +168,7 @@ where $\vtheta$ are the kernel parameters and $\vK$ is the Gram matrix $k(\vX, \
 
 Typically, the \gplvm{} is used for dimensionality reduction or visualization, and the latent coordinates are set by maximizing \eqref{eq:py_x}.
 In that setting, the Gaussian prior density on $\vx$ is essentially a regularizer which keeps the latent coordinates from spreading arbitrarily far apart.  
-In contrast, we'll integrate out the latent coordinates, and place a more flexible parameterization on $p(\vx)$ than a single isotropic Gaussian.
+In contrast, we integrate out the latent coordinates, and the \iwmm{} places a more flexible parameterization on $p(\vx)$ than a single isotropic Gaussian.
 Just as the \gplvm{} can be viewed as a manifold learning algorithm, the \iwmm{} can be viewed as learning a set of manifolds, one for each cluster.
 
 
@@ -212,7 +215,7 @@ The \iwmm{} can be seen as a generalization of either the \gplvm{} or the \iGMM{
 To be precise, the \iwmm{} with a single fixed spherical Gaussian density on the latent coordinates corresponds to the \gplvm{}, while the \iwmm{} with fixed direct mapping function $f_{d}(\vx)=x_{d}$ and 
 $Q=D$ corresponds to the \iGMM{}.
 
-The need for a clustering model that doesn't have a fixed set of cluster shapes is motivated by fact that
+The need for a clustering model that does not have a fixed set of cluster shapes is motivated by fact that
 a mixture of Gaussians fit to a single non-Gaussian cluster (such as one that is curved or heavy-tailed) will report that the data contains many Gaussian clusters.
 If we care about getting the number of clusters right, then we need a flexible model of cluster shapes.
 
@@ -246,7 +249,7 @@ If we care about getting the number of clusters right, then we need a flexible m
 
 As discussed in \cref{sec:useful-properties}, one of the main advantages of \gp{} priors is that, given inputs $\vX$, outputs $\vY$ and kernel parameters $\vtheta$, we can analytically integrate over functions mapping $\vX$ to $\vY$.
 However, if we introduce uncertainty about any of these parameters, or add extra latent variables, then there's usually no analytic method to integrate out these extra parameters.
-In this section, we'll outline how we can infer all the parameters in the \iwmm{} given only a set of observations $\vY$.
+This section outlines how to infer all parameters in the \iwmm{} given only a set of observations $\vY$.
 Details can be found in \cref{sec:iwmm-inference-details}.
 
 By placing conjugate priors on the parameters of the Gaussian mixture components, we can analytically integrate out the cluster shapes, given the assignments of points to clusters.
@@ -321,8 +324,8 @@ One of the main advantages of the \iwmm{} over these methods is that there is no
 
 The kernel Gaussian mixture model~\citep{wang2003kernel} can also find non-Gaussian shaped clusters.
 This model estimates a \GMM{} in the implicit infinite-dimensional feature space defined by the kernel mapping of the observed space.
-However, the kernel \GMM{} uses a fixed nonlinear mapping function, with no likelihood term that encourages the latent points to be well-modeled by a \GMM{}.
-Thus the kernel parameters must be set by cross-validation.
+%However, the kernel \GMM{} uses a fixed nonlinear mapping function, with no likelihood term that encourages the latent points to be well-modeled by a \GMM{}.
+However, the kernel parameters must be set by cross-validation.
 %and the data points mapped by a fixed function are not guaranteed 
 %to be distributed according to a GMM.
 In contrast, the \iwmm{} infers the mapping function such that the latent co-ordinates will be well-modeled by a mixture of Gaussians.
@@ -353,7 +356,7 @@ They found that when modeling \MNIST{} hand-written digits, nearest-neighbour cl
 \subsection{Clustering Face Images}
 
 We first examined our model's ability to model images without pre-processing.
-We constructed a dataset consisting of 50 greyscale 32x32 pixel images of two individuals from the \UMIST{} faces dataset \citep{umistfaces}.
+We constructed a dataset consisting of 50 greyscale 32x32 pixel images of two individuals from the \UMIST{} faces dataset~\citep{umistfaces}.
 Both series of images show a person turning his head to the right to varying degrees.
 
 \begin{figure}[h!]
@@ -514,7 +517,7 @@ Regardless of the dimension of the latent space, the \iwmm{} will tend to model 
 This is because, if the data in a cluster can be made to lie in a low-dimensional plane, a narrowly-shaped Gaussian will assign the latent coordinates much higher likelihood than a spherical Gaussian.
 
 \subsection{Clustering Performance}
-We more formally evaluated the density estimation and clustering performance of the proposed model using four real datasets: iris, glass, wine and vowel, obtained from \LIBSVM{} multi-class datasets \citep{chang2011libsvm}, in addition to the four synthetic datasets shown above: 2-curve, 3-semi, 2-circle and pinwheel~\citep{adams2009archipelago}.
+We more formally evaluated the density estimation and clustering performance of the proposed model using four real datasets: iris, glass, wine and vowel, obtained from \LIBSVM{} multi-class datasets~\citep{chang2011libsvm}, in addition to the four synthetic datasets shown above: 2-curve, 3-semi, 2-circle and pinwheel~\citep{adams2009archipelago}.
 The statistics of these datasets are summarized in \Cref{tab:statistics}.
 %
 \begin{table}[ht!]
@@ -653,7 +656,7 @@ Another natural extension would be to allow a separate warping for each cluster,
 
 \subsubsection{Learning the Topology of Data Manifolds}
 
-Some datasets naturally live on manifolds which aren't simply connected.
+Some datasets naturally live on manifolds which are not simply connected.
 For example, motion capture data or video of a person walking in a circle naturally lives on a torus, with one coordinate specifying the phase of the person's step, and another specifying how far around the circle they've walked.
 
 %What if we were to use the structured kernels of \cref{ch:kernels,ch:grammar} to specify the prior on warpings?

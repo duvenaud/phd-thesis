@@ -9,12 +9,12 @@
 
 
 In \cref{ch:grammar}, we showed how to learn the structure of a kernel by building it up piece-by-piece.
-This chapter presents an alternative approach, where we start with many different types of structure in the kernel, and adjust kernel parameters to discard whatever structues \emph{aren't} present in the current dataset.
-The advantage of this approach is that we don't need to run an expensive discrete-and-continuous optimization problem in order to build a structured model.
+This chapter presents an alternative approach, where we start with many different types of structure in the kernel, and adjust kernel parameters to discard whatever structues are \emph{not} present in the current dataset.
+The advantage of this approach is that we do not need to run an expensive discrete-and-continuous optimization problem in order to build a structured model.
 Implementation is also much simpler.
 
 The type of structure our kernel will represent are sums of functions of all possible combinations of input variables.
-We'll call this model class \emph{additive Gaussian processes}.
+We call this model class \emph{additive Gaussian processes}.
 This model can be specified by a kernel which is a sum of all possible products of one-dimensional kernels.
 
 There are $2^D$ combinations of $D$ inputs, so a na\"{i}ve computation of such a kernel would be intractable.
@@ -25,7 +25,7 @@ Empirically, this kernel has good predictive power in regression tasks, and its 
 
 The work in this chapter was done in collaboration with Hannes Nickisch and Carl Rasmussen, who derived and coded up the initial model.
 My role in the project was to examine the properties of the resulting model, clarify the connections to existing methods, to create all figures and run all experiments.
-This work was published in \citep{duvenaud2011additive11}.
+This work was published in \citet{duvenaud2011additive11}.
 
 
 
@@ -41,7 +41,7 @@ f(\vx) = g \left( f(x_1) + f(x_2) + \dots + f(x_D) \right)
 \end{align}
 %
 are widely used in machine learning and statistics, because they are relatively easy to fit and interpret.
-Examples include logistic regression, linear regression, Generalized Linear Models \citep{nelder1972generalized} and Generalized Additive Models (\GAM{}) \citep{hastie1990generalized}.
+Examples include logistic regression, linear regression, generalized linear models~\citep{nelder1972generalized} and generalized additive models~\citep{hastie1990generalized}.
 %, are typically easy to fit and interpret.
 %Some extensions of this family, such as smoothing-splines ANOVA \citep{wahba1990spline}, also consider terms depending on more than one variable.
 %However, such models often become intractable and difficult to fit as the number of terms increases.
@@ -63,7 +63,7 @@ f(x_1, x_2, x_3) = f_{12}(x_1, x_2) + f_{23}(x_2, x_3) + f_{13}(x_1, x_3)
 \label{eq:second-order-additive}
 \end{align}
 %
-We'll call the number of input variables appearing in each term the \emph{order} of a model class.
+We call the number of input variables appearing in each term the \emph{order} of a model class.
 Models of intermediate order allow more flexibility than models of form \eqref{eq:general-additive} ($D$-th order), but have more structure than those of form \eqref{eq:highest-order} (first-order).
 
 If the function being learned depends in some way on an interaction between all input variables, a $D$th-order term is required in order for the model to be consistent.
@@ -196,7 +196,7 @@ An additive kernel over $D$ inputs with interactions up to order $n$ has $O(2^n)
 Na\"{i}vely summing over these terms quickly becomes intractable.
 In this section, we show how one can evaluate the sum over all terms in $O(D^2)$, while still weighting each order seperately.
 
-To efficiently compute the additive kernel, we exploit the fact that the $n$th order additive kernel corresponds to the $n$th \textit{elementary symmetric polynomial} \citep{macdonald1998symmetric}
+To efficiently compute the additive kernel, we exploit the fact that the $n$th order additive kernel corresponds to the $n$th \textit{elementary symmetric polynomial}~\citep{macdonald1998symmetric}
 %\citep{stanley2001enumerative}, 
 of the base kernels, which we denote $e_n$.
 For example:  if $\vx$ has 4 input dimensions ($D = 4$), and if we use the shorthand notation $k_d = k_d(x_d, x_d')$, then
@@ -300,7 +300,7 @@ For example, additive kernels of the second order give high covariance between f
 
 \section{Dropout in Gaussian Processes}
 
-\emph{Dropout} is a method for regularizing neural networks \citep{hinton2012improving, srivastava2013improving}.
+\emph{Dropout} is a method for regularizing neural networks~\citep{hinton2012improving, srivastava2013improving}.
 Training with dropout entails randomly and independently setting to zero (``dropping'') some proportion $p$ of features or inputs, in order to improve the robustness of the resulting network by reducing co-dependence between neurons.
 To maintain similar overall activation levels, weights are multiplied by $\nicefrac{1}{p}$ at test time. Alternatively, feature activations are multiplied by $\nicefrac{1}{p}$ during training.
 Test-time predictions are made by approximately averaging over all possible ways of dropping out neurons.
@@ -324,8 +324,8 @@ Having expressed a \gp{} as a neural network, we can examine the prior we get fr
 
 \subsection{Dropout on Hidden Units}
 
-First, we'll examine the prior we get from independently dropping features from $\hPhi(\vx)$ by setting some of the weights $\valpha$ to zero with probability $p$.
-For simplicity, we'll assume that $\expectargs{}{\valpha} = \vzero$.
+First, we will examine the prior we get from independently dropping features from $\hPhi(\vx)$ by setting some of the weights $\valpha$ to zero with probability $p$.
+For simplicity, we assume that $\expectargs{}{\valpha} = \vzero$.
 If the weights initially have finite variance $\sigma^2_{\alpha}$ before dropout, then after dropout they'll have variance
 %$\expectargs{}{ \alpha_i} = \vzero, 
 %\varianceargs{}{\alpha_i} = \sigma^2$,
@@ -460,10 +460,8 @@ A closely related procedure from \citet{wahba1990spline} is smoothing-splines \A
 An \SSANOVA{} model is a weighted sum of splines along each dimension, plus a sum of splines over all pairs of dimensions, all triplets, etc, with each individual interaction term having a separate weighting parameter.
 Because the number of terms to consider grows exponentially in the order, in practice, only terms of first and second order are usually considered.
 %Learning in SS-ANOVA is usually done via penalized-maximum likelihood with a fixed sparsity hyperparameter.
-%\citep{shawe2004kernel} define ANOVA kernels thusly: "The ANOVA kernel of degree d is like the all-subsets kernel except that it is restricted to subsets of the given cardinality $d$."
+%\citet{shawe2004kernel} define ANOVA kernels thusly: "The ANOVA kernel of degree d is like the all-subsets kernel except that it is restricted to subsets of the given cardinality $d$."
 
-% estimated by generalized cross-validation\citep{craven1978smoothing}. 
-%MARS\citep{friedman1991multivariate} is another spline-based regression method.
 
 This more general model class, in which each interaction term is estimated separately, is known in the physical sciences as High Dimensional Model Representation (\HDMR{}).
 \citet{rabitz1999general} review some properties and applications of this model class.
@@ -497,9 +495,9 @@ For speed, we limited the maximum order of interaction to 10.
 \gp{} Squared-exp is a \gp{} model with a \seard{} kernel.
 \HKL{} was run using the all-subsets kernel, which corresponds to the same set of interaction terms as considered by the additive \gp{} with a squared-exp base kernel.
 
-For all \gp{} models, we fit kernel parameters by the standard method of maximizing training-set marginal likelihood, using \LBFGS{} \citep{nocedal1980updating} for 500 iterations, allowing five random restarts.
+For all \gp{} models, we fit kernel parameters by the standard method of maximizing training-set marginal likelihood, using \LBFGS{}~\citep{nocedal1980updating} for 500 iterations, allowing five random restarts.
 In addition to learning kernel parameters, we fit a constant mean function to the data.
-In the classification experiments, approximate \gp{} inference was done using Expectation Propagation \citep{minka2001expectation}.
+In the classification experiments, approximate \gp{} inference was done using expectation propagation~\citep{minka2001expectation}.
 
 For the regression experiments, we also compared against the structure search method from \cref{ch:grammar}, run up to depth 10, using the \SE{} and \RQ{} base kernel families.
 
@@ -646,7 +644,7 @@ The additive \gp{} performed best on datasets well-explained by low orders of in
 Because the additive \gp{} is a superset of both the \gp{}-1st model and the \kSE{}-\gp{} model, instances where the additive \gp{} performs slightly worse are presumably due to over-fitting, or due to the hyperparameter optimization becoming stuck in a local maximum. % Absence of over-fitting may explain the relatively strong performance of GP-GAM on classification tasks.  
 Performance could be expected to benefit from approximately integrating over the kernel parameters.
 
-The performance of \HKL{} is consistent with the results in \citep{DBLP:journals/corr/abs-0909-0844}, performing competitively but slightly worse than \SE{}-\gp{}.%  This is especially clear in the case of the regression tasks.
+The performance of \HKL{} is consistent with the results in \citet{DBLP:journals/corr/abs-0909-0844}, performing competitively but slightly worse than \SE{}-\gp{}.%  This is especially clear in the case of the regression tasks.
 
 
 \subsection{Source Code}
