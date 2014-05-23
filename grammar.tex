@@ -19,10 +19,9 @@ In \cref{ch:kernels}, we saw that the choice of kernel determines the type of st
 However, we did not answer the difficult question of which kernel to use for a given problem.
 Even for experts, choosing the kernel in \gp{} regression remains something of a black art.
 
-This chapter will show how to automate the process of building kernels for \gp{} models.
-To do so, we need to define an open-ended space of kernels.
-We do this by simply adding and multiplying together simple kernels from a fixed set.
-We then simply search over this space to find a kernel which captures as much structure in the data as possible.
+The contribution of this chapter is to show how to automate the process of building kernels for \gp{} models.
+To do so, we define an open-ended space of kernels, by adding and multiplying together kernels from a fixed set.
+We then search over this space to find a kernel which captures as much structure in the data as possible.
 
 Searching over such a large, structured model class has two main benefits.
 First, this procedure has very good predictive accuracy, since it tries out a large number of different regression models.
@@ -35,7 +34,7 @@ In \cref{ch:description}, we also show how to automatically generate English-lan
 This chapter is based on work done in collaboration with James Robert Lloyd, Roger Grosse, Joshua B. Tenenbaum, and Zoubin Ghahramani.
 It was published in \citet{DuvLloGroetal13} and \citet{LloDuvGroetal14}.
 Myself, James Lloyd and Roger Grosse jointly developed the idea of searching through a grammar-based language of \gp{} models, inspired by \citet{grosse2012exploiting}, and wrote the first versions of the code together.
-James Lloyd ran most of the experiments.
+James Lloyd ran most of the experiments, while I constructed most of the figures.
 %I produced all of the figures.
 %Zoubin Ghahramani and Josh Tenenbaum provided many conceptual insights, as well as suggestions about how the resulting procedure could be most fruitfully applied.
 

@@ -9,8 +9,8 @@ We will also show several ways to encode group invariants into kernels.
 Combining a few simple kernels through addition and multiplication will give us a rich, open-ended language of models.
 
 The properties of kernels discussed in this chapter are mostly known in the literature.
-The contribution of this chapter is to gather them into a coherent whole and to offer a tutorial showing the implications of different kernel choices, and some of the structures which can be obtained by combining them.
-To the best of our knowledge, the different types of structure that could be obtained by through taking sums and products of kernels had not been systematically explored before \citet{DuvLloGroetal13}.
+The original contribution of this chapter is to gather them into a coherent whole and to offer a tutorial showing the implications of different kernel choices, and some of the structures which can be obtained by combining them.
+To the best of our knowledge, the different types of structure that could be obtained through sums and products of kernels had not been systematically explored before \citet{DuvLloGroetal13}.
 %TODO: Add more about contribution here.
 
 
@@ -376,7 +376,7 @@ After learning the kernel parameters by maximizing the marginal likelihood of th
 \newcommand{\concretepic}[1]{\includegraphics[width=0.31\columnwidth]{\decompfigsdir/concrete-component-#1}}
 \newcommand{\concretelegend}[0]{\raisebox{5mm}{\includegraphics[trim=56mm 1mm 2mm 34.1mm, clip, width=0.24\columnwidth]{\decompfigsdir/concrete-component-8-legend}}}
 %
-\begin{figure}[t!]
+\begin{figure}[h!]
 \centering
 \begin{tabular}{ccc}
 %\includegraphics[width=0.3\textwidth]{\additivefigsdir/interpretable_1st_order1.pdf} &
@@ -701,7 +701,7 @@ f(\vx) = f(g(\vx))  \quad \forall \vx \in \mathcal{X}, \quad \forall g \in G
 %
 As an example, imagine we want to build a model of functions invariant to swapping their inputs: $f(x_1, x_2) = f(x_2, x_1)$.
 Being invariant to a set of operations is equivalent to being invariant to all compositions of those operations, the set of which form a group. \citep[chapter 21]{armstrong1988groups}.
-The elements of the group $\gswitch$ containing the operations these functions are invariant to has two elements:%, and is an example of the symmetric group $S2$:
+In our example, the elements of the group $\gswitch$ containing the operations the functions are invariant to has two elements:%, and is an example of the symmetric group $S2$:
 %
 \begin{align}
 g_1([x_1, x_2]) & = [x_2, x_1] \qquad \textnormal{(swap)} \\
@@ -920,6 +920,7 @@ The extension to two dimensions, $\shift(\vx, i, j)$, is straightforward, but no
 
 In this section we give a geometric illustration of the symmetries encoded by different compositions of kernels.
 The work presented in this section is based on a collaboration with David Reshef, Roger Grosse, Joshua B. Tenenbaum, and Zoubin Ghahramani.
+The derivation of the M\"obius kernel was an original contribution by myself.
 
 Priors on functions exhibiting symmetries can be used to create a prior on topological manifolds, by warping a simply-connected surface into a higher-dimensional space using a mapping expressing symmetries. %from a latent space to an observed space.%surface $f(\vx)$.
 %The distribution on $\vf$ allows us to put mass on 

@@ -775,12 +775,10 @@ This implies that with high probability, these functions vary little in all dire
 \begin{figure}
 \centering
 \begin{tabular}{cc}
-$p(\vx)$ & $p(\vf^{(1)}(\vx))$ \\
-\gpdrawbox{1} &
-\gpdrawbox{2} \\
-$p(\vf^{(1:4)}(\vx))$ &  $p(\vf^{(1:6)}(\vx))$ \\
-\gpdrawbox{4} & 
-\gpdrawbox{6}
+No transformation: $p(\vx)$ & 1 Layer: $p(\vf^{(1)}(\vx))$ \\
+\gpdrawbox{1} & \gpdrawbox{2} \\
+4 Layers: $p(\vf^{(1:4)}(\vx))$ & 6 Layers: $p(\vf^{(1:6)}(\vx))$ \\
+\gpdrawbox{4} & \gpdrawbox{6}
 \end{tabular}
 \caption[Points warped by a draw from a deep \sgp{}]
 {Points warped by a function drawn from a deep \gp{} prior.
@@ -796,8 +794,9 @@ As the net gets deeper, the largest singular value dominates, implying there is 
 \Cref{fig:filamentation} demonstrates a related pathology that arises when composing functions to produce a deep density model.
 The density in the observed space eventually becomes locally concentrated onto one-dimensional manifolds, or \emph{filaments}, again implying that such models are unsuitable to model manifolds whose underlying dimensionality is greater than one.
 
-\newcommand{\mappic}[1]{\hspace{-0.05in}\includegraphics[width=0.465\columnwidth]{\deeplimitsfiguresdir/map/latent_coord_map_layer_#1}} 
-\newcommand{\mappiccon}[1]{\hspace{-0.05in} \includegraphics[width=0.465\columnwidth]{\deeplimitsfiguresdir/map_connected/latent_coord_map_layer_#1}}
+%for file in `ls`; do convert $file $file; done
+\newcommand{\mappic}[1]{\hspace{-0.05in}\includegraphics[width=0.475\columnwidth]{\deeplimitsfiguresdir/map/latent_coord_map_layer_#1}} 
+\newcommand{\mappiccon}[1]{\hspace{-0.05in}\includegraphics[width=0.475\columnwidth]{\deeplimitsfiguresdir/map_connected/latent_coord_map_layer_#1}}
 \begin{figure}
 \centering
 \begin{tabular}{cc}
@@ -952,7 +951,7 @@ Compare to standard-connectivity deep \gp{} draws shown in \cref{fig:deep_draw_1
 \begin{figure}
 \centering
 \begin{tabular}{cc}
-3 Layers & 6 Layers \\
+3 Connected layers: $p( f_C^{(1:3)}(\vx)$ & 6 Connected layers: $p( f_C^{(1:6)}(\vx)$ \\
 \gpdrawboxcon{3} &
 \gpdrawboxcon{6}
 \end{tabular}
@@ -984,9 +983,9 @@ The singular values remain roughly the same scale as one another.}
 \centering
 \begin{tabular}{cc}
 Identity map: $\vy = \vx$ & 2 Connected layers \\
-\hspace{-0.07in} \mappic{0} & \mappiccon{2} \\
+\mappic{0} & \mappiccon{2} \\
  10 Connected layers & 20 Connected layers \\
-\hspace{-0.07in} \mappiccon{10} & \mappiccon{20}
+\mappiccon{10} & \mappiccon{20}
 \end{tabular}
 \caption[Feature mapping of an input-connected deep \sgp{}]
 {Feature mapping of a deep \gp{} with each layer connected to the input $\vx$.

@@ -213,35 +213,33 @@ The main contribution of this thesis is to show how to automate the discovery an
 This thesis also includes a set of related results showing how Gaussian processes can be extended, or composed with other models.
 %Furthermore, the fact that the marginal likelihood is available means that we can evaluate how much evidence the data provides for one structure over another, allowing an automatic search to construct models for us.
 
-{\bf Chapter~\ref{ch:kernels}} is a tutorial showing how to build a wide variety of structured models of functions by constructing appropriate covariance functions.
+Chapter~\ref{ch:kernels} is a tutorial showing how to build a wide variety of structured models of functions by constructing appropriate covariance functions.
 %TODO: Expand this description.
 We will also show how \gp{}s can produce nonparametric models of manifolds with diverse topological structures, such as cylinders, toruses and M\"obius strips.
 
-{\bf Chapter~\ref{ch:grammar}} shows how to search over a general, open-ended language of models, built by composing together different kernels.
+Chapter~\ref{ch:grammar} shows how to search over a general, open-ended language of models, built by composing together different kernels.
 Since we can evaluate each model by the marginal likelihood, we can automatically construct custom models for each dataset by a breadth-first search.
 The nature of \gp{}s allow the resulting models to be visualized by decomposing them into diverse, interpretable components, each capturing a different type of structure.
 Capturing this high-level structure sometimes even allows us to extrapolate beyond the range of the data.
 
 One benefit of using a compositional model class is that the resulting models are interpretable.
-{\bf Chapter~\ref{ch:description}} demonstrates a system which automatically describes the structure implied by a given kernel on a given dataset, generating reports with graphs and English-language text describing the resulting model.
+Chapter~\ref{ch:description} demonstrates a system which automatically describes the structure implied by a given kernel on a given dataset, generating reports with graphs and English-language text describing the resulting model.
 We willl show several automatic analyses of time-series.
 Combined with the automatic model search developed in chapter~\ref{ch:grammar}, this system represents the beginnings of an ``automatic statistician''.
 
-
-%As an example of using \gp{}s as a simple-to-understand building block, 
-{\bf Chapter~\ref{ch:deep-limits}} analyzes deep neural network models by characterizing the prior over functions obtained by composing \gp{} priors to form \emph{deep Gaussian processes}.
+Chapter~\ref{ch:deep-limits} analyzes deep neural network models by characterizing the prior over functions obtained by composing \gp{} priors to form \emph{deep Gaussian processes}.
 %, and relates them to existing neep neural network architecures.
 We show that, as the number of layers increase, the amount of information retained about the original input diminishes to a single degree of freedom.
 A simple change to the network architecture fixes this pathology.
 We relate these models to neural networks, and as a side effect derive several forms of \emph{infinitely deep kernels}.
 
-{\bf Chapter~\ref{ch:additive}} examines a more limited, but much faster way of discovering structure using \gp{}s.
+Chapter~\ref{ch:additive} examines a more limited, but much faster way of discovering structure using \gp{}s.
 Specifying a kernel with many different types of structure, we use kernel parameters to discard whichever types of structure are \emph{not} found in the current dataset.
 The model class we examine is called \emph{additive Gaussian processes}, a model summing over exponentially-many \gp{}s, each depending on a different subset of the input variables.
 We give a polynomial-time inference algorithm for this model class, and relate it to other model classes.
 For example, additive \gp{}s are shown to have the same covariance as a \gp{} that uses \emph{dropout}, a recently discovered regularization technique for neural networks.
 
-{\bf Chapter~\ref{ch:warped}} develops a Bayesian clustering model in which the clusters have nonparametric shapes, called the infinite warped mixture model.
+Chapter~\ref{ch:warped} develops a Bayesian clustering model in which the clusters have nonparametric shapes, called the infinite warped mixture model.
 The density manifolds learned by this model follow the contours of the data density, and have interpretable, parametric forms in the latent space.
 The marginal likelihood lets us infer the effective dimension and shape of each cluster separately, as well as the number of clusters.
 
