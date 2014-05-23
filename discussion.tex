@@ -8,55 +8,23 @@
 \section{Summary of Contributions}
 
 The main contribution of this thesis is to show how to automate the construction of interpretable nonparametric models using Gaussian processes.
+This was done in several parts.
+First, \cref{ch:kernels} systematically described many different kernel construction techniques, and demonstrated properties of the corresponding \gp{} priors.
+Next, \cref{ch:grammar} showed how to automatically search over an open-ended space of \gp{} models, and that those models could be automatically decomposed into diverse parts showing the structure found in the data.
+\Cref{ch:description} showed that the effect each part of a kernel can be described modularly, allowing automatically written text to be included in detailed reports describing \gp{} models.
+An example report is included in \cref{ch:example-solar}.
+Together, these chapters describe the beginnings of an ``automatic statistician'', capable of the sort of model construction and description currently performed only by experts.
 
-\Cref{ch:kernels} is a tutorial showing how to build a wide variety of structured models of functions by constructing appropriate covariance functions.
-%TODO: Expand this description.
-We also showed how \gp{}s can produce nonparametric models of manifolds with diverse topological structures, such as cylinders, toruses and M\"obius strips.
-
-
-
-This thesis also includes a set of related results showing how Gaussian processes can be extended, or composed with other models.
-%Furthermore, the fact that the marginal likelihood is available means that we can evaluate how much evidence the data provides for one structure over another, allowing an automatic search to construct models for us.
-
-
-{\bf Chapter~\ref{ch:grammar}} shows how to search over a general, open-ended language of models, built by composing together different kernels.
-Since we can evaluate each model by the marginal likelihood, we can automatically construct custom models for each dataset by a breadth-first search.
-The nature of \gp{}s allow the resulting models to be visualized by decomposing them into diverse, interpretable components, each capturing a different type of structure.
-Capturing this high-level structure sometimes even allows us to extrapolate beyond the range of the data.
-
-One benefit of using a compositional model class is that the resulting models are interpretable.
-{\bf Chapter~\ref{ch:description}} demonstrates a system which automatically describes the structure implied by a given kernel on a given dataset, generating reports with graphs and English-language text describing the resulting model.
-We showed several automatic analyses of time-series.
-Combined with the automatic model search developed in chapter~\ref{ch:grammar}, this system represents the beginnings of an ``automatic statistician''.
+The second half of this thesis develops several extensions to Gaussian processes that can automatically determine modeling choices that were previously set by trial and error or cross-validation.
+\Cref{ch:deep-limits} contains theorems and visualizations characterizing deep Gaussian processes, relates them to existing deep neural networks, and derives novel deep kernels.
+\Cref{ch:additive} investigates additive \gp{}s, a family of structured models consisting of sums of functions of all combinations of input variables, which are shown to have the same covariance as a \gp{} using dropout regularization.
+\Cref{ch:warped} extends the \gp{} latent variable model into a Bayesian clustering model which automatically infers nonparametric shape of each cluster, as well as the number of clusters.
 
 
-%As an example of using \gp{}s as a simple-to-understand building block, 
-{\bf Chapter~\ref{ch:deep-limits}} analyzes deep neural network models by characterizing the prior over functions obtained by composing \gp{} priors to form \emph{deep Gaussian processes}.
-%, and relates them to existing neep neural network architecures.
-We show that, as the number of layers increase, the amount of information retained about the original input diminishes to a single degree of freedom.
-A simple change to the network architecture fixes this pathology.
-We relate these models to neural networks, and as a side effect derive several forms of \emph{infinitely deep kernels}.
-
-{\bf Chapter~\ref{ch:additive}} examines a more limited, but much faster way of discovering structure using \gp{}s.
-Specifying a kernel with many different types of structure, we use kernel parameters to discard whichever types of structure are \emph{not} found in the current dataset.
-The model class we examine is called \emph{additive Gaussian processes}, a model summing over exponentially-many \gp{}s, each depending on a different subset of the input variables.
-We give a polynomial-time inference algorithm for this model class, and relate it to other model classes.
-For example, additive \gp{}s are shown to have the same covariance as a \gp{} that uses \emph{dropout}, a recently discovered regularization technique for neural networks.
-
-{\bf Chapter~\ref{ch:warped}} develops a Bayesian clustering model in which the clusters have nonparametric shapes - the infinite Warped Mixture Model.
-The density manifolds learned by this model follow the contours of the data density, and have interpretable, parametric forms in the latent space.
-The marginal likelihood lets us infer the effective dimension and shape of each cluster separately, as well as the number of clusters.
-
-
-
-
-
-\Cref{ch:kernels} contains a detailed tutorial on the many sorts of structure that can be computed by kernels.
-Most of the material there is known by experts, but has not been compiled together into one place before.
 
 \section{Structured versus Unstructured \sgp{} Models}
 
-One question left unanswered by this thesis is when to prefer the highly structured models of \cref{ch:kernels,ch:grammar,ch:additive} to the relatively unstructured models of \cref{ch:deep-limits}.
+One question left unanswered by this thesis is when to prefer the structured kernel based models described \cref{ch:kernels,ch:grammar,ch:additive} to the relatively unstructured deep \gp{} models described in \cref{ch:deep-limits}.
 
 The warped mixture model of \cref{ch:warped} represents a compromise between these two approaches, combining a discrete clustering model with an unstructured warping function.
 However, the results of \citet{damianou2012deep} suggest that clustering can be automatically accomplished by a sufficiently deep, unstructured \gp{}.
@@ -97,63 +65,6 @@ To automate the practice of statistics, developing model-description procedures 
 \iffalse
 \section{Why Assume Zero Mean?}
 
-In literature, as well as in practice, it is common to construct \gp{} priors with a zero mean function.
-This might seem strange, since it is presumably a good place to put prior information, or if we are comparing models, to express  since marginalizing over an unknown mean function can be equivalently expressed as a different \gp{} with zero-mean, and another term added to the kernel.
-
-
-\subsection{Marginalizing Out the Mean Function}
-
-Additivity also helps us to avoid explicitly representing the mean function of a \gp{}, in two ways.
-First of all, a known mean function can be moved into the covariance function.
-Specifically, if we wish to model an unknown function $f(\vx)$ with known mean $m(\vx)$, where the mean has unknown magnitude $c \sim \Nt{0}{\sigma^2_c}$, we can equivalently express this model using another \gp{} with zero mean:
-%$related modelquivalently (\vx) a(\vx)$ with $f \sim \GPt{0}{k(\vx,\vx')}$, then this 
-%
-\begin{align}
-f \sim \GPt{c m(\vx)}{k(\vx,\vx')}, \quad c \sim \Nt{0}{\sigma^2_c}
-\iff f \sim \GPt{ \vzero }{ c^2 m(\vx) m(\vx') + k(\vx,\vx')}
-\end{align}
-
-By moving the mean function into the covariance function, we get the same model as before, but we can integrate over the magnitude $c$ of the mean function at no additional cost.
-
-Second, a mean function with an unknown form can also be expressed through an extra term in the covariance function.
-Specifically, if express our ignorance about the mean function through a \gp{} prior, then that's the same model as a \gp{} whose kernel is a sum of two terms:
-%
-\begin{align}
-m \sim \GPt{\vzero}{k_a(\vx,\vx')}, \quad
-f \sim \GPt{m(\vx)}{k_b(\vx,\vx')}
-\iff 
-f \sim \GPt{\vzero}{k_a(\vx,\vx') + k_b(\vx,\vx')}
-\end{align}
-
-
-
-\paragraph{A known mean function can be moved into the covariance function}
-Specifically, if we wish to model an unknown function $f(\vx)$ with known mean $m(\vx)$, (with unknown magnitude $c \sim \Nt{0}{\sigma^2_c}$), we can equivalently express this model using another \gp{} with zero mean:
-%$related modelquivalently (\vx) a(\vx)$ with $f \sim \GPt{0}{k(\vx,\vx')}$, then this 
-%
-\begin{align}
-f \sim \GPt{c m(\vx)}{k(\vx,\vx')}, \quad c \sim \Nt{0}{\sigma^2_c}
-\iff f \sim \GPt{ \vzero }{ c^2 m(\vx) m(\vx') + k(\vx,\vx')}
-\end{align}
-
-%This correspondence means that, b
-By moving the mean function into the covariance function, we get the same model, but we can integrate over the magnitude of the mean function at no additional cost.
-This is one advantage of moving as much structure as possible into the covariance function.
-%In fact, we can view \gp{} regression as simply implicitly integrating over the magnitudes of (possibly uncountably many) different mean functions all summed together.
-%TODO: provide a link to the GPs as neural nets discussion.
-
-\paragraph{An unknown mean function can be moved into the covariance function}
-
-If we wish to express our ignorance about the mean function, one way would be by putting a \gp{} prior on it.
-%
-\begin{align}
-m \sim \GPt{\vzero}{k_1(\vx,\vx')}, \quad
-f \sim \GPt{m(\vx)}{k_2(\vx,\vx')}
-\iff 
-f \sim \GPt{\vzero}{k_1(\vx,\vx') + k_2(\vx,\vx')}
-\end{align}
-
-
 \section{Why Not Learn the Mean Function Instead?}
 One might ask: besides integrating over the magnitude, what is the advantage of moving the mean function into the covariance function?
 After all, mean functions are certainly more interpretable than a posterior distribution over functions.
@@ -167,7 +78,7 @@ If we are forced to choose just a single function with which to make predictions
 If, on the other hand, we are allowed to keep in mind many possible explanations of the data, \emph{there is no need to penalize complexity}. [cite Occam's razor paper?]
 The power of putting structure into the covariance function is that doing so allows us to implicitly integrate over many functions, maintaining a posterior distribution over infinitely many functions, instead of choosing just one.
 In fact, each of the functions being considered can be infinitely complex, without causing any form of overfitting.
-For example, each of the samples shown in figure \ref{fig:gp-post} varies randomly over the whole real line, never repeating, each one requiring an infinite amount of information to describe.
+For example, each of the samples shown in \cref{fig:gp-post} varies randomly over the whole real line, never repeating, each one requiring an infinite amount of information to describe.
 Choosing the one function which best fits the data will almost certainly cause overfitting.
 However, if we integrate over many such functions, we will end up with a posterior putting mass on only those functions which are compatible with the data.
 In other words, the parts of the function that we can determine from the data will be predicted with certainty, but the parts which are still uncertain will give rise to a wide range of predictions.
@@ -190,24 +101,10 @@ However, $\epsilon$ can equivalently be thought of as another Gaussian process, 
 We believe that it depends on what you want to do with the model - there is no hard distinction between signal and noise in general.
 
 For example: often, we do not care about the short-term variations in a function, and only in the long-term trend.
-However, in many other cases, we with to de-trend our data to see more clearly how much a particular part of the signal deviated from normal.
+However, in many other cases, we wish to de-trend our data to see more clearly how much a particular part of the signal deviated from normal.
 
-%\subsubsection{Student's $t$ processes}
-
-%One shortcoming of the
 \fi
 
-
-%\section{Why does everyone use squared-exp?}
-%In some instances, using a 'default' kernel yields acceptable performance.
-%Many frequentist methods assume a characteristic kernel, such as the squared-exp.
-%This choice is motivated by the fact that, in the limit of infinite data, and a shrinking lengthscale, the estimate of the function will converge asymptotically to the truth. [citation needed]
-
-
-
-%\section{Why haven't structured kernels been built for SVMs?}
-
-%Because without marginal likelihood to tell you which structure is present in your data, it's not clear how to choose which kernel to use without cross-validation.
 
 
 %\section{Automating Statistics}

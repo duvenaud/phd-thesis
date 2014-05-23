@@ -25,8 +25,9 @@ Empirically, this kernel has good predictive power in regression tasks, and its 
 
 The work in this chapter was done in collaboration with Hannes Nickisch and Carl Rasmussen, who derived and coded up the initial model.
 My role in the project was to examine the properties of the resulting model, clarify the connections to existing methods, to create all figures and run all experiments.
-The connection to dropout regularization is an original contribution by myself.
-This work was published in \citet{duvenaud2011additive11}.
+That work was published in \citet{duvenaud2011additive11}.
+The connection to dropout regularization is an independent original contribution.
+
 
 
 
@@ -41,7 +42,7 @@ f(\vx) = g \left( f(x_1) + f(x_2) + \dots + f(x_D) \right)
 \label{eq:general-additive}
 \end{align}
 %
-are widely used in machine learning and statistics, because they are relatively easy to fit and interpret.
+are widely used in machine learning and statistics, partly because they are relatively easy to fit and interpret.
 Examples include logistic regression, linear regression, generalized linear models~\citep{nelder1972generalized} and generalized additive models~\citep{hastie1990generalized}.
 %, are typically easy to fit and interpret.
 %Some extensions of this family, such as smoothing-splines ANOVA \citep{wahba1990spline}, also consider terms depending on more than one variable.
@@ -65,7 +66,7 @@ f(x_1, x_2, x_3) = f_{12}(x_1, x_2) + f_{23}(x_2, x_3) + f_{13}(x_1, x_3)
 \end{align}
 %
 We call the number of input variables appearing in each term the \emph{order} of a model class.
-Models of intermediate order allow more flexibility than models of form \eqref{eq:general-additive} ($D$-th order), but have more structure than those of form \eqref{eq:highest-order} (first-order).
+Models of intermediate order such as \eqref{eq:second-order-additive} allow more flexibility than models of form \eqref{eq:general-additive} ($D$-th order), but have more structure than those of form \eqref{eq:highest-order} (first-order).
 
 If the function being learned depends in some way on an interaction between all input variables, a $D$th-order term is required in order for the model to be consistent.
 However, if the function also contains lower-order interactions, capturing that structure will still improve the predioctive performance on finite datasets.

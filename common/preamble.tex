@@ -34,20 +34,39 @@
 \usepackage{rotating}
 \usepackage{array}
 \usepackage{fp}
+%\usepackage{common/sectsty}
+
+% Controls capitalization of all headers
+%\usepackage{stringstrings}
+%\usepackage[explicit]{titlesec}
+%\newcommand\SentenceCase[1]{%
+%  \caselower[e]{#1}%
+%  \capitalize[q]{\thestring}%
+%}
+%\titleformat{\section}
+%  {\normalfont\Large\bfseries}{\thesection}{1em}{\SentenceCase{#1}\thestring}
+
+
+%\titleformat{\section} % The normal, unstarred version
+%    {\Large\bfseries}{}{2ex}
+%    {\thesection. \MakeSentenceCase{#1}}
+
+%\titleformat{name=\section,numberless} % The starred version; note the `numberless` key
+%    {\Large\bfseries}{}{2ex}
+%    {\MakeSentenceCase{#1}}
+
 \usepackage[hyperpageref]{backref}
+% Setup to show (pages 4 and 9) sort of thing in the bibliography - DD
 %\def\foo{\hspace{\fill}\mbox{}\linebreak[0]\hspace*{\fill}}
 %\def\foo{\parbox{3cm}{\hfill}
 %\def\foo{\parbox{3cm}{\hfill}
 %\newcommand\foo[1]{{\raggedleft{\hfill{\mbox{\hfill{#1}}}}}}
-
 \newcommand{\comfyfill}[1]{% = Thorsten Donig's \signed
   \unskip\hspace*{0.1em plus 1fill}
   \nolinebreak[3]%
   \hspace*{\fill}\mbox{#1}
   \parfillskip0pt\par
 }
-
-
 \newcommand\foo[1]{{\comfyfill{\mbox{#1}}}}
 %\newcommand\foo[1]{{\mbox{#1}}}
 \renewcommand*{\backref}[1]{}
