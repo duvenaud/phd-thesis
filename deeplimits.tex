@@ -252,6 +252,15 @@ Neural net corresponding to a \gp{} & Net corresponding to a \gp{} with a deep k
 
 
 
+\subsubsection{Random versus Fixed Layers}
+
+%In the previous section we derived \gp{}s as neural nets having fixed hidden units.
+Confusingly, the derivation of \citet{neal1995bayesian} uses random hidden units instead of fixed hidden units.
+Both derivations lead to a \gp{}, but only when the number of hidden units is infinite, in which case there is no difference between random or fixed hidden units.
+We denote the hidden units as being fixed in our derivation to allow for the possibility that the feature expansion of our kernel has finitely-many units.
+
+
+
 
 
 \subsection{Multiple Hidden Layers}
@@ -283,7 +292,7 @@ k(\vx, \vx') = \left( \hPhi^{(2)} ( \hPhi^{(1)}(\vx) ) \right) \tra \hPhi^{(2)} 
 Thus, unless we richly parameterize these kernels, their capacity to learn an appropriate representation is limited in comparison to more flexible models such as deep neural networks, or deep \gp{}s. %since only the output weights ${\vnetweights}$ can adapt to the problem  which is what we wish to analyze in this chapter.
 
 
-%In a neural net with multiple hidden layers, the correspondence is a little more complicated.
+
  
 \subsection{Two Network Architectures Equivalent to Deep \sgp{}s}
 
@@ -463,6 +472,7 @@ Two equivalent views of deep \gp{}s as neural networks.
 }
 \label{fig:deep-gp-architectures}
 \end{figure}
+
 
 There are two equivalent neural net architectures which correspond to deep \gp{}s: one with fixed non-linearities, and another with \gp{}-distributed nonlinearties.
 

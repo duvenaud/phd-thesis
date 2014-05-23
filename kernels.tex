@@ -390,7 +390,7 @@ Cement & Slag & Fly Ash\\
 \end{tabular}
 \caption[Decomposition of posterior into interpretable one-dimensional functions]
 {The predictive distribution of each component of a multidimensional additive model.
-Blue crosses indicate the original data projected on to each dimension, red indicates the marginal posterior density, and colored lines are samples from the posterior of each component.
+Blue crosses indicate the original data projected on to each dimension, red indicates the marginal posterior density, and colored lines are samples from the marginal posterior of each component.
 The vertical axis is the same for all plots.
 %The black line is the posterior mean of a \sgp{} with only one term in its kernel.
 %Right:  the posterior mean of a \sgp{} with only one second-order term in its kernel.
@@ -719,7 +719,8 @@ k(\vx, \vx') = k( g(\vx), g(\vx')), \quad \forall \vx, \vx' \in \InputSpace, \qu
 Formally, given a finite group $G$ whose elements are operations to which we wish our function to remain invariant, and $f \sim \GPt{0}{k(\vx,\vx')}$, then every $f$ is invariant under $G$ (up to a modification) if and only if $k(\cdot, \cdot)$ is argument-wise invariant under $G$.
 
 It might not always be clear how to construct a kernel respecting such argument-wise invariances.
-Fortunately, for finite groups, there are a few simple ways to transform any kernel into one which is argument-wise invariant to actions under any finite group:
+%Fortunately, for finite groups, there are a few simple ways to transform any kernel into one which is argument-wise invariant to actions under any finite group:
+Fortunately, there are a few simple ways to do this for any finite group:
 %
 %
 \begin{figure}
@@ -932,13 +933,13 @@ Symmetries in $[f_1, f_2, f_3]$ will connect different parts of the manifolds, g
 \begin{figure}
 \renewcommand{\tabcolsep}{1mm}
 \begin{tabular}{ccc}
-Manifold $( \SE_1 \times \SE_2 )$  & Cylinder $( \SE_1 \times \Per_2 )$ & Toroid $( \Per_1 \times \Per_2 )$\\
+Euclidian $( \SE_1 \times \SE_2 )$  & Cylinder $( \SE_1 \times \Per_2 )$ & Toroid $( \Per_1 \times \Per_2 )$\\
 \hspace{-0.5cm}\includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/manifold} &
 \includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/cylinder} &
 \includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/torus} \\
 \end{tabular}
 \caption[Generating 2D manifolds with different topological structures]{
-Generating 2D manifolds with different topological structures.
+Generating 2D manifolds with different topologies.
 By enforcing that the functions mapping from $\mathbb{R}^2$ to $\mathbb{R}^3$ obey the appropriate symmetries, the surfaces created have the corresponding topologies, ignoring self-intersections.
 }
 \label{fig:gen_surf}
@@ -959,13 +960,13 @@ This construction is similar in spirit to the \gp{} latent variable model (\gplv
 A prior on functions on M\"{o}bius strips can be constructed by enforcing the symmetries:
 %
 \begin{align}
-f(x, y) & = f( x, y + \tau_y) \\
-f(x, y) & = f( x + \tau_x, y)  \\
+f(x, y) & = f( x, y + \tau) \\
+f(x, y) & = f( x + \tau, y)  \\
 f(x, y) & = f( y, x )
 \end{align}
-
+%
 Moving along the diagonal $x = y$ of a function drawn from the corresponding \gp{} prior is equivalent to moving along the edge of a notional M\"{o}bius strip which has had the function mapped on to its surface.
-\Cref{fig:mobius}{a} shows an example of a function drawn from such a prior.
+\Cref{fig:mobius}(a) shows an example of a function drawn from such a prior.
 %
 \begin{figure}
 \begin{tabular}[t]{ccc}

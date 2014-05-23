@@ -21,6 +21,16 @@ The second half of this thesis develops several extensions to Gaussian processes
 \Cref{ch:warped} extends the \gp{} latent variable model into a Bayesian clustering model which automatically infers nonparametric shape of each cluster, as well as the number of clusters.
 
 
+\section{Future Work}
+
+How far can we push the kernel structure discovery procedure outlined in this thesis?
+
+\subsubsection{Multiple Dimensions}
+
+The experiments in \cref{ch:additive} showed that the structure search had very good performance in moderate dimensions.
+
+\subsubsection{Input and Output Warpings}
+
 
 \section{Structured versus Unstructured \sgp{} Models}
 
@@ -49,7 +59,7 @@ However, we may lose some of the advantages of interpretability by this approach
 Another point to consider is that, in high dimensions, the line between interpolation and extrapolation is blurred, and that learning a suitable representation of the data manifold may be sufficient for most purposes.
 
 \subsubsection{Ease of Interpretation}
-\cref{ch:description} showed that composite kernels allow automatic visualization and desription of low-dimensional structure.
+\Cref{ch:description} showed that composite kernels allow automatic visualization and desription of low-dimensional structure.
 On the other hand, \citet{damianou2012deep} showed that deep \gplvm{}s allow summarization of high-dimensional structure through showing samples from the posterior, examining the dimension of each latent layer, visualizing latent coordinates, or examining how the predictive distribution changes as one moves in the latent space.
 
 \section{Automating Machine Learning and Statistics}
