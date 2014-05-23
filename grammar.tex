@@ -542,6 +542,7 @@ BIC trades off model fit and complexity by penalizing the number of parameters i
 This can result in \procedurename{} favoring kernel expressions with nested products of sums, producing descriptions involving many additive components when expressions are expanded.
 While these models typically have good predictive performance, the large number of components can make them less interpretable.
 We experimented with not allowing parentheses during the search, discouraging nested expressions.
+This was achieved by distributing all products immediately after each search operator was applied.
 We call this procedure \procedurename{}-interpretability, in contrast to the unrestricted version of the search, \procedurename{}-accuracy.
 
 

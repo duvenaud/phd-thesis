@@ -6,7 +6,7 @@
 
 %\section{Formula for Gaussian Conditionals}
 
-A standard result shows how to condition on knowing a subset of the dimensions $\vy_B$ of a vector $\vy$ having a multivariate Gaussian distribution.
+A standard result shows how to condition on a subset of dimensions $\vy_B$ of a vector $\vy$ having a multivariate Gaussian distribution.
 If
 %
 \begin{align}
@@ -59,14 +59,17 @@ Each of these formulas is multiplied by a scale factor $\sigma_f^2$, which we om
 \kLin(\inputVar, \inputVar') & = \scalefactor (\inputVar - c)(\inputVar' - c)  \label{eq:appendix-lin} \\
 \kSE(\inputVar, \inputVar') & = \scalefactor \exp\left(-\frac{(\inputVar - \inputVar')^2}{2\ell^2}\right)  \label{eq:appendix-se}\\
 \kRQ(x, x') & = \scalefactor \left( 1 + \frac{(\inputVar - \inputVar')^2}{2\alpha\ell^2}\right)^{-\alpha}  \label{eq:appendix-rq}\\
-\kPer(\inputVar, \inputVar') & =  \sigma_f^2 \frac{\exp\left(\frac{1}{\ell^2}\cos 2 \pi  \frac{(\inputVar - \inputVar')}{p}\right) - I_0\left(\frac{1}{\ell^2}\right)}{\exp\left(\frac{1}{\ell^2}\right) - I_0\left(\frac{1}{\ell^2}\right)} \label{eq:generalized-periodic} \\
+\kPer(x, x') & = \exp\left(-\frac{2}{\ell^2} \sin^2 \left( \pi \frac{\inputVar - \inputVar'}{p} \right)\right) \\
+%\kPer(\inputVar, \inputVar') & =  \sigma_f^2 \frac{\exp\left(\frac{1}{\ell^2}\cos 2 \pi  \frac{(\inputVar - \inputVar')}{p}\right) - I_0\left(\frac{1}{\ell^2}\right)}{\exp\left(\frac{1}{\ell^2}\right) - I_0\left(\frac{1}{\ell^2}\right)} \label{eq:generalized-periodic} \\
 %\kPer(\inputVar, \inputVar') & =  \scalefactor \exp\left(\frac{1}{\ell^2}\cos 2 \pi  \frac{(\inputVar - \inputVar')}{p}\right) - I_0\left(\frac{1}{\ell^2}\right) \\
 \cos(x, x') & = \scalefactor \cos\left(\frac{2 \pi (x - x')}{p}\right) \label{eq:appendix-cos} \\
 \kCP(\kernel_1, \kernel_2)(x, x') & = \scalefactor \sigma(x) k_1(x,x')\sigma(x') + (1-\sigma(x)) k_2(x,x')(1-\sigma(x')) \\
-\boldsymbol\sigma & = \scalefactor \sigma(x)\sigma(x') \\
-\boldsymbol{\bar\sigma} & = \scalefactor (1-\sigma(x))(1-\sigma(x'))
+\boldsymbol\sigma(\inputVar, \inputVar') & = \scalefactor \sigma(x)\sigma(x') \\
+\boldsymbol{\bar\sigma}(\inputVar, \inputVar') & = \scalefactor (1-\sigma(x))(1-\sigma(x'))
 \end{align}
 where $\delta_{\inputVar, \inputVar'}$ is the Kronecker delta function, $I_0$ is the modified Bessel function of the first kind of order zero, and other symbols are kernel parameters.
+${\sigma(x) = \nicefrac{1}{1 + \exp(-x)}}$.
+
 \Cref{eq:appendix-se,eq:generalized-periodic,eq:appendix-lin} are plotted in \cref{fig:basic_kernels}, and \cref{eq:appendix-wn,eq:appendix-rq,eq:appendix-cos} are plotted in \cref{fig:basic_kernels_two}.
 Draws from \gp{} priors with changepoint kernels are shown in \cref{fig:changepoint_examples}.
 
@@ -75,7 +78,12 @@ Draws from \gp{} priors with changepoint kernels are shown in \cref{fig:changepo
 \subsubsection{The Generalized Periodic Kernel}
 
 \citet{lloyd-periodic} showed that the standard periodic kernel due to \citet{mackay1998introduction} can be decomposed into a periodic and a constant component.
-He derived the equivalent periodic kernel without any constant component, shown in \cref{eq:generalized-periodic}.
+He derived the equivalent periodic kernel without any constant component:
+%, shown in \cref{eq:generalized-periodic}.
+%
+\begin{align}
+\kPer(\inputVar, \inputVar') & =  \sigma_f^2 \frac{\exp\left(\frac{1}{\ell^2}\cos 2 \pi  \frac{(\inputVar - \inputVar')}{p}\right) - I_0\left(\frac{1}{\ell^2}\right)}{\exp\left(\frac{1}{\ell^2}\right) - I_0\left(\frac{1}{\ell^2}\right)} \label{eq:generalized-periodic}
+\end{align}
 He further showed that its limit as the lengthscale grows is the cosine kernel:
 \begin{equation}
 \lim_{\ell \to \infty} \kPer(x, x') = \cos\left(\frac{2 \pi (x - x')}{p}\right).

@@ -37,14 +37,27 @@
 \usepackage[hyperpageref]{backref}
 %\def\foo{\hspace{\fill}\mbox{}\linebreak[0]\hspace*{\fill}}
 %\def\foo{\parbox{3cm}{\hfill}
+%\def\foo{\parbox{3cm}{\hfill}
+%\newcommand\foo[1]{{\raggedleft{\hfill{\mbox{\hfill{#1}}}}}}
+
+\newcommand{\comfyfill}[1]{% = Thorsten Donig's \signed
+  \unskip\hspace*{0.1em plus 1fill}
+  \nolinebreak[3]%
+  \hspace*{\fill}\mbox{#1}
+  \parfillskip0pt\par
+}
+
+
+\newcommand\foo[1]{{\comfyfill{\mbox{#1}}}}
+%\newcommand\foo[1]{{\mbox{#1}}}
 \renewcommand*{\backref}[1]{}
 \renewcommand*{\backrefalt}[4]{%
 \ifcase #1 %
 %
 \or
-\mbox{(page #2)}%
+\foo{(page #2)}%
 \else
-\mbox{(pages #2)}%
+\foo{(pages #2)}%
 \fi
 }
 
