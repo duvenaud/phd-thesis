@@ -785,9 +785,9 @@ This implies that with high probability, these functions vary little in all dire
 \begin{figure}
 \centering
 \begin{tabular}{cc}
-No transformation: $p(\vx)$ & 1 Layer: $p(\vf^{(1)}(\vx))$ \\
+No transformation: $p(\vx)$ & 1 Layer: $p \left( \vf^{(1)}(\vx) \right)$ \\
 \gpdrawbox{1} & \gpdrawbox{2} \\
-4 Layers: $p(\vf^{(1:4)}(\vx))$ & 6 Layers: $p(\vf^{(1:6)}(\vx))$ \\
+4 Layers: $p \left( \vf^{(1:4)}(\vx) \right)$ & 6 Layers: $p \left( \vf^{(1:6)}(\vx) \right)$ \\
 \gpdrawbox{4} & \gpdrawbox{6}
 \end{tabular}
 \caption[Points warped by a draw from a deep \sgp{}]
@@ -805,15 +805,17 @@ As the net gets deeper, the largest singular value dominates, implying there is 
 The density in the observed space eventually becomes locally concentrated onto one-dimensional manifolds, or \emph{filaments}, again implying that such models are unsuitable to model manifolds whose underlying dimensionality is greater than one.
 
 %for file in `ls`; do convert $file $file; done
-\newcommand{\mappic}[1]{\hspace{-0.05in}\includegraphics[width=0.475\columnwidth]{\deeplimitsfiguresdir/map/latent_coord_map_layer_#1}} 
-\newcommand{\mappiccon}[1]{\hspace{-0.05in}\includegraphics[width=0.475\columnwidth]{\deeplimitsfiguresdir/map_connected/latent_coord_map_layer_#1}}
+\newcommand{\mappic}[1]{ \includegraphics[width=0.475\columnwidth]{\deeplimitsfiguresdir/map/latent_coord_map_layer_#1} } 
+\newcommand{\mappiccon}[1]{ \includegraphics[width=0.475\columnwidth]{\deeplimitsfiguresdir/map_connected/latent_coord_map_layer_#1} }
 \begin{figure}
 \centering
 \begin{tabular}{cc}
-Identity Map: $\vy = \vx$ & 1 Layer: $\vy = f^{(1)}(\vx)$ \\
-\mappic{0} & \mappic{1} \\
-10 Layers: $\vy = f^{(1:10)}(\vx)$ & 40 Layers: $\vy = f^{(1:40)}(\vx)$ \\
-\mappic{10} & \mappic{40}
+\hspace{-0.15in} Identity Map: $\vy = \vx$ &
+\hspace{-0.15in} 1 Layer: $\vy = \vf^{(1)}(\vx)$ \\
+\hspace{-0.15in} \mappic{0} & \mappic{1} \\
+\hspace{-0.15in} 10 Layers: $\vy = \vf^{(1:10)}(\vx)$ &
+\hspace{-0.15in} 40 Layers: $\vy = \vf^{(1:40)}(\vx)$ \\
+\hspace{-0.15in} \mappic{10} & \mappic{40}
 \end{tabular}
 \caption[Visualization of a feature map drawn from a deep \sgp{}]
 {A vizualization of the feature map implied by a draw from a deep \gp{}.
@@ -961,7 +963,7 @@ Compare to standard-connectivity deep \gp{} draws shown in \cref{fig:deep_draw_1
 \begin{figure}
 \centering
 \begin{tabular}{cc}
-3 Connected layers: $p( f_C^{(1:3)}(\vx)$ & 6 Connected layers: $p( f_C^{(1:6)}(\vx)$ \\
+3 Connected layers: $p \left( \vf_C^{(1:3)}(\vx) \right)$ & 6 Connected layers: $p \left( \vf_C^{(1:6)}(\vx) \right)$ \\
 \gpdrawboxcon{3} &
 \gpdrawboxcon{6}
 \end{tabular}
@@ -992,10 +994,12 @@ The singular values remain roughly the same scale as one another.}
 \begin{figure}
 \centering
 \begin{tabular}{cc}
-Identity map: $\vy = \vx$ & 2 Connected layers \\
-\mappic{0} & \mappiccon{2} \\
- 10 Connected layers & 20 Connected layers \\
-\mappiccon{10} & \mappiccon{20}
+\hspace{-0.15in} Identity map: $\vy = \vx$ &
+\hspace{-0.15in} 2 Connected layers: $\vy = \vf^{(1:2)}(\vx)$ \\
+\hspace{-0.15in} \mappic{0} & \mappiccon{2} \\
+\hspace{-0.15in} 10 Connected layers: $\vy = \vf^{(1:10)}(\vx)$ &
+\hspace{-0.15in} 20 Connected layers: $\vy = \vf^{(1:20)}(\vx)$ \\
+\hspace{-0.15in} \mappiccon{10} & \mappiccon{20}
 \end{tabular}
 \caption[Feature mapping of an input-connected deep \sgp{}]
 {Feature mapping of a deep \gp{} with each layer connected to the input $\vx$.
