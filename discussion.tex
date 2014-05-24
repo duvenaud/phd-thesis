@@ -51,6 +51,36 @@ On the other hand, \citet{damianou2012deep} showed that deep \gplvm{}s allow sum
 
 
 
+
+
+
+
+\section{Automating Model Construction}
+
+This thesis is part of a push to automate the practice of model building and inference.
+Broadly speaking, this problem is being attacked from two directions.
+
+From the top-down, the probabilistic programming community is developing automatic inference engines for extremely broad classes of models~\citep{goodman2008church,mansinghka2014venture,liang2010learning} such as the class of all computable distributions~\citep{solomonoff1964formal, li2009introduction}.
+As discussed in \cref{sec:ingredients}, model construction can be seen as a search through such open-ended model classes.
+%Exact inference in sufficiently powerful model classes is \#P-hard (cite), so approximate inference algorithms are necessary.
+Universal search strategies have been constructed for these very general model classes, \citep{hutter2002fastest,schmidhuber2002speed,levin1973universal}, but they remain impractically slow.
+
+The bottom-up approach is to design procedures which extend and combine existing model classes, for which relatively efficient inference algorithms are known.
+For example, \citet{roger-grosse-thesis} built an open-ended language of matrix decomposition models and a corresponding compositional language of relatively efficient approximate inference algorithms.
+This approach makes inference feasible for models in the language, but extending the language requires developing new inference algorithms.
+The language of models proposed in \cref{ch:grammar} is an example of this bottom-up approach, and has the same benefits and limitations. % as the approach of \citet{roger-grosse-thesis}.
+
+We might consider deep learning an example of this bottom-up approach, although the type of composition used is usually limited to stacking layers, and inference in general is still difficult in these models.
+
+%The model-building and description procedures described in this thesis relied on particular properties \gp{}s.
+
+It seems clear that, one way or another, large parts of the existing practice of model-building will eventually be automated.
+%The machine learning community has so far focused largely on producing efficient inference strategies for powerful model classes, which is sufficient for improving predictive performance.
+Historically, the statistics community has put more emphasis on the interpretabilty and meaning of models than the machine learning community, which has focused more on predictive performance.
+To automate the practice of statistics, developing model-description procedures for powerful model classes seems like the direction with the most low-hanging fruit.
+
+
+
 \section{Summary of Contributions}
 
 The main contribution of this thesis is to show how to automate the construction of interpretable nonparametric models using Gaussian processes.
@@ -65,23 +95,6 @@ The second half of this thesis develops several extensions to Gaussian processes
 \Cref{ch:deep-limits} contains theorems and visualizations characterizing deep Gaussian processes, relates them to existing deep neural networks, and derives novel deep kernels.
 \Cref{ch:additive} investigates additive \gp{}s, a family of structured models consisting of sums of functions of all combinations of input variables, which are shown to have the same covariance as a \gp{} using dropout regularization.
 \Cref{ch:warped} extends the \gp{} latent variable model into a Bayesian clustering model which automatically infers nonparametric shape of each cluster, as well as the number of clusters.
-
-
-
-
-\section{Automating Machine Learning and Statistics}
-
-This work can be situated as part of a larger push to automate most of the current practice of machine learning.
-The model-building and description procedures described in this thesis relied on particular properties \gp{}s.
-
-\citet{roger-grosse-thesis} showed that reasonably efficient inference methods could be automatically composed
-
-\citet{goodman2008church, 
-It seems clear that, one way or another, large parts of the existing practice of model-building will eventually be automated.
-%The machine learning community has so far focused largely on producing efficient inference strategies for powerful model classes, which is sufficient for improving predictive performance.
-Historically, the statistics community has put much more emphasis on the interpretabilty and meaning of models than the machine learning community, which has focused more on predictive performance.
-To automate the practice of statistics, developing model-description procedures for powerful model classes seems like the direction with the most low-hanging fruit.
-
 
 
 
