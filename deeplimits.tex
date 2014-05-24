@@ -1200,27 +1200,31 @@ To put it another way, any fixed representation is unlikely to be useful unless 
 \section{Related Work}
 
 \subsubsection{Deep Gaussian Processs}
-\citet{neal1995bayesian} discussed the properties of arbitrarily deep random networks, including those that would give rise to deep \gp{}s.
-However, deep \gp{}s were first clearly defined and developed by \cite{lawrence2007hierarchical}, as a model of hierarchical generative relationships.
-Deep \gp{}s were first referred to as such by \citet{damianou2012deep}, who developed a variational inference scheme and analyzed the effect of automatic relevance determination in that model.
+\citet{neal1995bayesian} discussed the properties of arbitrarily deep Bayesian neural networks, including those that would give rise to deep \gp{}s.
+\citep{lawrence2007hierarchical}, presented a deep, semi-latent variable model called ``hierarchical \gplvm{}s'', in which time was mapped trough a composition of multiple \gp{}s to produce observations.
+
+The term ``deep Gaussian processes'' first appeared in \citet{damianou2012deep}, where it referred to a latent variable model whose warping function was defined by a composition of \gp{}s.
+%\citet{damianou2012deep} developed a variational inference scheme for this model, analyzed the effect of automatic relevance determination, and showed that it could learn with relatively little data.
+I submit that this model might be more clearly described as a ``deep \gplvm{}'', and that the term ``deep Gaussian process'' should be reserved for describing compositions of functions drawn from \gp{} priors.
 
 \subsubsection{Nonparametric Neural Networks}
 %Other Bayesian deep neural network models have been proposed by, for example, . % and Sum-product networks \cite{poon2011sum}  
-\citet{adams2010learning} proposed a prior on arbitrarily deep Bayesian networks.
+\citet{adams2010learning} proposed a prior on arbitrarily deep Bayesian networks with an unkown, unbounded number of hidden units in each layer.
 Their architecture has connections only between adjacent layers, and may also be expected to have similar pathologies to those of deep \gp{}s as the number of layers increases.
 
-Deep Density Networks \citep{rippel2013high} were constructed with invertibility in mind, with penalty terms encouraging the preservation of information about lower layers.
+Deep density networks \citep{rippel2013high} construct a series warpings of fixed dimension, with penalty terms encouraging the preservation of information about lower layers.
 This is another promising approach to fixing the pathology discussed above.
 
-\citet{wilson2012gaussian} introduced \gp{} Regression Networks (\gprn{}), which define a matrix product of \gp{}s, rather than a composition.
-The form of a \gprn{} is
+\citet{wilson2012gaussian} introduced Gaussian process regression networks, which are defined as a matrix product of \gp{}s, rather than a composition.
+These networks have the form:
+%The form of a \gprn{} is
 %
 \begin{align}
 \vy(\vx) & = \vW(\vx) \vf(\vx) \qquad \textnormal{with each} \; f_{d}, W_{d,j} \simiid \GPt{\vzero}{\kSE + \kWN} .
 %\textnormal{each} \; W_{d,j} & \simiid \GPt{\vzero}{\kSE + \kWN}
 \end{align}
 %
-We can easily define a ``deep'' \gprn{}:
+We can easily define a ``deep'' Gaussian process regression network %\gprn{}:
 %
 \begin{align}
 \vy(\vx) = \vW^{(3)}(\vx) \vW^{(2)}(\vx) \vW^{(1)}(\vx) \vf(\vx)
@@ -1242,7 +1246,7 @@ This prior on functions might be amenable to a similar analysis to that of secti
 
 \subsubsection{Recurrent Networks}
 \cite{bengio1994learning} and \cite{pascanu2012understanding} analyze a related problem with gradient-based learning in recurrent nets, the ``exploding-gradients'' problem.
-Specifically, they note that in recurrent neural networks, the size of the training gradient can grow or shrink exponentially as it is back-propagated, making gradient-based training difficult.
+They note that in recurrent neural networks, the size of the training gradient can grow or shrink exponentially as it is back-propagated, making gradient-based training difficult.
 
 \subsubsection{Deep Kernels}
 

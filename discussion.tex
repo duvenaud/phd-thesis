@@ -1,24 +1,10 @@
 \input{common/header.tex}
 \inbpdocument
 
-\chapter{Conclusions and Discussion}
+\chapter{Conclusions and Futue Work}
 \label{ch:discussion}
 
 
-\section{Summary of Contributions}
-
-The main contribution of this thesis is to show how to automate the construction of interpretable nonparametric models using Gaussian processes.
-This was done in several parts.
-First, \cref{ch:kernels} systematically described many different kernel construction techniques, and demonstrated properties of the corresponding \gp{} priors.
-Next, \cref{ch:grammar} showed how to automatically search over an open-ended space of \gp{} models, and that those models could be automatically decomposed into diverse parts showing the structure found in the data.
-\Cref{ch:description} showed that the effect each part of a kernel can be described modularly, allowing automatically written text to be included in detailed reports describing \gp{} models.
-An example report is included in \cref{ch:example-solar}.
-Together, these chapters describe the beginnings of an ``automatic statistician'', capable of the sort of model construction and description currently performed only by experts.
-
-The second half of this thesis develops several extensions to Gaussian processes that can automatically determine modeling choices that were previously set by trial and error or cross-validation.
-\Cref{ch:deep-limits} contains theorems and visualizations characterizing deep Gaussian processes, relates them to existing deep neural networks, and derives novel deep kernels.
-\Cref{ch:additive} investigates additive \gp{}s, a family of structured models consisting of sums of functions of all combinations of input variables, which are shown to have the same covariance as a \gp{} using dropout regularization.
-\Cref{ch:warped} extends the \gp{} latent variable model into a Bayesian clustering model which automatically infers nonparametric shape of each cluster, as well as the number of clusters.
 
 
 \section{Future Work}
@@ -62,12 +48,47 @@ Another point to consider is that, in high dimensions, the line between interpol
 \Cref{ch:description} showed that composite kernels allow automatic visualization and desription of low-dimensional structure.
 On the other hand, \citet{damianou2012deep} showed that deep \gplvm{}s allow summarization of high-dimensional structure through showing samples from the posterior, examining the dimension of each latent layer, visualizing latent coordinates, or examining how the predictive distribution changes as one moves in the latent space.
 
+
+
+
+\section{Summary of Contributions}
+
+The main contribution of this thesis is to show how to automate the construction of interpretable nonparametric models using Gaussian processes.
+This was done in several parts.
+First, \cref{ch:kernels} systematically described many different kernel construction techniques, and demonstrated properties of the corresponding \gp{} priors.
+Next, \cref{ch:grammar} showed how to automatically search over an open-ended space of \gp{} models, and that those models could be automatically decomposed into diverse parts showing the structure found in the data.
+\Cref{ch:description} showed that the effect each part of a kernel can be described modularly, allowing automatically written text to be included in detailed reports describing \gp{} models.
+An example report is included in \cref{ch:example-solar}.
+Together, these chapters describe the beginnings of an ``automatic statistician'', capable of the sort of model construction and description currently performed only by experts.
+
+The second half of this thesis develops several extensions to Gaussian processes that can automatically determine modeling choices that were previously set by trial and error or cross-validation.
+\Cref{ch:deep-limits} contains theorems and visualizations characterizing deep Gaussian processes, relates them to existing deep neural networks, and derives novel deep kernels.
+\Cref{ch:additive} investigates additive \gp{}s, a family of structured models consisting of sums of functions of all combinations of input variables, which are shown to have the same covariance as a \gp{} using dropout regularization.
+\Cref{ch:warped} extends the \gp{} latent variable model into a Bayesian clustering model which automatically infers nonparametric shape of each cluster, as well as the number of clusters.
+
+
+
+
 \section{Automating Machine Learning and Statistics}
 
 It seems clear that, one way or another, large parts of the existing practice of model-building will eventually be automated.
 %The machine learning community has so far focused largely on producing efficient inference strategies for powerful model classes, which is sufficient for improving predictive performance.
 Historically, the statistics community has put much more emphasis on the interpretabilty and meaning of models than the machine learning community, which has focused more on predictive performance.
 To automate the practice of statistics, developing model-description procedures for powerful model classes seems like the direction with the most low-hanging fruit.
+
+
+
+
+%\section{Automating Statistics}
+
+%Automating the process of statistical modeling would have a tremendous impact on fields that currently rely on expert statisticians, machine learning researchers, and data scientists.
+%While fitting simple models (such as linear regression) is largely automated by standard software packages, there has been little work on the automatic construction of flexible but interpretable models. 
+
+
+\outbpdocument{
+\bibliographystyle{plainnat}
+\bibliography{references.bib}
+}
 
 
 
@@ -98,6 +119,10 @@ To repeat: \emph{there is no need to assume that the function being modeled is s
 In Chapter~\ref{ch:grammar}, we will compare a system which estimates a parametric covariance function against one which estimates a parametric mean function.
 
 
+
+
+
+
 \section{Signal versus Noise}
 
 In most derivations of Gaussian processes, the model is given as
@@ -114,17 +139,3 @@ For example: often, we do not care about the short-term variations in a function
 However, in many other cases, we wish to de-trend our data to see more clearly how much a particular part of the signal deviated from normal.
 
 \fi
-
-
-
-%\section{Automating Statistics}
-
-%Automating the process of statistical modeling would have a tremendous impact on fields that currently rely on expert statisticians, machine learning researchers, and data scientists.
-%While fitting simple models (such as linear regression) is largely automated by standard software packages, there has been little work on the automatic construction of flexible but interpretable models. 
-
-
-\outbpdocument{
-\bibliographystyle{plainnat}
-\bibliography{references.bib}
-}
-
