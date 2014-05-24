@@ -1,21 +1,21 @@
 \input{common/header.tex}
 \inbpdocument
 
-\chapter{Conclusions and Futue Work}
+\chapter{Discussion}
 \label{ch:discussion}
 
 
 
+% TODO: move to the relevant chapter
+%\section{Future Work}
 
-\section{Future Work}
+%How far can we push the kernel structure discovery procedure outlined in this thesis?
 
-How far can we push the kernel structure discovery procedure outlined in this thesis?
+%\subsubsection{Multiple Dimensions}
 
-\subsubsection{Multiple Dimensions}
+%The experiments in \cref{ch:additive} showed that the structure search had very good performance in moderate dimensions.
 
-The experiments in \cref{ch:additive} showed that the structure search had very good performance in moderate dimensions.
-
-\subsubsection{Input and Output Warpings}
+%\subsubsection{Input and Output Warpings}
 
 
 \section{Structured versus Unstructured \sgp{} Models}
@@ -42,7 +42,8 @@ However, to extrapolate a periodic function, the $\sin$ and $\cos$ functions wou
 One obvious possibility is to marry the two approaches, learning deep \gp{}s with structured kernels.
 However, we may lose some of the advantages of interpretability by this approach.
 
-Another point to consider is that, in high dimensions, the line between interpolation and extrapolation is blurred, and that learning a suitable representation of the data manifold may be sufficient for most purposes.
+Another point to consider is that, in high dimensions, the line between interpolation and extrapolation is blurred.
+Learning a suitable representation of the data manifold may be sufficient for most purposes.
 
 \subsubsection{Ease of Interpretation}
 \Cref{ch:description} showed that composite kernels allow automatic visualization and desription of low-dimensional structure.
@@ -51,31 +52,34 @@ On the other hand, \citet{damianou2012deep} showed that deep \gplvm{}s allow sum
 
 
 
+\section{Approaches to Automating Model Construction}
 
-
-
-
-\section{Automating Model Construction}
-
-This thesis is part of a push to automate the practice of model building and inference.
+This thesis is part of a larger push to automate the practice of model building and inference.
 Broadly speaking, this problem is being attacked from two directions.
 
 From the top-down, the probabilistic programming community is developing automatic inference engines for extremely broad classes of models~\citep{goodman2008church,mansinghka2014venture,liang2010learning} such as the class of all computable distributions~\citep{solomonoff1964formal, li2009introduction}.
-As discussed in \cref{sec:ingredients}, model construction can be seen as a search through such open-ended model classes.
+As discussed in \cref{sec:ingredients}, model construction can be seen as search through such open-ended model classes.
 %Exact inference in sufficiently powerful model classes is \#P-hard (cite), so approximate inference algorithms are necessary.
-Universal search strategies have been constructed for these very general model classes, \citep{hutter2002fastest,schmidhuber2002speed,levin1973universal}, but they remain impractically slow.
+Universal search strategies have been constructed for these very general model classes~\citep{hutter2002fastest,schmidhuber2002speed,levin1973universal}, but they remain impractically slow.
 
 The bottom-up approach is to design procedures which extend and combine existing model classes, for which relatively efficient inference algorithms are known.
 For example, \citet{roger-grosse-thesis} built an open-ended language of matrix decomposition models and a corresponding compositional language of relatively efficient approximate inference algorithms.
 This approach makes inference feasible for models in the language, but extending the language requires developing new inference algorithms.
+As another example, \citet{christian-thesis} showed how to compose inference algorithms for arbitrary sequence models.
 The language of models proposed in \cref{ch:grammar} is an example of this bottom-up approach, and has the same benefits and limitations. % as the approach of \citet{roger-grosse-thesis}.
 
-We might consider deep learning an example of this bottom-up approach, although the type of composition used is usually limited to stacking layers, and inference in general is still difficult in these models.
+Using general models as building blocks in a composition blurs the line between these two approaches.
+%It is not clear which approach best describes generative, or probabilistic, deep learning methods.
+For example, we might consider deep generative models~\citep{adams2010learning,damianou2012deep,rippel2013high,bengio2013generalized,salakhutdinov2009deep} to be an example of the bottom-up approach, since they decompose both model and inference into individual layers.
+However, large neural nets can capture enough different types of structure that they could be seen as an example of the universalist top-down approach.
 
-%The model-building and description procedures described in this thesis relied on particular properties \gp{}s.
+In any case, it seems clear that, one way or another, large parts of the existing practice of model-building will eventually be automated.
+% Benefit: systematically explores model space?
 
-It seems clear that, one way or another, large parts of the existing practice of model-building will eventually be automated.
+\section{Approaches to Automating Model Description}
+
 %The machine learning community has so far focused largely on producing efficient inference strategies for powerful model classes, which is sufficient for improving predictive performance.
+
 Historically, the statistics community has put more emphasis on the interpretabilty and meaning of models than the machine learning community, which has focused more on predictive performance.
 To automate the practice of statistics, developing model-description procedures for powerful model classes seems like the direction with the most low-hanging fruit.
 
@@ -83,18 +87,19 @@ To automate the practice of statistics, developing model-description procedures 
 
 \section{Summary of Contributions}
 
-The main contribution of this thesis is to show how to automate the construction of interpretable nonparametric models using Gaussian processes.
+The main contribution of this thesis was to show how to automate the construction of interpretable nonparametric models of functions using Gaussian processes.
 This was done in several parts.
-First, \cref{ch:kernels} systematically described many different kernel construction techniques, and demonstrated properties of the corresponding \gp{} priors.
-Next, \cref{ch:grammar} showed how to automatically search over an open-ended space of \gp{} models, and that those models could be automatically decomposed into diverse parts showing the structure found in the data.
-\Cref{ch:description} showed that the effect each part of a kernel can be described modularly, allowing automatically written text to be included in detailed reports describing \gp{} models.
+First, \cref{ch:kernels} systematically described several kernel construction techniques, as well as properties of the resulting \gp{} priors.
+Next, \cref{ch:grammar} showed how to automatically search over an open-ended space of \gp{} models, and showed that those models could be automatically decomposed into diverse parts illustrating the structure found in the data.
+\Cref{ch:description} showed that the contribution of each part of a kernel can be described modularly, allowing automatically written text to be included in detailed reports describing \gp{} models.
 An example report is included in \cref{ch:example-solar}.
-Together, these chapters describe the beginnings of an ``automatic statistician'', capable of the sort of model construction and description currently performed only by experts.
+Together, these chapters describe the beginnings of an ``automatic statistician'', capable of the sort of model construction and analysis currently performed by experts.
 
-The second half of this thesis develops several extensions to Gaussian processes that can automatically determine modeling choices that were previously set by trial and error or cross-validation.
-\Cref{ch:deep-limits} contains theorems and visualizations characterizing deep Gaussian processes, relates them to existing deep neural networks, and derives novel deep kernels.
-\Cref{ch:additive} investigates additive \gp{}s, a family of structured models consisting of sums of functions of all combinations of input variables, which are shown to have the same covariance as a \gp{} using dropout regularization.
-\Cref{ch:warped} extends the \gp{} latent variable model into a Bayesian clustering model which automatically infers nonparametric shape of each cluster, as well as the number of clusters.
+The second half of this thesis examined several extensions of Gaussian processes, all of which enable the automatic determination of modeling choices that were previously set by trial and error or cross-validation.
+\Cref{ch:deep-limits} characterized and visualized deep Gaussian processes, related them to existing deep neural networks, and derived novel deep kernels.
+\Cref{ch:additive} investigated additive \gp{}s, a family of models consisting of sums of functions of all subsets of input variables, and showed that they have the same covariance as a \gp{} using dropout regularization.
+\Cref{ch:warped} extended the \gp{} latent variable model into a Bayesian clustering model which automatically infers the nonparametric shape of each cluster, as well as the number of clusters.
+
 
 
 
