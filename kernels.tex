@@ -946,6 +946,9 @@ By enforcing that the functions mapping from $\mathbb{R}^2$ to $\mathbb{R}^3$ ob
 \end{figure}
 %
 \Cref{fig:gen_surf} shows 2D meshes warped into 3D by functions drawn from \gp{} priors with different kernels, giving rise to a variety of different topologies.
+%
+Higher-dimensional analogues of these shapes can be constructed by increasing the latent dimension and including corresponding terms in the kernel.
+For example, an $N$-dimensional space with kernel $\kPer_1 \kerntimes \kPer_2 \kerntimes \ldots \kerntimes \kPer_N$ will give rise to a prior on $N$-dimensional toruses.
 
 This construction is similar in spirit to the \gp{} latent variable model (\gplvm{}) of \citet{lawrence2005probabilistic}, which learns a latent embedding of the data into a low-dimensional space, using a \gp{} prior on the mapping from the latent space to the observed space.%and constructs a fixed kernel structure over that space.
 %The GP-LVM will be discussed in further detail in chapter ...

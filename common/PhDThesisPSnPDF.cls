@@ -380,11 +380,11 @@ font in the preamble.tex file by specifying `customfont' in the class options}
 \ifpdf
 \AtBeginDocument{
   \hypersetup{
-%    pdftitle = {\@title},  %TODO: re-enable this!
-pdftitle = {DRAFT}
-%    pdfauthor = {\@author},
-%    pdfsubject={\@subject},
-%    pdfkeywords={\@keywords}
+    pdftitle = {\@title},
+%pdftitle = {DRAFT}
+    pdfauthor = {\@author},
+    pdfsubject={\@subject},
+    pdfkeywords={\@keywords}
   }
 }
 \fi

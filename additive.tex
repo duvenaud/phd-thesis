@@ -333,9 +333,7 @@ If the weights initially have finite variance $\sigma^2_{\alpha}$ before dropout
 %\varianceargs{}{\alpha_i} = \sigma^2$,
 %then the distribution of weights after each one has been dropped out with probability $p$ is:
 \begin{align}
-r_i \simiid \textnormal{Ber}(p)
-\qquad
-%\expectargs{}{ r_i \alpha_i} = p\mu, \quad 
+r_i \simiid \textnormal{Ber}(p) \qquad %\expectargs{}{ r_i \alpha_i} = p\mu, \quad 
 \varianceargs{}{r_i \alpha_i} = p \sigma_{\alpha}^2 \;.
 \end{align}
 %Since only the first two moments of the weight variance matter, the resulting \gp{} remain
@@ -346,7 +344,7 @@ Thus, dropping out features of an infinitely-wide \MLP{} does not change the mod
 Indeed, multiplying all weights by $p^{-1/2}$ restores the initial variance:
 \begin{align}
 %\expectargs{}{ \frac{1}{p} r_i \alpha_i } = \frac{p}{p}\mu = \mu, \quad 
-\varianceargs{}{ \frac{1}{p^\frac{1}{2}} r_i \alpha_i} = \frac{p}{p} \sigma_{\alpha}^2 = \sigma_{\alpha}^2 \;.
+\varianceargs{}{ \frac{1}{p^\frac{1}{2}} r_i \alpha_i} = \frac{p}{p} \sigma_{\alpha}^2 = \sigma_{\alpha}^2 \; .
 \end{align}
 In which case dropout on the hidden units has no effect at all.
 Intuitively, this is because no individual feature can have more than an infinitesimal contribution to the network output.
@@ -399,30 +397,28 @@ Our experiments show that sometimes, the intermediate degrees of interaction con
 \citet{kaufman2010bayesian} used a closely related procedure called Gaussian process \ANOVA{} to perform a Bayesian analysis of meteorological data using 2nd and 3rd-order interactions.
 They also introduce a weighting scheme to ensure that each order's total contribution sums to zero.
 It is not clear if this weighting scheme permits the use of the Newton-Girard formula to speed computation of the Gram matrix.
-%Also, computationally, the Gibbs sampling approach used in \citep{kaufman2010bayesian} is disadvantageous.
 %[TODO: read and mention \citep{friedman1981projection} from Hannes]
 
 
 \subsubsection{Hierarchical Kernel Learning}
 
-A similar model class was recently explored by \citet{DBLP:journals/corr/abs-0909-0844} called Hierarchical Kernel Learning (\HKL{}).
+A similar model class was recently explored by \citet{DBLP:journals/corr/abs-0909-0844} called hierarchical kernel learning (\HKL{}).
 %Finally, on real datasets, HKL is outperformed by the standard \SEGP{} \citep{DBLP:journals/corr/abs-0909-0844}.
 \HKL{} uses a regularized optimization framework to learn a weighted sum over an exponential number of kernels which can be computed in polynomial time.
 %
-\begin{figure}[ht!]
+\begin{figure}
 \centering
 \begin{tabular}{c|c}
-Hierarchical Kernel Learning & All-orders additive \gp{} \\
+Hierarchical kernel learning & All-orders additive \gp{} \\
 \includegraphics[height=0.35\textwidth]{\additivefigsdir/compare_models/hkl.pdf} &
 \includegraphics[height=0.35\textwidth]{\additivefigsdir/compare_models/additive.pdf}
 \\ \hline \\
- Squared-exp GP & First-order additive \gp{} \\
+ Squared-exp \gp{} & First-order additive \gp{} \\
 \includegraphics[height=0.35\textwidth]{\additivefigsdir/compare_models/ard.pdf} &
 \includegraphics[height=0.35\textwidth]{\additivefigsdir/compare_models/gam.pdf} \\
 \end{tabular}
 \caption[A comparison of different additive model classes]
-{  
-A comparison of different additive model classes.
+{A comparison of different additive model classes.
 Nodes represent different interaction terms, ranging from first-order to fourth-order interactions.
 Coloured boxes represent the weightings of different terms.
 \emph{Top left: }\HKL{} can select a hull of interaction terms, but must use a pre-determined weighting over those terms.
@@ -431,14 +427,13 @@ Coloured boxes represent the weightings of different terms.
 \label{hulls-figure}
 \end{figure}
 %
-This method chooses among \textit{hull} of kernels, defined as a set of terms such that if $\prod_{j \in J} k_j(\bf x, x')$ is included in the set, then so are all lower-order terms containing the same elements: $\prod_{j \in J / i} k_j(\bf x, x')$, for all $i \in J$.
+This method chooses among \emph{hull} of kernels, defined as a set of terms such that if $\prod_{j \in J} k_j(\vx, \vx')$ is included in the set, then so are all lower-order terms containing the same elements: $\prod_{j \in J / i} k_j(\vx, \vx')$, for all $i \in J$.
 \HKL{} computes the sum over all orders in $\mathcal{O}(D)$ time by the formula:
 \begin{equation}
 \label{eqn:uniform}
 k_{a}({\bf x, x'}) = v^2 \prod_{d=1}^D \left(1 + \alpha k_{d}(x_{d}, x_{d}') \right)
 \end{equation}
 which forces the weight of all $n$th order terms to be weighted by $\alpha^n$.
-
 
 \Cref{hulls-figure} contrasts the \HKL{} model class with the additive \gp{} model.
 Neither method is strictly more flexible than the other.
