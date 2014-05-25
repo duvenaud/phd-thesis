@@ -541,28 +541,29 @@ We will also show that the Jacobian of a multivariate deep \gp{} is a product of
 In this section, we derive the limiting distribution of the derivative of an arbitrarily deep, one-dimensional \gp{} with a squared-exp kernel:  %in order to shed light on the ways in which a deep \gp{}s are non-Gaussian, and the ways in which lower layers affect the computation performed by higher layers.
 %
 \newcommand{\onedsamplepic}[1]{
-\hspace{-0.25in}
-\includegraphics[trim=2mm 2mm 2mm 6.4mm, clip, width=0.255\columnwidth]{\deeplimitsfiguresdir/1d_samples/latent_seed_0_1d_large/layer-#1}} 
-%
+\includegraphics[trim=2mm 5mm 7mm 6.4mm, clip, width=0.235\columnwidth]{\deeplimitsfiguresdir/1d_samples/latent_seed_0_1d_large/layer-#1}}%
 \newcommand{\onedsamplepiccon}[1]{
-\hspace{-0.25in}
-\includegraphics[trim=2mm 2mm 2mm 6.4mm, clip, width=0.255\columnwidth]{\deeplimitsfiguresdir/1d_samples/latent_seed_0_1d_large_connected/layer-#1}} 
+\includegraphics[trim=2mm 5mm 7mm 6.4mm, clip, width=0.235\columnwidth]{\deeplimitsfiguresdir/1d_samples/latent_seed_0_1d_large_connected/layer-#1}}%
 %
 \begin{figure}
 \centering
-\begin{tabular}{cccc}
-\hspace{-0.1in} 1 layer & \hspace{-0.2in} 2 Layers & 5 Layers & \hspace{-0.25in} 10 Layers \\
-\hspace{0.03in}
+\setlength{\tabcolsep}{1.5pt}
+\begin{tabular}{ccccc}
+& 1 Layer & 2 Layers & 5 Layers & 10 Layers \\
+\raisebox{0.6cm}{\rotatebox{90}{$f^{(1:L)}(x)$}} &
 \onedsamplepic{1} &
 \onedsamplepic{2} &
 \onedsamplepic{5} &
-\onedsamplepic{10}
-%& 6 layers \\ & largest , for unconnected layers & largest, for connected layers
+\onedsamplepic{10} \\[-3pt]
+ & $x$ & $x$ & $x$ & $x$
 \end{tabular}
-\caption[One-dimensional draws from a deep \sgp{} prior]
-{One-dimensional draws from a deep gp prior.
+\caption[A one-dimensional draw from a deep \sgp{} prior]
+{A one-dimensional draw from a deep \gp{} prior, shown at different depths.
+The $x$-axis is the same for all plots.
 After a few layers, the functions begin to be either nearly flat, or highly varying, everywhere.
-This is a consequence of the distribution on derivatives becoming heavy-tailed.}
+This is a consequence of the distribution on derivatives becoming heavy-tailed.
+The function values also tend to cluster around the same few values as the depth increases.
+This happens because once the function values in a particular region are mapped to the same value in an intermediate layer, there is no way for them to be mapped to different values in later layers.}
 \label{fig:deep_draw_1d}
 \end{figure}
 %
@@ -940,16 +941,19 @@ b) Input-connected architecture\\
 
 \begin{figure}[h]
 \centering
-\begin{tabular}{cccc}
-\hspace{-0.1in} One layer & \hspace{-0.2in} 2 Layers & \hspace{-0.2in}  5 Layers & \hspace{-0.25in} 10 Layers \\
-\hspace{0.03in}
+\setlength{\tabcolsep}{1.5pt}
+\begin{tabular}{ccccc}
+& 1 Layer & 2 Layers & 5 Layers & 10 Layers \\
+\raisebox{0.6cm}{\rotatebox{90}{$f_C^{(1:L)}(x)$}} &
 \onedsamplepiccon{1} &
 \onedsamplepiccon{2} &
 \onedsamplepiccon{5} &
-\onedsamplepiccon{10}
+\onedsamplepiccon{10} \\[-3pt]
+ & $x$ & $x$ & $x$ & $x$
 \end{tabular}
-\caption[Draws from a 1D deep \sgp{} prior with each layer connected to the input]
-{Draws from a 1D deep \gp{} prior with each layer connected to the input.
+\caption[A draw from a 1D deep \sgp{} prior with each layer connected to the input]
+{A draw from a 1D deep \gp{} prior with each layer connected to the input.
+The $x$-axis is the same for all plots.
 Even after many layers, the functions remain smooth in some regions, while varying rapidly in other regions.
 Compare to standard-connectivity deep \gp{} draws shown in \cref{fig:deep_draw_1d}.}
 \label{fig:deep_draw_1d_connected}
