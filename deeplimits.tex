@@ -78,7 +78,7 @@ f(\vx) = \vV^{(1)} \sigma \left( \vb^{(1)} + \vW^{(1)} \vx \right)  = \vV^{(1)} 
 where $\vV^{(1)}$ is another weight matrix.
 
 %There exists a correspondence between one-layer \MLP{}s and \gp{}s 
-\citet{neal1995bayesian} showed that \gp{}s can be viewed as a prior on neural networks with infinitely many hidden units and unknown weights.
+\citet[chapter 2]{neal1995bayesian} showed that \gp{}s can be viewed as a prior on neural networks with infinitely many hidden units and unknown weights.
 More precisely, for any model of the form
 %
 \begin{align}
@@ -460,7 +460,7 @@ A net with nonpararametric activation functions corresponding to a 3-layer deep 
     \node[annot,above of=H-1, node distance=\upnodedist, text width = 2cm] {\gp{}};
     \node[annot,above of=H2-1, node distance=\upnodedist, text width = 2cm] {\gp{}};
     \node[annot,below of=H-\numhidden, node distance=\upnodedist, text width = 2cm] {$\vf^{(1)}(\vx)$};
-    \node[annot,below of=H2-\numhidden, node distance=\upnodedist, text width = 2cm] {$\vf^{(2)}(\vf^{(1)}(\vx))$};
+    \node[annot,below of=H2-\numhidden, node distance=\upnodedist, text width = 2cm] {$\vf^{(1:2)}(\vx)$};
     \node[annot,above of=O-1, node distance=\upnodedist] {\gp{}};
     \node[annot,below of=O-\numdims, node distance=\upnodedist, text width = 1cm] {$\vy$};
 \end{tikzpicture}
@@ -471,6 +471,7 @@ A net with nonpararametric activation functions corresponding to a 3-layer deep 
 Two equivalent views of deep \gp{}s as neural networks.
 \emph{Top:} A neural network whose every second layer is a weighted sum of an infinite number of fixed hidden units, where the weights are initially unknown.
 \emph{Bottom:} A neural network with a finite number of hidden units, each with a different unknown non-parametric activation function.
+The activation functions are visualized by draws from 2-dimensional \gp{}s, although their input dimension will actually be the same as the output dimension of the previous layer.
 }
 \label{fig:deep-gp-architectures}
 \end{figure}
@@ -845,7 +846,7 @@ Thus, these pathologies are unlikely to severely effect the relatively shallow, 
 \section{Fixing the Pathology}
 \label{sec:fix}
 
-Following \citet{neal1995bayesian}, we can fix the pathologies exhibited in figures \cref{fig:filamentation} and \ref{fig:deep_map} by simply making each layer depend not only on the output of the previous layer, but also on the original input $\vx$.  
+As suggested by \citet[chapter 2]{neal1995bayesian}, we can fix the pathologies exhibited in figures \cref{fig:filamentation} and \ref{fig:deep_map} by simply making each layer depend not only on the output of the previous layer, but also on the original input $\vx$.  
 We refer to these models as \emph{input-connected} networks, and denote deep functions having this architecture with the subscript $C$, as in $f_C(\vx)$.
 \Cref{fig:input-connected} shows a graphical representation of the two connectivity architectures.
 Similar connections between non-adjacent layers can also be found the primate visual cortex \citep{maunsell1983connections}.
@@ -1022,7 +1023,7 @@ The Jacobian of an input-connected deep function is defined by the recurrence
 \newcommand{\sbi}[2]{\left[ \! \begin{array}{c} #1 \\ #2 \end{array} \! \right]} 
 %\newcommand{\sbi}[2]{\left[ #1 \quad \!\! #2 \right]} 
 \begin{align}
-{J_C^{1:L}(\vx) = J^L \sbi{ J_C^{1:L-1}}{I_D}}.
+{J_C^{(1:L)} = J^{(L)} \sbi{ J_C^{(1:L-1)}}{I_D}}.
 \end{align}
 %
 %So the entire Jacobian has the form:
@@ -1055,20 +1056,23 @@ To return to an example given in \cref{sec:expressing-symmetries}, periodic kern
 
 %In addition to analyzing \MLP{}s with random weights, we can also analyze fixed feature mappings with different connectivity architectures.
  
-Can we construct other useful kernels by composing fixed feature maps several times, creating deep kernels?  \citet{cho2009kernel} constructed kernels of this form, repeatedly applying multiple layers of feature mappings.
+We can construct other useful kernels by composing fixed feature maps several times, creating deep kernels.
+In this section, we build on the work of \citet{cho2009kernel}, who derived several kinds of deep kernels by applying multiple layers of feature mappings.
+
 %Given a kernel $k_1(\vx, \vx') = \hPhi(\vx) \tra \hPhi(\vx')$, 
 In principle, we can compose the feature mapping of any two kernels to get a new one:
 %
 \begin{align}
 k_a(\vx, \vx') & = \hPhi_a(\vx) \tra \hPhi_a(\vx') \\
 k_b(\vx, \vx') & = \hPhi_b(\vx) \tra \hPhi_b(\vx') \\
-\left( k_b \circ k_a \right)(\vx, \vx') & = k_b \left(\hPhi_1(\vx), \hPhi_a(\vx') \right) 
+\left( k_b \circ k_a \right)(\vx, \vx') & = k_b \left(\hPhi_a(\vx), \hPhi_a(\vx') \right) 
  = \left[ \hPhi_b \left( \hPhi_a(\vx) \right)\right] \tra \hPhi_b \left(\hPhi_a(\vx') \right) 
 \end{align}
 %
-However, this composition might not always have a closed form.
+However, this composition might not always have a closed form if the number of hidden features of either kernel in infinite.
 
-Fortunately, composing the squared-exp kernel with any implicit mapping $\hPhi(\vx)$ has a simple closed form:
+Fortunately, composing the squared-exp kernel with any implicit mapping given by another kernel has a simple closed form.
+If $k(\vx, \vx') = \hPhi(\vx)\tra \hPhi(\vx')$, then
 %, this composition operation has a closed form for any starting kernel:% for any set of starting features $\hPhi_n(\vx)$:
 %
 \begin{align}
@@ -1081,7 +1085,7 @@ Fortunately, composing the squared-exp kernel with any implicit mapping $\hPhi(\
 & = \exp\left ( -\frac{1}{2} \left[ \hPhi(\vx) \tra \hPhi(\vx) - 2 \hPhi(\vx) \tra \hPhi(\vx') + \hPhi(\vx') \tra \hPhi(\vx') \right] \right) \nonumber \\
 %k_2(\vx, \vx') & = \exp \left( -\frac{1}{2} \left[ \sum_i \hphi_i(\vx)^2 - 2 \sum_i \hphi_i(\vx) \hphi_i(\vx') + \sum_i \hphi_i(\vx')^2 \right] \right) \\
 %k_{n+1}(\vx, \vx') 
-& = \exp \left( -\frac{1}{2} \left[ k(\vx, \vx) - 2 k(\vx, \vx') + k(\vx', \vx') \right] \right) \nonumber
+& = \exp \left( -\frac{1}{2} \big[ k(\vx, \vx) - 2 k(\vx, \vx') + k(\vx', \vx') \big] \right) \; .\nonumber
 %k_{n+1}(\vx, \vx') 
 %& = \exp \left( k_1(\vx, \vx') - 1 \right) \qquad \textnormal{(if $k_1(\vx, \vx) = 1$)} \nonumber
 \end{align}
@@ -1102,11 +1106,11 @@ Fortunately, composing the squared-exp kernel with any implicit mapping $\hPhi(\
 %Note that nothing in this derivation depends on details of $k_n$, except that $k_n( \vx, \vx) = 1$.
 %Note that this result holds for any base kernel $k_n$, as long as $k_n( \vx, \vx) = 1$.
 %  Because this is true for $k_2$ as well, this recursion holds in general, and we have that $k_{n+1}(x,y) = e^{k_n(x, y) - 1}$.  
-which lets us express the composed kernel, $\kSE \circ k$, exactly in terms of evaluations of $k$.
+This formula lets expresses the composed kernel function $\kSE \circ k$ exactly in terms of evaluations of the original kernel function $k$.
 
 \subsection{Infinitely Deep Kernels}
 What happens when we repeat this composition of feature maps many times, starting with the squared-exp kernel?
-If the output variance is set to 1, then in the infinite limit, this operation converges to $\left(\kSE \circ \kSE \circ \kSE \circ \ldots \kSE\right)(\vx,\vx') = 1$ for all pairs of inputs, which corresponds to a prior on constant functions $f(\vx) = c$.
+If the output variance $k(\vx,\vx) = 1$, then in the infinite limit, this operation converges to $\left(\kSE \circ \kSE \circ \kSE \circ \ldots \kSE\right)(\vx,\vx') = 1$ for all pairs of inputs, which corresponds to a prior on constant functions $f(\vx) = c$.
 
 %Figure \ref{fig:deep_kernel_connected} shows this kernel at different depths, including the degenerate limit.  
 %
@@ -1115,7 +1119,7 @@ If the output variance is set to 1, then in the infinite limit, this operation c
 
 %\subsubsection{A non-degenerate construction}
 
-As before, we can overcome this degeneracy by connecting the inputs $\vx$ to each layer.  To do so, we simply augment the feature vector at each layer, $\hPhi^{(\ell)}(\vx)$, with the input vector $\vx$:
+As before, we can overcome this degeneracy by connecting the inputs $\vx$ to each layer.  To do so, we simply concatenate the feature vector at each layer, $\hPhi^{(\ell)}(\vx)$, with the input vector $\vx$:
 %
 \begin{align}
 %k_1(\vx, \vx') & = \exp \left( -\frac{1}{2} ||\vx - \vx'||_2^2 \right) \\
@@ -1134,7 +1138,7 @@ As before, we can overcome this degeneracy by connecting the inputs $\vx$ to eac
 %
 Starting with the squared-exp kernel, this repeated mapping satisfies
 \begin{align}
-k^{(\infty)}(\vx, \vx') - \log \left( k^{(\infty)}(\vx, \vx') \right) = 1 + \frac{1}{2} || \vx - \vx' ||_2^2
+k^{(\infty)}(\vx, \vx') - \log \left( k^{(\infty)}(\vx, \vx') \right) = 1 + \frac{1}{2} || \vx - \vx' ||_2^2 \,.
 \end{align}
 %
 \begin{figure}
@@ -1196,7 +1200,7 @@ It is easy to show that in the limit of infinite depth, both these architectures
 \subsection{When are Deep Kernels Useful Models?}
 
 Kernels correspond to fixed feature maps, and so kernel learning is an example of implicit representation learning. %can compute %useful representations.
-As we saw in \cref{ch:kernels,ch:grammar}, kernels can capture rich structure, and can enable many types of generalization.
+As we saw in \cref{ch:kernels,ch:grammar}, kernels can capture rich structure and can enable many types of generalization.
  %, such as affine invariance in images \citep{kondor2008group}.
 %\cite{salakhutdinov2008using} used a deep neural network to learn feature transforms for kernels, which learn invariants in an unsupervised manner.
 The relatively uninteresting properties of the deep kernels derived in this section simply reflect the fact that an arbitrary computation, even if it is ``deep'', is not likely to give rise to a useful representation, unless combined with learning.
@@ -1210,28 +1214,32 @@ To put it another way, any fixed representation is unlikely to be useful unless 
 \section{Related Work}
 
 \subsubsection{Deep Gaussian Processs}
-\citet{neal1995bayesian} discussed the properties of arbitrarily deep Bayesian neural networks, including those that would give rise to deep \gp{}s.
-\citep{lawrence2007hierarchical}, presented a deep model called ``hierarchical \gplvm{}s'', in which time was mapped trough a composition of multiple \gp{}s to produce observations.
+\citet[chapter 2]{neal1995bayesian} discussed the properties of arbitrarily deep Bayesian neural networks, including those that would give rise to deep \gp{}s.
+He noted that infinitely deep random neural networks without extra connections to the input would be equivalent to a Markov chain, and therefore would lead to degenerate priors on functions.
+He also suggested connecting the input to each layer in order to fix this problem.
+Much of the analysis in this chapter can be seen as a detailed investigation which vindicates these claims.
+
+The first instance of deep \gp{}s being used in practice was \citep{lawrence2007hierarchical}, who presented a model called ``hierarchical \gplvm{}s'', in which time was mapped through a composition of multiple \gp{}s to produce observations.
 
 %The term ``deep Gaussian processes'' first appeared in \citet{damianou2012deep}, where it referred to a latent variable model whose warping function was defined by a composition of \gp{}s.
 The term ``deep Gaussian processes'' was first used by \citet{damianou2012deep}, who also developed a variational inference method, analyzed the effect of automatic relevance determination, and showed that deep \gp{}S could learn with relatively little data.
 %I propose that this model might be more clearly described as a ``deep \gplvm{}'', and that the term ``deep Gaussian process'' should be reserved for describing compositions of functions drawn from \gp{} priors.
 %
-\citet{damianou2012deep} used the term ``deep \gp{}'' to refer to both supervised models (compositions of \gp{}s) and unsupervised models (compositions of \gplvm{}s).
+They used the term ``deep \gp{}'' to refer both to supervised models (compositions of \gp{}s) and to unsupervised models (compositions of \gplvm{}s).
 This conflation may be reasonable, since the activations of the hidden layers are themselves latent variables.
 Depending on kernel parameters, these latent variables may or may not depend on the inputs in the layer below.
-Supervised models can also be latent-variable models.
-For example, \citet{wang2012gaussian} investigated single-layer \gp{} regression models with latent inputs.
+In general, supervised models can also be latent-variable models.
+For example, \citet{wang2012gaussian} investigated single-layer \gp{} regression models that had additional latent inputs.
 
 \subsubsection{Nonparametric Neural Networks}
 %Other Bayesian deep neural network models have been proposed by, for example, . % and Sum-product networks \cite{poon2011sum}  
-\citet{adams2010learning} proposed a prior on arbitrarily deep Bayesian networks with an unkown, unbounded number of hidden units in each layer.
+\citet{adams2010learning} proposed a prior on arbitrarily deep Bayesian networks with an unknown and unbounded number of hidden units in each layer.
 Their architecture has connections only between adjacent layers, and may also be expected to have similar pathologies to those of deep \gp{}s as the number of layers increases.
 
-Deep density networks \citep{rippel2013high} construct a series warpings of fixed dimension, with penalty terms encouraging the preservation of information about lower layers.
-This is another promising approach to fixing the pathology discussed above.
+Deep density networks \citep{rippel2013high} are constructed through a series of warpings of fixed output dimension, with penalty terms encouraging the preservation of information about lower layers.
+This is another promising approach to fixing the pathology discussed in \cref{sec:formalizing-pathology}.
 
-\citet{wilson2012gaussian} introduced Gaussian process regression networks, which are defined as a matrix product of draws from \gp{}s, rather than a composition.
+\citet{wilson2012gaussian} introduced Gaussian process regression networks, which are defined as a matrix product of draws from \gp{}s priors, rather than a composition.
 These networks have the form:
 %The form of a \gprn{} is
 %
@@ -1245,8 +1253,8 @@ We can easily define a ``deep'' Gaussian process regression network:
 \vy(\vx) = \vW^{(3)}(\vx) \vW^{(2)}(\vx) \vW^{(1)}(\vx) \vf(\vx)
 \end{align}
 %
-which repeatedly adds and multiplies functions drawn from \gp{}s, in contrast to deep \gp{}s which repeatedly compose functions.
-This prior on functions has a similar form to the Jacobian of a deep \gp{} (\cref{eq:jacobian-of-deep-gp}) and so might be amenable to a similar analysis to that of section \ref{sec:characterizing-deep-gps}.
+which repeatedly adds and multiplies functions drawn from \gp{}s, in contrast to deep \gp{}s, which repeatedly compose functions.
+This prior on functions has a similar form to the Jacobian of a deep \gp{} (\cref{eq:jacobian-of-deep-gp}), and so might be amenable to a similar analysis to that of section \ref{sec:characterizing-deep-gps}.
 
 %
 %This model has a similar form to the Jacobian of deep \gp{}, (since each row of the Jacobian is jointly a \gp{} but with with a kernel given by \eqref{eq:deriv-kernel}) except that the Jacobian is evaluated at the output from previous layers:
@@ -1269,12 +1277,13 @@ The first systematic examination of deep kernels was done by \citet{cho2009kerne
 %\citet{cho2012kernel} 
 
 \cite{hermans2012recurrent} constructed deep kernels in a time-series setting, constructing kernels corresponding to infinite-width \emph{recurrent} neural networks.
-They also proposed concatenating the implicit feature vectors from previous time-steps with the current inputs, resulting in an architecture analogous to the input-connected architecture proposed by \citet{neal1995bayesian}.
+They also proposed concatenating the implicit feature vectors from previous time-steps with the current inputs, resulting in an architecture analogous to the input-connected architecture proposed by \citet[chapter 2]{neal1995bayesian}.
 
 \subsubsection{Analyses of Deep Learning}
 \cite{montavon2010layer} performed a layer-wise analysis of deep networks, and noted that the performance of \MLP{}s degrades as the number of layers with random weights increases.
-The importance of network architectures relative to learning was examined by \cite{saxe2011random}.
-Later, \cite{saxedynamics} looked at the dynamics of learning in deep linear models as a tractable approximation to deep neural networks.  
+
+The experiments of \cite{saxe2011random} suggested that most of the performance of convolutional neural networks could be attributed to the architecture alone.
+Later, \cite{saxedynamics} looked at the dynamics of gradient-based training methods in deep \emph{linear} networks, as a tractable approximation to standard deep (nonlinear) neural networks.  
 
 
 
@@ -1284,6 +1293,11 @@ Later, \cite{saxedynamics} looked at the dynamics of learning in deep linear mod
 
 %\paragraph{Recursive learning method}
 %Just as layer-wise unsupervised pre-training encourages the projection of the data into a representation with independent features in the higher layers, so does the procedure outlined here.  This is because the isotropic kernel does not penalize independence between different dimensions, only the number of dimensions.
+
+
+\subsubsection{Source Code}
+Source code to produce all figures is available at \url{github.com/duvenaud/deep-limits}.
+The source code is also capable of producing visualizations of mappings such as \cref{fig:deep_map,fig:deep_map_connected} using neural nets instead of \gp{}s at each layer.
 
 
 \section{Conclusions}
@@ -1315,11 +1329,6 @@ If we can identify classes of priors that give our models desirable properties, 
 Existing neural network practice also requires expensive tuning of model hyperparameters such as the number of layers, the size of each layer, and regularization penalties by cross-validation.
 One advantage of deep \gp{}s is that the approximate marginal likelihood allows a principled method for automatically determining such model details.
 
-
-
-\subsubsection{Source Code}
-Source code to produce all figures is available at \url{github.com/duvenaud/deep-limits}.
-The source code is also capable of producing visualizations of mappings such as \cref{fig:deep_map,fig:deep_map_connected}, using neural nets instead of \gp{}s at each layer.
 
 
 
