@@ -668,23 +668,23 @@ The reported additional linear structure in the last row is explainable by the f
 As the noise increases, our method generally backs off to simpler structures, rather than over-fitting.
 
 \subsubsection{Source Code}
-Source code to perform all experiments is available at \url{github.com/jamesrobertlloyd/gpss-research/}. 
-All \gp{} parameter optimisation was performed by automated calls to the \GPML{} toolbox, available at \url{www.gaussianprocess.org/gpml/code/}.
+Source code to perform all experiments is available at \url{github.com/jamesrobertlloyd/gpss-research}. 
+All \gp{} parameter optimisation was performed by automated calls to the \GPML{} toolbox, available at \url{gaussianprocess.org/gpml/code}.
 
 
 \section{Discussion}
 
 Towards the goal of automating statistical modeling, we developed a system which constructs an appropriate model from an open-ended language, and automatically generates plots decomposing the different types of structure present in the model.
 
-We achieved this by introducing a space kernels defined compositionally as sums and products of a small number of base kernels.  
+This was done by introducing a space of kernels defined by sums and products of a small number of base kernels.  
 The set of models in this space includes many standard regression models.
 We proposed a search procedure for this space of kernels, and argued that this search process parallels the process of scientific discovery, and of model-building by statisticians.
 
-We found that the learned structures are often capable of accurate extrapolation in complex time-series datasets, and are competitive with widely used kernel classes and kernel combination methods on a variety of prediction tasks.
+We found that the learned structures are often capable of accurate extrapolation in time-series datasets, and are competitive with widely used kernel classes and kernel combination methods on a variety of prediction tasks.
 The learned kernels often yield decompositions of a signal into diverse and interpretable components, enabling model-checking by humans.
 We hope that this procedure has the potential to make powerful statistical model-building techniques accessible to non-experts.
 
-The next chapter will show how the model components found by this procedure can be automatically described in terms of English-language text.
+The next chapter will show how the model components found by this procedure can be automatically described using English-language text.
 
 \iffalse
 \section{Open Questions}

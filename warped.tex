@@ -287,10 +287,10 @@ The marginal likelihood of the latent Gaussian mixture will favor using as few d
 In fact, because each latent cluster has a different set of parameters, each cluster can have a different effective dimension.
 This allows the \iwmm{} to model manifolds of differing dimension in the observed space, as demonstrated in \cref{fig:warping}(b).
 
-\citet{nickisch2010gaussian} considered several extensions of the \gplvm{} which model the latent density with a mixture of Gaussians centered around the latent points.
-They approximated the observed density $p(\vY)$ by another mixture of Gaussians, obtained by moment-matching the warped latent Gaussians.
+\citet{nickisch2010gaussian} considered several modifications of the \gplvm{} which model the latent density using a mixture of Gaussians centered around the latent points.
+They approximated the observed density $p(\vY)$ by another mixture of Gaussians, obtained by moment-matching the latent Gaussians after they had been warped into the observed space.
 Training was done by maximizing a leave-some-out predictive density.
-This method had poor predictive performance compared to simple baselines, and did not have a generative clustering model.
+This method had poor predictive performance compared to simple baselines, and was not have a generative clustering model.
 %spherical Gaussian at each latent datapoint, and approximated the implied density in the observed space with another set of Gaussians, one for each datapoint.
 %This model enjoys some of the flexibility of the \iwmm{}, but 
 
@@ -615,6 +615,10 @@ Code to reproduce all the above experiments is available at \url{github.com/duve
 This chapter introduced a simple generative model of non-Gaussian density manifolds which can infer nonlinearly separable clusters, low-dimensional representations of varying dimension per cluster, and density estimates which smoothly follow the contours of each cluster.
 We then introduced a sampler for this model which integrates out both the cluster parameters and the warping function exactly.
 %We further demonstrated that allowing non-parametric cluster shapes improves clustering performance over the Dirichlet process Mixture of Gaussians.
+
+%Relatively flexible nonparametric clustering models already exist
+Non-probabilistic methods such as spectral clustering can also produce nonparametric cluster shapes, but usually lack principled methods for setting kernel parameters, the number of clusters, and the implicit dimension of the learned manifolds, other than by cross-validation.
+This chapter shows that using a fully generative model allows most model choices to be determined automatically.
 
 Many methods have been proposed which can perform some combination of clustering, manifold learning, density estimation and visualization.
 We demonstrated that a simple but flexible probabilistic generative model can perform well at all these tasks.
