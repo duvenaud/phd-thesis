@@ -170,7 +170,7 @@ supported!}
 \pdfpageheight=\the\paperheight
 \fi
 
-\RequirePackage[usenames, dvipsnames]{color} 
+\RequirePackage[usenames, dvipsnames]{xcolor} 
 
 % Stuff added by David Duvenaud
 \definecolor{mydarkblue}{rgb}{0.00,0.08,0.45}
@@ -226,9 +226,9 @@ supported!}
       urlcolor=mydarkblue,
       citecolor=mydarkblue, 
       anchorcolor=green,
-      pagebackref,
-      hyperindex = true,
-      hyperfigures
+%      pagebackref,
+%      hyperindex = true,
+%      hyperfigures
     }
     
     \ifPHD@custommargin

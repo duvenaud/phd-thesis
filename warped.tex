@@ -112,12 +112,11 @@ Grey lines show points being mapped through $f$.
 \begin{tabular}{ccc}
 Latent space $p(\vx)$ & & Observed space $p(\vy)$ \\
 \fbox{\includegraphics[height=15em,width=15em]{\gplvmfiguresdir/gplvm-latent-crop}} &
-\raisebox{7em}{$\overset{\mathlarger{\vf(\vx)}}{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\rightarrow}}}}}}}}$} &
-%\raisebox{7em}{\Huge $\overset{\textnormal{\Large{GP}}}\rightarrow$} &
+\raisebox{7em}{$\overset{ \textstyle \vf(\vx)}{ \mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{ \rightarrow}}}}}}$} &
 \fbox{\includegraphics[height=15em,width=15em]{\gplvmfiguresdir/gplvm-draw-crop}}
 \end{tabular}
 \caption[Two-dimensional Gaussian process latent variable model]{A draw from a multi-dimensional Gaussian process latent variable model.
-\emph{Left:}  Isocontours and samples from a 2D Gaussian, specifying the distribution $p(\vx)$ in the latent space. 
+\emph{Left:} Isocontours and samples from a 2D Gaussian, specifying the distribution $p(\vx)$ in the latent space. 
 \emph{Right:} Observed density $p(\vy)$ has a nonparametric shape, defined by warping the latent density through a function drawn from a \gp{} prior.}  
 \label{fig:twod-gplvm}
 \end{figure}
@@ -179,18 +178,10 @@ Just as the \gplvm{} can be viewed as a manifold learning algorithm, the \iwmm{}
 
 \begin{figure}
 \centering
-%\tabcolsep=0.1em
-%{\begin{tabular}{ccc}
-%\fbox{\includegraphics[trim=2em 0em 0em 0em, clip, height=13.5em,width=13.5em]{\warpedfiguresdir/iwmm_latent_N200_seed2155_darker}} &
-%\raisebox{5em}{$\rightarrow$} &
-%\fbox{\includegraphics[trim=8em 6em 6em 2em, clip, height=13.5em,width=13.5em]{\warpedfiguresdir/%iwmm_N200_seed2155_points1000000}}\\
-%Latent space & & Observed space \\
-%\end{tabular}}
 \begin{tabular}{ccc}
 Latent space $p(\vx)$ & & Observed space $p(\vy)$ \\
 \fbox{\includegraphics[trim=2em 0em 0em 0em, clip, height=15em,width=15em]{\warpedfiguresdir/iwmm_latent_N200_seed2155_darker}} &
-\raisebox{7em}{$\overset{\mathlarger{\vf(\vx)}}{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{\rightarrow}}}}}}}}$} &
-%\raisebox{7em}{\Huge $\overset{\textnormal{\Large{GP}}}\rightarrow$} &
+\raisebox{7em}{$\overset{ \textstyle \vf(\vx)}{ \mathlarger{\mathlarger{\mathlarger{\mathlarger{\mathlarger{ \rightarrow}}}}}}$} &
 \fbox{\includegraphics[trim=8em 6em 6em 2em, clip, height=15em,width=15em]{\warpedfiguresdir/iwmm_N200_seed2155_points1000000}}
 \end{tabular}
 \caption[A draw from the infinite warped mixture model prior]{
