@@ -1,6 +1,8 @@
 % All my custom preamble stuff.  Shouldn't overlap with anything in official-preamble
 
 
+
+
 % Paths to figure and table directories.
 \newcommand{\symmetryfigsdir}{figures/symmetries}
 \newcommand{\topologyfiguresdir}{figures/topology}
@@ -34,6 +36,9 @@
 \usepackage{rotating}
 \usepackage{array}
 \usepackage{fp}
+\usepackage{cleveref}   % Note: this package sometimes causes the page counter to reset.
+\crefname{equation}{equation}{equations}
+\crefname{figure}{figure}{figures}
 %\usepackage{common/sectsty}
 
 % Controls capitalization of all headers
@@ -80,9 +85,10 @@
 \fi
 }
 
-\usepackage{cleveref}
-\crefname{equation}{equation}{equations}
-\crefname{figure}{figure}{figures}
+\usepackage{stringstrings}
+
+%\newcommand{\headercase}{\
+%\DeclareFieldFormat{titlecase}{\MakeSentenceCase{#1}}
 
 
 %% For submission, make all render blank.
