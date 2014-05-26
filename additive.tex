@@ -363,6 +363,7 @@ We present two results ways to gain intuition about this model.
 First, if the kernel on each dimension has the form ${k_d(x_d, x_d') = g \left( \frac{x_d - x_d'}{\lengthscale_d} \right)}$, as does the \kSE{} kernel, then any input dimension can be dropped out by setting its lengthscale $\lengthscale_d$ to $\infty$.
 Thus, performing dropout on the inputs of a \gp{} corresponds to putting independent spike-and-slab priors on the lengthscales, with each dimension independently having $w_d = \infty$ with probability $\nicefrac{1}{2}$.
 
+
 Another way to understand the resulting prior is to note that the dropout mixture of \gp{}s \eqref{eq:dropout-mixture} has the same covariance as an additive \gp{}, scaled by a factor of $2^{-D}$:
 \begin{align}
 %f(\vx) \sim \textnormal{\gp} \left(0, \frac{1}{2^{-2D}} \sum_{\vr \in \{0,1\}^D}  \prod_{d=1}^D k_d(x_d, x_d')^{r_d} \right)
@@ -373,7 +374,6 @@ f(\vx) \sim \textnormal{\gp} \left(0, \frac{1}{2^{D}} \sum_{\vr \in \{0,1\}^D}  
 %
 Therefore, ignoring higher moments, dropout on the inputs of a \gp{} can be approximated by an additive \gp{} with all orders equally weighted.
 This suggests an interpretation of additive \gp{}s as an approximation to a mixture of models where each model only depends on a subset of the input variables.
-
 
 
 
