@@ -18,14 +18,14 @@
 %\subsubsection{Input and Output Warpings}
 
 
-\section{Structured versus Unstructured \sgp{} Models}
+\section{Structured versus unstructured models}
 
 One question left unanswered by this thesis is when to prefer the structured kernel based models described \cref{ch:kernels,ch:grammar,ch:additive} to the relatively unstructured deep \gp{} models described in \cref{ch:deep-limits}.
 
 The warped mixture model of \cref{ch:warped} represents a compromise between these two approaches, combining a discrete clustering model with an unstructured warping function.
 However, the results of \citet{damianou2012deep} suggest that clustering can be automatically accomplished by a sufficiently deep, unstructured \gp{}.
 
-\subsubsection{Difficulty of Optimization}
+\subsubsection{Difficulty of optimization}
 The discrete nature of the search over composite kernel structures can be seen as a blessing and a curse.
 Certainly, a mixed discrete and continuous optimization requires more complex procedures compared to the continuous-only optimization possible in deep \gp{}s.
 
@@ -45,14 +45,14 @@ However, we may lose some of the advantages of interpretability by this approach
 Another point to consider is that, in high dimensions, the line between interpolation and extrapolation is blurred.
 Learning a suitable representation of the data manifold may be sufficient for most purposes.
 
-\subsubsection{Ease of Interpretation}
+\subsubsection{Ease of interpretation}
 \Cref{ch:description} showed that composite kernels allow automatic visualization and desription of low-dimensional structure.
 On the other hand, \citet{damianou2012deep} showed that deep \gplvm{}s allow summarization of high-dimensional structure through showing samples from the posterior, examining the dimension of each latent layer, visualizing latent coordinates, or examining how the predictive distribution changes as one moves in the latent space.
 
 
 
 
-\section{Approaches to Automating Model Construction}
+\section{Approaches to automating model construction}
 
 This thesis is part of a larger push to automate the practice of model building and inference.
 Broadly speaking, this problem is being attacked from two directions.
@@ -76,7 +76,7 @@ However, large neural nets can capture enough different types of structure that 
 In any case, it seems clear that, one way or another, large parts of the existing practice of model-building will eventually be automated.
 % Benefit: systematically explores model space?
 
-\section{Approaches to Automating Model Description}
+\section{Approaches to automating model description}
 
 %The machine learning community has so far focused largely on producing efficient inference strategies for powerful model classes, which is sufficient for improving predictive performance.
 
@@ -85,7 +85,7 @@ To automate the practice of statistics, developing model-description procedures 
 
 
 
-\section{Summary of Contributions}
+\section{Summary of contributions}
 
 The main contribution of this thesis was to show how to automate the construction of interpretable nonparametric models of functions using Gaussian processes.
 This was done in several parts.
@@ -118,9 +118,9 @@ The second half of this thesis examined several extensions of Gaussian processes
 
 
 \iffalse
-\section{Why Assume Zero Mean?}
+\section{Why assume zero mean?}
 
-\section{Why Not Learn the Mean Function Instead?}
+\section{Why not learn the mean function instead?}
 One might ask: besides integrating over the magnitude, what is the advantage of moving the mean function into the covariance function?
 After all, mean functions are certainly more interpretable than a posterior distribution over functions.
 
@@ -147,7 +147,7 @@ In Chapter~\ref{ch:grammar}, we will compare a system which estimates a parametr
 
 
 
-\section{Signal versus Noise}
+\section{Signal versus noise}
 
 In most derivations of Gaussian processes, the model is given as
 %

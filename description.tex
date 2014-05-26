@@ -2,7 +2,7 @@
 \inbpdocument
 
 
-\chapter{Automatic Model Description}
+\chapter{Automatic model description}
 \label{ch:description}
 
 
@@ -55,7 +55,7 @@ James Lloyd wrote the code to automatically generate reports, and ran all of the
 %The text was written mainly by myself, James Lloyd, and Zoubin Ghahramani, with many helpful contributions and suggestions from Roger Grosse and Josh Tenenbaum.
 
 
-\section{Generating Descriptions of Kernels}
+\section{Generating descriptions of kernels}
 
 There are two main features of our language of \gp{} models that allow description to be performed automatically.
 First, the sometimes complicated kernel expressions found by the model search can always be simplified into a sum of products.
@@ -67,7 +67,7 @@ For example, we can describe the product of kernels $\kPer \kerntimes \kSE$ by r
 To simplify the system, we restrict the base kernels to $\kC$, $\kLin$, $\kWN$, $\kSE$, $\kPer$, and $\vsigma$ (allowing changepoints and change-windows).
 
 
-\subsection{Simplification Rules}
+\subsection{Simplification rules}
 
 In order to be able to use the same adjectives to for each type of kernel in different circumstances, we must convert each kernel expression into a standard, simplified form.
 
@@ -94,7 +94,7 @@ We use superscripts to distinguish between different instances of the same kerne
 %Formally, if $f_1(x) \dist \gp{}(0, \kernel_1)$ and independently $f_2(x) \dist \gp{}(0, \kernel_2)$ then ${f_1(x) + f_2(x) \dist \gp{}(0, \kernel_1 + \kernel_2)}$.
 %Because sums of kernels correspond to sums of functions, we can describe each product of kernels separately.
 
-\subsection{Describing Each Kernel in a Product}
+\subsection{Describing each kernel in a product}
 
 Loosely speaking, each kernel in a product modifies the resulting \gp{} model in a consistent way.
 This allows us to describe the contribution of each kernel in a product as an adjective, or more generally as a post-modifier of a noun.
@@ -164,7 +164,7 @@ Noun phrase descriptions of each type of kernel
 %
 \Cref{table:nouns} gives the corresponding description of each kernel before it has been multiplied by any other, written as a noun phrase.
 
-\subsection{Combining Descriptions into Noun Phrases}
+\subsection{Combining descriptions into noun phrases}
 
 In order to build a noun phrase describing a product of kernels, we can choose one kernel to act as a head noun, which is then modified by appending descriptions of the other kernels in the product.
 %described by the functions it encodes for when unmodified \eg `smooth function' for $\kSE$.
@@ -217,7 +217,7 @@ As a heuristic, we order components by always adding next the component which mo
 
 
 
-\subsection{Worked Example}
+\subsection{Worked example}
 
 Suppose we start with a kernel of the form
 \begin{align}
@@ -243,14 +243,14 @@ Finally, the third component is described as ``An approximately periodic functio
 
 
 
-\section{Example Descriptions}
+\section{Example descriptions}
 \label{sec:example-descriptions}
 In this section, we demonstrate the ability of our procedure to write intelligible desciptions of the structure present in two time series.
 %Full automatically-generated reports for 13 data sets are provided as supplementary material.
 The model descriptions were generated based off of models produced by the automatic search method presented in \cref{ch:grammar}.
 
 
-\subsection{Summarizing 400 Years of Solar Activity}
+\subsection{Summarizing 400 years of solar activity}
 \label{sec:solar}
 
 First, we show excerpts from the report automatically generated on annual solar irradiation data from 1610 to 2011.
@@ -330,7 +330,7 @@ The complete report generated on this dataset can be found in \cref{ch:example-s
 
 
 
-\subsection{Describing Changing Noise Levels} % in Air Traffic Data}
+\subsection{Describing changing noise levels} % in Air Traffic Data}
 \label{sec:airline}
 
 %\begin{figure}[ht!]
@@ -391,7 +391,7 @@ Other example reports describing a wide variety of time-series can be found at \
 
 
 
-\section{Related Work}
+\section{Related work}
 \label{sec:description-related-work}
 
 
@@ -405,11 +405,11 @@ However, systems with natural language output have been built in the areas of vi
 
 %We do not claim that
 
-\subsubsection{Source Code}
+\subsubsection{Source code}
 Source code to perform all experiments is available at \url{github.com/jamesrobertlloyd/gpss-research}. 
 
 
-\section{Conclusion}
+\section{Conclusions}
 Towards the goal of automating statistical modeling we have presented a system which, given a structured \gp{} model, automatically generates detailed reports that describe patterns in the data captured by the model.
 This, combined with the automatic model search of \cref{ch:grammar}, gives a procedure which can discover and describe a variety of patterns on several time series.
 

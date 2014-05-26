@@ -2,7 +2,7 @@
 \inbpdocument
 
 
-\chapter{Automatic Model Construction}% Structured Regression Models}
+\chapter{Automatic model construction}
 \label{ch:grammar}
 
 \begin{quotation}
@@ -49,17 +49,10 @@ James Lloyd ran most of the experiments, while I constructed most of the figures
 %Section \ref{sec:related_work} situates our work in the context of other nonparametric regression, kernel learning, and structure discovery methods.
 %We evaluate our methods on synthetic datasets, time series analysis, and high-dimensional prediction problems in Sections \ref{sec:synthetic} through \ref{sec:quantitative}, respectively.
 
-%What are the ingredients required for an artificial intelligence system to be able to perform statistical modeling automatically? 
-%In this paper we conjecture that the following ingredients may be useful for building an AI system for statistics, and we develop a working system which incorporates them:
-%\begin{itemize}
-%\item {\bf An open-ended language of models} expressive enough to capture many of the modeling assumptions and model composition techniques  applied by human statisticians to capture real-world phenomena
-%\item {\bf A search procedure} to efficiently explore the space of models spanned by the language
-%\item {\bf A principled method for evaluating models} in terms of their complexity and their degree of fit to the data
-%\item {\bf A procedure for automatically generating reports} which can explain and visualize different factors underlying the data, make the chosen modeling assumptions explicit, and quantify how each component improves the predictive power of the model 
-%\end{itemize}
 
 
-\section{Ingredients of an Automatic Statistician}
+
+\section{Ingredients of an automatic statistician}
 \label{sec:ingredients}
 \citet{gelman2013philblogpost} asks, ``How can an artificial intelligence do statistics? ... It needs not just an inference engine, but also a way to construct new models and a way to check models. Currently, those steps are performed by humans, but the AI would have to do it itself.''.
 %
@@ -93,7 +86,7 @@ The next four sections of this chapter describe the mechanisms we use to produce
 
 
 
-\section{A Language of Regression Models}
+\section{A language of regression models}
 \label{sec:improvements}
 
 As shown in \cref{ch:kernels}, we can construct a wide variety of kernel structures compositionally by adding and multiplying a small number of base kernels.
@@ -171,7 +164,7 @@ $\cos(\cdot, \cdot)$ is a special case of our reparametrised $\kPer(\cdot, \cdot
 
 
 
-\section{A Model Search Procedure}
+\section{A model search procedure}
 
 We explore the space of regression models using a simple greedy search.
 At each stage, we choose the highest scoring kernel, and propose modifying it by applying an operation to one of its parts, combining or replacing that part with another base kernel.
@@ -274,7 +267,7 @@ This corresponds to adding or multiplying with kernels on dimensions not yet inc
 
 
 
-\subsubsection{Hyperparameter Initialization}
+\subsubsection{Hyperparameter initialization}
 
 Unfortunately, optimizing the marginal likelihood over parameters is not a convex optimization problem, and the space can have many local optima.
 For example, in data with periodic structure, integer multiples of the true period (harmonics) are often local optima. 
@@ -287,7 +280,7 @@ This procedure is not guaranteed to find the global optimum, but it implements t
 
 
 
-\section{A Model Comparison Procedure}
+\section{A model comparison procedure}
 
 Choosing a kernel requires a method for comparing models.
 We choose marginal likelihood as our criterion, since it balances the fit and complexity of a model \citep{rasmussen2001occam}.
@@ -316,7 +309,7 @@ We chose to try \BIC{} first because of its simplicity, and it performed resonab
 
 
 
-\section{A Model Description Procedure}
+\section{A model description procedure}
 
 As discussed in \Cref{ch:kernels}, a \gp{} whose kernel is a sum of kernels can be viewed as a sum of functions drawn from different \gp{}s.
 We can always express any kernel structure as a sum of products of kernels, by distributing all products of sums.
@@ -334,14 +327,14 @@ In \cref{ch:description}, we extend this model visualization method to include a
 
 
 
-\section{Structure Discovery in Time Series}
+\section{Structure discovery in time series}
 \label{sec:time_series}
 
 To investigate our method's ability to discover structure, we ran the kernel search on several time-series.
 In the following examples, the search was run to depth 10, using \kSE{}, \kRQ{}, \kLin{}, \kPer{} and \kWN{} as base kernels.
 
 \label{sec:extrapolation}
-\subsection{Mauna Loa Atmospheric CO$\mathbf{_{2}}$}
+\subsection{Mauna Loa atmospheric CO$\mathbf{_{2}}$}
 
 Using our method, we analyzed records of carbon dioxide levels recorded at the Mauna Loa observatory.
 Since this dataset was analyzed in detail by \citet{rasmussen38gaussian}, we can compare the kernel chosen by our method to a kernel constructed by human experts.
@@ -391,7 +384,7 @@ More generally, some components capture slowly-changing structure while others c
 
 
 
-\subsection{Airline Passenger Counts}
+\subsection{Airline passenger counts}
 
 \begin{figure}[h!]
 \centering
@@ -438,18 +431,18 @@ In addition, the composite kernel captures the near-linearity of the long-term t
 
 
 
-\section{Related Work}
+\section{Related work}
 \label{sec:gpss-related-work}
 
 \def\rwsheader{\subsubsection}
 
-\rwsheader{Building Kernel Functions by Hand}
+\rwsheader{Building kernel functions by hand}
 \citet[Chapter 5]{rasmussen38gaussian} devote 4 pages to manually constructing a composite kernel to model the Mauna Loa dataset.
 %In the supplementary material, we include a report automatically generated by \procedurename{} for this dataset; our procedure chose a model similar to the one they constructed by hand.
 Other examples of papers whose main contribution is to manually construct and fit a composite \gp{} kernel are \citet{EdgarTelescope,lloydgefcom2012,textperiodic13}.
 
 
-\rwsheader{Nonparametric Regression in High Dimensions}
+\rwsheader{Nonparametric regression in high dimensions}
 Nonparametric regression methods such as splines, locally-weighted regression, and \gp{} regression are popular because they are capable of learning arbitrary smooth functions of the data.
 Unfortunately, they suffer from the curse of dimensionality: it is very difficult for these models to generalize well in more than a few dimensions.
 
@@ -472,7 +465,7 @@ Semi-parametric regression \citep[e.g.][]{ruppert2003semiparametric} attempts to
 This model class can be represented through the kernel ${\kSE \kernplus \kLin}$.
 
 
-\rwsheader{Kernel Learning}
+\rwsheader{Kernel learning}
 There is a large body of work attempting to construct a rich kernel through a weighted sum of many base kernels \citep[e.g.][]{gonen2011multiple, Bach_HKL}.
 These approaches usually admit a convex objective function.
 However the component kernels, as well as their parameters, must be specified in advance.
@@ -495,7 +488,7 @@ These approaches find the optimal solution in polynomial time, but only if the c
 We compare to a Bayesian variant of \MKL{} in \cref{sec:numerical}, expressed as a restriction of our language of kernels.
 
 
-\rwsheader{Equation Learning}
+\rwsheader{Equation learning}
 \cite{todorovski1997declarative}, \cite{washio1999discovering} and \cite{Schmidt2009b} learn parametric forms of functions specifying time series, or relations between quantities.
 In contrast, \procedurename{} learns a parametric form for the covariance, allowing it to model functions which do not have a simple parametric form but still have high-level structure.
 An examination of the structure discovered by the automatic equation-learning software Eureqa \citep{Eureqa} on the airline and Mauna Loa datasets can be found in \citet{LloDuvGroetal14}.
@@ -503,7 +496,7 @@ An examination of the structure discovered by the automatic equation-learning so
 
 
 
-\rwsheader{Structure Discovery through Grammars}
+\rwsheader{Structure discovery through grammars}
 
 
 \citet{kemp2008discovery} learned the structural form of a graph used to model human similarity judgements.
@@ -537,7 +530,7 @@ More generally, \citet{dechter2013bootstrap} and \citet{liang2010learning} const
 \section{Experiments}
 \label{sec:numerical}
 
-\subsection{Interpretability versus Accuracy}
+\subsection{Interpretability versus accuracy}
 
 BIC trades off model fit and complexity by penalizing the number of parameters in a kernel expression.
 This can result in \procedurename{} favoring kernel expressions with nested products of sums, producing descriptions involving many additive components when expressions are expanded.
@@ -547,7 +540,7 @@ This was achieved by distributing all products immediately after each search ope
 We call this procedure \procedurename{}-interpretability, in contrast to the unrestricted version of the search, \procedurename{}-accuracy.
 
 
-\subsection{Predictive Accuracy on Time Series}
+\subsection{Predictive accuracy on time series}
 
 
 %\subsubsection{Datasets}
@@ -578,7 +571,7 @@ Constructing a language of autoregressive time-series models would be an interes
 
 
 
-\subsubsection{Extrapolation Experiments}
+\subsubsection{Extrapolation experiments}
 
 To test extrapolation, we trained all algorithms on the first 90\% of the data, predicted the remaining 10\% and then computed the root mean squared error (\RMSE{}).
 The \RMSE{}s are then standardised by dividing by the smallest \RMSE{} for each data set, so the best performance on each data set will have a value of 1.
@@ -614,14 +607,14 @@ Not shown on the plot are large outliers for spectral kernels, Eureqa, squared e
 
 
 
-\subsection{High-dimensional Prediction}
+\subsection{High-dimensional prediction}
 
 \procedurename{} can also be applied to multidimensional regression problems without modification.
 An experimental comparison with other methods can be found in \cref{sec:additive-experiments}, where it outperforms a wide variety of multidimensional regression methods.
 
 
 
-\subsection{Structure Recovery on Synthetic Data}
+\subsection{Structure recovery on synthetic data}
 \label{sec:synthetic}
 
 The structure found in the examples above may seem reasonable, but we may wonder to what extent \procedurename{} is consistent - that is, when do we recover all the structure in any given dataset?
@@ -667,7 +660,7 @@ For the highest \SNR{}, the method finds all relevant structure except in one ca
 The reported additional linear structure in the last row is explainable by the fact that functions sampled from \kSE{} kernels with long length-scales occasionally have near-linear trends.
 As the noise increases, our method generally backs off to simpler structures, rather than over-fitting.
 
-\subsubsection{Source Code}
+\subsubsection{Source code}
 Source code to perform all experiments is available at \url{github.com/jamesrobertlloyd/gpss-research}. 
 All \gp{} parameter optimisation was performed by automated calls to the \GPML{} toolbox, available at \url{gaussianprocess.org/gpml/code}.
 

@@ -2,7 +2,7 @@
 \inbpdocument
 
 
-\chapter{Deep Gaussian Processes}
+\chapter{Deep Gaussian processes}
 \label{ch:deep-limits}
 
 \begin{quotation}
@@ -37,7 +37,7 @@ The ideas contained in this chapter were developed through discussions with Oren
 
 %\section{Relations to Neural Networks}
 %\section{Relating Neural Networks to Deep Gaussian\\ \mbox{Processes}}
-\section{Definition and Relation to Neural Networks}
+\section{Definition and relation to neural networks}
 \label{sec:relating}
 
 In this chapter, we'll define a deep \gp{} as any prior on functions constructed by composing draws from \gp{} priors.
@@ -58,7 +58,7 @@ The rest of this section shows the precise relationship between Gaussian process
 
 %\subsection{A neural net with one hidden layer}
 %\vspace{-0.05in}
-\subsection{Single-layer Models}
+\subsection{Single-layer models}
 
 First, we will relate neural networks with one hidden layer to Gaussian processes, using the
 standard neural network architecture known as the multi-layer perceptrion (\MLP{}).
@@ -265,7 +265,7 @@ Neural net corresponding to a \gp{} & Net corresponding to a \gp{} with a deep k
 
 
 
-\subsection{Multiple Hidden Layers}
+\subsection{Multiple hidden layers}
 
 %\paragraph{Fixed nonlinearities}
 In an \MLP{} with multiple hidden layers, activation of the $\layerindex$th layer units are given by
@@ -296,7 +296,7 @@ Thus, unless we richly parameterize these kernels, their capacity to learn an ap
 
 
  
-\subsection{Two Network Architectures Equivalent to Deep \sgp{}s}
+\subsection{Two network architectures equivalent to deep \sgp{}s}
 
 \def\halfshift{0.0cm}
 
@@ -524,7 +524,7 @@ This second view lets us compare deep \gp{} models to standard neural net archit
 
 
 
-\section{Characterizing Deep Gaussian Processes}
+\section{Characterizing deep Gaussian process priors}
 \label{sec:characterizing-deep-gps}
 
 In this section, we develop several theoretical results that explore the behavior of deep \gp{}s as a function of their depth.
@@ -534,7 +534,7 @@ Specifically, we will show that the size of the derivative of a one-dimensional 
 We will also show that the Jacobian of a multivariate deep \gp{} is a product of independent Gaussian matrices with independent entries.
 
 
-\subsection{One-dimensional Asymptotics}
+\subsection{One-dimensional asymptotics}
 \label{sec:1d}
 
 %One way to understand the properties of functions drawn from deep \gp{}s and deep networks is by looking at the distribution of the derivative of these functions. We first focus on the one-dimensional case.
@@ -724,7 +724,7 @@ By lemma \ref{thm:matrix}, each ${J^{(\layerindex)}_{i,j} \simind \mathcal{N}}$,
 
 
 
-\section{Formalizing a Pathology}
+\section{Formalizing a pathology}
 \label{sec:formalizing-pathology}
 
 \citet{rifai2011higher} argue that good representations of data manifolds are invariant in directions orthogonal to the manifold.
@@ -843,7 +843,7 @@ Thus, these pathologies are unlikely to severely effect the relatively shallow, 
 
 
 
-\section{Fixing the Pathology}
+\section{Fixing the pathology}
 \label{sec:fix}
 
 As suggested by \citet[chapter 2]{neal1995bayesian}, we can fix the pathologies exhibited in figures \cref{fig:filamentation} and \ref{fig:deep_map} by simply making each layer depend not only on the output of the previous layer, but also on the original input $\vx$.  
@@ -1044,7 +1044,7 @@ In particular, care would need to be taken to ensure that the networks do not pr
 
 
 
-\section{Deep Kernels}
+\section{Deep kernels}
 \label{sec:deep_kernels}
 
 
@@ -1057,7 +1057,7 @@ To return to an example given in \cref{sec:expressing-symmetries}, periodic kern
 %In addition to analyzing \MLP{}s with random weights, we can also analyze fixed feature mappings with different connectivity architectures.
  
 We can construct other useful kernels by composing fixed feature maps several times, creating deep kernels.
-In this section, we build on the work of \citet{cho2009kernel}, who derived several kinds of deep kernels by applying multiple layers of feature mappings.
+This section builds on the work of \citet{cho2009kernel}, who derived several kinds of deep kernels by applying multiple layers of feature mappings.
 
 %Given a kernel $k_1(\vx, \vx') = \hPhi(\vx) \tra \hPhi(\vx')$, 
 In principle, we can compose the feature mapping of any two kernels to get a new one:
@@ -1108,7 +1108,7 @@ If $k(\vx, \vx') = \hPhi(\vx)\tra \hPhi(\vx')$, then
 %  Because this is true for $k_2$ as well, this recursion holds in general, and we have that $k_{n+1}(x,y) = e^{k_n(x, y) - 1}$.  
 This formula lets expresses the composed kernel function $\kSE \circ k$ exactly in terms of evaluations of the original kernel function $k$.
 
-\subsection{Infinitely Deep Kernels}
+\subsection{Infinitely deep kernels}
 What happens when we repeat this composition of feature maps many times, starting with the squared-exp kernel?
 If the output variance $k(\vx,\vx) = 1$, then in the infinite limit, this operation converges to $\left(\kSE \circ \kSE \circ \kSE \circ \ldots \kSE\right)(\vx,\vx') = 1$ for all pairs of inputs, which corresponds to a prior on constant functions $f(\vx) = c$.
 
@@ -1197,7 +1197,7 @@ It is easy to show that in the limit of infinite depth, both these architectures
 %Which also has the solution $k_\infty = \delta( \vx = \vx' )$, a white noise kernel.
 
 
-\subsection{When are Deep Kernels Useful Models?}
+\subsection{When are deep kernels useful models?}
 
 Kernels correspond to fixed feature maps, and so kernel learning is an example of implicit representation learning. %can compute %useful representations.
 As we saw in \cref{ch:kernels,ch:grammar}, kernels can capture rich structure and can enable many types of generalization.
@@ -1211,13 +1211,13 @@ To put it another way, any fixed representation is unlikely to be useful unless 
 
 
 
-\section{Related Work}
+\section{Related work}
 
-\subsubsection{Deep Gaussian Processs}
+\subsubsection{Deep Gaussian processs}
 \citet[chapter 2]{neal1995bayesian} discussed the properties of arbitrarily deep Bayesian neural networks, including those that would give rise to deep \gp{}s.
 He noted that infinitely deep random neural networks without extra connections to the input would be equivalent to a Markov chain, and therefore would lead to degenerate priors on functions.
 He also suggested connecting the input to each layer in order to fix this problem.
-Much of the analysis in this chapter can be seen as a detailed investigation which vindicates these claims.
+Much of the analysis in this chapter can be seen as a detailed investigation and vindication of these claims.
 
 The first instance of deep \gp{}s being used in practice was \citep{lawrence2007hierarchical}, who presented a model called ``hierarchical \gplvm{}s'', in which time was mapped through a composition of multiple \gp{}s to produce observations.
 
@@ -1231,7 +1231,7 @@ Depending on kernel parameters, these latent variables may or may not depend on 
 In general, supervised models can also be latent-variable models.
 For example, \citet{wang2012gaussian} investigated single-layer \gp{} regression models that had additional latent inputs.
 
-\subsubsection{Nonparametric Neural Networks}
+\subsubsection{Nonparametric neural networks}
 %Other Bayesian deep neural network models have been proposed by, for example, . % and Sum-product networks \cite{poon2011sum}  
 \citet{adams2010learning} proposed a prior on arbitrarily deep Bayesian networks with an unknown and unbounded number of hidden units in each layer.
 Their architecture has connections only between adjacent layers, and may also be expected to have similar pathologies to those of deep \gp{}s as the number of layers increases.
@@ -1267,11 +1267,11 @@ This prior on functions has a similar form to the Jacobian of a deep \gp{} (\cre
 
 
 
-\subsubsection{Recurrent Networks}
+\subsubsection{Recurrent networks}
 \cite{bengio1994learning} and \cite{pascanu2012understanding} analyze a related problem with gradient-based learning in recurrent nets, the ``exploding-gradients'' problem.
 They note that in recurrent neural networks, the size of the training gradient can grow or shrink exponentially as it is back-propagated, making gradient-based training difficult.
 
-\subsubsection{Deep Kernels}
+\subsubsection{Deep kernels}
 
 The first systematic examination of deep kernels was done by \citet{cho2009kernel}, who derived closed-form composition rules for $\kSE$, polynomial, and arc-cosine kernels, and showed that deep arc-cosine kernels performed competitively in machine-vision applications when used in a \SVM{}.
 %\citet{cho2012kernel} 
@@ -1279,7 +1279,7 @@ The first systematic examination of deep kernels was done by \citet{cho2009kerne
 \cite{hermans2012recurrent} constructed deep kernels in a time-series setting, constructing kernels corresponding to infinite-width \emph{recurrent} neural networks.
 They also proposed concatenating the implicit feature vectors from previous time-steps with the current inputs, resulting in an architecture analogous to the input-connected architecture proposed by \citet[chapter 2]{neal1995bayesian}.
 
-\subsubsection{Analyses of Deep Learning}
+\subsubsection{Analyses of deep learning}
 \cite{montavon2010layer} performed a layer-wise analysis of deep networks, and noted that the performance of \MLP{}s degrades as the number of layers with random weights increases.
 
 The experiments of \cite{saxe2011random} suggested that most of the performance of convolutional neural networks could be attributed to the architecture alone.
@@ -1295,7 +1295,7 @@ Later, \cite{saxedynamics} looked at the dynamics of gradient-based training met
 %Just as layer-wise unsupervised pre-training encourages the projection of the data into a representation with independent features in the higher layers, so does the procedure outlined here.  This is because the isotropic kernel does not penalize independence between different dimensions, only the number of dimensions.
 
 
-\subsubsection{Source Code}
+\subsubsection{Source code}
 Source code to produce all figures is available at \url{github.com/duvenaud/deep-limits}.
 The source code is also capable of producing visualizations of mappings such as \cref{fig:deep_map,fig:deep_map_connected} using neural nets instead of \gp{}s at each layer.
 
