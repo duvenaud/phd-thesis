@@ -33,7 +33,7 @@ The next chapter will describe many of the types of functions which we know how 
 
 
 
-\section{Gaussian Process Models}
+\section{Gaussian Process models}
 
 Gaussian processes are a simple and general class of models of functions.
 %
@@ -83,7 +83,7 @@ However, these are just a few familiar examples out of a wide range of possibili
 One of the main difficulties in using \gp{}s is constructing a kernel which represents the particular structure present in the data being modelled.
 
 
-\subsection{Model Selection}
+\subsection{Model selection}
 
 The crucial property of \gp{}s that allows us to automatically construct models is that we can compute the \emph{marginal likelihood} of a dataset given a particular model, also known as the \emph{evidence} \citep{mackay1992bayesian}.
 The marginal likelihood allows us to compare models and automatically discover the appropriate amount of detail to use, due to Bayesian Occam's razor \citep{rasmussen2001occam,mackay2003information}.
@@ -125,7 +125,7 @@ Our use of probabilities does not mean that we are assuming the function being l
 
 
 
-\subsection{Useful Properties of Gaussian Processes}
+\subsection{Useful properties of Gaussian processes}
 \label{sec:useful-properties}
 
 There are several reasons why \gp{}s in particular are well-suited for building a language of regression models:
@@ -156,7 +156,6 @@ This means that \gp{}s can easily be composed with other models or decision proc
 %For example, in reinforcement learning applications, 
 
 \item {\bf Easy to analyze.}
-%\subsection{Why stick to such a limited model class?}
 It may seem unsatisfying to restrict ourselves to a limited model class, as opposed to trying to do inference in the set of all computable functions.
 However, simple models can be used as well-understood building blocks for constructing more interesting models. %in diverse settings.
 
@@ -172,7 +171,7 @@ Gaussian processes can be seen as an extension of linear models which retain the
 
 
 
-\subsection{Limitations of Gaussian Processes}
+\subsection{Limitations of Gaussian processes}
 
 There are, unfortunately, several issues which make usage of \gp{}s sometimes difficult:
 
@@ -207,7 +206,7 @@ However, until recently, human experts were still required to choose the paramet
 
 
 
-\section{Outline and Contributions of Thesis}
+\section{Outline and contributions of thesis}
 
 The main contribution of this thesis is to show how to automate the discovery and explanation of structure in functions, simply by searching an open-ended language of regression models.
 This thesis also includes a set of related results showing how Gaussian processes can be extended, or composed with other models.

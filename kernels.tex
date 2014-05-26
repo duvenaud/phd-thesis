@@ -1,7 +1,7 @@
 \input{common/header.tex}
 \inbpdocument
 
-\chapter{Expressing Structure with Kernels}
+\chapter{Expressing structure with kernels}
 \label{ch:kernels}
 
 This chapter shows how to use kernels to build models of functions with many different kinds of structure: additivity, symmetry, periodicity, interactions between variables, and changepoints.
@@ -35,7 +35,7 @@ The kernel specifies which functions are likely under the \gp{} prior, which in 
 
 
 
-\section{A Few Basic Kernels}
+\section{A few basic kernels}
 \label{sec:basic-kernels}
 
 To begin understanding the types of structures expressible by \gp{}s, we will start by briefly examining the priors on functions encoded by some commonly used kernels:
@@ -84,7 +84,7 @@ In contrast, the linear kernel $\kLin$ is non-stationary, meaning that the corre
 
 
 
-\section{Combining Kernels}
+\section{Combining kernels}
 
 What if the kind of structure we need is not expressed by any existing kernel?
 For many types of structure, it is possible to build a ``made to order'' kernel with the desired properties.
@@ -110,7 +110,7 @@ To remove clutter, we will usually refer to kernels without specifying their par
 
 
 
-\subsection{Combining Properties through Multiplication}
+\subsection{Combining properties through multiplication}
 
 %Multiplying kernels allows us to account for interactions between different input dimensions, or to combine different notions of similarity.
 
@@ -161,7 +161,7 @@ For example, the kernel $\kSE \kerntimes \kLin \kerntimes \kPer$ is a prior on f
 We will see examples of real datasets with this kind of structure in \cref{ch:grammar}.
 
 
-\subsection{Building Flexible Multidimensional Models}
+\subsection{Building flexible multidimensional models}
 
 %For instance, in multidimensional data, the multiplicative kernel $\SE_1 \kerntimes \SE_2$ represents a smoothly varying function of dimensions 1 and 2 which is not constrained to be additive.
 
@@ -214,7 +214,7 @@ Below, we will investigate ways to encode more structure into kernels.
 
 
 
-\section{Modeling Sums of Functions}
+\section{Modeling sums of functions}
 
 An additive function is one which can be expressed as $f(\vx) = f_a(\vx) + f_b(\vx)$.
 %
@@ -262,7 +262,7 @@ Kernels $\kernel_a$ and $\kernel_b$ can be kernels of different types, allowing 
 We can also sum any number of components this way.
 
 
-\subsection{Additivity Across Multiple Dimensions}
+\subsection{Additivity across multiple dimensions}
 \label{sec:additivity-multiple-dimensions}
 
 When modeling functions of multiple dimensions, summing kernels can give rise to additive structure across different dimensions.
@@ -315,7 +315,7 @@ f(x_1, x_2) & = f_1(x_1) + f_2(x_2)
 Note that the product of two kernels does not have an analogous interpretation as the product of two functions.
 
 
-\subsection{Long-range Extrapolation through Additivity}
+\subsection{Long-range extrapolation through additivity}
 \label{sec:additivity-extrapolation}
 
 Additive structure often allows us to make predictions far from the training data.
@@ -354,7 +354,7 @@ In high dimensions, we can also consider sums of functions of more than one dime
 
 
 
-\subsection{Example: An Additive Model of Concrete Strength}
+\subsection{Example: an additive model of concrete strength}
 \label{sec:concrete}
 
 To illustrate how additive kernels give rise to interpretable models, we will build an additive model of the strength of concrete as a function of the amount of seven different ingredients, plus the age of the concrete \citep{yeh1998modeling}.
@@ -409,7 +409,7 @@ The ability to learn kernel parameters in this way is much more difficult when u
 
 
 
-\subsection{Posterior Variance of Additive Components}
+\subsection{Posterior variance of additive components}
 \label{sec:posterior-variance}
 
 
@@ -474,7 +474,7 @@ To extend these formulas to a sum of more than two functions, the term $\vK_1 + 
 
 
 
-\subsubsection{Posterior Covariance of Additive Components}
+\subsubsection{Posterior covariance of additive components}
 
 %One of the advantages of using a generative, model-based approach is that we can examine any aspect of the model we wish to.
 We can also compute the posterior covariance between any two components, conditioned on their sum:
@@ -522,19 +522,7 @@ Dimensions `Coarse' and `Fine' are not shown, because their variance is zero.
 %
 \Cref{fig:interpretable interactions} shows the posterior correlation between all non-zero components of the concrete model.
 Most of the correlation occurs within components, but there is also negative correlation between the ``Cement'' and ``Slag'' variables.
-%We can see that there is negative correlation between the ``Cement'' and ``Slag'' variables.
 This reflects an ambiguity in the model about which one of these functions is high and the other low.
-
-
-
-%\subsection{Interpreting Additive Models in High Dimensions}
-%As noted by \citet{plate1999accuracy}, o
-%One advantage of additive models is their interpretability.
-% since a high-dimensional function is decomposed into a series of one- or two-dimensional functions.  
-%\citet{plate1999accuracy} demonstrated that by allowing high-order interactions as well as low-order interactions, one can trade off interpretability with predictive accuracy.
-%In the case where the kernel parameters indicate that most of the variance in a function can be explained by low-order interactions, it is informative to plot the corresponding low-order functions, as in Figure \ref{fig:interpretable functions}. 
-
-
 
 
 
@@ -579,7 +567,7 @@ The parameters of the sigmoid determine where, and how rapidly, this change occu
 
 We can also express a function whose structure changes within some interval -- a \emph{change window} -- by replacing $\sigma(x)$ with a product of two sigmoids, one increasing and one decreasing.
 
-\subsection{Multiplication by a Known Function}
+\subsection{Multiplication by a known function}
 
 More generally, we can model an unknown function that's been multiplied by some fixed, known function $a(x)$, by multiplying the kernel by $a(\vx) a(\vx')$.
 Formally,
@@ -593,7 +581,7 @@ f(\iva) = a(\iva) g(\iva), \quad g \sim \GPdist{g}{\vzero}{k(\iva, \iva')} \quad
 
 
 
-\section{Feature Representation}
+\section{Feature representation of kernels}
 %
 By Mercer's theorem \citep{mercer1909functions},
 %Due to \citet{mercer1909functions}, we know that
@@ -613,7 +601,7 @@ In some cases, $\InputSpace$ can even be the infinite-dimensional feature mappin
 
 
 
-\subsection{Relation to Linear Regression}
+\subsection{Relation to linear regression}
 
 Surprisingly, \gp{} regression is equivalent to Bayesian linear regression on the implicit features $\feat(\vx)$ which give rise to the kernel:
 %
@@ -626,7 +614,7 @@ f(\iva) = \vw\tra \feat(\iva), \quad \vw \sim \N{\vw}{\vzero}{\vI} \quad
 The link between Gaussian processes, linear regression, and neural networks is explored further in \cref{ch:deep-limits}.
 
 
-\subsection{Feature-space View of Combining Kernels}
+\subsection{Feature-space view of combining kernels}
 
 \def\feata{\va}
 \def\featb{\vb}
@@ -679,7 +667,7 @@ h_{ij}(x_1, x_2) \propto \exp \left( -\frac{1}{2} \frac{(x_1 - c_i)^2}{2\ell_1^2
 
 
 
-\section{Expressing Symmetries and Invariants}
+\section{Expressing symmetries and invariants}
 \label{sec:expressing-symmetries}
 
 \def\gswitch{G_\textnormal{swap}}
@@ -691,7 +679,7 @@ Many types of symmetry can be enforced through operations on the kernel.
 We will demonstrate the properties of the resulting models by sampling functions from their priors.
 By using these functions to define warpings from $\Reals^2 \to \Reals^3$, we will show how to build a nonparametric prior on an open-ended family of topological manifolds, such as cylinders, toruses, and M\"{o}bius strips.
 
-\subsection{Three Recipes for Invariant Priors}
+\subsection{Three recipes for invariant priors}
 
 Consider the scenario where we have a finite set of transformations of the input space $\{g_1, g_2, \ldots \}$ to which we wish our function to remain invariant:
 %
@@ -757,7 +745,7 @@ All three methods introduce a different type of nonstationarity.
 %
 \begin{enumerate}
 
-\item {\bf Sum over the Orbit.} 
+\item {\bf Sum over the orbit.} 
 \citet{ginsbourger2012argumentwise} and \citet{kondor2008group} suggest enforcing invariants through a double sum over the orbits of $\vx$ and $\vx'$ with respect to G:
 %
 \begin{align}
@@ -779,7 +767,7 @@ This construction has the property that the marginal variance is doubled near $x
 
 
 
-\item {\bf Project onto a Fundamental Domain.}
+\item {\bf Project onto a fundamental domain.}
 \citet{Invariances13} also explore the possibility of projecting each datapoint into a fundamental domain of the group, using a mapping $A_G$:
 %
 \begin{align}
@@ -790,7 +778,7 @@ For the group $\gswitch$, a fundamental domain is $\{x, y : x < y\}$, which can 
 Constructing a kernel using this method introduces a non-differentiable  ``seam'' along $x = y$, as shown in \cref{fig:add_vs_min}(center).
 %The projection method also works for infinite groups, as we shall see below.
 
-\item {\bf Multiply over the Orbit.}
+\item {\bf Multiply over the orbit.}
 \citet{adams2013product} suggests a construction enforcing invariants through products over the orbits:
 %
 \begin{align}
@@ -810,7 +798,7 @@ For example, simply setting $k(\vx, \vx') = 0$ gives rise to a \gp{} prior which
 %In this section, we give recipes for expressing several classes of symmetries.  Later, we will show how these can be combined to produce more interesting structures.
 
 
-\subsection{Example: Periodicity}
+\subsection{Example: periodicity}
 
 %We can enforce periodicity on any subset of the dimensions:
 Periodicity in a one-dimensional function corresponds to the invariance
@@ -838,7 +826,7 @@ Simple algebra reduces this kernel to the form shown in \cref{fig:basic_kernels}
 We could also build a periodic kernel with period $\tau$ by the mapping $A(x) = \mod(x, \tau)$.
 However, samples from this prior would be discontinuous at every integer multiple of $\tau$.
 
-\subsection{Example: Symmetry About Zero}
+\subsection{Example: symmetry about zero}
 
 Another simple example of an easily-enforceable symmetry is symmetry about zero:
 %
@@ -871,7 +859,7 @@ k_{\textnormal{reflect}}(x, x') & = k(x, x') + k(x, -x') + k(-x, x') + k(-x, -x'
 
 
 
-\subsection{Example: Translation Invariance in Images}
+\subsection{Example: translation invariance in images}
 
 Most models of images are invariant to spatial translations \citep{lecun1995convolutional}.
 Similarly, most models of sounds are also invariant to translation through time.
@@ -916,7 +904,7 @@ The extension to two dimensions, $\shift(\vx, i, j)$, is straightforward, but no
 
 
 
-\section{Generating Topological Manifolds}
+\section{Generating topological manifolds}
 \label{sec:topological-manifolds}
 
 In this section we give a geometric illustration of the symmetries encoded by different compositions of kernels.
@@ -950,15 +938,11 @@ By enforcing that the functions mapping from $\mathbb{R}^2$ to $\mathbb{R}^3$ ob
 Higher-dimensional analogues of these shapes can be constructed by increasing the latent dimension and including corresponding terms in the kernel.
 For example, an $N$-dimensional space with kernel $\kPer_1 \kerntimes \kPer_2 \kerntimes \ldots \kerntimes \kPer_N$ will give rise to a prior on $N$-dimensional toruses.
 
-This construction is similar in spirit to the \gp{} latent variable model (\gplvm{}) of \citet{lawrence2005probabilistic}, which learns a latent embedding of the data into a low-dimensional space, using a \gp{} prior on the mapping from the latent space to the observed space.%and constructs a fixed kernel structure over that space.
-%The GP-LVM will be discussed in further detail in chapter ...
-
-%\subsection{Surfaces, Cylinders and Torii}
+This construction is similar in spirit to the \gp{} latent variable model (\gplvm{}) of \citet{lawrence2005probabilistic}, which learns a latent embedding of the data into a low-dimensional space, using a \gp{} prior on the mapping from the latent space to the observed space.
 
 
 
-
-\subsection{M\"{o}bius Strips}
+\subsection{M\"{o}bius strips}
 
 A prior on functions on M\"{o}bius strips can be constructed by enforcing the symmetries:
 %
@@ -1017,7 +1001,7 @@ but instead resembles an embedding known as the Sudanese M\"{o}bius strip \citep
 
 
 
-\section{Kernels on Categorical Variables}
+\section{Kernels on categorical variables}
 
 %Kernels can be defined over all types of data structures: Text, images, matrices, and even kernels . Coming up with a kernel on a new type of data used to be an easy way to get a NIPS paper.
 
@@ -1102,7 +1086,7 @@ Long-term trend & Weekly periodicity &Yearly periodicity \\
 
 
 
-\section{Building a Kernel in Practice}
+\section{Building a kernel in practice}
 
 %\subsection{Learning Kernel Parameters}
 
@@ -1124,7 +1108,7 @@ The kernel parameters estimated in the examples above were optimized using the \
 %We demonstrate that marginal likeihood an be used to automatically search over such structures.
 The next chapter will show how to perform such a search not just over the kernel parameters, but also over the open-ended space of kernel expressions.
 
-\subsubsection{Source Code}
+\subsubsection{Source code}
 Source code to produce all figures is available at \url{github.com/duvenaud/phd-thesis}.
 
 %\section{Conclusion}
