@@ -102,7 +102,7 @@ However, if the function also contains lower-order interactions, capturing that 
 
 %\subsection{Why additive functions can be expected to be a good model}
 
-\section{Additive Kernels}
+\section{Defining Additive Kernels}
 
 We now give a precise definition of the additive kernels introduced in this chapter.
 We first assign each dimension $i \in \{1 \dots D\}$ a one-dimensional \emph{base kernel} $k_i(x_i, x'_i)$.
@@ -193,7 +193,7 @@ If low-dimensional additive structure is not present, the kernel parameters can 
 
 
 
-\subsection{Efficient Evaluation of Additive Kernels}
+\subsection{Additive Kernels can be Efficiently Evaluated}
 An additive kernel over $D$ inputs with interactions up to order $n$ has $O(2^n)$ terms.
 Na\"{i}vely summing over these terms quickly becomes intractable.
 In this section, we show how one can evaluate the sum over all terms in $O(D^2)$, while still weighting each order seperately.
@@ -239,7 +239,7 @@ This allows us to optimize the base kernel parameters with respect to the margin
 %  The final derivative is a sum of multilinear terms, so if only one term depends on the hyperparameter under consideration, we can factorise it out and compute the sum with one degree less.
 
 
-\subsection{Computational Cost}
+\subsubsection{Computational Cost}
 The computational cost of evaluating the Gram matrix $k(\vX, \vX)$ of a product kernel such as the \seard{} scales as $\mathcal{O}(N^2D)$, while the cost of evaluating the Gram matrix of the additive kernel scales as $\mathcal{O}(N^2DR)$, where $R$ is the maximum degree of interaction allowed (up to $D$).
 In higher dimensions, this can be a significant cost, even relative to the fixed $\mathcal{O}(N^3)$ cost of inverting the Gram matrix.
 However, \cref{tbl:all_orders} shows that sometimes only the first few orders of interaction are important.
@@ -247,7 +247,7 @@ Hence if one is computationally limited, one may be able to limit the maximum de
 
 
 
-\section{Non-local Interactions}
+\section{Additive Models Allow Non-local Interactions}
 %In this section we give one motivation for why low-order interactions might help our predictive accuracy.
 %
 %The SE-GP model relies on local smoothing to make predictions at novel locations.  Recent work by Bengio et. al. discusses the limitations
@@ -322,9 +322,11 @@ Recall from \cref{sec:relating} that \gp{}s can be derived as an infinitely-wide
 Mercer's theorem implies that we can write any \gp{} prior equivalently in this way.
 Having expressed a \gp{} as a neural network, we can examine the prior we get from performing dropout in this network.
 
+This result does not hold in neural networks having a finite number of hidden features with Gaussian-distributed weights, another model class that gives rise to \gp{}s.
 
 
-\subsection{Dropout on Hidden Units}
+
+\subsection{Dropout on Infinitely-Many Hidden Units has No Effect}
 
 First, we will examine the prior we get from independently dropping features from $\hPhi(\vx)$ by setting some of the weights $\valpha$ to zero with probability $p$.
 For simplicity, we assume that $\expectargs{}{\valpha} = \vzero$.
@@ -350,29 +352,42 @@ In which case dropout on the hidden units has no effect at all.
 Intuitively, this is because no individual feature can have more than an infinitesimal contribution to the network output.
 
 
-\subsection{Dropout on Inputs}
+\subsection{Dropout on Inputs gives Additive Covariance}
 
-In a \gp{} with a product kernel ${k(\vx, \vx') = \prod_{d=1}^D k_d(x_d, x_d')}$, exactly averaging over all possible ways of dropping out inputs with probability $\nicefrac{1}{2}$ results in a mixture of \gp{}s, each depending on only a subset of the inputs:
+We can also perform dropout on the $D$ inputs of the \gp{}.
+For simplicity, we'll consider a stationary product kernel ${k(\vx, \vx') = \prod_{d=1}^D k_d(x_d, x_d')}$ which has been normalized such that $k(\vx, \vx') = 1$, and dropout probability of $\nicefrac{1}{2}$.
+In this case, the generative model can be written as:
+%
 \begin{align}
-p \left( f(\vx) \right)
-= \frac{1}{2^D} \sum_{\vr \in \{0,1\}^D}  \textnormal{\gp} \left(f(\vx) \,\Big|\, 0, \prod_{d=1}^D k_d(x_d, x_d')^{r_d} \right)
+r_i \simiid \textnormal{Ber} \left( \frac{1}{2} \right), \quad f(\vx) | \vr \sim \GP \left( 0, \prod_{d=1}^D k_d(x_d, x_d')^{r_d} \right)
+\end{align}
+%
+This is a mixture of \gp{}s, each depending on a different subset of the inputs:
+%
+\begin{align}
+p \left( f(\vx) \right) = 
+\sum_{\vr} p \left( f(\vx) | \vr \right) p( \vr) = 
+\frac{1}{2^D} \sum_{\vr \in \{0,1\}^D}  \GP \left(f(\vx) \,\Big|\, 0, \prod_{d=1}^D k_d(x_d, x_d')^{r_d} \right)
 \label{eq:dropout-mixture}
 \end{align}
 We present two results ways to gain intuition about this model.
 
 First, if the kernel on each dimension has the form ${k_d(x_d, x_d') = g \left( \frac{x_d - x_d'}{\lengthscale_d} \right)}$, as does the \kSE{} kernel, then any input dimension can be dropped out by setting its lengthscale $\lengthscale_d$ to $\infty$.
-Thus, performing dropout on the inputs of a \gp{} corresponds to putting independent spike-and-slab priors on the lengthscales, with each dimension independently having $w_d = \infty$ with probability $\nicefrac{1}{2}$.
+Thus, performing dropout on the inputs of a \gp{} corresponds to putting independent spike-and-slab priors on the lengthscales, with each dimension's distribution independently having ``spikes'' at $w_d = \infty$ with probability mass of $\nicefrac{1}{2}$.
 
 
-Another way to understand the resulting prior is to note that the dropout mixture of \gp{}s \eqref{eq:dropout-mixture} has the same covariance as an additive \gp{}, scaled by a factor of $2^{-D}$:
+
+Another way to understand the resulting prior is to note that the dropout mixture (\cref{eq:dropout-mixture}) has the same covariance as an additive \gp{}, scaled by a factor of $2^{-D}$:
 \begin{align}
 %f(\vx) \sim \textnormal{\gp} \left(0, \frac{1}{2^{-2D}} \sum_{\vr \in \{0,1\}^D}  \prod_{d=1}^D k_d(x_d, x_d')^{r_d} \right)
-f(\vx) \sim \textnormal{\gp} \left(0, \frac{1}{2^{D}} \sum_{\vr \in \{0,1\}^D}  \prod_{d=1}^D k_d(x_d, x_d')^{r_d} \right)
-\label{eq:additive-gps}
+%f(\vx) \sim \textnormal{\gp} \left(0, \frac{1}{2^{D}} \sum_{\vr \in \{0,1\}^D}  \prod_{d=1}^D k_d(x_d, x_d')^{r_d} \right)
+\cov\left( \colvec{f(\vx)}{f(\vx')} \right) = \frac{1}{2^{D}} \sum_{\vr \in \{0,1\}^D}  \prod_{d=1}^D k_d(x_d, x_d')^{r_d}
+\label{eq:dropout-mixture-covariance}
 \end{align}
 %TODO:  Make this equation more precise
 %
 Therefore, ignoring higher moments, dropout on the inputs of a \gp{} can be approximated by an additive \gp{} with all orders equally weighted.
+For dropout rates $p$ other than $\nicefrac{1}{2}$, the $d$ order terms will be weighted by the corresponding binomial coefficient $D \choose d$.
 This suggests an interpretation of additive \gp{}s as an approximation to a mixture of models where each model only depends on a subset of the input variables.
 
 
@@ -380,13 +395,16 @@ This suggests an interpretation of additive \gp{}s as an approximation to a mixt
 
 \section{Related Work}
 
+
+
 Since additive models are a relatively natural and easy-to-analyze model class, the literature on similar model classes is extensive.
 We try to give a broad overview in this section.
 
-\subsubsection{Previous work on Additive \sgp{}s}
+\subsubsection{Previous Examples of Additive \sgp{}s}
 
 Since the non-local structure capturable by additive kernels is necessarily axis-aligned, we can naturally consider that an initial transformation of the input space might allow us to recover non-axis aligned additivity in functions.
-This avenue was explored by \citet{gilboa2013scaling}, who developed a linearly-transformed first-order additive \gp{} model, called projection-pursuit \gp{} regression.  They further showed that inference in this model was possible in $\mathcal{O}(N)$ time.
+This avenue was explored by \citet{gilboa2013scaling}, who developed a linearly-transformed first-order additive \gp{} model, called projection-pursuit \gp{} regression.
+They further showed that inference in this model was possible in $\mathcal{O}(N)$ time.
 
 \citet{durrande2011additive} also examined the properties of additive \gp{}s, and proposed a layer-wise optimization strategy for kernel hyperparameters in these models.
 
@@ -469,7 +487,7 @@ The main benefits of the model setup and parameterization proposed in this chapt
 
 
 
-\section{Experiments}
+\section{Regression and Classification Experiments}
 \label{sec:additive-experiments}
 
 \subsubsection{Choosing the Base Kernel}
@@ -658,7 +676,7 @@ Code to perform all experiments in this chapter is available at \url{github.com/
 
 
 
-\section{Conclusion}
+\section{Conclusions}
 
 %We present a simple model which generalizes two widely-used classes of models.  A large increase in modeling power is gained at only modest computational cost.
 In this chapter, we presented a tractable \gp{} model consisting of a sum of exponentially-many functions, each depending on a different subset of the inputs.
