@@ -222,7 +222,7 @@ Other example reports can be found at \url{mlg.eng.cam.ac.uk/Lloyd/abcdoutput/},
 %\solarreportpage{22}
 
 
-\chapter{Inference in the marped mixture model}
+\chapter{Inference in the warped mixture model}
 \label{ch:warped-appendix}
 
 \subsubsection{Detailed definition of model}
@@ -371,7 +371,12 @@ as follows:
 %
 \begin{align}
 p(\vx_{n}|\vX_{c\setminus n},\bm{S},\nu,\vu,r)
-=\pi^{-\frac{N_{c\setminus n}Q}{2}}\frac{r_{c\setminus n}^{Q/2}|\vS_{c\setminus n}|^{\nu_{c\setminus n}/2}}{r_{c\setminus n}'^{Q/2}|\vS_{c\setminus n}'|^{\nu_{c\setminus n}'/2}}\prod_{d=1}^{Q}\frac{\Gamma(\frac{\nu_{c\setminus n}'+1-d}{2})}{\Gamma(\frac{\nu_{c\setminus n}+1-d}{2})},
+=\pi^{-\frac{N_{c\setminus n}Q}{2}}
+\frac{r_{c\setminus n} ^{Q/2} \left| \vS_{c\setminus n}  \right|^{\nu_{c\setminus n}/2}}
+     {r_{c\setminus n}'^{Q/2} \left| \vS_{c\setminus n}' \right|^{\nu_{c\setminus n}'/2}}
+\times \prod_{d=1}^{Q}
+\frac{\Gamma \left( \frac{\nu_{c\setminus n}' + 1 - d}{2} \right)}
+     {\Gamma \left( \frac{\nu_{c\setminus n}  + 1 - d}{2} \right)},
 \label{eq:iwmm-cluster-gibbs}
 \end{align}
 %
