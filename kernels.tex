@@ -948,12 +948,12 @@ This construction is similar in spirit to the \gp{} latent variable model (\gplv
 A prior on functions on M\"{o}bius strips can be constructed by enforcing the symmetries:
 %
 \begin{align}
-f(x, y) & = f( x, y + \tau) \\
-f(x, y) & = f( x + \tau, y)  \\
-f(x, y) & = f( y, x )
+f(x_1, x_2) & = f( x_1 + \tau, x_2) \qquad \textnormal{(periodic in $x_1$)} \nonumber \\
+f(x_1, x_2) & = f( x_1, x_2 + \tau) \qquad \textnormal{(periodic in $x_1$)} \nonumber \\
+f(x_1, x_2) & = f( x_2, x_1)  \quad \,\,\,\;     \qquad \textnormal{(symmetric about $x_1 = x_2$)} \nonumber 
 \end{align}
 %
-Moving along the diagonal $x = y$ of a function drawn from the corresponding \gp{} prior is equivalent to moving along the edge of a notional M\"{o}bius strip which has had the function mapped on to its surface.
+Moving along the diagonal $x_1 = x_2$ of a function drawn from the corresponding \gp{} prior is equivalent to moving along the edge of a notional M\"{o}bius strip which has had the function mapped on to its surface.
 \Cref{fig:mobius}(a) shows an example of a function drawn from such a prior.
 %
 \begin{figure}
@@ -966,12 +966,18 @@ $\begin{array}{l@{}l@{}}
 &\Per(x_1, x_1') \kerntimes \Per(x_2, x_2') \\
           \kernplus & \Per(x_1, x_2') \kerntimes \Per(x_2, x_1')
 \end{array}$
-& $\begin{array}{c} \textnormal{ M\"{o}bius strip}  \\ \textnormal{drawn from manifold prior}  \end{array}$
+& $\begin{array}{c} \textnormal{ M\"{o}bius strip drawn from}  \\ \textnormal{$\mathbb{R}^2 \to \mathbb{R}^3$ \gp{} prior}  \end{array}$
  & $\begin{array}{c} \textnormal{Sudanese M\"{o}bius strip}  \\ \textnormal{generated parametrically}  \end{array}$\\
 %$ + \Per(x_1, x_2') \times \Per(x_2, x_1')$ & \\
 %\includegraphics[width=0.45\columnwidth, height=0.45\columnwidth, clip=true,trim=2cm 2cm 2cm 1cm]{\topologyfiguresdir/mobius_regression} \\
-\includegraphics[width=0.3\columnwidth, height=0.3\columnwidth, clip=true,trim=3cm 2cm 2cm 2cm]{\topologyfiguresdir/mobius_field} & 
-\includegraphics[width=0.3\columnwidth,clip=true,trim=1cm 0cm 0cm 0cm]{\topologyfiguresdir/mobius} &
+\null\hspace{-5mm}\raisebox{2.75cm}{
+\begin{tabular}{cc}
+\raisebox{1.65cm}{$x_2$\hspace{-1.5mm}} &
+\includegraphics[width=0.235\columnwidth, height=0.235\columnwidth, clip=true,trim=3cm 2cm 2cm 2cm]{\topologyfiguresdir/mobius_field} \\
+ & $x_1$ \\[-3em]
+\end{tabular}}
+& 
+\raisebox{0.3cm}{\includegraphics[width=0.3\columnwidth,clip=true,trim=1cm 1.3cm 0cm 0cm]{\topologyfiguresdir/mobius}} &
 %\includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/mobius} 
 %\begin{minipage}{0.33\columnwidth}
 %{\begin{tabular}[t]{p{.3\columnwidth}}
@@ -980,7 +986,7 @@ $\begin{array}{l@{}l@{}}
 %\includegraphics[width=0.3\columnwidth,clip=true,trim=10.55cm 0cm 0cm 0cm]{\topologyfiguresdir/sudanese-wikipedia}
 %\end{tabular}}
 %\end{minipage}
-\raisebox{1cm}{\includegraphics[width=0.25\columnwidth,clip=true,trim=0cm 0cm 14.6cm 0cm]{\topologyfiguresdir/sudanese-wikipedia}}
+\raisebox{1cm}{\includegraphics[width=0.25\columnwidth,clip=true,trim=0cm 0cm 14.6cm 0cm]{\topologyfiguresdir/sudanese-wikipedia}} \\[-0.5em]
 \end{tabular}
 \caption[Generating M\"{o}bius strips]{Generating M\"{o}bius strips.
 \emph{Left:} A function drawn from a \sgp{} prior obeying the same symmetries as a M\"{o}bius strip.
@@ -988,15 +994,15 @@ $\begin{array}{l@{}l@{}}
 Surfaces generated this way do not have the familiar shape of a flat surface connected to itself with a half-twist.
 Instead, they tend to look like \emph{Sudanese} M\"{o}bius strips \citep{sudanese1984}, whose edge has a circular shape.
 \emph{Right:} A Sudanese projection of a M\"{o}bius strip.
-Image adapted from \citep{sudanesepict}.
+Image adapted from \citet{sudanesepict}.
 }
 \label{fig:mobius}
 \end{figure}
-
+%
 \Cref{fig:mobius}(b) shows an example of a 2D mesh mapped to 3D by functions drawn from such a prior.
 This surface doesn't resemble the typical representation of a M\"{o}bius strip,
 %, because the edge of the M\"{o}bius strip is in roughly circular shape, as opposed to the double-loop that one obtains by gluing a strip of paper with a single twist.
-but instead resembles an embedding known as the Sudanese M\"{o}bius strip \citep{sudanese1984}, shown in \Cref{fig:mobius}(c).
+but instead resembles an embedding known as the Sudanese M\"{o}bius strip \citep{sudanese1984}, shown in \cref{fig:mobius}(c).
 
 %Another classic example of a function living on a Mobius strip is the auditory quality of 2-note intervals.  The harmony of a pair of notes is periodic (over octaves) for each note, and the 
 
