@@ -77,20 +77,21 @@ Draws from \gp{} priors with changepoint kernels are shown in \cref{fig:changepo
 
 \subsubsection{The generalized periodic kernel}
 
-\citet{lloyd-periodic} showed that the standard periodic kernel due to \citet{mackay1998introduction} can be decomposed into a periodic and a constant component.
+%\citet{lloyd-periodic}
+James Lloyd (personal communication) showed that the standard periodic kernel due to \citet{mackay1998introduction} can be decomposed into a periodic and a constant component.
 He derived the equivalent periodic kernel without any constant component:
 %, shown in \cref{eq:generalized-periodic}.
 %
 \begin{align}
-\kPer(\inputVar, \inputVar') & =  \sigma_f^2 \frac{\exp\left(\frac{1}{\ell^2}\cos 2 \pi  \frac{(\inputVar - \inputVar')}{p}\right) - I_0\left(\frac{1}{\ell^2}\right)}{\exp\left(\frac{1}{\ell^2}\right) - I_0\left(\frac{1}{\ell^2}\right)} \label{eq:generalized-periodic}
+\kPerGen(\inputVar, \inputVar') & =  \sigma_f^2 \frac{\exp\left(\frac{1}{\ell^2}\cos 2 \pi  \frac{(\inputVar - \inputVar')}{p}\right) - I_0\left(\frac{1}{\ell^2}\right)}{\exp\left(\frac{1}{\ell^2}\right) - I_0\left(\frac{1}{\ell^2}\right)} \label{eq:generalized-periodic}
 \end{align}
 He further showed that its limit as the lengthscale grows is the cosine kernel:
 \begin{equation}
-\lim_{\ell \to \infty} \kPer(x, x') = \cos\left(\frac{2 \pi (x - x')}{p}\right).
+\lim_{\ell \to \infty} \kPerGen(x, x') = \cos\left(\frac{2 \pi (x - x')}{p}\right).
 \end{equation}
 
 Separating out the constant component allows us to express negative prior covariance, as well as increasing the interpretability of the resulting models.
-
+This covariance function is included in the \GPML{} software package~\citep{GPML}, and its source can be viewed at \url{gaussianprocess.org/gpml/code/matlab/cov/covPeriodicNoDC.m}.
 
 
 
@@ -445,7 +446,7 @@ p(\vy_\star | \vY)
 \label{eq:density}
 \end{align}
 We first approximate $p(\vX | \vY)$ using samples from the Gibbs and Hamiltonian Monte Carlo chains.
-We then approximate $p(\vx_\star | \vX, \vY)$ by sampling points from the sampled latent mixtures and warping them, using the following procedure:
+We then approximate $p(\vx_\star | \vX, \vY)$ by sampling points from the posterior density in the latent space and warping them, using the following procedure:
 \begin{enumerate}
 \item Draw latent cluster assignment $z_\star \sim {\rm Mult}(\frac{N_{1}}{N+\eta},\cdots,\frac{N_{C}}{N+\eta},\frac{\eta}{N+\eta})$
 \item Draw latent cluster precision matrix $\vR_\star \sim {\cal W}(\vS\inv_{z_\star},\nu_{z_\star})$

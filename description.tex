@@ -434,7 +434,7 @@ However, systems with natural language output have been built in the areas of vi
 
 This chapter presents a procedure for describing \gp{} models which relied on the particular properties of the model and kernel being used.
 The compositional nature of the descriptions avoided an exponential blowup in the number of special cases that needed to be considered.
-However, the development of this system highlighted several difficulties with this approach:
+However, during development, we noted several difficulties with this approach:
 
 \begin{itemize}
 
@@ -442,8 +442,8 @@ However, the development of this system highlighted several difficulties with th
 For instance, we did not include the $\kRQ$ kernel in the text-generation procedure.
 This was done for several reasons.
 First, the $\kRQ$ kernel can be equivalently expressed as a scale mixture of $\kSE$ kernels.
-Second, it was difficult to think of a description for the hyperparameter which controls the heavy-tailedness of the $\kRQ$ kernel.
-Third, a product of two $\kRQ$ kernels does not give another $\kRQ$ kernel, which poses the question of how to concisely describe products of $\kRQ$ kernels.
+Second, it was difficult to think of a description for the hyperparameter which controls the heaviness of the tails of the $\kRQ$ kernel.
+Third, a product of two $\kRQ$ kernels does not give another $\kRQ$ kernel, which raises the question of how to concisely describe products of $\kRQ$ kernels.
 
 \item {\bf Reliance on additivity.}
 Much of the work of decomposing models was due to the additive decomposition.

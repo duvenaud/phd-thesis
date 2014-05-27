@@ -757,7 +757,7 @@ For the group $\gswitch$, this operation results in the kernel:
 %
 \begin{align}
 k_\textnormal{switch}(\vx, \vx')
-& = \sum_{g, \in \gswitch} \sum_{g' \in \gswitch} k( g( \vx ), g'( \vx') ) \\
+& = \sum_{g \in \gswitch} \sum_{g' \in \gswitch} k( g( \vx ), g'( \vx') ) \\
 & = k(x_1, x_2, x_1', x_2') + k(x_1, x_2, x_2', x_1')  \nonumber \\ 
 & \quad + k(x_2, x_1, x_1', x_2') + k(x_2, x_1, x_2', x_1')
 \end{align}
@@ -775,15 +775,16 @@ This construction has the property that the marginal variance is doubled near $x
 k_\textnormal{proj}(\vx, \vx') = k( A_G(\vx), A_G( \vx') )
 \end{align}
 %
-For the group $\gswitch$, a fundamental domain is $\{x, y : x < y\}$, which can be mapped to using $A_{\gswitch}( x, y ) = \big[ \min(x,y), \max(x,y) \big]$.
-Constructing a kernel using this method introduces a non-differentiable  ``seam'' along $x = y$, as shown in \cref{fig:add_vs_min}(center).
+For the group $\gswitch$, a fundamental domain is $\{x_1, x_2 : x_1 < x_2\}$, which can be mapped to using $A_{\gswitch}( x_1, x_2 ) = \big[ \min(x_1, x_2), \max(x_1, x_2) \big]$.
+Constructing a kernel using this method introduces a non-differentiable  ``seam'' along $x_1 = x_2$, as shown in \cref{fig:add_vs_min}(center).
 %The projection method also works for infinite groups, as we shall see below.
 
 \item {\bf Multiply over the orbit.}
-\citet{adams2013product} suggests a construction enforcing invariants through products over the orbits:
+%\citet{adams2013product}
+Ryan Adams (personal communication) suggested a construction enforcing invariants through products over the orbits:
 %
 \begin{align}
-k_\textnormal{sum}(\vx, \vx') = \prod_{g, \in G} \prod_{g' \in G} k( g( \vx ), g'( \vx') )
+k_\textnormal{sum}(\vx, \vx') = \prod_{g \in G} \prod_{g' \in G} k( g( \vx ), g'( \vx') )
 \end{align}
 %
 This method can sometimes produce \gp{} priors with zero variance in some regions of the space, as in \cref{fig:add_vs_min}(right).
@@ -1026,7 +1027,9 @@ k_{\textnormal{categorical}}( x, x') = \seard( \oneofk(x), \oneofk(x') )
 %
 Short lengthscales on any particular dimension in the $\seard$ kernel indicate that the function value corresponding to that category is uncorrelated with the others.
 
-A more flexible parameterization suggested by \citet{swersky2013categorical} allows complete flexibility about which pairs of categories are similar to one another, replacing the $\seard$ kernel with a fully-parameterized kernel, $\sefull$:
+A more flexible parameterization suggested by 
+%\citet{swersky2013categorical}
+Kevin Swersky (personal communication) allows complete flexibility about which pairs of categories are similar to one another, replacing the $\seard$ kernel with a fully-parameterized kernel, $\sefull$:
 %
 \begin{align}
 \sefull( \vx, \vx') = \exp \left( -\frac{1}{2} \vx\tra \vL \vx' \right)

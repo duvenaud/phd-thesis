@@ -4,7 +4,8 @@
 \chapter{Discussion}
 \label{ch:discussion}
 
-
+This chapter articulates some of the questions raised by the work in this thesis, and attempts to relate kenrel-based model-building to the larger project of automating statistics and machine learning.
+We conclude with a summary of the contributions of this thesis.
 
 % TODO: move to the relevant chapter
 %\section{Future Work}
@@ -20,21 +21,21 @@
 
 \section{Structured versus unstructured models}
 
-One question left unanswered by this thesis is when to prefer the structured kernel based models described \cref{ch:kernels,ch:grammar,ch:additive} to the relatively unstructured deep \gp{} models described in \cref{ch:deep-limits}.
+One question left unanswered by this thesis is when to prefer the structured, kernel-based models described \cref{ch:kernels,ch:grammar,ch:additive} to the relatively unstructured deep \gp{} models described in \cref{ch:deep-limits}.
+In this section, we consider some advantages and disadvantages of the two approaches.
 
-The warped mixture model of \cref{ch:warped} represents a compromise between these two approaches, combining a discrete clustering model with an unstructured warping function.
-However, the results of \citet{damianou2012deep} suggest that clustering can be automatically accomplished by a sufficiently deep, unstructured \gp{}.
+\begin{itemize}
 
-\subsubsection{Difficulty of optimization}
-The discrete nature of the search over composite kernel structures can be seen as a blessing and a curse.
-Certainly, a mixed discrete and continuous optimization requires more complex procedures compared to the continuous-only optimization possible in deep \gp{}s.
+\item {\bf Difficulty of optimization.}
+The discrete nature of the search over composite kernel structures can be seen as both a blessing and a curse.
+Certainly, a mixed discrete and continuous search space requires more complex optimization procedures compared to the continuous-only optimization possible in deep \gp{}s.
 
 However, the discrete nature of the space of composite kernels offers the possibility of learning heuristics to suggest which types of structure to add.
 For example, finding periodic structure or growing variance in the residuals of a model suggests adding periodic or linear components to the kernel, respectively.
-It is not clear whether such heuristics can easily be found for optimizing the variational parameters of a deep \gp{}.
+It is not clear whether such heuristics can easily be found for optimizing the variational parameters of a deep \gp{}, although
 
-\subsubsection{Extrapolation}
-Another question is whether, and how, an equally rich inductive bias can be encoded into relatively unstructured models such as deep \gp{}s.
+\item {\bf Long-range extrapolation.}
+Another question is whether the inductive bias of deep \gp{}s can enable the sorts of long-range extrapolation shown in \cref{ch:kernels,ch:grammar}.
 As an example, consider the problem of extrapolating a periodic function.
 A deep \gp{} could learn a latent representation similar to that of the periodic kernel, projecting into a basis eqeuivalent to $[\sin(x), \cos(x)]$ in the first hidden layer.
 However, to extrapolate a periodic function, the $\sin$ and $\cos$ functions would have to continue to repeat beyond the range of the training data, which would not happen if each layer assumed only local smoothness.
@@ -45,9 +46,20 @@ However, we may lose some of the advantages of interpretability by this approach
 Another point to consider is that, in high dimensions, the line between interpolation and extrapolation is blurred.
 Learning a suitable representation of the data manifold may be sufficient for most purposes.
 
-\subsubsection{Ease of interpretation}
-\Cref{ch:description} showed that composite kernels allow automatic visualization and desription of low-dimensional structure.
-On the other hand, \citet{damianou2012deep} showed that deep \gplvm{}s allow summarization of high-dimensional structure through showing samples from the posterior, examining the dimension of each latent layer, visualizing latent coordinates, or examining how the predictive distribution changes as one moves in the latent space.
+\item {\bf Ease of interpretation.}
+Historically, the statistics community has put more emphasis on the interpretabilty and meaning of models than the machine learning community, which has focused more on predictive performance.
+To automate the practice of statistics, developing model-description procedures for powerful model classes seems to be a necessary step. %promising direction.% with the most low-hanging fruit.
+
+In general, such descriptions would seem to require some sort of decomposition of a model into discrete components.
+For example, \cref{ch:description} showed that composite kernels allow automatic visualization and desription of low-dimensional structure.
+
+On the other hand, \citet{damianou2012deep} showed that deep \gplvm{}s allow summarization of high-dimensional structure through sampling from the posterior, examining the dimension of each latent layer, visualizing latent coordinates, and examining how the predictive distribution changes as one moves in the latent space.
+Perhaps more sophisticated procedures would also allow intelligible descriptions of such models.
+
+\end{itemize}
+
+The warped mixture model of \cref{ch:warped} represents a compromise between these two approaches, combining a discrete clustering model with an unstructured warping function.
+However, the explicit clusterting model may by unnecessary: the results of \citet{damianou2012deep} suggest that clustering can be automatically accomplished by a sufficiently deep, unstructured \gp{}.
 
 
 
@@ -58,41 +70,41 @@ This thesis is part of a larger push to automate the practice of model building 
 Broadly speaking, this problem is being attacked from two directions.
 
 From the top-down, the probabilistic programming community is developing automatic inference engines for extremely broad classes of models~\citep{goodman2008church,mansinghka2014venture,liang2010learning} such as the class of all computable distributions~\citep{solomonoff1964formal, li2009introduction}.
-As discussed in \cref{sec:ingredients}, model construction can be seen as search through such open-ended model classes.
+As discussed in \cref{sec:ingredients}, model construction can be seen as search through an open-ended model class.
 %Exact inference in sufficiently powerful model classes is \#P-hard (cite), so approximate inference algorithms are necessary.
-Universal search strategies have been constructed for these very general model classes~\citep{hutter2002fastest,schmidhuber2002speed,levin1973universal}, but they remain impractically slow.
+Universal search strategies have been constructed for the space of all computable distributions~\citep{hutter2002fastest,schmidhuber2002speed,levin1973universal}, but they remain impractically slow.
 
-The bottom-up approach is to design procedures which extend and combine existing model classes, for which relatively efficient inference algorithms are known.
+The alternative, bottom-up approach is to design procedures which extend and combine existing model classes, for which relatively efficient inference algorithms are known.
 For example, \citet{roger-grosse-thesis} built an open-ended language of matrix decomposition models and a corresponding compositional language of relatively efficient approximate inference algorithms.
 This approach makes inference feasible for models in the language, but extending the language requires developing new inference algorithms.
 As another example, \citet{christian-thesis} showed how to compose inference algorithms for arbitrary sequence models.
 The language of models proposed in \cref{ch:grammar} is an example of this bottom-up approach, and has the same benefits and limitations. % as the approach of \citet{roger-grosse-thesis}.
 
-Using general models as building blocks in a composition blurs the line between these two approaches.
+If the building-blocks being composed are sufficiently powerful, the line between these two approaches becomes blurred.
 %It is not clear which approach best describes generative, or probabilistic, deep learning methods.
-For example, we might consider deep generative models~\citep{adams2010learning,damianou2012deep,rippel2013high,bengio2013generalized,salakhutdinov2009deep} to be an example of the bottom-up approach, since they decompose both model and inference into individual layers.
+For example, we deep generative models~\citep{adams2010learning,damianou2012deep,rippel2013high,bengio2013generalized,salakhutdinov2009deep} could be considered an example of the bottom-up approach, since they compose both model and inference into individual layers.
 However, large neural nets can capture enough different types of structure that they could be seen as an example of the universalist top-down approach.
 
-In any case, it seems clear that, one way or another, large parts of the existing practice of model-building will eventually be automated.
+
+
+
 % Benefit: systematically explores model space?
 
-\section{Approaches to automating model description}
+%\section{Approaches to automating model description}
 
 %The machine learning community has so far focused largely on producing efficient inference strategies for powerful model classes, which is sufficient for improving predictive performance.
 
-Historically, the statistics community has put more emphasis on the interpretabilty and meaning of models than the machine learning community, which has focused more on predictive performance.
-To automate the practice of statistics, developing model-description procedures for powerful model classes seems like the direction with the most low-hanging fruit.
 
 
 
 \section{Summary of contributions}
 
-The main contribution of this thesis was to show how to automate the construction of interpretable nonparametric models of functions using Gaussian processes.
-This was done in several parts.
-First, \cref{ch:kernels} systematically described several kernel construction techniques, as well as properties of the resulting \gp{} priors.
-Next, \cref{ch:grammar} showed how to automatically search over an open-ended space of \gp{} models, and showed that those models could be automatically decomposed into diverse parts illustrating the structure found in the data.
-\Cref{ch:description} showed that the contribution of each part of a kernel can be described modularly, allowing automatically written text to be included in detailed reports describing \gp{} models.
-An example report is included in \cref{ch:example-solar}.
+The main contribution of this thesis was to show how to automate the construction of interpretable nonparametric regression models using Gaussian processes.
+This was done in several parts:
+First, \cref{ch:kernels} presented a systematic overview of kernel construction techniques, as well as properties of the resulting \gp{} priors.
+Next, \cref{ch:grammar} showed the viability of a bread-first search over an open-ended space of kernels, and showed that the corresponding \gp{} models could be automatically decomposed into diverse parts illustrating the structure found in the data.
+\Cref{ch:description} showed that each part of a kernel can be described modularly, allowing automatically written text to be included in detailed reports describing \gp{} models.
+An example report is included in appendix \ref{ch:example-solar}.
 Together, these chapters describe the beginnings of an ``automatic statistician'', capable of the sort of model construction and analysis currently performed by experts.
 
 The second half of this thesis examined several extensions of Gaussian processes, all of which enable the automatic determination of modeling choices that were previously set by trial and error or cross-validation.
@@ -100,7 +112,8 @@ The second half of this thesis examined several extensions of Gaussian processes
 \Cref{ch:additive} investigated additive \gp{}s, a family of models consisting of sums of functions of all subsets of input variables, and showed that they have the same covariance as a \gp{} using dropout regularization.
 \Cref{ch:warped} extended the \gp{} latent variable model into a Bayesian clustering model which automatically infers the nonparametric shape of each cluster, as well as the number of clusters.
 
-
+\subsubsection{Endnote}
+It seems clear that, one way or another, large parts of the existing practice of model-building will eventually be automated.
 
 
 %\section{Automating Statistics}
