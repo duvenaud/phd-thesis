@@ -22,7 +22,7 @@ Instead, we can ask what sorts of information-processing structures these priors
 %To shed light on this problem, we analyze the analogous problem of constructing useful priors on compositions of functions.
 As a starting point, we will relate neural networks to Gaussian processes, and examine a class of infinitely-wide, deep neural networks called \emph{deep Gaussian processes}.
 Deep \gp{}s are an attractive model class to study for several reasons.
-\citet{damianou2012deep} showed that the probabilistic nature of deep \gp{}s gaurds against overfitting, and allows us to use the marginal likelihood to automatically tune the model architecture without the need for cross-validation.
+\citet{damianou2012deep} showed that the probabilistic nature of deep \gp{}s guards against overfitting, and allows us to use the marginal likelihood to automatically tune the model architecture without the need for cross-validation.
 \citet{hensman2014deep} showed that stochastic variational inference is possible in deep \gp{}s.
 Together, these results suggest that deep \gp{}s are a promising alternative to neural nets.
 For the analysis in this chapter, deep \gp{}s are attractive because they abstract away some of the details of finite neural networks. %, such as the number of hidden units
@@ -61,7 +61,7 @@ The rest of this section shows the precise relationship between Gaussian process
 \subsection{Single-layer models}
 
 First, we will relate neural networks with one hidden layer to Gaussian processes, using the
-standard neural network architecture known as the multi-layer perceptrion (\MLP{}).
+standard neural network architecture known as the multi-layer perceptron (\MLP{}).
 In the typical definition of an \MLP{}, the hidden units of the first layer are defined as:
 %
 \begin{align}
@@ -291,7 +291,7 @@ If the features $\vh^{(1)}(\vx)$ and $\vh^{(2)}(\vx)$ are considered fixed with 
 k(\vx, \vx') = \left( \hPhi^{(2)} ( \hPhi^{(1)}(\vx) ) \right) \tra \hPhi^{(2)} (\hPhi^{(1)}(\vx') )
 \end{align}
 \gp{}s with deep kernels, explored in \cref{sec:deep_kernels}, imply a fixed representation as opposed to a prior over representations.
-Thus, unless we richly parameterize these kernels, their capacity to learn an appropriate representation is limited in comparison to more flexible models such as deep neural networks, or deep \gp{}s. %since only the output weights ${\vnetweights}$ can adapt to the problem  which is what we wish to analyze in this chapter.
+Thus, unless we richly parametrize these kernels, their capacity to learn an appropriate representation is limited in comparison to more flexible models such as deep neural networks, or deep \gp{}s. %since only the output weights ${\vnetweights}$ can adapt to the problem  which is what we wish to analyze in this chapter.
 
 
 
@@ -410,7 +410,7 @@ A neural net with fixed activation functions corresponding to a 3-layer deep \gp
 \\
 \hline
 \\
-A net with nonpararametric activation functions corresponding to a 3-layer deep \gp{}\\
+A net with nonparametric activation functions corresponding to a 3-layer deep \gp{}\\
 \\
 %\begin{tabular}{c}
 \begin{tikzpicture}[shorten >=1pt,->,draw=black!50, node distance=\layersep]
@@ -477,7 +477,7 @@ The activation functions are visualized by draws from 2-dimensional \gp{}s, alth
 \end{figure}
 
 
-There are two equivalent neural net architectures which correspond to deep \gp{}s: one with fixed non-linearities, and another with \gp{}-distributed nonlinearties.
+There are two equivalent neural net architectures which correspond to deep \gp{}s: one with fixed non-linearities, and another with \gp{}-distributed non-linearities.
 
 To construct a neural network with fixed nonlinearities that corresponds to a deep \gp{}, 
 one can start with the infinitely-wide deep \gp{} shown in \cref{fig:gp-architectures}(right), and introduce a finite set of nodes in between each infinitely-wide set of fixed basis functions.
@@ -780,7 +780,7 @@ The number of relatively large singular values of the Jacobian roughly correspon
 {%The normalized singular value spectrum of the Jacobian of a deep \gp{} warping $\Reals^5 \to \Reals^5$.
 The distribution of normalized singular values of the Jacobian of a function drawn from a 5-dimensional deep \gp{} prior 25 layers deep~(\emph{Left}) and 50 layers deep~(\emph{Right}).
 As nets get deeper, the largest singular value tends to become much larger than the others.
-This implies that with high probability, these functions vary little in all directions but one, making them insuitable for computing representations of manifolds of more than one dimension.
+This implies that with high probability, these functions vary little in all directions but one, making them unsuitable for computing representations of manifolds of more than one dimension.
 %As depth increases, the distribution on singular values also becomes heavy-tailed.
 }
 \label{fig:deep_spectrum}
@@ -822,7 +822,7 @@ The density in the observed space eventually becomes locally concentrated onto o
 \hspace{-0.15in} \mappic{10} & \mappic{40}
 \end{tabular}
 \caption[Visualization of a feature map drawn from a deep \sgp{}]
-{A vizualization of the feature map implied by a draw from a deep \gp{}.
+{A visualization of the feature map implied by a draw from a deep \gp{}.
 Colors correspond to the location $\vy = \vf(\vx)$ that each point is mapped to after being warped by a deep \gp{}.
 The number of directions in which the color changes rapidly corresponds to the number of large singular values in the Jacobian.
 Just as the densities in \cref{fig:filamentation} became locally one-dimensional, there is usually only one direction that one can move $\vx$ in locally to change $\vy$.
@@ -1213,7 +1213,7 @@ To put it another way, any fixed representation is unlikely to be useful unless 
 
 \section{Related work}
 
-\subsubsection{Deep Gaussian processs}
+\subsubsection{Deep Gaussian processes}
 \citet[chapter 2]{neal1995bayesian} discussed the properties of arbitrarily deep Bayesian neural networks, including those that would give rise to deep \gp{}s.
 He noted that infinitely deep random neural networks without extra connections to the input would be equivalent to a Markov chain, and therefore would lead to degenerate priors on functions.
 He also suggested connecting the input to each layer in order to fix this problem.

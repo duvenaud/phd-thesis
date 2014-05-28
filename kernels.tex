@@ -917,13 +917,13 @@ Priors on functions exhibiting symmetries can be used to create a prior on topol
 %The distribution on $\vf$ allows us to put mass on 
 %If we set the input $\vx$ to be a 2-dimensional plane, intro 3 dimensions using a \gp{} encoding certain symmetries, the resulting surfaces will correspon
 To build a prior on 2-dimensional manifolds embedded in 3-dimensional space, we simply need a prior on mappings from $\mathbb{R}^2$ to $\mathbb{R}^3$, which we can construct using three independent functions $[f_1(\vx), f_2(\vx), f_3(\vx)]$, each mapping from $\mathbb{R}^2$ to $\mathbb{R}$.
-\gp{} priors on the mapping functions implictly give rise to a prior on warped surfaces.
+\gp{} priors on the mapping functions implicitly give rise to a prior on warped surfaces.
 Symmetries in $[f_1, f_2, f_3]$ will connect different parts of the manifolds, giving rise to non-trivial topologies on the sampled surfaces.
 %
 \begin{figure}
 \renewcommand{\tabcolsep}{1mm}
 \begin{tabular}{ccc}
-Euclidian $( \SE_1 \times \SE_2 )$  & Cylinder $( \SE_1 \times \Per_2 )$ & Toroid $( \Per_1 \times \Per_2 )$\\
+Euclidean $( \SE_1 \times \SE_2 )$  & Cylinder $( \SE_1 \times \Per_2 )$ & Toroid $( \Per_1 \times \Per_2 )$\\
 \hspace{-0.5cm}\includegraphics[width=0.33\columnwidth,clip=true,trim=10mm 10mm 1mm 1mm]{\topologyfiguresdir/manifold} &
 \includegraphics[width=0.33\columnwidth,clip=true,trim=10mm 10mm 10mm 10mm]{\topologyfiguresdir/cylinder} &
 \includegraphics[width=0.33\columnwidth,clip=true,trim=1mm 1mm 1mm 1mm]{\topologyfiguresdir/torus} \\
@@ -962,7 +962,7 @@ k(x_1, x_2, x_1', x_2') =
 \Per(x_1, x_2') \kerntimes \Per(x_2, x_1')
 \end{align}
 %
-Moving along the diagonal $x_1 = x_2$ of a function drawn from the corresponding \gp{} prior is equivalent to moving along the edge of a notional M\"{o}bius strip which has had the function mapped on to its surface.
+Moving along the diagonal $x_1 = x_2$ of a function drawn from the corresponding \gp{} prior is equivalent to moving along the edge of a notional M\"{o}bius strip which has had a function mapped on to its surface.
 \Cref{fig:mobius}(a) shows an example of a function drawn from such a prior.
 %
 \begin{figure}
@@ -1037,13 +1037,13 @@ Short lengthscales on any particular dimension in the $\seard$ kernel indicate t
 
 A more flexible parameterization suggested by 
 %\citet{swersky2013categorical}
-Kevin Swersky (personal communication) allows complete flexibility about which pairs of categories are similar to one another, replacing the $\seard$ kernel with a fully-parameterized kernel, $\sefull$:
+Kevin Swersky (personal communication) allows complete flexibility about which pairs of categories are similar to one another, replacing the $\seard$ kernel with a fully-parametrized kernel, $\sefull$:
 %
 \begin{align}
 \sefull( \vx, \vx') = \exp \left( -\frac{1}{2} \vx\tra \vL \vx' \right)
 \end{align}
 %
-where $L$ is a symmetric matrix, individually parameterizing the covariance between each pair of function values of categories.
+where $L$ is a symmetric matrix, individually parametrizing the covariance between each pair of function values of categories.
 
 %Then, simply put a product of kernels on those dimensions.
 %This is the same as putting one SE ARD kernel on all of them.

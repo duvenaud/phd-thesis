@@ -34,7 +34,7 @@ In this case, the necessary covariance matrices are given by:
 \vSigma_{BA} & = k(\vX^\star, \vX) \\
 \vSigma_{BB} & = k(\vX^\star, \vX^\star)
 \end{align}
-and similarily for the mean vectors.
+and similarly for the mean vectors.
 
 
 
@@ -121,15 +121,15 @@ The search used in the multidimensional regression experiments in \cref{sec:synt
 \mathcal{B} &\to& \mathcal{B'}
 \end{eqnarray}
 %
-where $\mathcal{S}$ represents any kernel subexpression and $\mathcal{B}$ is any base kernel within a kernel expression.
+where $\mathcal{S}$ represents any kernel sub-expression and $\mathcal{B}$ is any base kernel within a kernel expression.
 These search operators represent addition, multiplication and replacement.
-When the multiplication operator is applied to a subexpression which includes a sum of subexpressions, parentheses () are introduced.
-For instance, if rule \eqref{eq:search-multiply} is applied to the subexpression $k_1 + k_2$, the resulting expression is $(k_1 \kernplus k_2) \kerntimes \mathcal{B}$.
+When the multiplication operator is applied to a sub-expression which includes a sum of sub-expressions, parentheses () are introduced.
+For instance, if rule \eqref{eq:search-multiply} is applied to the sub-expression $k_1 + k_2$, the resulting expression is $(k_1 \kernplus k_2) \kerntimes \mathcal{B}$.
 
 Afterwards, we added several more search operators in order to speed up the search.
 These new operators do not change the set of possible models.
 
-To accommodate changepoints and changewindows, we introduced the following additional operators to our search:
+To accommodate changepoints and change-windows, we introduced the following additional operators to our search:
 %
 \begin{eqnarray}
 \mathcal{S} &\to& \kCP(\mathcal{S},\mathcal{S}) \\
@@ -171,7 +171,7 @@ This dataset was previously analyzed by \citet{lean1995reconstruction}.
 
 The structure search was run using the \procedurename-interpretable variant, with base kernels $\kSE$, $\kLin$, $\kC$, $\kPer$, $\vsigma$, and $\kWN$.
 
-Other example reports can be found at \url{mlg.eng.cam.ac.uk/Lloyd/abcdoutput/}, including anlyses of wheat prices, temperature records, call centre volumes, radio interference, gas production, unemployment, number of births, and wages over time.
+Other example reports can be found at \url{mlg.eng.cam.ac.uk/Lloyd/abcdoutput/}, including analyses of wheat prices, temperature records, call centre volumes, radio interference, gas production, unemployment, number of births, and wages over time.
 
 \newcommand{\solarreportpage}[1]{\includegraphics[width=\columnwidth]{figures/solarpages/02-solar-seperate-pages-#1}}
 
@@ -349,7 +349,7 @@ In particular, we'll alternate between collapsed Gibbs sampling of each row of $
 
 First, we explain collapsed Gibbs sampling for the cluster assignments $\vZ$.
 Given a sample of $\vX$, $p(\vZ | \vX, \vS, \nu, \vu, r, \eta)$ does not depend on $\vY$.
-This lets us resample cluster assignments, integrating out the \iGMM{} likelihood in closed form.
+This lets us re-sample cluster assignments, integrating out the \iGMM{} likelihood in closed form.
 Given the current state of all but one latent component $z_n$, a new value for $z_n$ is sampled with the following probability:
 %
 \begin{align}
@@ -434,7 +434,7 @@ When inference is done this way, approximating the predictive density only requi
 For our model, we use approximate integration to estimate $p(\vy_\star)$.
 This is done for two reasons:
 First, multiple latent points (possibly from different clusters) can map to the same observed point, meaning the standard method can underestimate $p(\vy_\star)$.
-Second, because we do not optimize the latent coordinates of training points, but instead sample them, we would need to optimize each $p(\vx_\star)$ seperately for each sample in the Markov chain.
+Second, because we do not optimize the latent coordinates of training points, but instead sample them, we would need to optimize each $p(\vx_\star)$ separately for each sample in the Markov chain.
 One advantage of our method is that it gives estimates for all $p(\vy_\star)$ at once, but it may not be accurate in very high dimensions.
 
 The posterior density in the observed space given the training data is

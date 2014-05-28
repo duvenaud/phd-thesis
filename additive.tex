@@ -9,7 +9,7 @@
 
 
 In \cref{ch:grammar}, we showed how to learn the structure of a kernel by building it up piece-by-piece.
-This chapter presents an alternative approach, where we start with many different types of structure in the kernel, and adjust kernel parameters to discard whatever structues are \emph{not} present in the current dataset.
+This chapter presents an alternative approach, where we start with many different types of structure in the kernel, and adjust kernel parameters to discard whatever structures are \emph{not} present in the current dataset.
 The advantage of this approach is that we do not need to run an expensive discrete-and-continuous optimization problem in order to build a structured model.
 Implementation is also much simpler.
 
@@ -69,7 +69,7 @@ We call the number of input variables appearing in each term the \emph{order} of
 Models of intermediate order such as \eqref{eq:second-order-additive} allow more flexibility than models of form \eqref{eq:general-additive} ($D$-th order), but have more structure than those of form \eqref{eq:highest-order} (first-order).
 
 If the function being learned depends in some way on an interaction between all input variables, a $D$th-order term is required in order for the model to be consistent.
-However, if the function also contains lower-order interactions, capturing that structure will still improve the predioctive performance on finite datasets.
+However, if the function also contains lower-order interactions, capturing that structure will still improve the predictive performance on finite datasets.
 
 %To the extent that a set of variables is relevant to the output, this model must be highly uncertain about any novel combination of those variables.
 
@@ -170,7 +170,7 @@ If low-dimensional additive structure is not present, the kernel parameters can 
 \subsection{Efficiently evaluating additive kernels}
 An additive kernel over $D$ inputs with interactions up to order $n$ has $O(2^n)$ terms.
 Na\"{i}vely summing over these terms quickly becomes intractable.
-Perhaps surprisingly, one can evaluate the sum over all terms in $O(D^2)$, while also weighting each order of interaction seperately.
+Perhaps surprisingly, one can evaluate the sum over all terms in $O(D^2)$, while also weighting each order of interaction separately.
 
 To efficiently compute the additive kernel, we exploit the fact that the $n$th order additive kernel corresponds to the $n$th \textit{elementary symmetric polynomial}~\citep{macdonald1998symmetric}
 %\citep{stanley2001enumerative}, 
@@ -371,7 +371,7 @@ This suggests an interpretation of additive \gp{}s as an approximation to a mixt
 \section{Related work}
 
 Since additive models are a relatively natural and easy-to-analyze model class, the literature on similar model classes is extensive.
-This section attemps to provide a broad overview.
+This section attempts to provide a broad overview.
 
 \subsubsection{Previous examples of additive \sgp{}s}
 
