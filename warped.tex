@@ -220,7 +220,7 @@ For example, a mixture of Gaussians fit to a single non-Gaussian cluster (such a
 As discussed in \cref{sec:useful-properties}, one of the main advantages of \gp{} priors is that, given inputs $\vX$, outputs $\vY$ and kernel parameters $\vtheta$, we can analytically integrate over functions mapping $\vX$ to $\vY$.
 However, inference becomes more difficult if we introduce uncertainty about the kernel parameters, or the input locations $\vX$.
 This section outlines how to infer all parameters in the \iwmm{} given only a set of observations $\vY$.
-Details can be found in \cref{sec:iwmm-inference-details}.
+Details can be found in appendix~\ref{sec:iwmm-inference-details}.
 
 By placing conjugate priors on the parameters of the Gaussian mixture components, we can analytically integrate out the cluster shapes, given the assignments of points to clusters.
 The only remaining variables to infer are the latent points $\vX$, the cluster assignments $\vZ$, and the kernel parameters $\vtheta$.

@@ -306,20 +306,23 @@ If the weights initially have finite variance $\sigma^2_{\alpha}$ before dropout
 %$\expectargs{}{ \alpha_i} = \vzero, 
 %\varianceargs{}{\alpha_i} = \sigma^2$,
 %then the distribution of weights after each one has been dropped out with probability $p$ is:
+%
 \begin{align}
 r_i \simiid \textnormal{Ber}(p) \qquad %\expectargs{}{ r_i \alpha_i} = p\mu, \quad 
 \varianceargs{}{r_i \alpha_i} = p \sigma_{\alpha}^2 \;.
 \end{align}
-%Since only the first two moments of the weight variance matter, the resulting \gp{} remain
+%
 Because \cref{eq:one-layer-gp-two} is a result of the central limit theorem, it does not depend on the form of the distribution on $\valpha$, only its mean and variance.
 Thus, dropping out features of an infinitely-wide \MLP{} does not change the model at all, except to rescale the output variance.
 %If we were to rescale the weights by a factor other than $p^{-1/2}$, we would only rescale the output variance of the model, leaving all other aspects identical.
 %Is there a better way to drop out features that would lead to robustness?
 Indeed, multiplying all weights by $p^{-1/2}$ restores the initial variance:
+%
 \begin{align}
 %\expectargs{}{ \frac{1}{p} r_i \alpha_i } = \frac{p}{p}\mu = \mu, \quad 
 \varianceargs{}{ \frac{1}{p^\frac{1}{2}} r_i \alpha_i} = \frac{p}{p} \sigma_{\alpha}^2 = \sigma_{\alpha}^2 \; .
 \end{align}
+%
 In which case dropout on the hidden units has no effect at all.
 Intuitively, this is because no individual feature can have more than an infinitesimal contribution to the network output.
 
@@ -358,7 +361,7 @@ Another way to understand the resulting prior is to note that the dropout mixtur
 \end{align}
 %TODO:  Make this equation more precise
 %
-Therefore, ignoring higher moments, dropout on the inputs of a \gp{} can be approximated by an additive \gp{} with all orders equally weighted.
+Therefore, ignoring higher central moments, dropout on the inputs of a \gp{} can be approximated by an additive \gp{} with all orders equally weighted.
 For dropout rates $p$ other than $\nicefrac{1}{2}$, the $d$ order terms will be weighted by the corresponding binomial coefficient $D \choose d$.
 This suggests an interpretation of additive \gp{}s as an approximation to a mixture of models where each model only depends on a subset of the input variables.
 

@@ -21,11 +21,17 @@
 
 %... the only possible link between the objective world and the linguistic world is found in structure, and structure alone. — Alfred Korzybski, Science and Sanity: An Introduction to Non-Aristotelian Systems and General Semantics (1958), 61.
 
+%“The first draft of anything is shit.” 
+%― Ernest Hemingway
+
+%“Not a wasted word. This has been a main point to my literary thinking all my life.”
+%—Hunter S. Thompson
+
 
 \begin{quotation}
-``When I write, I feel like an armless, legless man with a crayon in his mouth.''
+``Not a wasted word. This has been a main point to my literary thinking all my life.''
 
-\hspace*{\fill} \emph{ -- Kurt Vonnegut}
+\hspace*{\fill} \emph{ -- Hunter S. Thompson}
 \end{quotation}
 
 
@@ -47,7 +53,7 @@ For example, $\kPer$ indicates repeating structure, and $\kSE$ indicates smooth 
 %In this chapter, we describe how \procedurename{} can generate natural-language descriptions of the models found by the search procedure.
 %Combined wing automatic model search, plots, and text, we present a system which automatically generates reports which highlight interpretable features discovered in a variety of data sets.
 This chapter also presents a system which combines automatically generated text and plots to generate reports which highlight interpretable features discovered in a variety of data sets.
-An example of a complete automatically-generated report can be found in \cref{ch:example-solar}.
+An example of a complete automatically-generated report can be found in appendix~\ref{ch:example-solar}.
 %Other example reports can be found at \url{mlg.eng.cam.ac.uk/Lloyd/abcdoutput/}
 % (e.g.\ figure~\ref{fig:periodic}).
 
@@ -126,9 +132,9 @@ This follows from the fact that if ${f_1(x) \dist \gp{}(0, \kernel_1)}$ and ${f_
 \end{align}
 %This can be loosely described as \eg `modulated by a periodic function with a period of [period] [units]'.
 Put more plainly, a \gp{} whose covariance is a product of kernels has the same covariance as a product of two functions, each drawn from the corresponding \gp{} prior.
-However, the distribution of $f_1 f_2$ is not \gp{} distributed -- it has higher non-central moments as well.
+However, the distribution of $f_1 f_2$ is not \gp{} distributed -- it has higher central moments as well.
 This identity can be used to generate a cumbersome ``worst-case'' description in cases where a more concise description of the effect of a kernel is not known.
-For example, it is used in our system to describe the product of more than one periodic function.
+For example, it is used in our system to describe the product of more than one periodic kernel.
 \end{itemize}
 
 \Cref{table:modifiers} gives the corresponding description of the effect of each type of kernel in a product, written as a post-modifier.
@@ -406,35 +412,21 @@ The second component, shown in \cref{fig:lin_periodic}, is accurately described 
 The description of the fourth component, shown in \cref{fig:heteroscedastic}, expresses the fact that the scale of the unstructured noise in the model grows linearly with time.
 %By multiplying a white noise kernel by a linear kernel, the model is able to express heteroscedasticity (covariance which changes over time).
 
-
-
 The complete report generated on this dataset can be found in the supplementary material of \citet{LloDuvGroetal14}.
 Other example reports describing a wide variety of time-series can be found at \url{mlg.eng.cam.ac.uk/lloyd/abcdoutput/}
 
 
-\subsubsection{Source code}
-Source code to perform all experiments is available at \url{github.com/jamesrobertlloyd/gpss-research}. 
-
-
 \section{Related work}
 \label{sec:description-related-work}
-
-
-%\subsection{Natural-language output}
 To the best of our knowledge, our procedure is the first example of automatic description of nonparametric statistical models.
 However, systems with natural language output have been built in the areas of video interpretation \citep{barbu2012video} and automated theorem proving \citep{ganesalingam2013fully}.
 
-%\subsubsection{Assessing Validity}
 
-%Describing an infinite-dimensional object, such as a \gp{} posterior, using only text presents a difficult challenge.
 
-%We do not claim that
 
 \section{Limitations of this approach}
 
-This chapter presents a procedure for describing \gp{} models which relied on the particular properties of the model and kernel being used.
-The compositional nature of the descriptions avoided an exponential blowup in the number of special cases that needed to be considered.
-However, during development, we noted several difficulties with this approach:
+During development, we noted several difficulties with this approach:
 
 \begin{itemize}
 
@@ -446,16 +438,32 @@ Second, it was difficult to think of a description for the hyperparameter which 
 Third, a product of two $\kRQ$ kernels does not give another $\kRQ$ kernel, which raises the question of how to concisely describe products of $\kRQ$ kernels.
 
 \item {\bf Reliance on additivity.}
-Much of the work of decomposing models was due to the additive decomposition.
-However, it is easy to imagine data without such additive decomposition, or which only decomposes additively after being warped.
-Describing the properties of transformations of the data may not be as useful to the end user.
+Much of the modularity of the description procedure is due to the additive decomposition.
+%However, some types of structure do not allow additive decomposition.
+%For example, A multiplication of , or only decompose additively after being warped.
+However, additivity is lost under any nonlinear transformation of the output.
+Such warpings can be learned~\citep{snelson2004warped}, but descriptions of transformations of the data may not be as clear to the end user.
+
+\item {\bf Difficulty of expressing uncertainty.}
+A natural extension to the model search procedure would be to report a posterior distribution on structures and kernel parameters, rather than point estimates.
+Describing uncertainty about the hyperparameters of a particular structure may be feasible,
+but describing even a few most-probable structures might result in excessively long reports.
 
 \end{itemize}
 
+\subsubsection{Source code}
+Source code to perform all experiments is available at \url{github.com/jamesrobertlloyd/gpss-research}. 
+
 
 \section{Conclusions}
-Towards the goal of automating statistical modeling we presented a system which, given a structured \gp{} model, automatically generates detailed reports that describe patterns in the data captured by the model.
-This, combined with the automatic model search of \cref{ch:grammar}, gives a procedure which can discover and describe a variety of patterns in time series.
+This chapter presented a system which automatically generates detailed reports that describe patterns captured by a \gp{} model.
+The properties of \gp{}s and the kernels being used allowed a modular description, avoiding an exponential blowup in the number of special cases that needed to be considered.
+
+Combined with the model search of \cref{ch:grammar}, this gives a procedure combining all the elements listed in \cref{sec:ingredients}:
+an open-ended language of models, a search through model space, a model comparison procedure, and a model description procedure.
+Each particular element used in the procedure presented here is merely a proof-of-concept.
+However, even this simple prototype demonstrated the ability to discover and describe a variety of patterns in time series.
+
 
 %\section{Discussion and Future Work}
 

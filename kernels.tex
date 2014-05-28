@@ -924,9 +924,9 @@ Symmetries in $[f_1, f_2, f_3]$ will connect different parts of the manifolds, g
 \renewcommand{\tabcolsep}{1mm}
 \begin{tabular}{ccc}
 Euclidian $( \SE_1 \times \SE_2 )$  & Cylinder $( \SE_1 \times \Per_2 )$ & Toroid $( \Per_1 \times \Per_2 )$\\
-\hspace{-0.5cm}\includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/manifold} &
-\includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/cylinder} &
-\includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/torus} \\
+\hspace{-0.5cm}\includegraphics[width=0.33\columnwidth,clip=true,trim=10mm 10mm 1mm 1mm]{\topologyfiguresdir/manifold} &
+\includegraphics[width=0.33\columnwidth,clip=true,trim=10mm 10mm 10mm 10mm]{\topologyfiguresdir/cylinder} &
+\includegraphics[width=0.33\columnwidth,clip=true,trim=1mm 1mm 1mm 1mm]{\topologyfiguresdir/torus} \\
 \end{tabular}
 \caption[Generating 2D manifolds with different topological structures]{
 Generating 2D manifolds with different topologies.
@@ -954,6 +954,14 @@ f(x_1, x_2) & = f( x_1, x_2 + \tau) \qquad \textnormal{(periodic in $x_1$)} \non
 f(x_1, x_2) & = f( x_2, x_1)  \quad \,\,\,\;     \qquad \textnormal{(symmetric about $x_1 = x_2$)} \nonumber 
 \end{align}
 %
+We'll call a kernel which enforces these symmetries a \emph{M\"{o}bius kernel}:
+%
+\begin{align}
+k(x_1, x_2, x_1', x_2') = 
+\Per(x_1, x_1') \kerntimes \Per(x_2, x_2') \kernplus
+\Per(x_1, x_2') \kerntimes \Per(x_2, x_1')
+\end{align}
+%
 Moving along the diagonal $x_1 = x_2$ of a function drawn from the corresponding \gp{} prior is equivalent to moving along the edge of a notional M\"{o}bius strip which has had the function mapped on to its surface.
 \Cref{fig:mobius}(a) shows an example of a function drawn from such a prior.
 %
@@ -961,11 +969,11 @@ Moving along the diagonal $x_1 = x_2$ of a function drawn from the corresponding
 \begin{tabular}[t]{ccc}
 %\begin{columns}
 \centering
-Draw from \gp{} prior: &  &  \\
+Draw from \gp{} with kernel: &  &  \\
 %$( \Per_1 \times \Per_2 )$ and $f(x,y) = f(y,x)$ & generated parametrically\\
 $\begin{array}{l@{}l@{}}
-&\Per(x_1, x_1') \kerntimes \Per(x_2, x_2') \\
-          \kernplus & \Per(x_1, x_2') \kerntimes \Per(x_2, x_1')
+&            \Per(x_1, x_1') \kerntimes \Per(x_2, x_2') \\
+ \kernplus & \Per(x_1, x_2') \kerntimes \Per(x_2, x_1')
 \end{array}$
 & $\begin{array}{c} \textnormal{ M\"{o}bius strip drawn from}  \\ \textnormal{$\mathbb{R}^2 \to \mathbb{R}^3$ \gp{} prior}  \end{array}$
  & $\begin{array}{c} \textnormal{Sudanese M\"{o}bius strip}  \\ \textnormal{generated parametrically}  \end{array}$\\
@@ -978,7 +986,7 @@ $\begin{array}{l@{}l@{}}
  & $x_1$ \\[-3em]
 \end{tabular}}
 & 
-\raisebox{0.3cm}{\includegraphics[width=0.3\columnwidth,clip=true,trim=1cm 1.3cm 0cm 0cm]{\topologyfiguresdir/mobius}} &
+\raisebox{0.3cm}{\includegraphics[width=0.3\columnwidth,clip=true,trim=1cm 1.3cm 1mm 1mm]{\topologyfiguresdir/mobius}} &
 %\includegraphics[width=0.33\columnwidth]{\topologyfiguresdir/mobius} 
 %\begin{minipage}{0.33\columnwidth}
 %{\begin{tabular}[t]{p{.3\columnwidth}}
@@ -991,7 +999,7 @@ $\begin{array}{l@{}l@{}}
 \end{tabular}
 \caption[Generating M\"{o}bius strips]{Generating M\"{o}bius strips.
 \emph{Left:} A function drawn from a \sgp{} prior obeying the same symmetries as a M\"{o}bius strip.
-\emph{Center:} By enforcing that the functions mapping from $\mathbb{R}^2$ to $\mathbb{R}^3$ obey the appropriate symmetries, surfaces sampled from the prior have topology corresponding to a M\"{o}bius strip.
+\emph{Center:} By enforcing that the function mapping from $\mathbb{R}^2$ to $\mathbb{R}^3$ obeys the appropriate symmetries, surfaces sampled from the prior have topology corresponding to a M\"{o}bius strip.
 Surfaces generated this way do not have the familiar shape of a flat surface connected to itself with a half-twist.
 Instead, they tend to look like \emph{Sudanese} M\"{o}bius strips \citep{sudanese1984}, whose edge has a circular shape.
 \emph{Right:} A Sudanese projection of a M\"{o}bius strip.
