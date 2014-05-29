@@ -103,7 +103,7 @@ k_a + k_b =& \,\, k_a(\vx, \vx') + k_b( \vx, \vx')\\
 k_a \times k_b =& \,\, k_a(\vx, \vx') \times k_b(\vx, \vx')
 \end{align}
 
-All of the basic kernels we considered in \cref{sec:basic-kernels} are one-dimensional, but kernels over multidimensional inputs can be constructed by adding and multiplying between kernels on different dimensions.
+All of the basic kernels we considered in \cref{sec:basic-kernels} are one-dimensional, but kernels over multi-dimensional inputs can be constructed by adding and multiplying between kernels on different dimensions.
 The dimension on which a kernel operates is denoted by a subscripted integer.
 For example, $\SE_2$ represents an \kSE{} kernel over the second dimension of $\vx$.
 To remove clutter, we will usually refer to kernels without specifying their parameters.
@@ -161,16 +161,16 @@ For example, the kernel $\kSE \kerntimes \kLin \kerntimes \kPer$ is a prior on f
 We will see examples of real datasets with this kind of structure in \cref{ch:grammar}.
 
 
-\subsection{Building flexible multidimensional models}
+\subsection{Building multi-dimensional models}
 
 %For instance, in multidimensional data, the multiplicative kernel $\SE_1 \kerntimes \SE_2$ represents a smoothly varying function of dimensions 1 and 2 which is not constrained to be additive.
 
-We can build flexible models of functions of more than one input simply by multiplying kernels between the different inputs.
+A flexible way to model functions having more than one input is to multiply together kernels defined on the individual inputs.
 For example, a product of $\kSE$ kernels over different dimensions, each having a different lengthscale parameter, is called the $\seard$ kernel:
 %
 \begin{align}
 \seard( \vx, \vx')
- = \prod_{d=1}^D \exp \sigma_d^2 \left( -\frac{1}{2} \frac{\left( x_d - x'_d \right)^2}{\ell_d^2} \right)
+ = \prod_{d=1}^D \sigma_d^2 \exp \left( -\frac{1}{2} \frac{\left( x_d - x'_d \right)^2}{\ell_d^2} \right)
  = \sigma_f^2 \exp \left( -\frac{1}{2} \sum_{d=1}^D \frac{\left( x_d - x'_d \right)^2}{\ell_d^2} \right)
 \end{align}
 %
@@ -330,7 +330,7 @@ True function: & sum of $\kSE$ kernels: & product of $\kSE$ kernels: \\
 \hspace{-0.1in}\includegraphics[width=0.32\textwidth]{\additivefigsdir/1st_order_censored_add} & 
 \hspace{-0.1in}\includegraphics[width=0.32\textwidth]{\additivefigsdir/1st_order_censored_ard}\\[1em]
 \end{tabular}
-\caption[Long-range inference in functions with additive structure]
+\caption[Extrapolation in functions with additive structure]
 {\emph{Left:} A function with additive structure.
 %Inference in functions with additive structure.
 \emph{Center:} When the function being modeled has additive structure, a \gp{} with an additive kernel can exploit this fact to extrapolate far from the training data.
@@ -389,7 +389,7 @@ Cement & Slag & Fly Ash\\
  \concretepic{7} & \concretepic{8} & \concretelegend \\
 \end{tabular}
 \caption[Decomposition of posterior into interpretable one-dimensional functions]
-{The predictive distribution of each component of a multidimensional additive model.
+{The predictive distribution of each component of a multi-dimensional additive model.
 Blue crosses indicate the original data projected on to each dimension, red indicates the marginal posterior density, and colored lines are samples from the marginal posterior of each component.
 The vertical axis is the same for all plots.
 %The black line is the posterior mean of a \sgp{} with only one term in its kernel.
@@ -668,7 +668,7 @@ h_{ij}(x_1, x_2) \propto \exp \left( -\frac{1}{2} \frac{(x_1 - c_i)^2}{2\ell_1^2
 
 
 
-\section{Expressing symmetries and invariants}
+\section{Expressing symmetries and invariances}
 \label{sec:expressing-symmetries}
 
 \def\gswitch{G_\textnormal{swap}}
@@ -699,7 +699,7 @@ g_2([x_1, x_2]) & = [x_1, x_2] \qquad \textnormal{(identity)}
 %
 How can we construct a prior on functions which respect these symmetries?
 
-\citet{ginsbourger2012argumentwise} and \citet{Invariances13} showed that the only way to construct a \gp{} prior on functions which respect a set of invariants is to construct a kernel which respects the same invariants with respect to each of its two inputs:
+\citet{ginsbourger2012argumentwise} and \citet{Invariances13} showed that the only way to construct a \gp{} prior on functions which respect a set of invariances is to construct a kernel which respects the same invariances with respect to each of its two inputs:
 %
 \begin{align}
 k(\vx, \vx') = k( g(\vx), g(\vx')), \quad \forall \vx, \vx' \in \InputSpace, \quad \forall g, g' \in G
@@ -747,7 +747,7 @@ All three methods introduce a different type of nonstationarity.
 \begin{enumerate}
 
 \item {\bf Sum over the orbit.} 
-\citet{ginsbourger2012argumentwise} and \citet{kondor2008group} suggest enforcing invariants through a double sum over the orbits of $\vx$ and $\vx'$ with respect to G:
+\citet{ginsbourger2012argumentwise} and \citet{kondor2008group} suggest enforcing invariances through a double sum over the orbits of $\vx$ and $\vx'$ with respect to G:
 %
 \begin{align}
 k_\textnormal{sum}(\vx, \vx') = \sum_{g, \in G} \sum_{g' \in G} k( g( \vx ), g'( \vx') )
@@ -781,7 +781,7 @@ Constructing a kernel using this method introduces a non-differentiable  ``seam'
 
 \item {\bf Multiply over the orbit.}
 %\citet{adams2013product}
-Ryan Adams (personal communication) suggested a construction enforcing invariants through products over the orbits:
+Ryan P. Adams (personal communication) suggested a construction enforcing invariances through products over the orbits:
 %
 \begin{align}
 k_\textnormal{sum}(\vx, \vx') = \prod_{g \in G} \prod_{g' \in G} k( g( \vx ), g'( \vx') )
@@ -1027,7 +1027,7 @@ but instead resembles an embedding known as the Sudanese M\"{o}bius strip \citep
 Categorical variables are variables which can take values only from a discrete, unordered set, such as $\{\texttt{blue}, \texttt{green}, \texttt{red}\}$.
 A flexible way to construct a kernel over categorical variables is to represent that variable by a set of binary variables, using a one-of-k encoding.
 For example, if $\vx$ can take one of four values, $x \in \{ \texttt{A}, \texttt{B}, \texttt{C}, \texttt{D}\}$, then a one-of-k encoding of $x$ will correspond to four binary inputs, and $\oneofk(\texttt{C}) = [0, 0, 1, 0]$.
-Given a one-of-k encoding, we can place any multidimensional kernel on that space, such as the \seard{}:
+Given a one-of-k encoding, we can place any multi-dimensional kernel on that space, such as the \seard{}:
 %
 \begin{align}
 k_{\textnormal{categorical}}( x, x') = \seard( \oneofk(x), \oneofk(x') )
