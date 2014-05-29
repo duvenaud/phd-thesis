@@ -45,6 +45,15 @@ longse_length_scale = 20;
 longse_output_var = 10;
 longse_kernel = @(x,y) longse_output_var*exp( - 0.5 * ( ( x - y ) .^ 2 ) ./ longse_length_scale^2 );
 
+shortse_length_scale = 0.5;
+shortse_output_var = 0.5;
+shortse_kernel = @(x,y) shortse_output_var*exp( - 0.5 * ( ( x - y ) .^ 2 ) ./ shortse_length_scale^2 );
+
+medse_length_scale = 10;
+medse_output_var = 5;
+medse_kernel = @(x,y) medse_output_var*exp( - 0.5 * ( ( x - y ) .^ 2 ) ./ medse_length_scale^2 );
+
+
 per_length_scale = 1;
 per_period = 4;
 per_output_var = 1.1;
@@ -75,13 +84,14 @@ longse_times_per = @(x,y) longse_kernel(x, y) .* per_kernel(x, y);
 longse_plus_per = @(x,y) longse_kernel(x, y) + per_kernel(x, y);
 longse_times_lin = @(x,y) longse_kernel(x, y) .* lin_kernel(x, y);
 longse_plus_se = @(x,y) longse_kernel(x, y) + se_kernel(x, y);
+shortse_plus_medse = @(x,y) shortse_kernel(x, y) + medse_kernel(x, y);
 
 % kernel_names = {'se_kernel', 'lin_kernel', 'per_kernel', 'longse_kernel', ...
 %            'se_plus_lin', 'se_plus_per', 'se_times_lin', 'se_times_per', ...
 %            'lin_times_per', 'lin_plus_per', 'lin_times_lin', ...
 %            'longse_times_per', 'longse_plus_per', 'longse_times_lin', ...
 %            'rq_kernel','c_kernel'};
-kernel_names = {'wn_kernel'};
+kernel_names = {'shortse_plus_medse'};
 
 % Automatically build kernel names from function names.
 for i = 1:numel(kernel_names)
