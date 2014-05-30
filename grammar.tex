@@ -487,6 +487,14 @@ There is a large body of work attempting to construct rich kernels through a wei
 These approaches find the optimal solution in polynomial time, but only if the component kernels and parameters are pre-specified.
 We compare to a Bayesian variant of \MKL{} in \cref{sec:numerical}, expressed as a restriction of our language of kernels.
 
+\rwsheader{Changepoints}
+
+There is a wide body of work on changepoint modeling.
+\citet{adams2007bayesian} developed a Bayesian online changepoint detection method which segments time-series into independent parts.
+This approach was extended by \citet{saatcci2010gaussian} to Gaussian process models.
+\citet{garnett2010sequential} developed a family of kernels which modeled changepoints occuring in a single step.
+The changepoint kernel (\kCP) used in this work is a straightforward extension to smooth changepoints.
+
 
 \rwsheader{Equation learning}
 \cite{todorovski1997declarative}, \cite{washio1999discovering} and \cite{Schmidt2009b} learn parametric forms of functions specifying time series, or relations between quantities.
@@ -503,7 +511,7 @@ An examination of the structure discovered by the automatic equation-learning so
 Their grammar on graph structures includes planes, trees, and cylinders.
 Some of their discrete graph structures have continuous analogues in our own space.
 For example, $\SE_1 \kerntimes \SE_2$ and $\SE_1 \kerntimes \Per_2$ can be seen as mapping the data to a plane and a cylinder, respectively.
-\Cref{sec:topological-manifolds} examines these structures in more detail.
+\Cref{sec:topological-manifolds} examined these structures in more detail.
 
 \citet{diosan2007evolving} and \citet{bing2010gp} learn composite kernels for support vector machines and relevance vector machines, respectively, using genetic search algorithms to optimize cross-validation error.
 Similarly, \citet{kronberger2013evolution} search over composite kernels for \gp{}s using genetic programming, optimizing the unpenalized marginal likelihood.

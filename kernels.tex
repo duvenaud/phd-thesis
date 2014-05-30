@@ -563,7 +563,7 @@ Figure~\ref{fig:changepoint_examples} shows some examples.
 \centering
 \begin{tabular}{rcccc}
  & $\kCP(\kSE, \kPer)$ & $\kCP(\kSE, \kPer)$ & $\kCP(\kSE, \kSE)$ & $\kCP(\kPer, \kPer)$ \\
-\raisebox{1cm}{f(x)} \hspace{-0.4cm} & \cppic{draw_1} & \cppic{draw_2} & \cppic{draw_3} & \cppic{draw_4} \\
+\raisebox{1cm}{$f(x)$} \hspace{-0.4cm} & \cppic{draw_1} & \cppic{draw_2} & \cppic{draw_3} & \cppic{draw_4} \\
 & $x$ & $x$ & $x$ & $x$
 \end{tabular}
 \caption[Draws from changepoint priors]
@@ -951,16 +951,27 @@ This construction is similar in spirit to the \gp{} latent variable model (\gplv
 
 \subsection{M\"{o}bius strips}
 
-A prior on functions on M\"{o}bius strips can be constructed by enforcing the symmetries:
+%A prior on functions on M\"{o}bius strips can be constructed by enforcing the symmetries:
+
+A space having the topology of a M\"{o}bius strip can be constructed by enforcing invariance to the following operations~\citep[chapter 7]{reid2005geometry}:
+%A function defined on a M\"{o}bius strips can be constructed by enforcing the symmetries~\citep[chapter 7]{reid2005geometry}:
 %
+%\begin{align}
+%f(x_1, x_2) & = f( x_1 + \tau, x_2) \qquad \textnormal{(periodic in $x_1$)} \label%{eq:mobius_symmetry_x} \\
+%f(x_1, x_2) & = f( x_1, x_2 + \tau) \qquad \textnormal{(periodic in $x_2$)} \label%{eq:mobius_symmetry_y} \\
+%f(x_1, x_2) & = f( x_2, x_1)  \quad \,\,\,\; \qquad \textnormal{(symmetric about $x_1 = x_2$)}
+%\label{eq:mobius_symmetry_xy}
+%\end{align}
 \begin{align}
-f(x_1, x_2) & = f( x_1 + \tau, x_2) \qquad \textnormal{(periodic in $x_1$)} \label{eq:mobius_symmetry_x} \\
-f(x_1, x_2) & = f( x_1, x_2 + \tau) \qquad \textnormal{(periodic in $x_2$)} \label{eq:mobius_symmetry_y} \\
-f(x_1, x_2) & = f( x_2, x_1)  \quad \,\,\,\; \qquad \textnormal{(symmetric about $x_1 = x_2$)}
+g_{p_1}([x_1, x_2]) & = [ x_1 + \tau, x_2] \qquad \textnormal{(periodic in $x_1$)} \label{eq:mobius_symmetry_x} \\
+g_{p_2}([x_1, x_2]) & = [ x_1, x_2 + \tau] \qquad \textnormal{(periodic in $x_2$)} \label{eq:mobius_symmetry_y} \\
+g_s([x_1, x_2]) & = [ x_2, x_1]  \quad \,\,\,\; \qquad \textnormal{(symmetric about $x_1 = x_2$)}
 \label{eq:mobius_symmetry_xy}
 \end{align}
 %
-We'll call a kernel which enforces these symmetries a \emph{M\"{o}bius kernel}:
+\Cref{sec:expressing-symmetries} already showed how to build \gp{} priors invariant to these types of transformations.
+We'll call a kernel which enforces these symmetries a \emph{M\"{o}bius kernel}.
+An example of such a kernel is:
 %
 \begin{align}
 k(x_1, x_2, x_1', x_2') = 
@@ -1106,7 +1117,8 @@ Long-term trend & Weekly periodicity &Yearly periodicity \\
 
 %\subsection{Learning Kernel Parameters}
 
-One difficulty in building \gp{} models is choosing, or integrating over, the kernel parameters.
+This chapter outlined ways to choose the parametric form of a kernel in order to express different sorts of structure.
+Once the parametric form has been chosen, one still needs to choose, or integrating over, the kernel parameters.
 %Fortunately, typical kernels only have $\mathcal{O}(D)$ parameters, meaning that if $N$ is reasonably large, these parameters can be estimated by maximum marginal likelihood.
 If the kernel we construct has relatively few parameters, these parameters can be estimated by maximum marginal likelihood, using gradient-based optimizers.
 The kernel parameters estimated in the examples above were optimized using the \GPML{} toolbox, available at \url{http://www.gaussianprocess.org/gpml/code}.
@@ -1122,7 +1134,10 @@ The kernel parameters estimated in the examples above were optimized using the \
 %The quantities represent the relative amount of evidence that the data provide for each of these possibilities, providing the assumptions of the model are correct.
 %To do so, we simple need to compare the marginal likelihood of the data
 %We demonstrate that marginal likeihood an be used to automatically search over such structures.
-The next chapter will show how to perform such a search not just over the kernel parameters, but also over the open-ended space of kernel expressions.
+
+A systematic search over kernel parameters is necessary when appropriate parameters aren't known.
+Likewise, sometimes appropriate kernel structures are hard to guess.
+The next chapter will show how to perform an automatic search not just over the kernel parameters, but also over the open-ended space of kernel expressions.
 
 \subsubsection{Source code}
 Source code to produce all figures and examples in this chapter is available at \\\url{http://www.github.com/duvenaud/phd-thesis}.
