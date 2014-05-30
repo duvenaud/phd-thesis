@@ -7,26 +7,24 @@
 
 \begin{quotation}
 ``It would be very nice to have a formal apparatus that gives us some `optimal' way of recognizing unusual phenomena and inventing new classes of hypotheses that are most likely to contain the true one; but this remains an art for the creative human mind.''
-%``It would be very nice to have a formal apparatus that gives us some `optimal' way of recognizing unusual phenomena and inventing new classes of hypotheses \dots but this remains an art for the creative human mind.''
-% In trying to practice this art, the Bayesian has the advantage because his formal apparatus already developed gives him a clearer picture of what to expect, and therefore a sharper perception for recognizing the unexpected.
 
 \defcitealias{Jaynes85highlyinformative}{ -- E. T.  Jaynes (1985)}
 \hspace*{\fill}\citetalias{Jaynes85highlyinformative}
 \end{quotation}
 
 
-In \cref{ch:kernels}, we saw that the choice of kernel determines the type of structure that can be learned by a \gp{} model, and that a wide variety of models could be constructed through simply adding and multiplying a few base kernels together.
+In \cref{ch:kernels}, we saw that the choice of kernel determines the type of structure that can be learned by a \gp{} model, and that a wide variety of models could be constructed by adding and multiplying a few base kernels together.
 However, we did not answer the difficult question of which kernel to use for a given problem.
 Even for experts, choosing the kernel in \gp{} regression remains something of a black art.
 
-The contribution of this chapter is to show how to automate the process of building kernels for \gp{} models.
-To do so, we define an open-ended space of kernels, by adding and multiplying together kernels from a fixed set.
-We then search over this space to find a kernel which captures as much structure in the data as possible.
+The contribution of this chapter is to show a way to automate the process of building kernels for \gp{} models.
+We define an open-ended space of kernels by adding and multiplying together kernels from a fixed set.
+We the define a procedure to search over this space to find a kernel which matches the structure in the data.
 
 Searching over such a large, structured model class has two main benefits.
-First, this procedure has very good predictive accuracy, since it tries out a large number of different regression models.
-Second, this procedure can discover interpretable structure in datasets.
-Because \gp{} posteriors can be decomposed (as in \cref{sec:concrete}), we can also examine the resulting structures visually.
+First, this procedure has good predictive accuracy, since it tries out a large number of different regression models.
+Second, this procedure can sometimes discover interpretable structure in datasets.
+Because \gp{} posteriors can be decomposed (as in \cref{sec:concrete}), we can examine the resulting structures visually.
 In \cref{ch:description}, we also show how to automatically generate English-language descriptions of the resulting models.
 
 %\paragraph{Attribution}
@@ -54,82 +52,81 @@ James Lloyd ran most of the experiments, while I constructed most of the figures
 
 \section{Ingredients of an automatic statistician}
 \label{sec:ingredients}
-\citet{gelman2013philblogpost} asks, ``How can an artificial intelligence do statistics? ... It needs not just an inference engine, but also a way to construct new models and a way to check models. Currently, those steps are performed by humans, but the AI would have to do it itself.''.
+\citet{gelman2013philblogpost} asks: ``How can an artificial intelligence do statistics? \dots It needs not just an inference engine, but also a way to construct new models and a way to check models. Currently, those steps are performed by humans, but the AI would have to do it itself''.
 %
 This section will discuss the different parts we think are required to build an artificial intelligence that can do statistics.
 
-\paragraph{1. An open-ended language of models.}
+\begin{enumerate}
+\item {\bf An open-ended language of models.}
 Many learning algorithms consider all models in a class of fixed size.
 For example, graphical model learning algorithms \citep{Friedman03,Eaton07_uai} search over different connectivity graphs for a given set of nodes.
-While such methods can be powerful, human statisticians are capable of deriving novel model classes when required.
-An automatic search through an open-ended class of models can achieve some of this flexibility, growing the complexity of the model as needed, possibly combining existing structures in novel ways.
+Such methods can be powerful, but human statisticians are sometimes capable of deriving \emph{novel} model classes when required.
+An automatic search through an open-ended class of models can achieve some of this flexibility, %growing the complexity of the model as needed, 
+possibly combining existing structures in novel ways.
 
-\paragraph{2. A search through model space.}
+\item {\bf A search through model space.}
 An open-ended space of models cannot be searched exhaustively.
 Just as human researchers iteratively refine their models, search procedures can propose new search directions based on the results of previous model fits.
 Because any search in an open-ended space must start with relatively simple models before moving on to more complex ones, any search strategy is likely to resemble an iterative model-building procedure.
 
-\paragraph{3. A model comparison procedure.}
+\item {\bf A model comparison procedure.}
 A search strategy requires an objective to optimize.
 In this work, we use approximate marginal likelihood to compare models, penalizing complexity using the Bayesian Information Criterion as a heuristic.
-More generally, an automatic statistician should be able to question the models it has constructed.
+More generally, an automatic statistician needs to somehow check the models it has constructed.
 %, and formal procedures from model checking provide a way for it to do this.
 \citet{gelman2012philosophy} review the literature on model checking.
 
-\paragraph{4. A model description procedure.}
+\item {\bf A model description procedure.}
 Part of the value of statistical models comes from helping humans to understand a dataset or a phenomenon.
 Furthermore, a clear description of the statistical structure found in a dataset helps a user to notice when the dataset has errors, the wrong question was asked, the model-building procedure failed to capture known structure, a relevant piece of data or constraint is missing, or when a novel statistical structure has been found.
+\end{enumerate}
 
 In this chapter, we introduce a system containing all the above ingredients.
 We call this system the automatic Bayesian covariance discovery (\procedurename{}) system.
-The next four sections of this chapter describe the mechanisms we use to produce these four ingredients, for this particular example of an artificial intelligence which does statistics.
+The next four sections of this chapter describe the mechanisms we use to incorporate these four ingredients into a limited example of an artificial intelligence which does statistics.
 
 
 
 \section{A language of regression models}
 \label{sec:improvements}
 
-As shown in \cref{ch:kernels}, we can construct a wide variety of kernel structures compositionally by adding and multiplying a small number of base kernels.
+As shown in \cref{ch:kernels}, we can construct a wide variety of kernel structures by adding and multiplying a small number of base kernels.
 We can therefore define a language of \gp{} regression models simply by specifying a language of kernels.
 
 \begin{figure}[ht!]%
 \centering
 \begin{tabular}{r|ccc}
 Kernel name: & Rational quadratic (\kRQ) & Cosine ($\cos$) & White noise (\kLin) \\[10pt]
-$k(x, x') =$ & $ \left( 1 + \frac{(\inputVar - \inputVar')^2}{2\alpha\ell^2}\right)^{-\alpha}$ &
-$\cos\left(2 \pi \frac{ (x - x')}{p}\right)$ &
-$\delta(\inputVar - \inputVar')$ \\[14pt]
+$k(x, x') =$ & $ \sigma_f^2 \left( 1 + \frac{(\inputVar - \inputVar')^2}{2\alpha\ell^2}\right)^{-\alpha}$ &
+$\sigma_f^2 \cos\left(2 \pi \frac{ (x - x')}{p}\right)$ &
+$\sigma_f^2 \delta(\inputVar - \inputVar')$ \\[14pt]
 \raisebox{1cm}{Plot of kernel:} & \kernpic{rq_kernel} & \kernpic{cos_kernel} & \kernpic{wn_kernel}\\
-& $x -x'$ & $x -x'$ & \fixedx \\
+& $x -x'$ & $x -x'$ & $x -x'$ \\
 %& & & \\
  & \large $\downarrow$ & \large $\downarrow$ & \large $\downarrow$  \\
-\raisebox{1cm}{\parbox{2.5cm}{Samples from \gp{} prior:}} & \kernpic{rq_kernel_draws_s4} & \kernpic{cos_kernel_draws_s1} & \kernpic{wn_kernel_draws_s1} \\
-Type of structure: & multiscale variation & sine waves & uncorrelated noise
+\raisebox{1cm}{\parbox{2.5cm}{Samples from \gp{} prior:}} & \kernpic{rq_kernel_draws_s4} & \kernpic{cos_kernel_draws_s1} & \kernpic{wn_kernel_draws_s1} \\[-2pt]
+& $x$ & $x$ & $x$ \\
+Type of structure: & multiscale variation & sinusoidal & uncorrelated noise
 \end{tabular}
 \vspace{6pt}
 \caption[Another set of basic kernels]
 {New base kernels introduced in this chapter, and the types of structure they encode.
-More interesting kernels can be constructed by adding and multiplying base kernels together.
-%Left and third columns: base kernels $k(\cdot,0)$.
-%Second and fourth columns: draws from a \sgp{} with each repective kernel.
-%The x-axis has the same range on all plots.
-}
+Other types of kernels can be constructed by adding and multiplying base kernels together.}
 \label{fig:basic_kernels_two}
 \end{figure}
 %
-To specify an open-ended language of structured kernels, we will consider the set of all kernels that can be built by adding and multiplying these base kernels together:
-\begin{align}
-k_1 + k_2 =      & \,\, k_1(\vx, \vx') + k_2(\vx, \vx') \\
-k_1 \times k_2 = & \,\, k_1(\vx, \vx') \times k_2(\vx, \vx')
-%(k_1 + k_2)(\vx, \vx') =& \,\, k_1(\vx, \vx') + k_2(\vx, \vx')\\
-%(k_1 \times k_2)(\vx, \vx') =& \,\, k_1(\vx, \vx') \times k_2(\vx, \vx')
-\end{align}
-%
-This language of models is made out of a set of base kernels which capture different properties of functions, and a set of composition rules which combine kernels to yield other valid kernels.
+Our language of models is specified by a set of base kernels which capture different properties of functions, and a set of rules which combine kernels to yield other valid kernels.
 In this chapter, we will use such base kernels as white noise ($\kWN$), constant ($\kC$), linear ($\kLin$), squared-exponential ($\kSE$), rational-quadratic ($\kRQ$), sigmoidal ($\kSig$) and periodic ($\kPer$).
 We use a form of $\kPer$ due to James Lloyd (personal communication) which has its constant component removed, and $\cos(x - x')$ as a special case.
 \Cref{fig:basic_kernels_two} shows the new kernels introduced in this chapter.
 For precise definitions of all kernels, see appendix~\ref{sec:kernel-definitions}.
+
+To specify an open-ended language of structured kernels, we consider the set of all kernels that can be built by adding and multiplying these base kernels together, which we write in shorthand by:
+\begin{align}
+k_1 + k_2 =      & \,\, k_1(\vx, \vx') + k_2(\vx, \vx') \\
+k_1 \times k_2 = & \,\, k_1(\vx, \vx') \times k_2(\vx, \vx')
+\end{align}
+%
 
 The space of kernels produced by adding and multiplying the above set of kernels contains many existing regression models.
 \Cref{table:motifs} lists some of these, which are discussed in more detail in \cref{sec:gpss-related-work}. % regression models that can be expressed by this language.
@@ -137,7 +134,7 @@ The space of kernels produced by adding and multiplying the above set of kernels
 \begin{table}[ht]
 \centering
 \begin{tabular}{l|l|l}
-Regression model & Kernel & Related work\\
+Regression model & Kernel structure & Example of related work\\
 \midrule
 Linear regression & $\kC \kernplus \kLin \kernplus \kWN$ & \\
 Polynomial regression & $\kC \kernplus \prod \kLin \kernplus \kWN$ & \\
@@ -151,11 +148,11 @@ Spectral mixture & $\sum \SE \kerntimes \cos \kernplus \kWN$ & \citet{WilAda13} 
 Changepoints & \eg $\kCP(\kSE, \kSE) \kernplus \kWN$ & \citet{garnett2010sequential} \\
 Time-changing variance & \eg $\kSE \kernplus \kLin \kerntimes \kWN$ & \\
 Interpretable + flexible & $ \sum_d \kSE_d \kernplus \prod_d \kSE_d$ & \citet{plate1999accuracy} \\
-Additive \gp{}s & $ \sum_{\vr \in \{0,1\}^D} \prod_{d \in \vr} \kSE_d$ & \cref{ch:additive}
+Additive \gp{}s & $ \eg \prod_d (1 + \kSE_d) $ & \Cref{ch:additive}
 \end{tabular}
 \caption[Common regression models expressible in the kernel language]
 {Common regression models expressible by sums and products of base kernels.
-$\cos(\cdot, \cdot)$ is a special case of our reparametrised $\kPer(\cdot, \cdot)$.
+$\cos(\cdot, \cdot)$ is a special case of our reparametrized $\kPer(\cdot, \cdot)$.
 }
 \label{table:motifs}
 \end{table}
@@ -166,7 +163,7 @@ $\cos(\cdot, \cdot)$ is a special case of our reparametrised $\kPer(\cdot, \cdot
 
 \section{A model search procedure}
 
-We explore the space of regression models using a simple greedy search.
+We explore this open-ended space of regression models using a simple greedy search.
 At each stage, we choose the highest scoring kernel, and propose modifying it by applying an operation to one of its parts, combining or replacing that part with another base kernel.
 The basic operations we can perform on any part $k$ of a kernel are:
 %
@@ -222,7 +219,6 @@ To see this, observe that if we restricted the addition and multiplication rules
 }
 \label{fig:mauna_search_tree}
 \end{figure}
-
 \begin{figure}
 \centering
 \newcommand{\wmg}{0.31\columnwidth}  % width maunu growth
@@ -238,9 +234,9 @@ Level 1: & Level 2: & Level 3: \\
 \caption[Progression of models as the search depth increases]
 {Posterior mean and variance for different depths of kernel search on the Mauna Loa dataset.
 The dashed line marks the end of the dataset.
-\emph{Left:} the function is only modeled as a locally smooth function, and the extrapolation is poor.
-\emph{Middle:} a periodic component is added, and the extrapolation improves.
-\emph{Right:} at depth 3, the kernel can capture most of the relevant structure, and is able to extrapolate reasonably.
+\emph{Left:} First, the function is only modeled as a locally smooth function, and the extrapolation is poor.
+\emph{Middle:} A periodic component is added, and the extrapolation improves.
+\emph{Right:} At depth 3, the kernel can capture most of the relevant structure, and is able to extrapolate reasonably.
 }
 \label{fig:mauna_grow}
 \end{figure}
@@ -250,14 +246,14 @@ The dashed line marks the end of the dataset.
 In practice, we also include extra operators which propose commonly-occuring structures, such as changepoints.
 A complete list is contained in appendix~\ref{sec:search-operators}.
 
-Our search operators are motivated by strategies that human researchers often use to construct kernels.
+Our search operators have rough parallels with strategies used by human researchers to construct regression models.
 In particular,
 \begin{itemize}
-\item One can look for structure, such as periodicity, in the residuals of a model, and then extend the model to capture that structure.
+\item One can look for structure in the residuals of a model, such as periodicity, and then extend the model to capture that structure.
 This corresponds to adding a new kernel to the existing structure.
-\item One can start with structure, such as linearity, which is assumed to hold globally, but find that it only holds locally.
-This corresponds to multiplying a kernel structure by a local kernel, such as $\kSE$.
-\item One can add features incrementally, analogous to algorithms like boosting, back-fitting, or forward selection.
+\item One can start with structure which is assumed to hold globally, such as linearity, but find that it only holds locally.
+This corresponds to multiplying a kernel structure by a local kernel such as $\kSE$.
+\item One can incorporate features incrementally, analogous to algorithms like boosting, back-fitting, or forward selection.
 This corresponds to adding or multiplying with kernels on dimensions not yet included in the model.
 \end{itemize}
 
@@ -271,7 +267,7 @@ This corresponds to adding or multiplying with kernels on dimensions not yet inc
 
 Unfortunately, optimizing the marginal likelihood over parameters is not a convex optimization problem, and the space can have many local optima.
 For example, in data with periodic structure, integer multiples of the true period (harmonics) are often local optima. 
-We take advantage of our search procedure to provide reasonable initializations: all of the parameters which were part of the previous kernel are initialized to their previous values, while randomly initializing any newly introduced parameters.
+We take advantage of our search procedure to provide reasonable initializations: all parameters which were part of the previous kernel are initialized to their previous values. Newly introduced paramters are initialized randomly.
 In the newly proposed kernel, all parameters are then optimized using conjugate gradients.
 This procedure is not guaranteed to find the global optimum, but it implements the commonly used heuristic of iteratively modeling residuals.
 
@@ -284,11 +280,11 @@ This procedure is not guaranteed to find the global optimum, but it implements t
 
 Choosing a kernel requires a method for comparing models.
 We choose marginal likelihood as our criterion, since it balances the fit and complexity of a model \citep{rasmussen2001occam}.
-Conditioned on kernel parameters, the marginal likelihood of a \gp{} can be computed analytically.
-Given a parametric form of a kernel, we can also choose its parameters using marginal likelihood.
-However, choosing kernel parameters by maximum likelihood (as opposed to integrating them out) raises the possibility of overfitting.
-In addition, if we compare two classes of kernels by the maximum likelihood found by optimizing over the kernel parameters, then all else being equal, the kernel class having more free parameters will be chosen.
-This introduces a bias for more complex models.
+Conditioned on kernel parameters, the marginal likelihood of a \gp{} can be computed analytically by \cref{eq:gp_marg_lik}.
+%Given a parametric form of a kernel, we can also choose its parameters using marginal likelihood.
+%However, choosing kernel parameters by maximum likelihood (as opposed to integrating them out) raises the possibility of overfitting.
+In addition, if we compare \gp{} models by the maximum likelihood over their kernel parameters, then all else being equal, the model having more free parameters will be chosen.
+This introduces a bias in favor of more complex models.
 
 We could avoid overfitting by integrating the marginal likelihood over all free parameters, but this integral is difficult to do in general.
 Instead, we approximate this integral using the Bayesian information criterion (\BIC{}) \citep{schwarz1978estimating}:
@@ -297,33 +293,33 @@ Instead, we approximate this integral using the Bayesian information criterion (
 \textrm{BIC}(M) = \log p(D \given M) - \frac{1}{2} |M| \log N
 \end{equation}
 %
-where $p(D|M)$ is the marginal likelihood of the data (given by \cref{eq:gp_marg_lik}), $|M|$ is the number of kernel parameters, and $N$ is the number of data points.
+where $p(D|M)$ is the marginal likelihood of the data evaluated at the maximum-likelihood kernel parameters, $|M|$ is the number of kernel parameters, and $N$ is the number of data points.
 \BIC{} simply penalizes the marginal likelihood in proportion to how many parameters the model has.
 %BIC trades off model fit against model complexity and implements what is known as ``Bayesian Occam's Razor'' \citep{rasmussen2001occam,mackay2003information}.
 Because BIC is a function of the number of parameters in a model, we did not count kernel parameters known to not affect the model.
 For example, when two kernels are multiplied, one of their output variance parameters becomes redundant, and can be ignored.
 
 Other more sophisticated approximations are possible, such as Laplace's approximation.
-We chose to try \BIC{} first because of its simplicity, and it performed resonably in our experiments.
+We chose to try \BIC{} first because of its simplicity, and it performed reasonably well in our experiments.
 
 
 
 
 \section{A model description procedure}
 
-As discussed in \Cref{ch:kernels}, a \gp{} whose kernel is a sum of kernels can be viewed as a sum of functions drawn from different \gp{}s.
-We can always express any kernel structure as a sum of products of kernels, by distributing all products of sums.
+As discussed in \cref{ch:kernels}, a \gp{} whose kernel is a sum of kernels can be viewed as a sum of functions drawn from different \gp{}s.
+We can always express any kernel structure as a sum of products of kernels by distributing all products of sums.
 For example,
 %
 \begin{align}
 \SE \kerntimes (\RQ \kernplus \Lin) = \SE \kerntimes  \RQ \kernplus \SE \kerntimes \Lin
 \end{align}
 %
-This decomposition into additive components provides a method of visualizing the learned model, breaking down the different types of structure discovered in the data.
+When all kernels in a product apply to the same dimension, we can use the formulas in \cref{sec:posterior-variance} to visualize the marginal posterior distribution of that component.
+This decomposition into additive components provides a method of visualizing \gp{} models which disentangles the different types of structure in the model.
 
-For products of kernels which all apply to the same dimension, we can use the formulas in \cref{sec:posterior-variance} to visualize the marginal posterior distribution of each component.
 The following section shows examples of such decomposition plots.
-In \cref{ch:description}, we extend this model visualization method to include automatically generated English text explaining the meaning of each type of structure discovered.
+In \cref{ch:description}, we extend this model visualization method to include automatically generated English text explaining types of structure discovered.
 
 
 
@@ -332,13 +328,6 @@ In \cref{ch:description}, we extend this model visualization method to include a
 
 To investigate our method's ability to discover structure, we ran the kernel search on several time-series.
 In the following examples, the search was run to depth 10, using \kSE{}, \kRQ{}, \kLin{}, \kPer{} and \kWN{} as base kernels.
-
-\label{sec:extrapolation}
-\subsection{Mauna Loa atmospheric CO$\mathbf{_{2}}$}
-
-Using our method, we analyzed records of carbon dioxide levels recorded at the Mauna Loa observatory.
-Since this dataset was analyzed in detail by \citet{rasmussen38gaussian}, we can compare the kernel chosen by our method to a kernel constructed by human experts.
-
 
 \begin{figure}[ht!]
 \newcommand{\wmgd}{0.5\columnwidth}  % width mauna decomp
@@ -364,18 +353,22 @@ Medium-term deviation: $\SE \kerntimes \RQ$ & Noise: \kWN \\
 {\emph{First row:} The full posterior on the Mauna Loa dataset, after a search of depth 10.
 \emph{Subsequent rows:} The automatic decomposition of the time series.
 The model is a sum of long-term, yearly periodic, medium-term components, and residual noise, respectively.
-The yearly periodic component has been rescaled for clarity.}
+The yearly periodic component has been rescaled for visibility.}
 \label{fig:mauna_decomp}
 \end{figure}
 
+\label{sec:extrapolation}
+\subsection{Mauna Loa atmospheric CO$\mathbf{_{2}}$}
 
+Our analyzed records of carbon dioxide levels recorded at the Mauna Loa observatory.
+Since this dataset was analyzed in detail by \citet{rasmussen38gaussian}, we can compare the kernel chosen by our method to a kernel constructed by human experts.
 
 \Cref{fig:mauna_grow} shows the posterior mean and variance on this dataset as the search depth increases.
 While the data can be smoothly interpolated by a model with only a single base kernel, the extrapolations improve dramatically as the increased search depth allows more structure to be included.
 
-\Cref{fig:mauna_decomp} shows the final model chosen by our method, together with its decomposition into additive components.
-The final model exhibits both plausible extrapolation and interpretable components: a long-term trend, annual periodicity, and medium-term deviations.
-These are the same components chosen in the kernel hand-constructed by \citet[Chapter 5]{rasmussen38gaussian}.
+\Cref{fig:mauna_decomp} shows the final model chosen by our method together with its decomposition into additive components.
+The final model exhibits plausible extrapolation and interpretable components: a long-term trend, annual periodicity, and medium-term deviations.
+These are the same components chosen in the kernel hand-constructed by \citet[chapter 5]{rasmussen38gaussian}.
 
 We also plot the residuals modeled by a white noise ($\kWN$) component, showing that there is little obvious structure left in the data.
 More generally, some components capture slowly-changing structure while others capture quickly-varying struture, but there is no hard distinction between ``signal'' components and ``noise'' components.
@@ -384,9 +377,7 @@ More generally, some components capture slowly-changing structure while others c
 
 
 
-\subsection{Airline passenger counts}
-
-\begin{figure}[h!]
+\begin{figure}[ht!]
 \centering
 \newcommand{\wagd}{0.48\columnwidth}  % width airline decomp
 \newcommand{\hagd}{4cm}  % height airline decomp
@@ -420,6 +411,8 @@ Due to the linear kernel, the marginal variance grows over time, making this a h
 \label{fig:airline_decomp}
 \end{figure}
 
+\subsection{Airline passenger counts}
+
 \Cref{fig:airline_decomp} shows the decomposition produced by applying our method to monthly totals of international airline passengers~\citep{box2013time}.
 We observe similar components to those in the Mauna Loa dataset: a long term trend, annual periodicity, and medium-term deviations.
 In addition, the composite kernel captures the near-linearity of the long-term trend, and the linearly growing amplitude of the annual oscillations.
@@ -428,7 +421,7 @@ In addition, the composite kernel captures the near-linearity of the long-term t
 % postprocessing.make_all_1d_figures(folder='../results/31-Jan-1d/', prefix='31-Jan-v3', rescale=False)
 
 
-
+The model search can be run without modification on multi-dimensional datasets, but the resulting structures are more difficult to visualize.
 
 
 \section{Related work}
@@ -440,6 +433,9 @@ In addition, the composite kernel captures the near-linearity of the long-term t
 \citet[chapter 5]{rasmussen38gaussian} devoted 4 pages to manually constructing a composite kernel to model the Mauna Loa dataset.
 %In the supplementary material, we include a report automatically generated by \procedurename{} for this dataset; our procedure chose a model similar to the one they constructed by hand.
 Other examples of papers whose main contribution is to manually construct and fit a composite \gp{} kernel are \citet{textperiodic13}, \citet{lloydgefcom2012}, and \citet{EdgarTelescope}.
+These papers show that experts are capable of constructing kernels, in one dimension, of similar complexity to the ones shown in this chapter.
+However, a more systematic search can consider possibilities that might otherwise be missed.
+For example, the kernel structure $\kSE \kerntimes \kPer \kerntimes \kLin$, while appropriate for the airline dataset, had never been considered by the authors before it was chosen by the automatic search.
 
 
 \rwsheader{Nonparametric regression in high dimensions}
@@ -454,7 +450,7 @@ In our grammar, we can capture such structure through sums of base kernels along
 
 It is possible to add more flexibility to additive models by considering higher-order interactions between different dimensions. 
 \Cref{ch:additive} considers \gp{} models whose kernel implicitly sums over all possible interactions of input variables.
-\citet{plate1999accuracy} constructs a special case of this model class, summing an \kSE{} kernel along each dimension, plus a single \seard{} kernel (a product of \kSE{} over all dimensions).
+\citet{plate1999accuracy} constructs a special case of this model class, summing an \kSE{} kernel along each dimension (for interpretability) plus a single \seard{} kernel over all dimensions (for flexibility).
 Both of these models can be expressed in our grammar.
 
 A closely related procedure is smoothing-splines \ANOVA{} \citep{wahba1990spline, gu2002smoothing}.
@@ -466,38 +462,32 @@ This model class can be represented through the kernel ${\kSE \kernplus \kLin}$.
 
 
 \rwsheader{Kernel learning}
-There is a large body of work attempting to construct a rich kernel through a weighted sum of many base kernels \citep[e.g.][]{gonen2011multiple, Bach_HKL}.
-These approaches usually admit a convex objective function.
+There is a large body of work attempting to construct rich kernels through a weighted sum of base kernels, called multiple kernel learning (\MKL{}) \citep[e.g.][]{gonen2011multiple, bach2004multiple}.
+These approaches usually have a convex objective function.
 However the component kernels, as well as their parameters, must be specified in advance.
-
-%Another approach to kernel learning is to learn an embedding of the data points. 
-%\citet{lawrence2005probabilistic} learns an embedding of the data into a low-dimensional space, using a fixed kernel structure over that space.
-%This model is typically used in unsupervised tasks and requires an expensive integration or optimisation over potential embeddings when generalizing to test points.
+We compare to a Bayesian variant of \MKL{} in \cref{sec:numerical}, expressed as a restriction of our language of kernels.
 
 \citet{salakhutdinov2008using} use a deep neural network with unsupervised pre-training to learn an embedding $g(\vx)$ onto which a \gp{} with an $\kSE$ kernel is placed: ${\Cov{[f(\vx), f(\vx')]} = k(g(\vx), g(\vx'))}$.
-This is a flexible approach to kernel learning, but relies upon finding structure in the input density $p(\vx)$.
+This is a flexible approach to kernel learning, but relies mainly on finding structure in the input density $p(\vx)$.
 Instead, we focus on domains where most of the interesting structure is in $f(\vx)$.
 
 Sparse spectrum \gp{}s \citep{lazaro2010sparse} approximate the spectral density of a stationary kernel function using delta functions which corresponds to kernels of the form $\sum \cos$.
-Similarly, \citet{WilAda13} introduce spectral mixture kernels, which approximate the spectral density using a mixture of Gaussians -- corresponding to kernels of the form $\sum \kSE \times \cos$.
-Both groups demonstrate, using Bochner's theorem \citep{bochner1959lectures}, that these kernels can approximate any stationary covariance function.
+Similarly, \citet{WilAda13} introduced spectral mixture kernels, which approximate the spectral density using a mixture of Gaussians, corresponding to kernels of the form $\sum \kSE \kerntimes \cos$.
+Both groups demonstrated, using Bochner's theorem \citep{bochner1959lectures}, that these kernels can approximate any stationary covariance function.
 Our language of kernels includes both of these kernel classes (see \cref{table:motifs}).
 
-There is a large body of work attempting to construct rich kernels through a weighted sum of base kernels called multiple kernel learning (\MKL{}) \citep[e.g.][]{bach2004multiple}.
-These approaches find the optimal solution in polynomial time, but only if the component kernels and parameters are pre-specified.
-We compare to a Bayesian variant of \MKL{} in \cref{sec:numerical}, expressed as a restriction of our language of kernels.
 
 \rwsheader{Changepoints}
 
 There is a wide body of work on changepoint modeling.
 \citet{adams2007bayesian} developed a Bayesian online changepoint detection method which segments time-series into independent parts.
 This approach was extended by \citet{saatcci2010gaussian} to Gaussian process models.
-\citet{garnett2010sequential} developed a family of kernels which modeled changepoints occuring in a single step.
+\citet{garnett2010sequential} developed a family of kernels which modeled changepoints occurring abruptly at a single point.
 The changepoint kernel (\kCP) used in this work is a straightforward extension to smooth changepoints.
 
 
 \rwsheader{Equation learning}
-\cite{todorovski1997declarative}, \cite{washio1999discovering} and \cite{Schmidt2009b} learn parametric forms of functions specifying time series, or relations between quantities.
+\cite{todorovski1997declarative}, \cite{washio1999discovering} and \cite{Schmidt2009b} learned parametric forms of functions specifying time series or relations between quantities.
 In contrast, \procedurename{} learns a parametric form for the covariance, allowing it to model functions which do not have a simple parametric form but still have high-level structure.
 An examination of the structure discovered by the automatic equation-learning software Eureqa \citep{Eureqa} on the airline and Mauna Loa datasets can be found in \citet{LloDuvGroetal14}.
 %\Cref{sec:eqn-learning-comp}.
@@ -510,23 +500,23 @@ An examination of the structure discovered by the automatic equation-learning so
 \citet{kemp2008discovery} learned the structural form of a graph used to model human similarity judgements.
 Their grammar on graph structures includes planes, trees, and cylinders.
 Some of their discrete graph structures have continuous analogues in our own space.
-For example, $\SE_1 \kerntimes \SE_2$ and $\SE_1 \kerntimes \Per_2$ can be seen as mapping the data to a plane and a cylinder, respectively.
+For example, $\SE_1 \kerntimes \SE_2$ and $\SE_1 \kerntimes \Per_2$ can be seen as mapping the data to a Euclidian surface and a cylinder, respectively.
 \Cref{sec:topological-manifolds} examined these structures in more detail.
 
-\citet{diosan2007evolving} and \citet{bing2010gp} learn composite kernels for support vector machines and relevance vector machines, respectively, using genetic search algorithms to optimize cross-validation error.
-Similarly, \citet{kronberger2013evolution} search over composite kernels for \gp{}s using genetic programming, optimizing the unpenalized marginal likelihood.
+\citet{diosan2007evolving} and \citet{bing2010gp} learned composite kernels for support vector machines and relevance vector machines, respectively, using genetic search algorithms to optimize cross-validation error.
+Similarly, \citet{kronberger2013evolution} searched over composite kernels for \gp{}s using genetic programming, optimizing the unpenalized marginal likelihood.
 These methods explore similar languages of kernels to the one explored in this chapter.
 %However, each of these methods suffer either from a model selection criterion which is not differentiable with respect to kernel parameters (cross-validation of classification accuracy), or from one which does not penalize complexity of the resulting kernel expressions.
 It is not clear whether the complex genetic searches used by these methods offer advantages over the straightforward but na\"{i}ve greedy search used in this chapter.
 %However, \citet{kronberger2013evolution} observed overfitting
 %Our work goes beyond ths prior work by demonstrating the structure implied by composite kernels, employing a Bayesian search criterion, and allowing for the automatic discovery of interpretable structure from data.
-Our search criterion has the advantages of being both differentiable with respect to kernel parameters, and trading off model fit and complexity automatically.
+Our search criterion has the advantages of being both differentiable with respect to kernel parameters, and of trading off model fit and complexity automatically.
 This prior work also did not explore the automatic model decomposition, summarization and description made possible by the use of \gp{} models.
 % and goes beyond this prior work by demonstrating the interpretability of the structure implied by composite kernels, and how such structure allows for extrapolation.
 
 
 \citet{grosse2012exploiting} performed a greedy search over a compositional model class for unsupervised learning, using a grammar of matrix decomposition models, and a greedy search procedure based on held-out likelihood.
-This model class contains many existing unsupervised models as special cases, and was able to discover such structure automatically from data.
+This model class contains many existing unsupervised models as special cases, and was able to discover diverse forms of structure, such as co-clustering or sparse latent feature models, automatically from data.
 Our framework takes a similar approach, but in a supervised setting.
 
 Similarly, \citet{christian-thesis} showed to automatically perform inference in arbitrary compositions of discrete sequence models.
@@ -541,10 +531,10 @@ More generally, \citet{dechter2013bootstrap} and \citet{liang2010learning} const
 \subsection{Interpretability versus accuracy}
 
 BIC trades off model fit and complexity by penalizing the number of parameters in a kernel expression.
-This can result in \procedurename{} favoring kernel expressions with nested products of sums, producing descriptions involving many additive components when expressions are expanded.
-While these models typically have good predictive performance, the large number of components can make them less interpretable.
+This can result in \procedurename{} favoring kernel expressions with nested products of sums, producing descriptions involving many additive components after expanding these structures.
+While these models typically have good predictive performance, their large number of components can make them less interpretable.
 We experimented with not allowing parentheses during the search, discouraging nested expressions.
-This was achieved by distributing all products immediately after each search operator was applied.
+This was done by distributing all products immediately after each search operator was applied.
 We call this procedure \procedurename{}-interpretability, in contrast to the unrestricted version of the search, \procedurename{}-accuracy.
 
 
@@ -554,6 +544,7 @@ We call this procedure \procedurename{}-interpretability, in contrast to the unr
 %\subsubsection{Datasets}
 
 We evaluate the performance of the algorithms listed below on 13 real time-series from various domains from the time series data library \citep{TSDL}.
+The pre-processed datasets used in our experiments are available at \\\url{http://github.com/jamesrobertlloyd/gpss-research/tree/master/data/tsdlr}
 % plots of the data can be found at the beginning of the reports in the supplementary material.
 
 
@@ -570,8 +561,8 @@ and trend-cyclical-irregular models \citep[e.g.][]{lind2006basic}.
 
 We set Eureqa's search objective to the default mean-absolute-error.
 All algorithms besides Eureqa can be expressed as restrictions of our modeling language (see \cref{table:motifs}), so we perform inference using the same search and objective function, with appropriate restrictions to the language.
-For \MKL{}, trend-cyclical-irregular, and spectral kernels, the greedy search procedure of \procedurename{} corresponds to a forward-selection algorithm.
-For squared-exponential and linear regression, the procedure corresponds to standard marginal likelihood optimization.
+%For \MKL{}, trend-cyclical-irregular, and spectral kernels, the greedy search procedure of \procedurename{} corresponds to a forward-selection algorithm.
+%For squared-exponential and linear regression, the procedure corresponds to standard marginal likelihood optimization.
 %More advanced inference methods are sometimes used for changepoint modeling, but we use the same inference method for all algorithms for comparability.
 
 We restricted to regression algorithms for comparability; we did not include models which regress on previous values of times series, such as auto-regressive or moving-average models \citep[e.g.][]{box2013time}.
@@ -582,7 +573,7 @@ Constructing a language of autoregressive time-series models would be an interes
 \subsubsection{Extrapolation experiments}
 
 To test extrapolation, we trained all algorithms on the first 90\% of the data, predicted the remaining 10\% and then computed the root mean squared error (\RMSE{}).
-The \RMSE{}s are then standardised by dividing by the smallest \RMSE{} for each data set, so the best performance on each data set will have a value of 1.
+The \RMSE{}s were then standardised by dividing by the smallest \RMSE{} for each data set, so the best performance on each data set will have a value of 1.
 
 \begin{figure}[h!]
 \includegraphics[width=1.02\textwidth]{\grammarfiguresdir/comparison/box_extrap_wide}
@@ -595,11 +586,12 @@ The methods are ordered by median.
 
 
 \Cref{fig:box_extrap_dist} shows the standardised \RMSE{}s across algorithms.
-\procedurename{}-accuracy outperforms \procedurename{}-interpretability.
-Both algorithms have lower quartiles than all other methods.
+\procedurename{}-accuracy usually outperforms \procedurename{}-interpretability.
+Both algorithms had lower quartiles than all other methods.
 
-Overall, the model construction methods with greater capacity perform better: \procedurename{} outperforms trend-cyclical-irregular, which outperforms Bayesian \MKL{}, which outperforms squared-exponential.
-Despite searching over a rich model class, Eureqa performs relatively poorly, since very few datasets are parsimoniously explained by a parametric equation.
+Overall, the model construction methods having richer languages of models perform better: \procedurename{} outperforms trend-cyclical-irregular, which outperforms Bayesian \MKL{}, which outperforms squared-exponential.
+Despite searching over a rich model class, Eureqa performs relatively poorly.
+This may be because few datasets are parsimoniously explained by a parametric equation, or because of the limited regularization ability of this procedure.
 
 Not shown on the plot are large outliers for spectral kernels, Eureqa, squared exponential and linear regression with normalized \RMSE{}s of 11, 493, 22 and 29 respectively.
 %All of these outliers occurred on a data set with a large discontinuity (see the call centre data in the supplementary material).
@@ -617,15 +609,15 @@ Not shown on the plot are large outliers for spectral kernels, Eureqa, squared e
 
 \subsection{Multi-dimensional prediction}
 
-\procedurename{} can also be applied to multidimensional regression problems without modification.
-An experimental comparison with other methods can be found in \cref{sec:additive-experiments}, where it outperforms a wide variety of multidimensional regression methods.
+\procedurename{} can be applied to multidimensional regression problems without modification.
+An experimental comparison with other methods can be found in \cref{sec:additive-experiments}, where it has the best performance on every dataset.%outperforms a wide variety of multidimensional regression methods.
 
 
 
 \subsection{Structure recovery on synthetic data}
 \label{sec:synthetic}
 
-The structure found in the examples above may seem reasonable, but we may wonder to what extent \procedurename{} is consistent - that is, when do we recover all the structure in any given dataset?
+The structure found in the examples above may seem reasonable, but we may wonder to what extent \procedurename{} is consistent -- that is, does it recover all the structure in any given dataset?
 It is difficult to tell from predictive accuracy alone if the search procedure is finding the correct structure, especially in multiple dimensions.
 To address this question, we tested our method's ability to recover known structure on a set of synthetic datasets.
 
@@ -636,10 +628,11 @@ We then added \iid Gaussian noise to the functions at various signal-to-noise ra
 \begin{table}[ht!]
 \caption[Kernels chosen on synthetic data]
 {
-Kernels chosen by our method on synthetic data generated using known kernel structures. $D$ denotes the dimension of the functions being modeled.
+Kernels chosen by \procedurename{} on synthetic data generated using known kernel structures.
+$D$ denotes the dimension of the function being modeled.
 \SNR{} indicates the signal-to-noise ratio.
 Dashes (--) indicate no structure was found.
-Each kernel implicitly has a \kWN{} kernel included.
+Each kernel implicitly has a \kWN{} kernel added to it.
 }
 \label{tbl:synthetic}
 \addtolength{\tabcolsep}{1pt}
@@ -665,8 +658,8 @@ $\SE_1 \kerntimes \SE_2 \kernplus \SE_2 \kerntimes \SE_3$ & 4 & $\SE_1 \kerntime
 
 \Cref{tbl:synthetic} shows the results.
 For the highest \SNR{}, the method finds all relevant structure except in one case.
-The reported additional linear structure in the last row is explainable by the fact that functions sampled from \kSE{} kernels with long length-scales occasionally have near-linear trends.
-As the noise increases, our method generally backs off to simpler structures, rather than over-fitting.
+The reported additional linear structure in the last row is can be explained the fact that functions sampled from \kSE{} kernels with long length-scales occasionally have near-linear trends.
+As the noise increases, our method generally backs off to simpler structures rather than over-fitting.
 
 \subsubsection{Source code}
 Source code to perform all experiments is available at \\\url{http://www.github.com/jamesrobertlloyd/gp-structure-search}.
@@ -676,17 +669,17 @@ All \gp{} parameter optimisation was performed by automated calls to the \GPML{}
 
 \section{Discussion}
 
-This chapter presented a system which constructs an appropriate model from an open-ended language, and automatically generates plots decomposing the different types of structure present in the model.
+This chapter presented a system which constructs an appropriate model from an open-ended language  and automatically generates plots decomposing the different types of structure present in the model.
 
 This was done by introducing a space of kernels defined by sums and products of a small number of base kernels.  
 The set of models in this space includes many standard regression models.
 We proposed a search procedure for this space of kernels, and argued that this search process parallels the process of model-building by statisticians.
 
-We found that the learned structures are often capable of accurate extrapolation in time-series datasets, and are competitive with widely used kernel classes and kernel combination methods on a variety of prediction tasks.
-The learned kernels often yield decompositions of a signal into diverse and interpretable components, enabling model-checking by humans.
+We found that the learned structures are often capable of accurate extrapolation in time-series datasets, and are competitive with widely used kernel classes on a variety of prediction tasks.
+The learned kernels can yield decompositions of a signal into diverse and interpretable components, enabling model-checking by humans.
 We hope that this procedure has the potential to make powerful statistical model-building techniques accessible to non-experts.
 
-The next chapter will show how the model components found by this procedure can be automatically described using English-language text.
+%The next chapter will show how the model components found by this procedure can be automatically described using English-language text.
 
 \iffalse
 \section{Future Work}
