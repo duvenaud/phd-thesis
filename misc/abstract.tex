@@ -6,7 +6,8 @@ These models, based on Gaussian processes, can capture many types of statistical
 Such structure can be encoded through \emph{kernels}, which have historically been chosen by hand by experts.
 We show how to automate this task, creating a system which explores an open-ended space of models and reports the structures discovered.
 
-To automatically construct Gaussian process models, we define a simple grammar over kernels, a search criterion (marginal likelihood), and a breadth-first search procedure.
+To automatically construct Gaussian process models, we define a grammar over kernels and simply optimize approximate marginal likelihood using a breadth-first search.
+We also develop automatic model decomposition, visualization and description procedures.
 Combining these, we present a procedure which takes in a dataset and outputs an automatically-constructed model, along with a detailed report with graphs and automatically generated text illustrating the qualitatively different, and sometimes novel, types of structure discovered in that dataset.
 
 %This system automates parts of the model-building and analysis currently performed by statisticians.
