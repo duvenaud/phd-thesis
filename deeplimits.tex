@@ -20,7 +20,7 @@ By viewing neural networks this way, we can analyze their properties without ref
 Instead, we can ask what sorts of information-processing structures these priors give rise to, and check whether those structures are the same sort which we expect to find in useful models.
 
 %To shed light on this problem, we analyze the analogous problem of constructing useful priors on compositions of functions.
-As a starting point, we will relate neural networks to Gaussian processes, and examine a class of infinitely-wide, deep neural networks called \emph{deep Gaussian processes}.
+As a starting point, we will relate neural networks to Gaussian processes, and examine a class of infinitely-wide, deep neural networks called \emph{deep Gaussian processes} -- compositions of functions drawn from \gp{} priors.
 Deep \gp{}s are an attractive model class to study for several reasons.
 \citet{damianou2012deep} showed that the probabilistic nature of deep \gp{}s gaurds against overfitting, and allows us to use the marginal likelihood to automatically tune the model architecture without the need for cross-validation.
 \citet{hensman2014deep} showed that stochastic variational inference is possible in deep \gp{}s.
@@ -86,8 +86,11 @@ f(\vx) = \frac{1}{K}{\mathbf \vnetweights}\tra \hPhi(\vx) = \frac{1}{K} \sum_{i=
 \label{eq:one-layer-gp}
 \end{align}
 %
-with fixed\footnote{The above derivation gives the same result if the parameters of the hidden units are random.
-However, to avoid confusion, we refer to layers with infinitely-many nodes as``fixed'', since their distribution on outputs always the same with probability one.} features $\left[ \hphi_1(\vx), \dots, \hphi_K(\vx) \right]\tra = \hPhi(\vx)$ and i.i.d. $\netweights$'s with zero mean and finite variance $\sigma^2$, the central limit theorem implies that as the number of features $K$ grows, any two function values $f(\vx), f(\vx')$ have a joint distribution approaching a Gaussian:
+with fixed%
+\footnote{The above derivation gives the same result if the parameters of the hidden units are random.
+However, to avoid confusion, we refer to layers with infinitely-many nodes as``fixed'', since their distribution on outputs always the same with probability one.
+}
+ features $\left[ \hphi_1(\vx), \dots, \hphi_K(\vx) \right]\tra = \hPhi(\vx)$ and i.i.d. $\netweights$'s with zero mean and finite variance $\sigma^2$, the central limit theorem implies that as the number of features $K$ grows, any two function values $f(\vx), f(\vx')$ have a joint distribution approaching a Gaussian:
 %
 \begin{align}
 \lim_{K \to \infty} p\left( \colvec{f(\vx)}{f(\vx')} \right) = \Nt{\colvec{0}{0}}{
@@ -161,7 +164,7 @@ Neural net corresponding to a \gp{} & Net corresponding to a \gp{} with a deep k
     
 	\foreach \name / \y in {3}
 	    \path[yshift=0.5cm]
-    	    node[hidden neuron, minimum size=\nodesize] (H-\name) at (\layersep,-\nodesep*4) {$\indfeat_K$};
+    	    node[hidden neuron, minimum size=\nodesize] (H-\name) at (\layersep,-\nodesep*4) {$\indfeat_\infty$};
 
     % Draw the output layer node
     \foreach \name / \y in {1,...,\numdims}
@@ -202,7 +205,7 @@ Neural net corresponding to a \gp{} & Net corresponding to a \gp{} with a deep k
             node[hidden neuron, minimum size=\nodesize] (H-\name) at (\layersep,-\nodesep*\y) {$\indfeat^{(1)}_{\y}$};
 	\foreach \name / \y in {3}
 	    \path[yshift=0.5cm]
-    	    node[hidden neuron, minimum size=\nodesize] (H-\name) at (\layersep,-\nodesep*4) {$\indfeat^{(1)}_K$};
+    	    node[hidden neuron, minimum size=\nodesize] (H-\name) at (\layersep,-\nodesep*4) {$\indfeat^{(1)}_\infty$};
             
 
     % Draw the secdond hidden layer nodes
@@ -211,7 +214,7 @@ Neural net corresponding to a \gp{} & Net corresponding to a \gp{} with a deep k
             node[hidden neuron, minimum size=\nodesize] (H2-\name) at (2*\layersep,-\nodesep*\y) {$\indfeat^{(2)}_{\y}$};
 	\foreach \name / \y in {3}
 	    \path[yshift=0.5cm]
-    	    node[hidden neuron, minimum size=\nodesize] (H2-\name) at (2*\layersep,-\nodesep*4) {$\indfeat^{(2)}_K$};
+    	    node[hidden neuron, minimum size=\nodesize] (H2-\name) at (2*\layersep,-\nodesep*4) {$\indfeat^{(2)}_\infty$};
 
     % Draw the output layer node
     \foreach \name / \y in {1,...,\numdims}
@@ -245,7 +248,7 @@ Neural net corresponding to a \gp{} & Net corresponding to a \gp{} with a deep k
 \end{tabular}
 \caption[Neural network architectures giving rise to \sgp{}s]
 {
-\emph{Left:} \gp{}s can be understood as a one-hidden-layer \MLP{} with infinitely many fixed hidden units having unknown weights.
+\emph{Left:} \gp{}s can be derived as a one-hidden-layer \MLP{} with infinitely many fixed hidden units having unknown weights.
 \emph{Right:} Multiple layers of fixed hidden units gives rise to a \gp{} with a deep kernel, but not a deep \gp{}.
 }
 \label{fig:gp-architectures}
@@ -326,7 +329,7 @@ A neural net with fixed activation functions corresponding to a 3-layer deep \gp
             node[hidden neuron, minimum size=\nodesize] (H-\name) at (\layersep,-\nodesep*\y) {$\indfeat^{(1)}_{\y}$};
    	\foreach \name / \y in {3}
 	    \path[yshift=0.5cm]
-    	    node[hidden neuron, minimum size=\nodesize] (H-\name) at (\layersep,-\nodesep*4) {$\indfeat^{(1)}_K$};
+    	    node[hidden neuron, minimum size=\nodesize] (H-\name) at (\layersep,-\nodesep*4) {$\indfeat^{(1)}_\infty$};
 
 
     % Draw the hidden layer nodes
@@ -335,7 +338,7 @@ A neural net with fixed activation functions corresponding to a 3-layer deep \gp
             node[hidden neuron, minimum size=\nodesize] (H2-\name) at (3*\layersep,-\nodesep*\y) {$\indfeat^{(2)}_{\y}$};
    	\foreach \name / \y in {3}
 	    \path[yshift=0.5cm]
-    	    node[hidden neuron, minimum size=\nodesize] (H2-\name) at (3*\layersep,-\nodesep*4) {$\indfeat^{(2)}_K$};
+    	    node[hidden neuron, minimum size=\nodesize] (H2-\name) at (3*\layersep,-\nodesep*4) {$\indfeat^{(2)}_\infty$};
     	    
     % Draw the hidden layer nodes
     \foreach \name / \y in {1,2}%...,\numhidden}
@@ -343,7 +346,7 @@ A neural net with fixed activation functions corresponding to a 3-layer deep \gp
             node[hidden neuron, minimum size=\nodesize] (H3-\name) at (5*\layersep,-\nodesep*\y) {$\indfeat^{(3)}_{\y}$};
    	\foreach \name / \y in {3}
 	    \path[yshift=0.5cm]
-    	    node[hidden neuron, minimum size=\nodesize] (H3-\name) at (5*\layersep,-\nodesep*4) {$\indfeat^{(3)}_K$};    	    
+    	    node[hidden neuron, minimum size=\nodesize] (H3-\name) at (5*\layersep,-\nodesep*4) {$\indfeat^{(3)}_\infty$};    	    
 
     % Draw the output layer node
     \foreach \name / \y in {1,...,\numdims}
@@ -407,9 +410,9 @@ A neural net with fixed activation functions corresponding to a 3-layer deep \gp
     \node[annot,below of=H3-2, node distance=1.15cm] {$\vdots$}; 
 \end{tikzpicture}
 %}
-\\
+\\[0.5em]
 \hline
-\\
+\\[-0.5em]
 A net with nonpararametric activation functions corresponding to a 3-layer deep \gp{}\\
 \\
 %\begin{tabular}{c}
@@ -527,11 +530,10 @@ This second view lets us compare deep \gp{} models to standard neural net archit
 \section{Characterizing deep Gaussian process priors}
 \label{sec:characterizing-deep-gps}
 
-In this section, we develop several theoretical results that explore the behavior of deep \gp{}s as a function of their depth.
-This will allow us in \cref{sec:formalizing-pathology} to formally identify a pathology that emerges in very deep networks.
-
-Specifically, we will show that the size of the derivative of a one-dimensional deep \gp{} becomes log-normal distributed as the network becomes deeper.
+This section develops several theoretical results characterizing the behavior of deep \gp{}s as a function of their depth.
+Specifically, we show that the size of the derivative of a one-dimensional deep \gp{} becomes log-normal distributed as the network becomes deeper.
 We will also show that the Jacobian of a multivariate deep \gp{} is a product of independent Gaussian matrices with independent entries.
+These results will allow us to identify a pathology that emerges in very deep networks in \cref{sec:formalizing-pathology}.
 
 
 \subsection{One-dimensional asymptotics}
@@ -591,7 +593,7 @@ If we choose kernel parameters so that ${\nicefrac{\sigma^2}{\lengthscale^2} = \
 %then ${\expectargs{}{\left| \nicefrac{\partial f(x)}{\partial x} \right|} = 1}$, and so ${\expectargs{}{\left| \nicefrac{\partial f^{(1:L)}(x)}{\partial x} \right|} = 1}$ for any $L$.
 %  If $\nicefrac{\sigma^2_f}{\lengthscale^2}$ is less than $\nicefrac{\pi}{2}$, the expected derivative magnitude goes to zero, and if it is greater, the expected magnitude goes to infinity as a function of $L$.  
 
-The log of the magnitude of the derivatives has moments
+The distribution of the log of the magnitude of the derivatives has finite moments:
 \begin{align}
 m_{\log} = \expectargs{}{\log \left| \frac{\partial f(x)}{\partial x} \right|} & = 2 \log \left( \frac{\sigma}{\lengthscale} \right) - \log2 - \gamma \nonumber \\
 %\varianceargs{}{\log \left| \frac{\partial f(x)}{\partial x} \right|} & = \frac{1}{4}\left[ \pi^2 + 2 \log^2 2  - 2 \gamma( \gamma + log4 ) + 8 \left( \gamma + \log2 - \log \left(\frac{\sigma_f}{\lengthscale}\right)\right) \log\left(\frac{\sigma_f}{\lengthscale}\right) \right]
