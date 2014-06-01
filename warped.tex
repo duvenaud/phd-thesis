@@ -223,24 +223,24 @@ This section outlines how to infer all parameters in the \iwmm{} given only a se
 Details can be found in appendix~\ref{sec:iwmm-inference-details}.
 
 By placing conjugate priors on the parameters of the Gaussian mixture components, we can analytically integrate out the cluster shapes, given the assignments of points to clusters.
-The only remaining variables to infer are the latent points $\vX$, the cluster assignments $\vZ$, and the kernel parameters $\vtheta$.
-%In particular, we'll alternate collapsed Gibbs sampling of $\vZ$ and Hamiltonian Monte Carlo sampling of $\vX$.
+The only remaining variables to infer are the latent points $\vX$, the cluster assignments $\CLAS$, and the kernel parameters $\vtheta$.
+%In particular, we'll alternate collapsed Gibbs sampling of $\CLAS$ and Hamiltonian Monte Carlo sampling of $\vX$.
 %
-%Given $\vZ$, we can calculate the gradient of the un-normalized posterior distribution of $\vX$, integrating over warping functions.
+%Given $\CLAS$, we can calculate the gradient of the un-normalized posterior distribution of $\vX$, integrating over warping functions.
 %This gradient allows us to sample $\vX$ using Hamiltonian Monte Carlo (\HMC{}).
 %
 We can obtain samples from their posterior 
-%$p(\vX,\vZ|\vY,\bm{\theta},\vS,\nu,\vu,r,\eta)$ 
-$p(\vX,\vZ, \vtheta | \vY)$ 
+%$p(\vX,\CLAS|\vY,\bm{\theta},\vS,\nu,\vu,r,\eta)$ 
+$p(\vX,\CLAS, \vtheta | \vY)$ 
 by iterating two steps:
 \begin{enumerate}
 \item
-Given the latent points $\vX$, we sample the discrete cluster memberships $\vZ$ using collapsed Gibbs sampling, integrating out the mixture parameters \eqref{eq:gibbs}.
-%The conditional probability of $\vZ$ given $\vX$ is given by \eqref{eq:gibbs}.
+Given the latent points $\vX$, we sample the discrete cluster memberships $\CLAS$ using collapsed Gibbs sampling, integrating out the mixture parameters \eqref{eq:gibbs}.
+%The conditional probability of $\CLAS$ given $\vX$ is given by \eqref{eq:gibbs}.
 %For each observation $n=1,\cdots,N$,
 %sample the component assignment $z_{n}$ by collapsed Gibbs sampling 
 \item 
-Given the cluster assignments $\vZ$, we sample the continuous latent coordinates $\vX$ and kernel parameters $\vtheta$ using Hamiltonian Monte Carlo (\HMC{})~\citep[chapter 30]{mackay2003information}.
+Given the cluster assignments $\CLAS$, we sample the continuous latent coordinates $\vX$ and kernel parameters $\vtheta$ using Hamiltonian Monte Carlo (\HMC{})~\citep[chapter 30]{mackay2003information}.
 The relevant equations are given by \cref{eq:warped-hmc1,eq:warped-hmc2,eq:warped-hmc3,eq:warped-hmc4}.
 \end{enumerate}
 

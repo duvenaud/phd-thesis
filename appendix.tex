@@ -20,8 +20,8 @@ If
 then
 %
 \begin{align}
-\vy_A | \vy_B \sim \Nt{\vmu_A + \vSigma_{AB} \vSigma_{BB}\inv \left( \vx_B - \vmu_B \right) }
-{\vSigma_{AA} - \vSigma_{AB} \vSigma_{BB}\inv \vSigma_{BA} }.
+\vy_A | \vy_B \sim \mathcal{N} \big(\vmu_A + \vSigma_{AB} \vSigma_{BB}\inv \left( \vx_B - \vmu_B \right),
+\vSigma_{AA} - \vSigma_{AB} \vSigma_{BB}\inv \vSigma_{BA} \big).
 \label{eq:gauss_conditional}
 \end{align}
 
@@ -29,12 +29,12 @@ This result can be used in the context of Gaussian process regression, where $\v
 In this case, the necessary covariance matrices are given by:
 %
 \begin{align}
-\vSigma_{AA} & = k(\vX, \vX) \\
-\vSigma_{AB} & = k(\vX, \vX^\star) \\
-\vSigma_{BA} & = k(\vX^\star, \vX) \\
-\vSigma_{BB} & = k(\vX^\star, \vX^\star)
+\vSigma_{AA} & = k(\vX^\star, \vX^\star) \\
+\vSigma_{AB} & = k(\vX^\star, \vX) \\
+\vSigma_{BA} & = k(\vX, \vX^\star) \\
+\vSigma_{BB} & = k(\vX, \vX)
 \end{align}
-and similarly for the mean vectors.
+and similarily for the mean vectors.
 
 
 
@@ -47,29 +47,27 @@ and similarly for the mean vectors.
 %\newcommand{\scalefactor}{\sigma_f^2}
 \newcommand{\scalefactor}{}
 
-%\subsection{Base kernels}
-
-%For scalar-valued inputs, the white noise ($\kWN$), constant ($\kC$), linear ($\kLin$), squared exponential ($\kSE$), and periodic kernels ($\kPer$) are defined as follows:
-Here we give the formulas for all one-dimensional base kernels mentioned in the thesis.
+This appendix gives the formulas for all one-dimensional base kernels used in the thesis.
 Each of these formulas is multiplied by a scale factor $\sigma_f^2$, which we omit for clarity.
+%
 \begin{align}
 \kC(\inputVar, \inputVar') & = \scalefactor 1 \\
-\kWN(\inputVar, \inputVar') & = \scalefactor \delta(\inputVar - \inputVar') \label{eq:appendix-wn}\\
-\kLin(\inputVar, \inputVar') & = \scalefactor (\inputVar - c)(\inputVar' - c)  \label{eq:appendix-lin} \\
 \kSE(\inputVar, \inputVar') & = \scalefactor \exp\left(-\frac{(\inputVar - \inputVar')^2}{2\ell^2}\right)  \label{eq:appendix-se}\\
+\kPer(x, x') & = \exp\left(-\frac{2}{\ell^2} \sin^2 \left( \pi \frac{\inputVar - \inputVar'}{p} \right)\right) \label{eq:appendix-periodic}\\
+\kLin(\inputVar, \inputVar') & = \scalefactor (\inputVar - c)(\inputVar' - c)  \label{eq:appendix-lin} \\
 \kRQ(x, x') & = \scalefactor \left( 1 + \frac{(\inputVar - \inputVar')^2}{2\alpha\ell^2}\right)^{-\alpha}  \label{eq:appendix-rq}\\
-\kPer(x, x') & = \exp\left(-\frac{2}{\ell^2} \sin^2 \left( \pi \frac{\inputVar - \inputVar'}{p} \right)\right) \\
 %\kPer(\inputVar, \inputVar') & =  \sigma_f^2 \frac{\exp\left(\frac{1}{\ell^2}\cos 2 \pi  \frac{(\inputVar - \inputVar')}{p}\right) - I_0\left(\frac{1}{\ell^2}\right)}{\exp\left(\frac{1}{\ell^2}\right) - I_0\left(\frac{1}{\ell^2}\right)} \label{eq:generalized-periodic} \\
 %\kPer(\inputVar, \inputVar') & =  \scalefactor \exp\left(\frac{1}{\ell^2}\cos 2 \pi  \frac{(\inputVar - \inputVar')}{p}\right) - I_0\left(\frac{1}{\ell^2}\right) \\
 \cos(x, x') & = \scalefactor \cos\left(\frac{2 \pi (x - x')}{p}\right) \label{eq:appendix-cos} \\
+\kWN(\inputVar, \inputVar') & = \scalefactor \delta(\inputVar - \inputVar') \label{eq:appendix-wn}\\
 \kCP(\kernel_1, \kernel_2)(x, x') & = \scalefactor \sigma(x) k_1(x,x')\sigma(x') + (1-\sigma(x)) k_2(x,x')(1-\sigma(x')) \\
 \boldsymbol\sigma(\inputVar, \inputVar') & = \scalefactor \sigma(x)\sigma(x') \\
 \boldsymbol{\bar\sigma}(\inputVar, \inputVar') & = \scalefactor (1-\sigma(x))(1-\sigma(x'))
 \end{align}
-where $\delta_{\inputVar, \inputVar'}$ is the Kronecker delta function, $I_0$ is the modified Bessel function of the first kind of order zero, and other symbols are kernel parameters.
-${\sigma(x) = \nicefrac{1}{1 + \exp(-x)}}$.
+%
+where $\delta_{\inputVar, \inputVar'}$ is the Kronecker delta function, $\{c,\ell,p,\alpha\}$ represent kernel parameters, and ${\sigma(x) = \nicefrac{1}{1 + \exp(-x)}}$.
 
-\Cref{eq:appendix-se,eq:generalized-periodic,eq:appendix-lin} are plotted in \cref{fig:basic_kernels}, and \cref{eq:appendix-wn,eq:appendix-rq,eq:appendix-cos} are plotted in \cref{fig:basic_kernels_two}.
+\Cref{eq:appendix-se,eq:appendix-periodic,eq:appendix-lin} are plotted in \cref{fig:basic_kernels}, and \cref{eq:appendix-wn,eq:appendix-rq,eq:appendix-cos} are plotted in \cref{fig:basic_kernels_two}.
 Draws from \gp{} priors with changepoint kernels are shown in \cref{fig:changepoint_examples}.
 
 
@@ -77,14 +75,18 @@ Draws from \gp{} priors with changepoint kernels are shown in \cref{fig:changepo
 \subsubsection{The zero-mean periodic kernel}
 
 %\citet{lloyd-periodic}
-James Lloyd (personal communication) showed that the standard periodic kernel due to \citet{mackay1998introduction} can be decomposed into a periodic and a constant component.
+James Lloyd (personal communication) showed that the standard periodic kernel due to \citet{mackay1998introduction} can be decomposed into a sum of a periodic and a constant component.
 He derived the equivalent periodic kernel without any constant component:
 %, shown in \cref{eq:generalized-periodic}.
 %
 \begin{align}
 \kPerGen(\inputVar, \inputVar') & =  \sigma_f^2 \frac{\exp\left(\frac{1}{\ell^2}\cos 2 \pi  \frac{(\inputVar - \inputVar')}{p}\right) - I_0\left(\frac{1}{\ell^2}\right)}{\exp\left(\frac{1}{\ell^2}\right) - I_0\left(\frac{1}{\ell^2}\right)} \label{eq:generalized-periodic}
 \end{align}
+%
+where $I_0$ is the modified Bessel function of the first kind of order zero.
+
 He further showed that its limit as the lengthscale grows is the cosine kernel:
+%
 \begin{equation}
 \lim_{\ell \to \infty} \kPerGen(x, x') = \cos\left(\frac{2 \pi (x - x')}{p}\right).
 \end{equation}
@@ -121,15 +123,16 @@ The search used in the multidimensional regression experiments in \cref{sec:synt
 \mathcal{B} &\to& \mathcal{B'}
 \end{eqnarray}
 %
-where $\mathcal{S}$ represents any kernel sub-expression and $\mathcal{B}$ is any base kernel within a kernel expression.
+where $\mathcal{S}$ represents any kernel subexpression and $\mathcal{B}$ is any base kernel within a kernel expression.
 These search operators represent addition, multiplication and replacement.
-When the multiplication operator is applied to a sub-expression which includes a sum of sub-expressions, parentheses () are introduced.
-For instance, if rule \eqref{eq:search-multiply} is applied to the sub-expression $k_1 + k_2$, the resulting expression is $(k_1 \kernplus k_2) \kerntimes \mathcal{B}$.
+When the multiplication operator is applied to a subexpression which includes a sum of subexpressions, parentheses () are introduced.
+For instance, if rule \eqref{eq:search-multiply} is applied to the subexpression $k_1 + k_2$, the resulting expression is $(k_1 \kernplus k_2) \kerntimes \mathcal{B}$.
 
 Afterwards, we added several more search operators in order to speed up the search.
+This expanded set of operators was used in the experiments in \cref{sec:time_series,sec:Predictive accuracy on time series,ch:description}.
 These new operators do not change the set of possible models.
 
-To accommodate changepoints and change-windows, we introduced the following additional operators to our search:
+To accommodate changepoints and changewindows, we introduced the following additional operators to our search:
 %
 \begin{eqnarray}
 \mathcal{S} &\to& \kCP(\mathcal{S},\mathcal{S}) \\
@@ -157,7 +160,7 @@ We also introduced the operator
 \mathcal{S} &\to& \mathcal{S} \times (\mathcal{B} + \kC)
 \end{eqnarray}
 %
-Which allows a new base kernel to be added along with the constant kernel, for cases when multiplying by a base kernel by itself would restrict the model too much.
+Which allows a new base kernel to be added along with the constant kernel, for cases when multiplying by a base kernel by itself would be overly restrictive.
 
 
 
@@ -166,12 +169,12 @@ Which allows a new base kernel to be added along with the constant kernel, for c
 \chapter{Example Automatically Generated Report}
 \label{ch:example-solar}
 
-The following pages of this appendix contain an entire automatically-generated report, run on a dataset measuring annual solar irradiation data from 1610 to 2011.
+The following pages of this appendix contain an automatically-generated report, run on a dataset measuring annual solar irradiation data from 1610 to 2011.
 This dataset was previously analyzed by \citet{lean1995reconstruction}.
 
 The structure search was run using the \procedurename-interpretable variant, with base kernels $\kSE$, $\kLin$, $\kC$, $\kPer$, $\vsigma$, and $\kWN$.
 
-Other example reports can be found at \url{mlg.eng.cam.ac.uk/Lloyd/abcdoutput/}, including analyses of wheat prices, temperature records, call centre volumes, radio interference, gas production, unemployment, number of births, and wages over time.
+Other example reports can be found at \url{http://www.mlg.eng.cam.ac.uk/Lloyd/abcdoutput/}, including anlyses of wheat prices, temperature records, call centre volumes, radio interference, gas production, unemployment, number of births, and wages over time.
 
 \newcommand{\solarreportpage}[1]{\includegraphics[width=\columnwidth]{figures/solarpages/02-solar-seperate-pages-#1}}
 
@@ -225,15 +228,18 @@ Other example reports can be found at \url{mlg.eng.cam.ac.uk/Lloyd/abcdoutput/},
 \chapter{Inference in the Warped Mixture Model}
 \label{ch:warped-appendix}
 
+
 \subsubsection{Detailed definition of model}
 
 The \iwmm{} assumes that the latent density is an infinite mixture of Gaussians:
+%
 \begin{align}
 p(\vx ) = \sum_{c=1}^{\infty} \lambda_c \, {\cal N}(\vx|\bm{\mu}_{c},\vR_{c}\inv)
 \end{align}
-where $\lambda_{c}$, $\bm{\mu}_{c}$ and $\vR_{c}$ is the mixture weight, mean, and precision matrix of the $c$\textsuperscript{th} mixture component.
 %
+where $\lambda_{c}$, $\bm{\mu}_{c}$ and $\vR_{c}$ is the mixture weight, mean, and precision matrix of the $c$\textsuperscript{th} mixture component.
 We place a conjugate Gaussian-Wishart priors on the Gaussian parameters $\{\bm{\mu}_{c},\vR_{c}\}$:
+%
 \begin{align}
 p(\bm{\mu}_{c},\vR_{c})
 = {\cal N}(\bm{\mu}_{c}|\vu,(r\vR_{c})\inv)
@@ -252,30 +258,30 @@ where $G$ is the normalizing constant.
 
 Because we use conjugate Gaussian-Wishart priors for the parameters of the Gaussian mixture components, we can analytically integrate out those parameters given the assignments of points to components.
 Let $z_n$ be the assignment of the $n$\textsuperscript{th} point.
-The prior probability of latent coordinates $\vX$ given latent cluster assignments $\vZ=(\vz_1, \vz_2, \ldots, \vz_N)$ factorizes over clusters, and can be obtained in closed-form by integrating out the Gaussian parameters $\{\vmu_c, \vR_c\}$ to give:
+The prior probability of latent coordinates $\vX$ given latent cluster assignments $\CLAS=(\CLASi_1, \CLASi_2, \ldots, \CLASi_N)$ factorizes over clusters, and can be obtained in closed-form by integrating out the Gaussian parameters $\{\vmu_c, \vR_c\}$ to give:
 %
 \begin{align}
-p(\vX | \vZ, \vS, \nu, r) = \prod_{c=1}^{\infty}
+p(\vX | \CLAS, \vS, \nu, r) = \prod_{c=1}^{\infty}
 \pi^{-\frac{N_c Q}{2}}\frac{r^{Q/2} \left|\vS \right|^{\nu/2}}{r_c^{Q/2} \left| \vS_c \right|^{\nu_c/2}}
 \times \prod_{q=1}^Q \frac{\Gamma \left( \frac{\nu_c + 1 - q}{2} \right)}{\Gamma \left( \frac{\nu+1-q}{2} \right)},
 \label{eq:px_z}
 \end{align}
 %
-where
-$N_c$ is the number of data points assigned to the $c$\textsuperscript{th} component, $\Gamma(\cdot)$ is the Gamma function, and
+where $N_c$ is the number of data points assigned to the $c$\textsuperscript{th} component, $\Gamma(\cdot)$ is the Gamma function, and
 %
 \begin{align}
-r_{c}=r+N_{c}, \hspace{2em}
+r_{c}=r+N_{c},
+\hspace{2em}
 \nu_{c}=\nu+N_{c}, 
-\quad
+\hspace{2em}
 %\nonumber
 %\end{align}
 %\begin{align}
-\vu_c=\frac{r\vu + \sum_{n:z_n = c} \vx_n}{r+N_c}, \\
+\vu_c=\frac{\displaystyle r\vu + \sum_{n:z_n = c} \vx_n}{r+N_c}, \\[1em]
 %\end{align}
 %
 %\begin{align}
-\textnormal{and} \qquad \vS_{c}=\vS+\sum_{n:z_{n}=c}\vx_{n}\vx_{n}\tra + r\vu\vu\tra
+\textnormal{and} \hspace{2em} \vS_{c}=\vS+\sum_{n:z_{n}=c}\vx_{n}\vx_{n}\tra + r\vu\vu\tra
  - r_{c}\vu_{c}\vu_{c}\tra,
 \end{align}
 %
@@ -283,11 +289,11 @@ are the posterior Gaussian-Wishart parameters of the $c$\textsuperscript{th} com
 
 To model the cluster assignments, we use a Dirichlet process~\citep{maceachern1998estimating} with concentration parameter $\eta$.
 % for infinite mixture modeling in the latent space.
-%The probability under a Dirichlet-multinomial prior of observing assignment matrix $\vZ$ is:
-Under a Dirichlet process prior, the probability of observing a particular cluster assignment matrix $\vZ$ depends only on the partition induced, and is given by the Chinese restaurant process:
+%The probability under a Dirichlet-multinomial prior of observing assignment $\CLAS$ is:
+Under a Dirichlet process prior, the probability of observing a particular cluster assignment $\CLAS$ depends only on the partition induced, and is given by the Chinese restaurant process:
 %
 \begin{align}
-p(\vZ|\eta) = 
+p(\CLAS|\eta) = 
 \frac{\Gamma(\eta) \eta^C}{\Gamma(\eta + N)} \prod_{c=1}^C \Gamma( N_c )
 %= \frac{\eta^{C}\prod_{c=1}^C (N_c-1)!}{\eta(\eta+1)\ldots(\eta+N-1)},
 \label{eq:pz}
@@ -298,9 +304,9 @@ where $C$ is the number of components for which $N_c > 0$, and $N$ is the total 
 The joint distribution of observed coordinates, latent coordinates, and cluster assignments is given by
 %
 \begin{align}
-p(\vY,\vX,\vZ|\bm{\theta},\bm{S},\nu,\vu,r,\eta)
+p(\vY,\vX,\CLAS|\bm{\theta},\bm{S},\nu,\vu,r,\eta)
  = p(\vY|\vX,\bm{\theta})
- p(\vX|\vZ,\bm{S},\nu,\vu,r)p(\vZ|\eta),
+ p(\vX|\CLAS,\bm{S},\nu,\vu,r)p(\CLAS|\eta),
 \label{eq:joint}
 \end{align}
 %
@@ -343,17 +349,17 @@ $m(\vx)$ is the mean function of the Gaussian process, $\vx,\vx'\in{\mathbb R}^{
 \label{sec:iwmm-inference-details}
 
 %By placing conjugate Gaussian-Wishart priors on the parameters of the Gaussian mixture components, we analytically integrate out those parameters given the assignments of points to clusters.
-After analytically integrating out the parameters of the Gaussian mixture components, the only remaining variables to infer are the latent points $\vX$, the cluster assignments $\vZ$, and the kernel parameters $\vtheta$.
+After analytically integrating out the parameters of the Gaussian mixture components, the only remaining variables to infer are the latent points $\vX$, the cluster assignments $\CLAS$, and the kernel parameters $\vtheta$.
 We'll estimate the posterior over these parameters using Markov chain Monte Carlo.
-In particular, we'll alternate between collapsed Gibbs sampling of each row of $\vZ$, and Hamiltonian Monte Carlo sampling of $\vX$ and $\vtheta$.
+In particular, we'll alternate between collapsed Gibbs sampling of each row of $\CLAS$, and Hamiltonian Monte Carlo sampling of $\vX$ and $\vtheta$.
 
-First, we explain collapsed Gibbs sampling for the cluster assignments $\vZ$.
-Given a sample of $\vX$, $p(\vZ | \vX, \vS, \nu, \vu, r, \eta)$ does not depend on $\vY$.
-This lets us re-sample cluster assignments, integrating out the \iGMM{} likelihood in closed form.
+First, we explain collapsed Gibbs sampling for the cluster assignments $\CLAS$.
+Given a sample of $\vX$, $p(\CLAS | \vX, \vS, \nu, \vu, r, \eta)$ does not depend on $\vY$.
+This lets us resample cluster assignments, integrating out the \iGMM{} likelihood in closed form.
 Given the current state of all but one latent component $z_n$, a new value for $z_n$ is sampled with the following probability:
 %
 \begin{align}
-p(z_{n}=c|\vX,\vZ_{\setminus n},\bm{S},\nu,\vu,r,\eta)
+p(z_{n}=c|\vX,\CLAS_{\setminus n},\bm{S},\nu,\vu,r,\eta)
  & \propto\!
 \left\{
 \begin{array}{ll}
@@ -384,17 +390,17 @@ p(\vx_{n}|\vX_{c\setminus n},\bm{S},\nu,\vu,r)
 %
 where $r_{c}'$, $\nu_{c}'$, $\vu_{c}'$ and $\vS_{c}'$ represent the posterior on Gaussian-Wishart parameters of the $c$\textsuperscript{th} component when the $n$\textsuperscript{th} data point has been assigned to it.
 %the $c$\textsuperscript{th} component.
-We efficiently calculate the determinant by using the rank-one Cholesky update.
-A special case of \cref{eq:iwmm-cluster-gibbs} gives the likelihood for a new component: $p(\vx_{n}|\bm{S},\nu,\vu,r)$.
+We can efficiently calculate the determinant $\left| \vS_{c\setminus n}' \right|$ using the rank-one Cholesky update.
+A special case of \cref{eq:iwmm-cluster-gibbs} gives the likelihood for a new component, $p(\vx_{n}|\bm{S},\nu,\vu,r)$.
 
 
 
 \subsubsection{Gradients for Hamiltonian Monte Carlo}
 
-Hamiltonian Monte Carlo (\HMC{}) sampling of $\vX$ from posterior ${p(\vX|\vZ,\vY,\bm{\theta},\bm{S},\nu,\vu,r)}$, requires computing the gradient of the log-unnormalized-posterior with respect to $\vX$:
+Hamiltonian Monte Carlo (\HMC{}) sampling of $\vX$ from posterior ${p(\vX|\CLAS,\vY,\bm{\theta},\bm{S},\nu,\vu,r)}$, requires computing the gradient of the log-unnormalized-posterior with respect to $\vX$:
 %
 \begin{align}
-\pderiv{}{\vX} \big[ \log p(\vY|\vX,\bm{\theta}) + \log p(\vX|\vZ,\bm{S},\nu,\vu,r) \big]
+\pderiv{}{\vX} \big[ \log p(\vY|\vX,\bm{\theta}) + \log p(\vX|\CLAS,\bm{S},\nu,\vu,r) \big]
 \label{eq:warped-hmc1}
 \end{align}
 %
@@ -414,13 +420,13 @@ where for an $\kSE + \kWN$ kernel with the same lengthscale $\ell$ on all dimens
 \end{align}
 %
 %using the chain rule.
-The second term of \eqref{eq:warped-hmc1} is
+The second term of \eqref{eq:warped-hmc1} is given by
 \begin{align}
-\frac{\partial \log p(\vX|\vZ,\bm{S},\nu,\vu,r)}{\partial \vx_{n}} 
+\frac{\partial \log p(\vX|\CLAS,\bm{S},\nu,\vu,r)}{\partial \vx_{n}} 
 = -\nu_{z_{n}}\bm{S}_{z_{n}}\inv(\vx_{n}-\vu_{z_{n}}).
 \label{eq:warped-hmc4}
 \end{align}
-We also infer kernel parameters $\vtheta$ via \HMC{}, using the gradient of the log unnormalized posterior with respect to the kernel parameters and an improper uniform prior.
+We also infer kernel parameters $\vtheta$ via \HMC{}, using the gradient of the log unnormalized posterior with respect to the kernel parameters, using an improper uniform prior.
 
 
 
@@ -434,39 +440,42 @@ When inference is done this way, approximating the predictive density only requi
 For our model, we use approximate integration to estimate $p(\vy_\star)$.
 This is done for two reasons:
 First, multiple latent points (possibly from different clusters) can map to the same observed point, meaning the standard method can underestimate $p(\vy_\star)$.
-Second, because we do not optimize the latent coordinates of training points, but instead sample them, we would need to optimize each $p(\vx_\star)$ separately for each sample in the Markov chain.
-One advantage of our method is that it gives estimates for all $p(\vy_\star)$ at once, but it may not be accurate in very high dimensions.
+Second, because we do not optimize the latent coordinates of training points, but instead sample them, we would need to optimize each $p(\vx_\star)$ seperately for each sample in the Markov chain.
+One advantage of our method is that it gives estimates for all $p(\vy_\star)$ at once.
+However, it may not be as accurate in very high observed dimensions, when the volume to sample over is relatively large.
 
 The posterior density in the observed space given the training data is
+%
 \begin{align}
 p(\vy_\star | \vY)
 & = \int \!\!\! \int p(\vy_\star,\vx_\star, \vX | \vY)d\vx_\star d\vX \nonumber\\
 & = \int\!\!\! \int p(\vy_\star | \vx_\star, \vX, \vY)p(\vx_\star|\vX,\vY)p(\vX|\vY)d\vx_\star d\vX.
 \label{eq:density}
 \end{align}
-We first approximate $p(\vX | \vY)$ using samples from the Gibbs and Hamiltonian Monte Carlo chains.
+%
+We first approximate $p(\vX | \vY)$ using samples from the Gibbs and Hamiltonian Monte Carlo chain.
 We then approximate $p(\vx_\star | \vX, \vY)$ by sampling points from the posterior density in the latent space and warping them, using the following procedure:
+%
 \begin{enumerate}
-\item Draw latent cluster assignment $z_\star \sim {\rm Mult}(\frac{N_{1}}{N+\eta},\cdots,\frac{N_{C}}{N+\eta},\frac{\eta}{N+\eta})$
-\item Draw latent cluster precision matrix $\vR_\star \sim {\cal W}(\vS\inv_{z_\star},\nu_{z_\star})$
-\item Draw latent cluster mean $\vmu_\star \sim {\cal N}(\vu_{z_\star},(r_{z_\star}\vR_\star)\inv)$
+\item Draw a latent cluster assignment $z_\star \sim {\rm Mult} \left( \frac{N_{1}}{N+\eta}, \frac{N_{2}}{N+\eta}, \cdots,\frac{N_{C}}{N+\eta},\frac{\eta}{N+\eta} \right)$
+\item Draw a latent cluster precision matrix $\vR_\star \sim {\cal W}(\vS\inv_{z_\star},\nu_{z_\star})$
+\item Draw a latent cluster mean $\vmu_\star \sim {\cal N}(\vu_{z_\star},(r_{z_\star}\vR_\star)\inv)$
 \item Draw latent coordinates $\vx_\star \sim {\cal N}(\vmu_\star,\vR_\star\inv)$
-\item Draw observed coordinates $\vy_\star \sim 
-%p(\vy_\star | \vx_\star, \vX, \vY) = 
-{\cal N}(\vk_\star\tra \vK\inv \vY, k(\vx_\star,\vx_\star) - \vk_\star\tra \vK\inv \vk_\star)$
+\item For each observed dimension $d = 1, 2, \ldots, D$, \\ draw observed coordinates 
+$\vy^\star_d \sim {\cal N}(\vk_\star\tra \vK\inv \vY_{:,d}, k(\vx_\star,\vx_\star) - \vk_\star\tra \vK\inv \vk_\star)$
 \end{enumerate}
 %
 If $z_\star$ is assigned to a new component in step 1, the prior Gaussian-Wishart distribution \eqref{eq:normal-wishar-prior} is used for sampling in steps 2 and 3.
-The density drawn from in step 5 is simply the predictive distribution of a \gp{}, where
+The density drawn from in step 5 is the predictive distribution of a \gp{}, where
 %
-$\vk_\star=( k(\vx_\star, \vx_1), \cdots, k(\vx_\star, \vx_N))\tra$.
+$\vk_\star=( k(\vx_\star, \vx_1), \cdots, k(\vx_\star, \vx_N))\tra$ and $\vY_{:,d}$ represents the $d$th column of $\vY$.
 
-Each step of this sampling procedure draws from the exact conditional distribution, so the Monte Carlo estimate of the predictive density $p(\vy_\star | \vX, \vY)$ will converge to the true marginal distribution as the number of samples increases.
+Each step of this sampling procedure draws from the exact conditional distribution, so the Monte Carlo estimate of the conditional predictive density $p(\vy_\star | \vX, \vY)$ will converge to the true marginal distribution as the number of samples increases.
 Since the observations $\vy_\star$ are conditionally normally distributed, each one adds a smooth contribution to the empirical Monte Carlo estimate of the posterior density, as opposed to a collection of point masses.
 
 \subsubsection{Source code}
 
-A reference implementation of the above algorithms is available at \url{github.com/duvenaud/warped-mixtures}.
+A reference implementation of the above algorithms is available at\\ \url{http://www.github.com/duvenaud/warped-mixtures}.
 
 \outbpdocument{
 \bibliographystyle{plainnat}
