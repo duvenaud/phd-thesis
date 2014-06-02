@@ -163,6 +163,7 @@
 \declareHumble{SNR}{SNR}
 \declareHumble{SSANOVA}{SS-ANOVA}
 \declareHumble{SVM}{SVM}
+\declareHumble{UCI}{UCI}
 \declareHumble{UMIST}{UMIST}
 \declareHumble{vbgplvm}{VB GP-LVM}
 
@@ -292,8 +293,13 @@
 \newcommand{\vz}{\vect{z}}
 
 
-\newcommand{\netweights}{\alpha}
-\newcommand{\vnetweights}{\valpha}
+% deep gp notation
+\newcommand{\netweights}{w}
+\newcommand{\vnetweights}{\vw}
+\newcommand{\mnetweights}{\vW}
+\newcommand{\outweights}{\v}
+\newcommand{\voutweights}{\vv}
+\newcommand{\moutweights}{\vV}
 
 \newcommand{\He}{\mathcal{H}}
 \newcommand{\normx}[2]{\left\|#1\right\|_{#2}}
