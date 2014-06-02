@@ -7,55 +7,53 @@
 \chapter{Additive Gaussian Processes}
 \label{ch:additive}
 
-\begin{quotation}
-``I am in [Gaussian processes] stepped in so far that, should I wade no more, Returning were as tedious as go o'er.''
+%\begin{quotation}
+%``I am in [Gaussian processes] stepped in so far that, should I wade no more, Returning were as tedious as go o'er.''
 
-\hspace*{\fill}--MacBeth
-\end{quotation}
+%\hspace*{\fill}--MacBeth
+%\end{quotation}
 
 
 
-In \cref{ch:grammar}, we showed how to learn the structure of a kernel by building it up piece-by-piece.
-This chapter presents an alternative approach, where we start with many different types of structure in the kernel, and adjust kernel parameters to discard whatever structues are \emph{not} present in the current dataset.
-The advantage of this approach is that we do not need to run an expensive discrete-and-continuous optimization problem in order to build a structured model.
-Implementation is also much simpler.
+\Cref{ch:grammar} showed how to learn the structure of a kernel by building it up piece-by-piece.
+This chapter presents an alternative approach: starting with many different types of structure in a kernel, adjust kernel parameters to discard whatever structure is \emph{not} present in the current dataset.
+The advantage of this approach is that we do not need to run an expensive discrete-and-continuous search in order to build a structured model, and implementation is simpler.
 
-The type of structure our kernel will represent are sums of functions of all possible combinations of input variables.
-We call this model class \emph{additive Gaussian processes}.
-This model can be specified by a kernel which is a sum of all possible products of one-dimensional kernels.
+This model, which we call \emph{additive Gaussian processes}, is a sum of functions of all possible combinations of input variables.
+This model can be specified by a weighted sum of all possible products of one-dimensional kernels.
 
-There are $2^D$ combinations of $D$ inputs, so a na\"{i}ve computation of such a kernel would be intractable.
-Furthermore, if each term has different kernel parameters, fitting or integrating over so many parameters would pose severe difficulty.
-% In fact, this has been tried...
-To get around this problem, we introduce a parameterization of the kernel which allows efficient evaluation of all interaction terms.
-Empirically, this kernel has good predictive power in regression tasks, and its parameters are relatively interpretable.
+There are $2^D$ combinations of $D$ objects, so na\"{i}ve computation of this kernel is intractable.
+Furthermore, if each term has different kernel parameters, fitting or integrating over so many parameters poses severe difficulty.
+To address these problems, we introduce a restricted parameterization of the kernel which allows efficient evaluation of all interaction terms, but a different weighting of each order of interaction.
+Empirically, this model has good predictive power in regression tasks, and its parameters are relatively interpretable.
+This model also has an interpretation as an approximation to \emph{dropout}, a recently-introduced regularization method for neural networks.
 
 The work in this chapter was done in collaboration with Hannes Nickisch and Carl Rasmussen, who derived and coded up the initial model.
 My role in the project was to examine the properties of the resulting model, clarify the connections to existing methods, to create all figures and run all experiments.
 That work was published in \citet{duvenaud2011additive11}.
-The connection to dropout regularization is an independent original contribution.
+The connection to dropout regularization in \cref{sec:dropout-gps} is an independent contribution.
 
 
 
 
 
 
-\section{Different types of multivariate additive structure}
-In \cref{ch:kernels}, we saw how additive structure in a \gp{} prior enabled long-range extrapolation in multivariate regression problems.
+\section{Different types of multivariate additive {\mbox structure}}
+\Cref{ch:kernels} showed how additive structure in a \gp{} prior enabled long-range extrapolation in multivariate regression problems.
 In general, models of the form
 %
 \begin{align}
-f(\vx) = g \left( f(x_1) + f(x_2) + \dots + f(x_D) \right)
+f(\vx) = g \big( f(x_1) + f(x_2) + \dots + f(x_D) \big)
 \label{eq:general-additive}
 \end{align}
 %
-are widely used in machine learning and statistics, partly because they are relatively easy to fit and interpret.
+are widely used in machine learning and statistics, partly for this reason, and partly because they are relatively easy to fit and interpret.
 Examples include logistic regression, linear regression, generalized linear models~\citep{nelder1972generalized} and generalized additive models~\citep{hastie1990generalized}.
 %, are typically easy to fit and interpret.
 %Some extensions of this family, such as smoothing-splines ANOVA \citep{wahba1990spline}, also consider terms depending on more than one variable.
 %However, such models often become intractable and difficult to fit as the number of terms increases.
 
-At the other end of the spectrum are models which allow the response to depend on all input variables simultaneously, having the most general form:
+At the other end of the spectrum are models which allow the response to depend on all input variables simultaneously, without any additive decomposition:
 %
 \begin{align}
 f(\vx) = f(x_1, x_2, \dots, x_D)
@@ -65,7 +63,7 @@ f(\vx) = f(x_1, x_2, \dots, x_D)
 An example would be a \gp{} with an \seard{} kernel.
 Such models are much more flexible than those having the form \eqref{eq:general-additive}, but this flexibility can make it difficult to generalize to new combinations of input variables.
 
-In between these extremes, we can consider function classes depending on pairs or triplets of inputs, such as
+In between these extremes are function classes depending on pairs or triplets of inputs, such as
 %
 \begin{align}
 f(x_1, x_2, x_3) = f_{12}(x_1, x_2) + f_{23}(x_2, x_3) + f_{13}(x_1, x_3)
@@ -75,8 +73,9 @@ f(x_1, x_2, x_3) = f_{12}(x_1, x_2) + f_{23}(x_2, x_3) + f_{13}(x_1, x_3)
 We call the number of input variables appearing in each term the \emph{order} of a model class.
 Models of intermediate order such as \eqref{eq:second-order-additive} allow more flexibility than models of form \eqref{eq:general-additive} ($D$-th order), but have more structure than those of form \eqref{eq:highest-order} (first-order).
 
-If the function being learned depends in some way on an interaction between all input variables, a $D$th-order term is required in order for the model to be consistent.
-However, if the function also contains lower-order interactions, capturing that structure will still improve the predioctive performance on finite datasets.
+Capturing the low-order additive structure present in a function can be expected to improve predictive accuracy.
+However, if the function being learned depends in some way on an interaction between all input variables, a $D$th-order term is required in order for the model to be consistent.
+%However, if the function also contains lower-order interactions, capturing that structure will still improve the predioctive performance on finite datasets.
 
 %To the extent that a set of variables is relevant to the output, this model must be highly uncertain about any novel combination of those variables.
 
@@ -85,52 +84,53 @@ However, if the function also contains lower-order interactions, capturing that 
 
 \section{Defining additive kernels}
 
-We now give a precise definition of the additive kernels introduced in this chapter.
-We first assign each dimension $i \in \{1 \dots D\}$ a one-dimensional \emph{base kernel} $k_i(x_i, x'_i)$.
-We then define the first order, second order and $n$th order additive kernel as:
+To define the additive kernels introduced in this chapter, we first assign each dimension $i \in \{1 \dots D\}$ a one-dimensional \emph{base kernel} $k_i(x_i, x'_i)$.
+Then, the first order, second order and $n$th order additive kernel are defined as:
 %
 \begin{align}
 k_{add_1}({\bf x, x'}) & = \sigma_1^2 \sum_{i=1}^D k_i(x_i, x_i') \\
 k_{add_2}({\bf x, x'}) & = \sigma_2^2 \sum_{i=1}^D \sum_{j = i + 1}^D k_i(x_i, x_i') k_j(x_j, x_j') \\
 k_{add_n}({\bf x, x'}) & = \sigma_n^2 \sum_{1 \leq i_1 < i_2 < ... < i_n \leq D} \left[ \prod_{d=1}^n k_{i_d}(x_{i_d}, x_{i_d}') \right] \\
-k_{add_D}({\bf x, x'}) & = \sigma_n^2 \sum_{1 \leq i_1 < i_2 < ... < i_D \leq D} \left[ \prod_{d=1}^D k_{i_d}(x_{i_d}, x_{i_d}') \right] = \sigma_D^2 \prod_{d=1}^D k_{d}(x_{d}, x_{d}')
+k_{add_D}({\bf x, x'}) & = \sigma_D^2 \sum_{1 \leq i_1 < i_2 < ... < i_D \leq D} \left[ \prod_{d=1}^D k_{i_d}(x_{i_d}, x_{i_d}') \right] = \sigma_D^2 \prod_{d=1}^D k_{d}(x_{d}, x_{d}')
 \end{align}
 %
-where $D$ is the dimension of our input space, and $\sigma_n^2$ is the variance assigned to all $n$th order interactions.
-The $n$th covariance function is a sum of ${D \choose n}$ terms.
-In particular, the $D$th order additive covariance function has ${D \choose D} = 1$ term, a product of each dimension's covariance function.
+where $D$ is the dimension of the input space, and $\sigma_n^2$ is the variance assigned to all $n$th order interactions.
+The $n$th-order kernel is a sum of ${D \choose n}$ terms.
+In particular, the $D$th-order additive kernel has ${D \choose D} = 1$ term, a product of each dimension's kernel.
 In the case where each base kernel is a one-dimensional squared-exponential kernel, the $D$th-order term corresponds to the multivariate squared-exponential kernel, also known as \seard{}:
 %
 \begin{align}
-k_{add_D}({\bf x, x'}) = \sigma_D^2 \prod_{d=1}^D k_{d}(x_{d}, x_{d}') = \sigma_D^2 \prod_{d=1}^D \exp \Big( -\frac{ ( x_{d} - x_{d}')^2}{2l^2_d} \Big) = \sigma_D^2  \exp \Big( -\sum_{d=1}^D \frac{ ( x_{d} - x_{d}')^2}{2l^2_d} \Big)
+%k_{add_D}({\bf x, x'}) = 
+%\sigma_D^2 \prod_{d=1}^D k_{d}(x_{d}, x_{d}') = 
+\prod_{d=1}^D \kSE(x_d, x_d') = 
+\sigma_D^2 \prod_{d=1}^D \exp \left( -\frac{ ( x_{d} - x_{d}')^2}{2 \ell^2_d} \right) = 
+\sigma_D^2 \exp \left( -\sum_{d=1}^D \frac{ ( x_{d} - x_{d}')^2}{2 \ell^2_d} \right)
 \end{align}
 %
-also commonly known as the Gaussian kernel.
+%also commonly known as the Gaussian kernel.
 
 The full additive kernel is a sum of the additive kernels of all orders.
 
-
-
 %\subsubsection{Parameterization}
 The only design choice necessary to specify an additive kernel is the selection of a one-dimensional base kernel for each input dimension.
-Parameters of the base kernels (such as length-scales) can be learned as usual by maximizing the marginal likelihood of the training data.
+Parameters of the base kernels (such as length-scales $\ell_1, \ell_2, \dots, \ell_D$) can be learned as usual by maximizing the marginal likelihood of the training data.
 
 \subsection{Weighting different orders of interaction}
 In addition to the parameters of each dimension's kernel, additive kernels are equipped with a set of $D$ parameters $\sigma_1^2 \dots \sigma_D^2$.
 %, controlling how much variance is assigned to each order of interaction.
-These ``order variance'' parameters have a useful interpretation:  the $d$th order variance hyperparameter controls how much of the target function's variance comes from interactions of the $d$th order.
+These ``order variance'' parameters have a useful interpretation:  the $d$th order variance parameter specifies how much of the target function's variance comes from interactions of the $d$th order.
 %
 %\input{\additivetablesdir/r_concrete_500_hypers_table.tex}
 %Table \ref{tbl:concrete} gives an example of parameters learnt by both a SE-GP, and by those learnt by an additive GP whose base kernels are one-dimensional squared exponential kernels.  In this case, the 1st, 2nd and 3rd-order interactions contribute most to the final function.
 %
 %
-\Cref{tbl:all_orders} shows examples of the variance contributed by different orders of interaction, learned on real datasets.
+\Cref{tbl:all_orders} shows examples of the variance contributed by different orders of interaction, estimated on real datasets.
 % --- Automatically generated by hypers_to_latex.m ---
 % Exported at 03-Jun-2011 00:22:23
 
 \begin{table}[h]
 \caption[Relative variance contributed by each order of the additive model]
-{Percentage of variance contributed by each order of the additive model, on different datasets.
+{Percentage of variance contributed by each order of interaction of the additive model on different datasets.
 The maximum order of interaction is set to the input dimension or 10, whichever is smaller.
 }
 \begin{center}
@@ -151,21 +151,17 @@ housing  & $0.1 $ & $0.6 $ & ${\bf 80.6 }$ & $1.4 $ & $1.8 $ & $0.8 $ & $0.7 $ &
 % End automatically generated LaTeX
 
 On different datasets, the dominant order of interaction estimated by the additive model varies widely.
-An additive \gp{} with all of its variance coming from the 1st order is equivalent to a sum of one-dimensional functions.
-An additive \gp{} with all its variance coming from the $D$th order is equivalent to a \gp{} with an \seard{} kernel.
+%An additive \gp{} with all of its variance coming from the 1st order is equivalent to a sum of one-dimensional functions.
+%An additive \gp{} with all its variance coming from the $D$th order is equivalent to a \gp{} with an \seard{} kernel.
 %
 % We can see that the length-scales learnt are not necessarily the same.  This is because, in a normal ARD-style kernel, the length-scale of a dimension is conflated with the variance of the function along that dimension.  The additive kernel separates these two parameters.
 %
 %This table lets us examine the relative contribution of each order of interaction to the total function variance.  Again, the ARD kernel is equivalent to an additive kernel in which all the variance is constrained to arise only from the highest-order interactions.
-
-%\subsubsection{Model Selection}
-
-Because the variance parameters can specify which degrees of interaction are important, the additive \gp{} can capture many different types of structure.
+%Because the variance parameters can specify which degrees of interaction are important, the additive \gp{} can capture many different types of structure.
 %By optimizing these parameters, we are approximately performing weighted model selection over a set of $D$ models.
 %If the function we are modeling is decomposable into a sum of low-dimensional functions, our model can discover this fact and exploit it.
-The marginal likelihood will usually favor using lower orders if possible, since the $|K|^{-\frac{1}{2}}$ term in the \gp{} marginal likelihood (\cref{eq:gp_marg_lik}) will usually be larger for less flexible model classes.
-%TODO: revisit this sentence.
-Low-order structure allows long-range extrapolation, as shown in \cref{sec:additivity-extrapolation}.
+%The marginal likelihood will usually favor using lower orders if possible, since the $|K|^{-\frac{1}{2}}$ term in the \gp{} marginal likelihood (\cref{eq:gp_marg_lik}) will usually be larger for less flexible model classes.
+Low-order structure sometimes allows extrapolation, as shown in \cref{sec:additivity-extrapolation}.
 If low-dimensional additive structure is not present, the kernel parameters can specify a suitably flexible model, with interactions between as many variables as necessary.
 
 %The expected number of zero crossings is $O(k^d)$ for product kernels (sqexp), $O(kd)$ for first-order additive, and $O\left(k  {d \choose r}\right)$ for $r$th order additive functions. [Conjecture]
@@ -176,8 +172,8 @@ If low-dimensional additive structure is not present, the kernel parameters can 
 
 \subsection{Efficiently evaluating additive kernels}
 An additive kernel over $D$ inputs with interactions up to order $n$ has $O(2^n)$ terms.
-Na\"{i}vely summing over these terms quickly becomes intractable.
-Perhaps surprisingly, one can evaluate the sum over all terms in $O(D^2)$, while also weighting each order of interaction seperately.
+Na\"{i}vely summing over these terms is intractable.
+Perhaps surprisingly, one can eactly evaluate the sum over all terms in $O(D^2)$, while also weighting each order of interaction seperately.
 
 To efficiently compute the additive kernel, we exploit the fact that the $n$th order additive kernel corresponds to the $n$th \textit{elementary symmetric polynomial}~\citep{macdonald1998symmetric}
 %\citep{stanley2001enumerative}, 
@@ -280,6 +276,7 @@ For example, additive kernels of the second order give high covariance between f
 
 
 \section{Dropout in Gaussian processes}
+\label{sec:dropout-gps}
 
 \emph{Dropout} is a method for regularizing neural networks~\citep{hinton2012improving, srivastava2013improving}.
 Training with dropout entails randomly and independently setting to zero (``dropping'') some proportion $p$ of features or inputs, in order to improve the robustness of the resulting network by reducing co-dependence between neurons.
