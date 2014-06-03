@@ -504,7 +504,8 @@ Both variants of the \iwmm{} usually outperformed the \iGMM{} on this measure.
 
 \subsection{Density estimation}
 
-Next, we compared the \iwmm{} in terms of predictive density against kernel density estimation (\KDE{}) and the (\iGMM{}).
+Next, we compared the \iwmm{} in terms of predictive density against kernel density estimation (\KDE{}), the \iGMM{}, and the fully-Bayesian \gplvm{}.
+%All samplers were run for 5000 iterations.
 For \KDE{}, the kernel width was estimated by maximizing the leave-one-out density.
 %Although all these methods are consistent density estimators, we expect the \iwmm{} to have an advantage for finite datasets since its density contours can follow the data density.
 %With WM and \iwmm{}, we set the dimensionality of the latent space
@@ -519,12 +520,14 @@ For \KDE{}, the kernel width was estimated by maximizing the leave-one-out densi
 \caption[Predictive likelihood comparison]
 {Average test log-likelihoods for evaluating density estimation performance.}
 \label{tab:likelihood}
-\begin{tabular}{lrrrrrrrr}
+\begin{tabular}{lrrrm{1cm}rrrr}
 \hline
 & 2-curve & 3-semi & 2-circle & Pinwheel & Iris  & Glass  & Wine  & Vowel  \\
 \hline 
-KDE & $-2.47$ & $-0.38$ & $-1.92$ & $-1.47$ & $\mathbf{-1.87}$ & $1.26$ & $-2.73$ & $\mathbf{6.06}$ \\
-iGMM & $-3.28$ & $-2.26$ & $-2.21$ & $-2.12$ & $-1.91$ & $3.00$ & $\mathbf{-1.87}$ & $-0.67$ \\
+\KDE{} & $-2.47$ & $-0.38$ & $-1.92$ & $-1.47$ & $\mathbf{-1.87}$ & $1.26$ & $-2.73$ & $\mathbf{6.06}$ \\
+\iGMM{} & $-3.28$ & $-2.26$ & $-2.21$ & $-2.12$ & $-1.91$ & $3.00$ & $\mathbf{-1.87}$ & $-0.67$ \\
+\gplvm{}(Q=2) & $-1.02$ & $-0.36$ & $\mathbf{-0.78}$ & $\mathbf{-0.78}$ & $-1.91$ & $\mathbf{5.70}$ & $\mathbf{-1.95}$ & $\mathbf{6.04}$ \\
+\gplvm{}(Q=D) & $-1.02$ & $-0.36$ & $\mathbf{-0.78}$ & $\mathbf{-0.78}$ & $-1.86$ & $\mathbf{5.59}$ & $-2.89$ & $-0.29$ \\
 \iwmm{}(Q=2) & $\mathbf{-0.90}$ & $\mathbf{-0.18}$ & $\mathbf{-1.02}$ & $\mathbf{-0.79}$ & $\mathbf{-1.88}$ & $\mathbf{5.76}$ & $\mathbf{-1.96}$ & $\mathbf{5.91}$ \\
 \iwmm{}(Q=D) & $\mathbf{-0.90}$ & $\mathbf{-0.18}$ & $\mathbf{-1.02}$ & $\mathbf{-0.79}$ & $\mathbf{-1.71}$ & $\mathbf{5.70}$ & $-3.14$ & $-0.35$ \\
 \hline
@@ -537,8 +540,10 @@ The \iwmm{} usually achieved higher test likelihoods than the \KDE{} and the \iG
 %except on the wine dataset.
 % This result indicates that it is important to assume an infinite mixture model in the latent space for density estimation.%, and that even a fully Bayesian version of the \gplvm{} is not necessarily a good density model.
 %
-The sometimes large differences between performance in the $D = 2$ case and the $D = Q$ case may be attributed to the fact that when the latent dimension is high, many samples are required from the latent distribution to produce an accurate estimate of the posterior predictive density at the test locations.
-This difficulty in inference might be solved by using a warping with back-constraints~\citep{Lawrence06localdistance}, which would allow a more direct evaluation of the density at a given point in the observed space.
+The \gplvm{} performed competitively with the \iwmm{}, although it never significantly outperformed the \iwmm{} having the same latent dimension.
+
+The sometimes large differences between performance in the $D = 2$ case and the $D = Q$ case of these two methods may be attributed to the fact that when the observed dimension is high, many samples are required from the latent distribution to produce accurate estimates of the posterior predictive density at the test locations.
+This difficulty might be resolved by using a warping with back-constraints~\citep{Lawrence06localdistance}, which would allow a more direct evaluation of the density at a given point in the observed space.
 
 
 
