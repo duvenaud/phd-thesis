@@ -366,7 +366,7 @@ Another way to understand the resulting prior is to note that the dropout mixtur
 %TODO:  Make this equation more precise
 %
 For dropout rates $p \neq \nicefrac{1}{2}$, the $d$th order terms will be weighted by $p^{(1-D)}(1-p)^D$.
-Therefore, ignoring higher central moments, dropout on the inputs of a \gp{} can be approximated by an additive \gp{}.
+Therefore, performing dropout on the inputs of a \gp{} gives a distribution with the same first two moments as an additive \gp{}.
 This suggests an interpretation of additive \gp{}s as an approximation to a mixture of models where each model only depends on a subset of the input variables.
 
 
@@ -381,9 +381,9 @@ This section attemps to provide a broad overview.
 
 \subsubsection{Previous examples of additive \sgp{}s}
 
-The structure captured by additive kernels is necessarily axis-aligned, but an initial transformation of the input space might allow us to recover non-axis aligned additivity.
+The additive models considered in this chapter are axis-aligned, but transforming the input space would allow one to recover non-axis aligned additivity.
 This model was explored by \citet{gilboa2013scaling}, who developed a linearly-transformed first-order additive \gp{} model, called projection-pursuit \gp{} regression.
-They further showed that inference in this model was possible in $\mathcal{O}(N)$ time.
+They showed that inference in this model was possible in $\mathcal{O}(N)$ time.
 
 \citet{durrande2011additive} also examined properties of additive \gp{}s, and proposed a layer-wise optimization strategy for kernel hyperparameters in these models.
 
