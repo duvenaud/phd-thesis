@@ -39,43 +39,34 @@ This has been a main point to my literary thinking all my life.''
 
 
 
-
-%The compositional structure of the language described in the previous chapter 
 The previous chapter showed how to automatically build structured models by searching through a language of kernels.
 It also showed how to decompose the resulting models into the different types of structure present, and how to visually illustrate the type of structure captured by each component.
 This chapter shows how automatically describe the resulting model structures with English text.
 
-The main idea is to treat every component of a product kernel as an adjective, or as a short phrase which modifies the description of a kernel.
+The main idea is to treat every component of a product kernel as an adjective, or as a short phrase that modifies the description of a kernel.
 To see how this could work, recall that the model decomposition plots of \cref{ch:grammar} showed that most of the structure in each component was determined by that component's kernel.
 Even across different datasets, the meaning of individual parts of kernels is consistent in some ways.
 For example, $\kPer$ indicates repeating structure, and $\kSE$ indicates smooth change over time.
-%This chapter shows how to use this modularity to develop a method for automatically describing the structure represented by components of structured \gp{} models through text.
 
-
-% descriptions of patterns in the data.
-%In this chapter, we describe how \procedurename{} can generate natural-language descriptions of the models found by the search procedure.
-%Combined wing automatic model search, plots, and text, we present a system which automatically generates reports which highlight interpretable features discovered in a variety of data sets.
-This chapter also presents a system which generates reports combining automatically-generated text and plots which highlight interpretable features discovered in a data sets.
+This chapter also presents a system that generates reports combining automatically generated text and plots which highlight interpretable features discovered in a data sets.
 A complete example of an automatically-generated report can be found in appendix~\ref{ch:example-solar}.
-%Other example reports can be found at \url{mlg.eng.cam.ac.uk/Lloyd/abcdoutput/}
-% (e.g.\ figure~\ref{fig:periodic}).
 
 The work appearing in this chapter was written in collaboration with James Robert Lloyd, Roger Grosse, Joshua B. Tenenbaum, and Zoubin Ghahramani, and was published in \citet{LloDuvGroetal14}.
 The procedure translating kernels into adjectives developed out of discussions between James and myself.
 James Lloyd wrote the code to automatically generate reports, and ran all of the experiments.
-The paper (upon which this chapter was based) was written mainly by James Lloyd and myself.%, and Zoubin Ghahramani, with many helpful contributions and suggestions from Roger Grosse and Josh Tenenbaum.
+The paper (upon which this chapter is based) was written mainly by James Lloyd and myself.%, and Zoubin Ghahramani, with many helpful contributions and suggestions from Roger Grosse and Josh Tenenbaum.
 
 
 \section{Generating descriptions of composite kernels}
 
 There are two main features of our language of \gp{} models that allow description to be performed automatically.
-First, any kernel expression in the language can be simplified into a sum of products.
+Firstly, any kernel expression in the language can be simplified into a sum of products.
 As discussed in \cref{sec:modeling-sums-of-functions}, a sum of kernels corresponds to a sum of functions, so each product can be described separately as part of a sum.
 Second, each kernel in a product modifies the resulting model in a consistent way.
 Therefore, one can describe a product of kernels by concatenating descriptions of the effect of each part of the product.
 One part needs to be described using a noun.
 
-For example, we can describe the product of kernels $\kPer \kerntimes \kSE$ by representing $\kPer$ by a noun (``a periodic function'') modified by a phrase representing the effect of the $\kSE$ kernel (``whose shape varies smoothly over time'').
+For example, one can describe the product of kernels $\kPer \kerntimes \kSE$ by representing $\kPer$ by a noun (``a periodic function'') modified by a phrase representing the effect of the $\kSE$ kernel (``whose shape varies smoothly over time'').
 To simplify the system, we restricted base kernels to the set $\{\kC$, $\kLin$, $\kWN$, $\kSE$, $\kPer$, and $\vsigma\}$.
 Recall that the sigmoidal kernel $\vsigma(x, x') = \sigma(x)\sigma(x')$ allows changepoints and change-windows.
 
@@ -83,10 +74,10 @@ Recall that the sigmoidal kernel $\vsigma(x, x') = \sigma(x)\sigma(x')$ allows c
 \subsection{Simplification rules}
 \label{sec:desc-simplification}
 
-In order to be able to use the same phrase to describe the effect of each base kernel in different circumstances, we convert each kernel expression into a standard, simplified form.
+In order to be able to use the same phrase to describe the effect of each base kernel in different circumstances, our system converts each kernel expression into a standard, simplified form.
 
-First, we distribute all products of sums into sums of products.
-Then, we apply several simplification rules to the kernel expression:
+First, our system distributes all products of sums into sums of products.
+Then, it applies several simplification rules to the kernel expression:
 
 \begin{itemize}
 \item Products of two or more $\kSE$ kernels can be equivalently replaced by a single $\kSE$ with different parameters.
@@ -94,7 +85,7 @@ Then, we apply several simplification rules to the kernel expression:
 \item Multiplying any kernel by the constant kernel ($\kC$) only changes the parameters of the original kernel, and so can be factored out of any product in which it appears.
 \end{itemize}
 
-After applying these rules, any composite kernel in our language can be written as a sum of terms of the form:
+After applying these rules, any composite kernel expressible by the grammar can be written as a sum of terms of the form:
 \begin{align}
 K \prod_m \kLin^{(m)} \prod_n \boldsymbol\sigma^{(n)},
 \label{eq:sop}
@@ -106,8 +97,8 @@ Superscripts denote different instances of the same kernel appearing in a produc
 
 \subsection{Describing each part of a product of kernels}
 
-Loosely speaking, each kernel in a product modifies the resulting \gp{} model in a consistent way.
-This allows us to describe the contribution of each kernel in a product as an adjective, or more generally as a modifier of a noun.
+Each kernel in a product modifies the resulting \gp{} model in a consistent way.
+This allows one to describe the contribution of each kernel in a product as an adjective, or more generally as a modifier of a noun.
 
 We now describe how each of the kernels in our grammar modifies a \gp{} model:
 %, and how this effect can be described in natural language:
@@ -118,7 +109,7 @@ We now describe how each of the kernels in our grammar modifies a \gp{} model:
 This converts any global correlation structure into local correlation only.
 
 \item {\bf Multiplication by $\kLin$} is equivalent to multiplying the function being modeled by a linear function.
-If $f(x) \dist \gp{}(0, \kernel)$, then $xf(x) \dist \gp{}\left(0, \kLin \kerntimes k \right)$.
+If $f(x) \dist \gp{}(0, \kernel)$, then $x \kerntimes f(x) \dist \gp{}\left(0, \kLin \kerntimes k \right)$.
 This causes the standard deviation of the model to vary linearly, without affecting the correlation between function values.
 % and can be described as \eg `with linearly increasing standard deviation'.
 
@@ -126,15 +117,16 @@ This causes the standard deviation of the model to vary linearly, without affect
 %This can be described as \eg `from [time]' or `until [time]'.
 
 \item {\bf Multiplication by $\kPer$}
-removes correlations between all pairs of function values not close to one period apart.
+removes correlation between all pairs of function values not close to one period apart, allowing variation within each period, but maintaining correlation between periods.
 
 \item {\bf Multiplication by any kernel}
 modifies the covariance in the same way as multiplying by a function drawn from a corresponding \gp{} prior.
 This follows from the fact that if ${f_1(x) \dist \gp{}(0, \kernel_1)}$ and ${f_2(x) \dist \gp{}(0, \kernel_2)}$ then
+%
 \begin{align}
 {\textrm{Cov} \left[f_1(x)f_2(x), f_1(x')f_2(x') \right] = k_1(x,x')k_2(x,x')}.
 \end{align}
-%This can be loosely described as \eg `modulated by a periodic function with a period of [period] [units]'.
+%
 Put more plainly, a \gp{} whose covariance is a product of kernels has the same covariance as a product of two functions, each drawn from the corresponding \gp{} prior.
 However, the distribution of $f_1 \kerntimes f_2$ is not \gp{} distributed -- it has higher central moments as well.
 This identity can be used to generate a cumbersome ``worst-case'' description in cases where a more concise description of the effect of a kernel is not known.
@@ -183,7 +175,7 @@ Noun phrase descriptions of each type of kernel.}
 
 \subsection{Combining descriptions into noun phrases}
 
-In order to build a noun phrase describing a product of kernels, we choose one kernel to act as the head noun, which is then modified by appending descriptions of the other kernels in the product.
+In order to build a noun phrase describing a product of kernels, our system chooses one kernel to act as the head noun, which is then modified by appending descriptions of the other kernels in the product.
 %described by the functions it encodes for when unmodified \eg `smooth function' for $\kSE$.
 %Modifiers corresponding to the other kernels in the product are then appended to this description, forming a noun phrase of the form:
 %\begin{align*}
@@ -204,23 +196,23 @@ In our system, the head noun is chosen according to the following ordering:
 \label{eq:noun-ordering}
 \end{align}
 %\ie $\kPer$ is always chosen as the head noun when present.
-Combining \cref{table:modifiers,table:nouns} with ordering \ref{eq:noun-ordering} provides a general method to produce descriptions of kernels.
+Combining \cref{table:modifiers,table:nouns} with ordering \ref{eq:noun-ordering} provides a general method to produce descriptions of sums and products of these base kernels.
 
 \subsubsection{Extensions}
 
 %\subsubsection{Refinements to the Descriptions}
-In practice, we also incorporate a number of other rules which help to make the descriptions shorter, easier to parse, or clearer:
+In practice, the system also incorporate a number of other rules which help to make the descriptions shorter, easier to parse, or clearer:
 %There are a number of ways in which the descriptions of the kernels can be made more interpretable and informative:
 \begin{itemize}
 %  \item We incorporate rules for which kernel is chosen as the head noun can change the interpretability of a description.
-  \item We add extra adjectives depending on kernel parameters.
+  \item The system add extra adjectives depending on kernel parameters.
         For example, an $\kSE$ with a relatively short lengthscale might be described as ``a rapidly-varying smooth function'' as opposed to just ``a smooth function''.
   \item Descriptions can include kernel parameters.
-        For example, we might write that a function is ``repeating with a period of 7 days''.
+        For example, the system might write that a function is ``repeating with a period of 7 days''.
   \item Descriptions can include extra information about the model not contained in the kernel.
-        For example, based on the slope of the posterior mean, we might write ``a linearly increasing function'' as opposed to ``a linear function''.
+        For example, based on the slope of the posterior mean, the system might write ``a linearly increasing function'' as opposed to ``a linear function''.
   \item Some kernels can be described through pre-modifiers.
-        For example, we might write ``an approximately periodic function'' as opposed to ``a periodic function whose shape changes smoothly''.
+        For example, the system might write ``an approximately periodic function'' as opposed to ``a periodic function whose shape changes smoothly''.
 \end{itemize}
 
 %The reports in the supplementary material and in \cref{sec:example-descriptions} include some of these refinements.
@@ -230,14 +222,13 @@ In practice, we also incorporate a number of other rules which help to make the 
 \subsubsection{Ordering additive components}
 
 The reports generated by our system attempt to present the most interesting or important features of a data set first.
-As a heuristic, we order components by always adding next the component which most reduces the 10-fold cross-validated mean absolute error.
+As a heuristic, the system orders components by always adding next the component which most reduces the 10-fold cross-validated mean absolute error.
 
 
 
 \subsection{Worked example}
 
-This section shows an example of our description procedure describing a compound kernel containing every type of base kernel in our set:
-%Suppose we start with a kernel of the form
+This section shows an example of our procedure describing a compound kernel containing every type of base kernel in our set:
 %
 \begin{align}
 \kSE \times (\kWN \kerntimes \kLin \kernplus \kCP(\kC, \kPer)).
@@ -272,7 +263,7 @@ Finally, the third component, $(\kSE \kerntimes \kPer \kerntimes \boldsymbol{\ba
 \section{Example descriptions}
 \label{sec:example-descriptions}
 In this section, we demonstrate the ability of our procedure, \procedurename, to write intelligible desciptions of the structure present in two time series.
-These describe models produced by the automatic search method presented in \cref{ch:grammar}.
+The examples presented here describe models produced by the automatic search method presented in \cref{ch:grammar}.
 
 
 \subsection{Summarizing 400 years of solar activity}
@@ -414,7 +405,7 @@ The description of the fourth component, shown in \cref{fig:heteroscedastic}, ex
 %By multiplying a white noise kernel by a linear kernel, the model is able to express heteroscedasticity (covariance which changes over time).
 
 The complete report generated on this dataset can be found in the supplementary material of \citet{LloDuvGroetal14}.
-Other example reports describing a wide variety of time-series can be found at \url{mlg.eng.cam.ac.uk/lloyd/abcdoutput/}
+Other example reports describing a wide variety of time-series can be found at \url{http://mlg.eng.cam.ac.uk/lloyd/abcdoutput/}
 
 
 \section{Related work}
@@ -462,9 +453,9 @@ Source code to perform all experiments is available at \\\url{http://www.github.
 
 \section{Conclusions}
 This chapter presented a system which automatically generates detailed reports describing patterns captured by a \gp{} model.
-The properties of \gp{}s and the kernels being used allowed a modular description, avoiding an exponential blowup in the number of special cases that needed to be considered.
+The properties of \gp{}s and the kernels being used allows a modular description, avoiding an exponential blowup in the number of special cases that needed to be considered.
 
-Combined with the model search of \cref{ch:grammar}, this gives a procedure combining all the elements potentially necessary for an automatic statistician listed in \cref{sec:ingredients}:
+Combined with the model search of \cref{ch:grammar}, this gives a procedure combining all the elements of an automatic statistician listed in \cref{sec:ingredients}:
 an open-ended language of models, a search through model space, a model comparison procedure, and a model description procedure.
 Each particular element used in the procedure presented here is merely a proof-of-concept.
 However, even this simple prototype demonstrated the ability to discover and describe a variety of patterns in time series.
@@ -472,25 +463,6 @@ However, even this simple prototype demonstrated the ability to discover and des
 %We hope that systems such as these will allow the use of
 
 
-
-
-%Automating the process of statistical modeling would have a tremendous impact on fields that currently rely on expert statisticians, machine learning researchers, and data scientists.
-%While fitting simple models (such as linear regression) is largely automated by standard software packages, there has been little work on the automatic construction of flexible but interpretable models. 
-%What are the ingredients required for an artificial intelligence system to be able to perform statistical modeling automatically? 
-%In this paper we conjecture that the following ingredients may be useful for building an AI system for statistics, and we develop a working system which incorporates them:
-%\begin{itemize}
-%\item {\bf An open-ended language of models} expressive enough to
-%  capture many of the modeling assumptions and model composition
-%  techniques  applied by human statisticians to capture real-world phenomena
-%\item {\bf A search procedure} to efficiently explore the space of
-%  models spanned by the language
-%\item {\bf A principled method for evaluating models} in terms of their complexity and their degree of fit to the
-%  data
-%\item {\bf A procedure for automatically generating reports} which
-%  explain and visualize different factors underlying the data, make
-%  the chosen modeling assumptions explicit, and quantify how each
-%  component improves the predictive power of the model 
-%\end{itemize}
 
 
 
