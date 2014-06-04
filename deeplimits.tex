@@ -22,10 +22,12 @@ Instead, we can ask what sorts of information-processing structures these priors
 %To shed light on this problem, we analyze the analogous problem of constructing useful priors on compositions of functions.
 As a starting point, we will relate neural networks to Gaussian processes, and examine a class of infinitely-wide, deep neural networks called \emph{deep Gaussian processes} -- compositions of functions drawn from \gp{} priors.
 Deep \gp{}s are an attractive model class to study for several reasons.
-\citet{damianou2012deep} showed that the probabilistic nature of deep \gp{}s gaurds against overfitting, and allows us to use the marginal likelihood to automatically tune the model architecture without the need for cross-validation.
-\citet{hensman2014deep} showed that stochastic variational inference is possible in deep \gp{}s.
-Together, these results suggest that deep \gp{}s are a promising alternative to neural nets.
-For the analysis in this chapter, deep \gp{}s are attractive because they abstract away some of the details of finite neural networks. %, such as the number of hidden units
+Firstly, \citet{damianou2012deep} showed that the probabilistic nature of deep \gp{}s gaurds against overfitting.
+Second, \citet{hensman2014deep} showed that stochastic variational inference is possible in deep \gp{}s, allowing mini-batch training.
+Third, the availabilty of an approximate marginal likelihood allows us to automatically tune the model architecture without the need for cross-validation.
+%Together, these results suggest that deep \gp{}s are a promising alternative to neural nets.
+%For the analysis in this chapter, 
+Finally, Deep \gp{}s are attractive from a model analysis point of view because they abstract away some of the details of finite neural networks. %, such as the number of hidden units
 
 Our analysis will show that in standard architectures, the representational capacity of standard deep networks tends to decrease as the number of layers increases, retaining only a single degree of freedom in the limit.
 We propose an alternate network architecture that connects the input to each layer that does not suffer from this pathology.
@@ -37,48 +39,54 @@ The ideas contained in this chapter were developed through discussions with Oren
 
 %\section{Relations to Neural Networks}
 %\section{Relating Neural Networks to Deep Gaussian\\ \mbox{Processes}}
-\section{Definition and relation to neural networks}
+
+\section{Relating deep neural networks to deep \sgp{}s}
 \label{sec:relating}
 
-In this chapter, we'll define a deep \gp{} as any prior on functions constructed by composing draws from \gp{} priors.
-An example of a deep \gp{} is a composition of vector-valued functions, where each function in each layer is drawn independently from a \gp{} prior:
+This section gives a precise definition of deep \gp{}S, reviews the precise relationship between neural networks and Gaussian processes, and gives two equivalent ways of constructing neural networks which give rise to deep \gp{}s.
+
+
+
+\subsection{Definition of deep \sgp{}s}
+
+We define a deep \gp{} as a prior on functions constructed by composing draws from \gp{} priors.
+An example of a deep \gp{} is a composition of vector-valued functions, with each function in each layer drawn independently from \gp{} priors:
 %
 \begin{align}
 \vf^{(1:L)}(\vx) = \vf^{(L)}(\vf^{(L-1)}(\dots \vf^{(2)}(\vf^{(1)}(\vx)) \dots)) \\
 %\nonumber\\
-\textnormal{with each} \quad f_d^{(\layerindex)}  \simind \gp{} \left( 0, k^\layerindex_d(\vx, \vx') \right) \nonumber
+\textnormal{with each} \quad f_d^{(\layerindex)}  \simind \gp{} \left( 0, k^{(\layerindex)}_d(\vx, \vx') \right) \nonumber
 \label{eq:deep-gp}
 \end{align}
 %
+%\citet{damianou2012deep} also use the term to refer to deep latent-variable models i
 
-A multilayer neural network also implements a composition of vector-valued functions, one per layer.
-%Therefore, understanding properties of function compositions helps us gain insight into deep networks.
-The rest of this section shows the precise relationship between Gaussian processes and neural nets, as well as two equivalent ways of constructing neural networks which give rise to deep \gp{}s.
+Multilayer neural networks also implement compositions of vector-valued functions, one per layer.
+Therefore, understanding properties of more general function compositions might helps us gain insight into deep neural networks.
 
 
 %\subsection{A neural net with one hidden layer}
 %\vspace{-0.05in}
-\subsection{Single-layer models}
+\subsection{Single-hidden-layer models}
 
-First, we will relate neural networks with one hidden layer to Gaussian processes, using the
-standard neural network architecture known as the multi-layer perceptrion (\MLP{}).
-In the typical definition of an \MLP{}, the hidden units of the first layer are defined as:
+First, we relate neural networks to standard ``shallow'' Gaussian processes, using the standard neural network architecture known as the multi-layer perceptrion (\MLP{})~\citep{rosenblatt1962principles}.
+In the typical definition of an \MLP{} with one hidden layer, the hidden unit activations are defined as:
 %
 \begin{align}
-\vh^{(1)}(\vx) = \sigma \left( \vb^{(1)} + \vW^{(1)}\vx \right)
+\vh(\vx) = \sigma \left( \vb + \munitparams \vx \right)
 \end{align}
 %
-where $\vh$ are the hidden unit activations, $\vb$ is a bias vector, $\vW$ is a weight matrix and $\sigma$ is a one-dimensional nonlinear function applied element-wise. The output vector $f(\vx)$ is simply a weighted sum of these hidden unit activations:
+where $\vh$ are the hidden unit activations, $\vb$ is a bias vector, $\munitparams$ is a weight matrix and $\sigma$ is a one-dimensional nonlinear function, usually sigmoidal, applied element-wise. The output vector $\vf(\vx)$ is simply a weighted sum of these hidden unit activations:
 %
 \begin{align}
-f(\vx) = \vV^{(1)} \sigma \left( \vb^{(1)} + \vW^{(1)} \vx \right)  = \vV^{(1)} \vh^{(1)}(\vx)
+\vf(\vx) = \mnetweights \sigma \left( \vb + \munitparams \vx \right)  = \mnetweights \vh(\vx)
 \label{eq:one-layer-nn}
 \end{align}
 %
-where $\vV^{(1)}$ is another weight matrix.
+where $\mnetweights$ is another weight matrix.
 
 %There exists a correspondence between one-layer \MLP{}s and \gp{}s 
-\citet[chapter 2]{neal1995bayesian} showed that \gp{}s can be viewed as a prior on neural networks with infinitely many hidden units and unknown weights.
+\citet[chapter 2]{neal1995bayesian} showed that neural networks with infinitely many hidden units, one hidden layer, and unknown weights correspond to Gaussian processes.
 More precisely, for any model of the form
 %
 \begin{align}
@@ -87,10 +95,10 @@ f(\vx) = \frac{1}{K}{\mathbf \vnetweights}\tra \hPhi(\vx) = \frac{1}{K} \sum_{i=
 \end{align}
 %
 with fixed%
-\footnote{The above derivation gives the same result if the parameters of the hidden units are random.
-However, to avoid confusion, we refer to layers with infinitely-many nodes as``fixed'', since their distribution on outputs always the same with probability one.
+\footnote{The above derivation gives the same result if the parameters of the hidden units are random, since their distribution on outputs always the same with probability one.
+However, to avoid confusion, we refer to layers with infinitely-many nodes as``fixed''.
 }
- features $\left[ \hphi_1(\vx), \dots, \hphi_K(\vx) \right]\tra = \hPhi(\vx)$ and i.i.d. $\netweights$'s with zero mean and finite variance $\sigma^2$, the central limit theorem implies that as the number of features $K$ grows, any two function values $f(\vx), f(\vx')$ have a joint distribution approaching a Gaussian:
+ features $\left[ \hphi_1(\vx), \dots, \hphi_K(\vx) \right]\tra = \hPhi(\vx)$ and i.i.d. $\netweights$'s with zero mean and finite variance $\sigma^2$, the central limit theorem implies that as the number of features $K$ grows, any two function values $f(\vx)$ and $f(\vx')$ have a joint distribution approaching a Gaussian:
 %
 \begin{align}
 \lim_{K \to \infty} p\left( \colvec{f(\vx)}{f(\vx')} \right) = \Nt{\colvec{0}{0}}{
@@ -102,7 +110,7 @@ However, to avoid confusion, we refer to layers with infinitely-many nodes as``f
 \end{array} \right] }
 \end{align}
 A joint Gaussian distribution between any set of function values is the definition of a Gaussian process.
-%\TBD{DD: any two or any set?}
+%Thus we can say that $f \sim \GPt{0}{
 
 The result is surprisingly general:
 it puts no constraints on the features (other than having uniformly bounded activation), nor does it require that the feature weights $\vnetweights$ be Gaussian distributed.  
@@ -111,9 +119,9 @@ We can also work backwards to derive a one-layer \MLP{} from any \gp{}.
 Mercer's theorem implies that any positive-definite kernel function corresponds to an inner product of features: $k(\vx, \vx') = \hPhi(\vx) \tra \hPhi(\vx')$.
 %
 Thus in the one-hidden-layer case, the correspondence between \MLP{}s and \gp{}s is simple:
-the implicit features $\hPhi(\vx)$ of the kernel correspond to the hidden units of the \MLP{}.
+the implicit features $\hPhi(\vx)$ of the kernel correspond to hidden units of an \MLP{}.
 
-
+An \MLP{} with a finite number of fixed hidden nodes gives rise to a \gp{} if and only if the weights $\vnetweights$ are jointly Gaussian distributed.
 
 
 % For tikz figures in deep limits
@@ -270,18 +278,20 @@ Neural net corresponding to a \gp{} & Net corresponding to a \gp{} with a deep k
 
 \subsection{Multiple hidden layers}
 
-%\paragraph{Fixed nonlinearities}
+Next, we examine infinitely-wide \MLP{}s with multiple hidden layers.
+There are several ways to construct such networks, giving rise to different priors on functions.
+
 In an \MLP{} with multiple hidden layers, activation of the $\layerindex$th layer units are given by
 % the recurrence
 %
 \begin{align}
-\vh^{(\layerindex)}(\vx) = \sigma \left( \vb^{(\layerindex)} + \vW^{(\layerindex)} \vh^{(\layerindex-1)}(\vx) \right) \;.
+\vh^{(\layerindex)}(\vx) = \sigma \left( \vb^{(\layerindex)} + \munitparams^{(\layerindex)} \vh^{(\layerindex-1)}(\vx) \right) \;.
 \label{eq:nextlayer}
 \end{align}
 This architecture is shown on the right of \cref{fig:gp-architectures}.
-%In this model, each hidden layer's output feeds directly into the next layer's input, weighted by the corresponding element of $\vW^{(\layerindex)}$.  
+%In this model, each hidden layer's output feeds directly into the next layer's input, weighted by the corresponding element of $\munitparams^{(\layerindex)}$.  
 %
-For example, if we extend the model given by \cref{eq:one-layer-nn} to have two layers of feature mappings,  the resulting model would become
+For example, if we extend the model given by \cref{eq:one-layer-nn} to have two layers of feature mappings, the resulting model becomes
 %
 \begin{align}
 f(\vx) = \frac{1}{K}{\mathbf \vnetweights}\tra \hPhi^{(2)}\left( \hPhi^{(1)}(\vx) \right) \;.
@@ -289,12 +299,13 @@ f(\vx) = \frac{1}{K}{\mathbf \vnetweights}\tra \hPhi^{(2)}\left( \hPhi^{(1)}(\vx
 \label{eq:mutli-layer-nn}
 \end{align}
 
-If the features $\vh^{(1)}(\vx)$ and $\vh^{(2)}(\vx)$ are considered fixed with only the last-layer weights ${\vnetweights}$ unknown, this model corresponds to a (non-deep) \gp{} with a ``deep kernel'', given by
+If the features $\vh^{(1)}(\vx)$ and $\vh^{(2)}(\vx)$ are fixed with only the last-layer weights ${\vnetweights}$ unknown, this model corresponds to a shallow \gp{} with a \emph{deep kernel}, given by
 \begin{align}
-k(\vx, \vx') = \left( \hPhi^{(2)} ( \hPhi^{(1)}(\vx) ) \right) \tra \hPhi^{(2)} (\hPhi^{(1)}(\vx') )
+k(\vx, \vx') = \left( \hPhi^{(2)} ( \hPhi^{(1)}(\vx) ) \right) \tra \hPhi^{(2)} (\hPhi^{(1)}(\vx') ) \, .
 \end{align}
-\gp{}s with deep kernels, explored in \cref{sec:deep_kernels}, imply a fixed representation as opposed to a prior over representations.
-Thus, unless we richly parameterize these kernels, their capacity to learn an appropriate representation is limited in comparison to more flexible models such as deep neural networks, or deep \gp{}s. %since only the output weights ${\vnetweights}$ can adapt to the problem  which is what we wish to analyze in this chapter.
+
+Deep kernels, explored in \cref{sec:deep_kernels}, imply a fixed representation as opposed to a prior over representations.
+Thus, unless we richly parameterize these kernels, their capacity to learn an appropriate representation is limited in comparison to more flexible models such as deep neural networks or deep \gp{}s. %since only the output weights ${\vnetweights}$ can adapt to the problem  which is what we wish to analyze in this chapter.
 
 
 
@@ -480,23 +491,24 @@ The activation functions are visualized by draws from 2-dimensional \gp{}s, alth
 \end{figure}
 
 
-There are two equivalent neural net architectures which correspond to deep \gp{}s: one with fixed non-linearities, and another with \gp{}-distributed nonlinearties.
+There are two equivalent neural network architectures that correspond to deep \gp{}s: one with fixed nonlinearities, and another with \gp{}-distributed nonlinearties.
 
-To construct a neural network with fixed nonlinearities that corresponds to a deep \gp{}, 
+To construct a neural network corresponding to a deep \gp{} using only fixed nonlinearities, 
 one can start with the infinitely-wide deep \gp{} shown in \cref{fig:gp-architectures}(right), and introduce a finite set of nodes in between each infinitely-wide set of fixed basis functions.
 This architecture is shown in the top of \cref{fig:deep-gp-architectures}.
-The $D^{(\layerindex)}$ outputs $\vf^{(\layerindex)}(\vx)$ in between each layer are weighted sums (with random weights) of the fixed hidden units of the layer below, and the next layer's hidden units depend only on these $D^{(\layerindex)}$ outputs.
+The $D^{(\layerindex)}$ outputs $\vf^{(\layerindex)}(\vx)$ in between each fixed layer are weighted sums (with random weights) of the fixed hidden units of the layer below, and the next layer's hidden units depend only on these $D^{(\layerindex)}$ outputs.
 
 This alternating-layer architecture has an interpretation as a series of linear information bottlenecks.
 To see this, we can simply substitute \cref{eq:one-layer-nn} into \cref{eq:nextlayer} to get
 %
 \begin{align}
-\hPhi^{(\layerindex)}(\vx) = \sigma \left( \vb^{(\layerindex)} + \vW^{(\layerindex)} \vV^{(\layerindex-1)} \hPhi^{(\layerindex-1)}(\vx) \right) \;.
+\hPhi^{(\layerindex)}(\vx) = \sigma \left( \vb^{(\layerindex)} + \left[ \munitparams^{(\layerindex)} \mnetweights^{(\layerindex-1)} \right] \hPhi^{(\layerindex-1)}(\vx) \right)
 \end{align}
 %
-Thus, ignoring the intermediate outputs $\vf^{(\layerindex)}(\vx)$, a deep \gp{} is an infinitely-wide, deep \MLP{} with each pair of layers connected by random, rank-$D_\layerindex$ matrices $\vW^{(\layerindex)} \vV^{(\layerindex-1)}$. %connecting the layers.
+where $\mnetweights^{(\ell-1)}$ is the weight matrix connecting $\hPhi^{(\ell-1)}$ to $\vf^{(\ell - 1)}$.
+Thus, ignoring the intermediate outputs $\vf^{(\layerindex)}(\vx)$, a deep \gp{} is an infinitely-wide, deep \MLP{} with each pair of layers connected by random, rank-$D_\layerindex$ matrices $\munitparams^{(\layerindex)} \mnetweights^{(\layerindex-1)}$.
 
-The second, more direct way to construct a network architecture corresponding to a deep \gp{} is to integrate out all $\vV^{(\layerindex)}$, and view deep \gp{}s as a neural network with a finite number of nonparametric, \gp{}-distributed basis functions at each layer, in which $\vf^{(1:\layerindex)}(\vx)$ represent the output of the hidden nodes at the $\layerindex^{th}$ layer.
+The second, more direct way to construct a network architecture corresponding to a deep \gp{} is to integrate out all $\mnetweights^{(\layerindex)}$, and view deep \gp{}s as a neural network with a finite number of nonparametric, \gp{}-distributed basis functions at each layer, in which $\vf^{(1:\layerindex)}(\vx)$ represent the output of the hidden nodes at the $\layerindex^{th}$ layer.
 This second view lets us compare deep \gp{} models to standard neural net architectures more directly.
 \Cref{fig:gp-architectures}(bottom) shows this architecture.
 
@@ -561,11 +573,11 @@ In this section, we derive the limiting distribution of the derivative of an arb
  & $x$ & $x$ & $x$ & $x$
 \end{tabular}
 \caption[A one-dimensional draw from a deep \sgp{} prior]
-{A one-dimensional draw from a deep \gp{} prior, shown at different depths.
+{A one-dimensional draw from a deep \gp{} prior shown at different depths.
 The $x$-axis is the same for all plots.
 After a few layers, the functions begin to be either nearly flat, or highly varying, everywhere.
 This is a consequence of the distribution on derivatives becoming heavy-tailed.
-The function values also tend to cluster around the same few values as the depth increases.
+As well, the function values at each layer tend to cluster around the same few values as the depth increases.
 This happens because once the function values in a particular region are mapped to the same value in an intermediate layer, there is no way for them to be mapped to different values in later layers.}
 \label{fig:deep_draw_1d}
 \end{figure}
@@ -579,8 +591,8 @@ The parameter $\sigma^2$ controls the variance of functions drawn from the prior
 The derivative of a \gp{} with a squared-exp kernel is point-wise distributed as $\Nt{0}{\nicefrac{\sigma^2}{\lengthscale^2}}$.  
 Intuitively, a draw from a \gp{} is likely to have large derivatives if the kernel has high variance and small lengthscales.
  
- By the chain rule, the derivative of a one-dimensional deep \gp{} is simply a product of the derivatives of each layer, which are drawn independently.
- The distribution of the absolute value of this derivative is a product of half-normals, each with mean $\sqrt{\nicefrac{2 \sigma^2}{\pi \lengthscale^2}}$.
+By the chain rule, the derivative of a one-dimensional deep \gp{} is simply a product of the derivatives of each layer, which are drawn independently by construction.
+The distribution of the absolute value of this derivative is a product of half-normals, each with mean $\sqrt{\nicefrac{2 \sigma^2}{\pi \lengthscale^2}}$.
 %
 %\begin{align}
 %\frac{\partial f(x)}{\partial x} & \distas{iid} \Nt{0}{\frac{\sigma^2_f}{\lengthscale^2}} \\
@@ -594,15 +606,19 @@ If we choose kernel parameters so that ${\nicefrac{\sigma^2}{\lengthscale^2} = \
 %  If $\nicefrac{\sigma^2_f}{\lengthscale^2}$ is less than $\nicefrac{\pi}{2}$, the expected derivative magnitude goes to zero, and if it is greater, the expected magnitude goes to infinity as a function of $L$.  
 
 The distribution of the log of the magnitude of the derivatives has finite moments:
+%
 \begin{align}
 m_{\log} = \expectargs{}{\log \left| \frac{\partial f(x)}{\partial x} \right|} & = 2 \log \left( \frac{\sigma}{\lengthscale} \right) - \log2 - \gamma \nonumber \\
 %\varianceargs{}{\log \left| \frac{\partial f(x)}{\partial x} \right|} & = \frac{1}{4}\left[ \pi^2 + 2 \log^2 2  - 2 \gamma( \gamma + log4 ) + 8 \left( \gamma + \log2 - \log \left(\frac{\sigma_f}{\lengthscale}\right)\right) \log\left(\frac{\sigma_f}{\lengthscale}\right) \right]
 v_{\log} = \varianceargs{}{\log \left| \frac{\partial f(x)}{\partial x} \right|} & = \frac{\pi^2}{4} + \frac{\log^2 2}{2}  - \gamma^2 - \gamma \log4 + 2 \log\left(\frac{\sigma}{\lengthscale}\right) \left[ \gamma + \log2 - \log \left(\frac{\sigma}{\lengthscale}\right) \right]
 \end{align}
+%
 where $\gamma \approxeq 0.5772$ is Euler's constant.  Since the second moment is finite, by the central limit theorem, the limiting distribution of the size of the gradient approaches log-normal as L grows:
+%
 \begin{align}
 \log \left| \frac{\partial f^{(1:L)}(x)}{\partial x} \right| 
-& = \sum_{\layerindex=1}^L \log \left| \frac{\partial f^{(\layerindex)}(x)}{\partial x} \right| 
+ = \log \prod_{\layerindex=1}^L \left| \frac{\partial f^{(\layerindex)}(x)}{\partial x} \right| 
+ = \sum_{\layerindex=1}^L \log \left| \frac{\partial f^{(\layerindex)}(x)}{\partial x} \right| 
 % \implies
 %\log \left| \frac{\partial f^{1:L}(x)}{\partial x} \right| & \distas{L \rightarrow \infty} \Nt{L \sqrt{\frac{2 \sigma^2_f}{\pi\lengthscale^2}}}{L \frac{\sigma^2_f}{\lengthscale^2} \left( 1 - \frac{2}{\pi} \right)}
 %\log \left| \frac{\partial f^{(1:L)}(x)}{\partial x} \right| & 
@@ -612,7 +628,7 @@ where $\gamma \approxeq 0.5772$ is Euler's constant.  Since the second moment is
 Even if the expected magnitude of the derivative remains constant, the variance of the log-normal distribution grows without bound as the depth increases.
 
 Because the log-normal distribution is heavy-tailed and its domain is bounded below by zero, the derivative will become very small almost everywhere, with rare but very large jumps.  
-\Cref{fig:deep_draw_1d} shows this behavior in a draw from a 1D deep \gp{} prior, at varying depths.
+\Cref{fig:deep_draw_1d} shows this behavior in a draw from a 1D deep \gp{} prior.
 This figure also shows that once the derivative in one region of the input space becomes very large or very small, it is likely to remain that way in subsequent layers.
 %
 %Does it convege to some sort of jump process?  
@@ -624,11 +640,10 @@ This figure also shows that once the derivative in one region of the input space
 
 
 
-%\section{The Jacobian of deep GP is a product of independent normal matrices}
+%\subsection{The Jacobian of deep GP is a product of independent normal matrices}
 \subsection{Distribution of the Jacobian}
 \label{sec:theorem}
-
-Next, we characterize the distribution on Jacobians of multivariate functions drawn from a deep \gp{} prior.
+fNext, we characterize the distribution on Jacobians of multivariate functions drawn from deep \gp{} priors, finding them to be products of independent Gaussian matrices with independent entries.
 
 \begin{lemma}
 \label{thm:deriv-ind}
@@ -656,9 +671,9 @@ For example, in the case of the multivariate squared-exp kernel, the covariance 
 %
 \begin{align}
 %k_{SE}(\vx, \vx') = 
-f(\vx) \sim \textnormal{GP}\left( 0, 
+& f(\vx) \sim \textnormal{GP}\left( 0, 
 \sigma^2 \prod_{d=1}^D \exp \left(-\frac{1}{2} \frac{(x_d - x_d')^2}{\lengthscale_d^2} \right) \right) \nonumber \\
- \implies 
+& \implies 
 \cov \left( \frac{\partial f(\vx)}{\partial x_{d_1}}, \frac{\partial f(\vx)}{\partial x_{d_2}} \right) =
 %\frac{\partial^2 k_{SE}(\vx, \vx')}{\partial x_{d_1} \partial x_{d_2}'} \bigg|_{\vx=\vx'} =
 \begin{cases} 
@@ -684,7 +699,7 @@ The Jacobian of the vector-valued function $\vf(\vx)$ is a matrix $J$ with eleme
 %\end{align}
 %
 %
-Because the \gp{}s on each output dimension $f_d(\vx)$ are independent, it follows that each row of $J$ is independent.
+Because the \gp{}s on each output dimension $f_1(\vx), f_2(\vx), \dots, f_D(\vx)$ are independent by construction, it follows that each row of $J$ is independent.
 Lemma \ref{thm:deriv-ind} shows that the elements of each row are independent Gaussian.
 Thus all entries in the Jacobian of a \gp{}-distributed transform are independent Gaussian R.V.'s.
 \end{proof}
@@ -719,7 +734,8 @@ Thus the Jacobian of the composed (deep) function $\vf^{(L)}(\vf^{(L-1)}(\dots \
 By lemma \ref{thm:matrix}, each ${J^{(\layerindex)}_{i,j} \simind \mathcal{N}}$, so the complete Jacobian is a product of independent Gaussian matrices, with each entry of each matrix drawn independently.
 \end{proof}
 
-\Cref{thm:prodjacob} allows us to analyze the representational properties of a deep Gaussian process by examining the properties of products of independent Gaussian matrices.
+%\Cref{thm:prodjacob} 
+This result allows us to analyze the representational properties of a deep Gaussian process by examining the properties of products of independent Gaussian matrices.
 
 
 
@@ -729,9 +745,11 @@ By lemma \ref{thm:matrix}, each ${J^{(\layerindex)}_{i,j} \simind \mathcal{N}}$,
 \section{Formalizing a pathology}
 \label{sec:formalizing-pathology}
 
-\citet{rifai2011higher} argue that good representations of data manifolds are invariant in directions orthogonal to the manifold.
-Conversely, a good representation must also change in directions tangent to the data manifold, in order to preserve relevant information.
-\Cref{fig:hidden} visualizes this idea.
+A common use of deep neural networks is building useful representations of data manifolds.
+What properties make a representation useful?
+\citet{rifai2011higher} argue that good representations of data manifolds are invariant in directions orthogonal to the data manifold.
+They also argue that, conversely, a good representation must also change in directions tangent to the data manifold, in order to preserve relevant information.
+\Cref{fig:hidden} visualizes such a representation.
 
 %\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 \begin{figure}[h]
@@ -756,7 +774,7 @@ Conversely, a good representation must also change in directions tangent to the 
 \caption[Desirable properties of representations of manifolds]
 {Representing a 1-D data manifold.
 %A representation is a function mapping the input space to some set of outputs.
-Colors correspond to the computed representation as a function of the input space.
+Colors are a function of the computed representation of the input space.
 The representation (blue \& green) varies in directions tangent to the data manifold (white), preserving information for later layers. 
 The representation changes little in directions orthogonal to the manifold, making it robust to noise in those directions.
 %, and reducing the number of parameters needed to represent a datapoint.
@@ -766,16 +784,15 @@ The representation changes little in directions orthogonal to the manifold, maki
 \end{figure}
 
 As in \citet{rifai2011contractive}, we characterize the representational properties of a function by the singular value spectrum of the Jacobian.
-The number of relatively large singular values of the Jacobian roughly correspond to the number of directions in which the representation varies.
-\citet{rifai2011contractive} analyzed the Jacobian at location of the training points, but because the priors we are examining are stationary, the distribution of the Jacobian is identical everywhere.
+The number of relatively large singular values of the Jacobian roughly correspond to the number of directions in data-space in which the representation varies.
 %
-\newcommand{\spectrumpic}[1]{%
+\newcommand{\spectrumpic}[1]{
 \includegraphics[trim=4mm 1mm 4mm 2.5mm, clip, width=0.475\columnwidth]{\deeplimitsfiguresdir/spectrum/layer-#1}}%
 \begin{figure}
 \centering
 \begin{tabular}{ccc}
 & 2 Layers & 6 Layers \\
-\hspace{-0.3cm} \begin{sideways} { \quad Normalized singular value} \end{sideways} & \hspace{-0.2in} \spectrumpic{2} & \hspace{-0.2in} \spectrumpic{6} \\
+\begin{sideways} { \quad Normalized singular value} \end{sideways} & \hspace{-0.2in} \spectrumpic{2} & \hspace{-0.1in} \spectrumpic{6} \\
  & { Singular value index} & { Singular value index}
 \end{tabular}
 \caption[Distribution of singular values of the Jacobian of a deep \sgp{}]
@@ -788,7 +805,7 @@ This implies that with high probability, these functions vary little in all dire
 \label{fig:deep_spectrum}
 \end{figure}%
 %
-\begin{figure}
+\begin{figure}%
 \centering
 \begin{tabular}{cc}
 No transformation: $p(\vx)$ & 1 Layer: $p \left( \vf^{(1)}(\vx) \right)$ \\
@@ -799,16 +816,19 @@ No transformation: $p(\vx)$ & 1 Layer: $p \left( \vf^{(1)}(\vx) \right)$ \\
 \caption[Points warped by a draw from a deep \sgp{}]
 {Points warped by a function drawn from a deep \gp{} prior.
 \emph{Top left:} Points drawn from a 2-dimensional Gaussian distribution, color-coded by their location.
-\emph{Subsequent panels:} Those same points, successively warped by functions drawn from a \gp{} prior.
-As the number of layers increases, the density concentrates along one-dimensional filaments.}
+\emph{Subsequent panels:} Those same points, successively warped by compositions of functions drawn from a \gp{} prior.
+As the number of layers increases, the density concentrates along one-dimensional filaments.
+Warpings using random finite neural networks exhibit the same pathology, but also tend to concentrate density into 0-dimensional manifolds (points) due to saturation of the hidden units.}
 \label{fig:filamentation}
-\end{figure}
+\end{figure}%
 %
-\Cref{fig:deep_spectrum} shows the singular value spectrum for 5-dimensional deep GPs of different depths.
-As the net gets deeper, the largest singular value dominates, implying there is usually only one effective degree of freedom in representation being computed.
+\Cref{fig:deep_spectrum} shows the singular value spectrum for 5-dimensional deep GPs of different depths
+\footnote{\citet{rifai2011contractive} analyzed the Jacobian at location of the training points, but because the priors we are examining are stationary, the distribution of the Jacobian is identical everywhere.}.
+As the net gets deeper, the largest singular value dominates, implying there is usually only one effective degree of freedom in the representations being computed.
 
 \Cref{fig:filamentation} demonstrates a related pathology that arises when composing functions to produce a deep density model.
-The density in the observed space eventually becomes locally concentrated onto one-dimensional manifolds, or \emph{filaments}, again implying that such models are unsuitable to model manifolds whose underlying dimensionality is greater than one.
+The density in the observed space eventually becomes locally concentrated onto one-dimensional manifolds, or \emph{filaments}.
+This again suggests that, when the width of the network is relatively small, deep compositions of independent functions are unsuitable for modeling manifolds whose underlying dimensionality is greater than one.
 
 %for file in `ls`; do convert $file $file; done
 \newcommand{\mappic}[1]{ \includegraphics[width=0.475\columnwidth]{\deeplimitsfiguresdir/map/latent_coord_map_layer_#1} } 
@@ -824,8 +844,8 @@ The density in the observed space eventually becomes locally concentrated onto o
 \hspace{-0.15in} \mappic{10} & \mappic{40}
 \end{tabular}
 \caption[Visualization of a feature map drawn from a deep \sgp{}]
-{A vizualization of the feature map implied by a draw from a deep \gp{}.
-Colors correspond to the location $\vy = \vf(\vx)$ that each point is mapped to after being warped by a deep \gp{}.
+{A vizualization of the feature map implied by a function $\vf$ drawn from a deep \gp{}.
+Colors are a function of the 2D representation $\vy = \vf(\vx)$ that each point is mapped to. % by the deep function. %that each point is mapped to after being warped by a deep \gp{}.
 The number of directions in which the color changes rapidly corresponds to the number of large singular values in the Jacobian.
 Just as the densities in \cref{fig:filamentation} became locally one-dimensional, there is usually only one direction that one can move $\vx$ in locally to change $\vy$.
 This means that $\vf$ is unlikely to be a suitable representation for decision tasks that depend on more than one aspect of $\vx$.  Also note that the overall shape of the mapping remains the same as the number of layers increase.
@@ -834,11 +854,11 @@ For example, the roughly circular shape remains in the top-left corner even afte
 \end{figure}
 %
 To visualize this pathology in another way, \cref{fig:deep_map} illustrates a color-coding of the representation computed by a deep \gp{}, evaluated at each point in the input space.
-After 10 layers, we can see that locally, there is usually only one direction that one can move in $\vx$-space in order to change the value of the computed representation.
+After 10 layers, we can see that locally, there is usually only one direction that one can move in $\vx$-space in order to change the value of the computed representation, or to cross a decision boundary.
 This means that such representations are likely to be unsuitable for decision tasks that depend on more than one property of the input.
 
 To what extent are these pathologies present in the types of neural networks commonly used in practice?
-In simulations, we found that for deep functions with a fixed latent dimension $D$, the singular value spectrum remained relatively flat for hundreds of layers as long as $D > 100$.
+In simulations, we found that for deep functions with a fixed hidden dimension $D$, the singular value spectrum remained relatively flat for hundreds of layers as long as $D > 100$.
 Thus, these pathologies are unlikely to severely effect the relatively shallow, wide networks most commonly used in practice.
 
 
@@ -850,19 +870,17 @@ Thus, these pathologies are unlikely to severely effect the relatively shallow, 
 
 As suggested by \citet[chapter 2]{neal1995bayesian}, we can fix the pathologies exhibited in figures \cref{fig:filamentation} and \ref{fig:deep_map} by simply making each layer depend not only on the output of the previous layer, but also on the original input $\vx$.  
 We refer to these models as \emph{input-connected} networks, and denote deep functions having this architecture with the subscript $C$, as in $f_C(\vx)$.
-\Cref{fig:input-connected} shows a graphical representation of the two connectivity architectures.
-Similar connections between non-adjacent layers can also be found the primate visual cortex \citep{maunsell1983connections}.
 Formally, this functional dependence can be written as
 \begin{align}
 \vf_C^{(1:L)}(\vx) = \vf^{(L)} \left( \vf_C^{(1:L-1)}(\vx), \vx \right), \quad \forall L
 \end{align}
 %
-Visualizations of the resulting prior on functions are shown in \cref{fig:deep_draw_1d_connected,fig:no_filamentation,fig:deep_map_connected}.
+\Cref{fig:input-connected} shows a graphical representation of the two connectivity architectures.
 
-\begin{figure}[h]
-\def\nodeseptwo{1.9cm}
-\def\nodesize{.35cm}
-\def\numhiddentwo{3}
+\begin{figure}[h]%
+\def\nodeseptwo{1.9cm}%
+\def\nodesize{.35cm}%
+\def\numhiddentwo{3}%
 \centering
 \begin{tabular}{ccc}
 a) Standard \MLP{} connectivity & &
@@ -938,8 +956,10 @@ b) Input-connected architecture\\
 \emph{Left:} The standard architecture connects each layer's outputs to the next layer's inputs.
 \emph{Right:} The input-connected architecture also connects the original input $\vx$ to each layer.}
 \label{fig:input-connected}
-\end{figure}
+\end{figure}%
 
+Similar connections between non-adjacent layers can also be found the primate visual cortex \citep{maunsell1983connections}.
+Visualizations of the resulting prior on functions are shown in \cref{fig:deep_draw_1d_connected,fig:no_filamentation,fig:deep_map_connected}.
 
 
 \begin{figure}[h]
@@ -957,7 +977,7 @@ b) Input-connected architecture\\
 \caption[A draw from a 1D deep \sgp{} prior with each layer connected to the input]
 {A draw from a 1D deep \gp{} prior with each layer connected to the input.
 The $x$-axis is the same for all plots.
-Even after many layers, the functions remain smooth in some regions, while varying rapidly in other regions.
+Even after many layers, the functions remain relatively smooth in some regions, while varying rapidly in other regions.
 Compare to standard-connectivity deep \gp{} draws shown in \cref{fig:deep_draw_1d}.}
 \label{fig:deep_draw_1d_connected}
 \end{figure}
@@ -977,10 +997,10 @@ Compare to standard-connectivity deep \gp{} draws shown in \cref{fig:deep_draw_1
 \gpdrawboxcon{6}
 \end{tabular}
 \caption[Points warped by a draw from an input-connected deep \sgp{}]
-{Points warped by a draw from a deep \sgp{}, with each layer connected to the input $\vx$.
+{Points warped by a draw from a deep \sgp{} with each layer connected to the input $\vx$.
 %\emph{Top left:} Points drawn from a 2-dimensional Gaussian distribution, color-coded by their location.
 %\emph{Subsequent panels:} Those same points, successively warped by functions drawn from a \gp{} prior.
-As depth increases, the density becomes more complex without concentrating everywhere along one-dimensional filaments.}
+As depth increases, the density becomes more complex without concentrating only along one-dimensional filaments.}
 \label{fig:no_filamentation}
 \end{figure}
 %
@@ -994,8 +1014,8 @@ As depth increases, the density becomes more complex without concentrating every
  & {\scriptsize Singular value number} & {\scriptsize Singular value number}
 \end{tabular}
 \caption[Distribution of singular values of an input-connected deep \sgp{}]
-{The distribution of singular values drawn from 5-dimensional input-connected deep GP priors, 25 and 50 layers deep.
-The singular values remain roughly the same scale as one another, meaning that the model outputs are sensitive to most directions of variation in the input.}
+{The distribution of singular values drawn from 5-dimensional input-connected deep \gp{} priors, 25 layers deep (\emph{Left}) and 50 layers deep (\emph{Right}).
+Compared to the standard architecure, the singular values are more likely to remain the same size as one another, meaning that the model outputs are more often sensitive to several directions of variation in the input.}
 \label{fig:good_spectrum}
 \end{figure}
 %
@@ -1010,10 +1030,11 @@ The singular values remain roughly the same scale as one another, meaning that t
 \hspace{-0.15in} 20 Connected layers: $\vy = \vf^{(1:20)}(\vx)$ \\
 \hspace{-0.15in} \mappiccon{10} & \mappiccon{20}
 \end{tabular}
-\caption[Feature mapping of an input-connected deep \sgp{}]
-{Feature mapping of a deep \gp{} with each layer connected to the input $\vx$.
-Compare to the mappings shown in \cref{fig:deep_map}.
-Just as the densities in \cref{fig:no_filamentation} remained locally two-dimensional even after many warpings, in the mapping shown here there are sometimes two directions that one can move locally in $\vx$ to in order to change the values of $\vf(\vx)$.
+\caption[Feature map of an input-connected deep \sgp{}]
+{The feature map implied by a function $\vf$ drawn from a deep \gp{} prior with each layer connected to the input $\vx$, visualized at various depths.
+Compare to the map shown in \cref{fig:deep_map}.
+%Just as the densities in \cref{fig:no_filamentation} remained locally two-dimensional even after many warpings, 
+In the mapping shown here there are sometimes two directions that one can move locally in $\vx$ to in order to change the value of $\vf(\vx)$.
 This means that the input-connected prior puts mass on a greater variety of types of representations, some of which depend on all aspects of the input.
 }
 \label{fig:deep_map_connected}
@@ -1034,12 +1055,13 @@ The Jacobian of an input-connected deep function is defined by the recurrence
 %J^{1:L}(x) = J^L \sbi{ J^{L-1} \sbi{ \dots J^{4} \sbi{ J^{3} \sbi{ J^2 J^1 }{ I_D }}{ I_D } \dots }{ I_D \\ %\vdots }}{ I_D}
 %\end{align}
 %
-which, in the case of a deep \gp{}, is still a product of independent Gaussian matrices.
+where $I_D$ is a $D$-dimensional identity matrix.
+In the case of a deep \gp{}, the input-connected Jacobian is still a product of independent Gaussian matrices.
 \Cref{fig:good_spectrum} shows that with this architecture, even 50-layer deep \gp{}s have well-behaved singular value spectra.
 
 The pathology examined in this section is an example of the sort of analysis made possible by a well-defined prior on functions.
-As explained in \cref{sec:relating}, \gp{}s are examples of a particular limit of Bayesian neural networks.
-The figures and analysis done in this section could have also been done using Bayesian neural networks with finite numbers of nodes, but would have been more difficult.
+%As explained in \cref{sec:relating}, \gp{}s are examples of a particular limit of Bayesian neural networks.
+The figures and analysis done in this section could be done using Bayesian neural networks with finite numbers of nodes, but would be more difficult.
 In particular, care would need to be taken to ensure that the networks do not produce degenerate mappings due to saturation of the hidden units.
 
 
@@ -1049,45 +1071,47 @@ In particular, care would need to be taken to ensure that the networks do not pr
 \section{Deep kernels}
 \label{sec:deep_kernels}
 
+\cite{ bengio2006curse} showed that kernel machines have limited generalization ability when they use ``local'' kernels such as the squared-exp.
+However, as we saw in \cref{ch:kernels,ch:grammar,ch:additive}, structured, non-local kernels can 
+%be constructed through addition and multiplication which 
+allow extrapolation.
+Another way to build non-local kernels is by composing fixed feature maps, creating \emph{deep kernels}.
+This section builds on the work of \citet{cho2009kernel}, who derived several kinds of deep kernels by applying multiple layers of feature mappings.
 
-\cite{ bengio2006curse} showed that kernel machines have limited generalization ability when they use ``local'' kernels, such as the squared-exp.
-However, as we saw in \cref{ch:kernels,ch:grammar}, structured kernels can be constructed through addition and multiplication which allow non-local extrapolation.
-
-We can also build non-local kernels by composing fixed feature maps.
 To return to an example given in \cref{sec:expressing-symmetries}, periodic kernels can be viewed as a 2-layer-deep kernel, in which the first layer maps $x \rightarrow [\sin(x), \cos(x)]$, and the second layer maps through basis functions corresponding to the \humble{SE} kernel.
 
 %In addition to analyzing \MLP{}s with random weights, we can also analyze fixed feature mappings with different connectivity architectures.
  
-We can construct other useful kernels by composing fixed feature maps several times, creating deep kernels.
-This section builds on the work of \citet{cho2009kernel}, who derived several kinds of deep kernels by applying multiple layers of feature mappings.
+%We can construct other useful kernels by composing fixed feature maps several times, creating deep kernels.
+
 
 %Given a kernel $k_1(\vx, \vx') = \hPhi(\vx) \tra \hPhi(\vx')$, 
-In principle, we can compose the feature mapping of any two kernels to get a new one:
+In principle, we can compose the implicit feature maps of any two kernels $k_a$ and $k_b$ to get a new kernel, which we'll denote by $\left( k_b \circ k_a \right)$:
 %
 \begin{align}
 k_a(\vx, \vx') & = \hPhi_a(\vx) \tra \hPhi_a(\vx') \\
 k_b(\vx, \vx') & = \hPhi_b(\vx) \tra \hPhi_b(\vx') \\
 \left( k_b \circ k_a \right)(\vx, \vx') & = k_b \left(\hPhi_a(\vx), \hPhi_a(\vx') \right) 
- = \left[ \hPhi_b \left( \hPhi_a(\vx) \right)\right] \tra \hPhi_b \left(\hPhi_a(\vx') \right) 
+ = \left[ \hPhi_b \left( \hPhi_a(\vx) \right)\right] \tra \hPhi_b \left(\hPhi_a(\vx') \right)
 \end{align}
 %
-However, this composition might not always have a closed form if the number of hidden features of either kernel in infinite.
+However, this composition might not always have a closed form if the number of hidden features of either kernel is infinite.
 
-Fortunately, composing the squared-exp kernel with any implicit mapping given by another kernel has a simple closed form.
+Fortunately, composing the squared-exp (\kSE{}) kernel with the implicit mapping given by any other kernel has a simple closed form.
 If $k(\vx, \vx') = \hPhi(\vx)\tra \hPhi(\vx')$, then
 %, this composition operation has a closed form for any starting kernel:% for any set of starting features $\hPhi_n(\vx)$:
 %
 \begin{align}
 %k_1(\vx, \vx') & = \exp \left( -\frac{1}{2} ||\vx - \vx'||_2^2 \right) \\
-\left( \kSE \circ k \right)(\vx, \vx') \left( \vx, \vx' \right) & = k_{SE} \left( \hPhi(\vx), \hPhi(\vx') \right) =  \\
+\left( \kSE \circ k \right) \left( \vx, \vx' \right) & = k_{SE} \big( \hPhi(\vx), \hPhi(\vx') \big) \\
 %& = \left( \hPhi^{SE} \left(\hPhi^{1}(\vx) \right) \right) \tra \hPhi^{SE} \left( \hPhi^{1}(\vx') \right) \\
-& = \exp \left( -\frac{1}{2} || \hPhi(\vx) - \hPhi(\vx')||_2^2 \right) \nonumber\\
+& = \exp \left( -\frac{1}{2} || \hPhi(\vx) - \hPhi(\vx')||_2^2 \right) \\
 %k_{n+1}(\vx, \vx') 
 %& = \exp \left( -\frac{1}{2} \sum_i \left[ \hphi_n^{(i)}(\vx) - \hphi_n^{(i)}(\vx') \right]^2 \right) \\
-& = \exp\left ( -\frac{1}{2} \left[ \hPhi(\vx) \tra \hPhi(\vx) - 2 \hPhi(\vx) \tra \hPhi(\vx') + \hPhi(\vx') \tra \hPhi(\vx') \right] \right) \nonumber \\
+& = \exp\left ( -\frac{1}{2} \left[ \hPhi(\vx) \tra \hPhi(\vx) - 2 \hPhi(\vx) \tra \hPhi(\vx') + \hPhi(\vx') \tra \hPhi(\vx') \right] \right)  \\
 %k_2(\vx, \vx') & = \exp \left( -\frac{1}{2} \left[ \sum_i \hphi_i(\vx)^2 - 2 \sum_i \hphi_i(\vx) \hphi_i(\vx') + \sum_i \hphi_i(\vx')^2 \right] \right) \\
 %k_{n+1}(\vx, \vx') 
-& = \exp \left( -\frac{1}{2} \big[ k(\vx, \vx) - 2 k(\vx, \vx') + k(\vx', \vx') \big] \right) \; .\nonumber
+& = \exp \left( -\frac{1}{2} \big[ k(\vx, \vx) - 2 k(\vx, \vx') + k(\vx', \vx') \big] \right) \; .
 %k_{n+1}(\vx, \vx') 
 %& = \exp \left( k_1(\vx, \vx') - 1 \right) \qquad \textnormal{(if $k_1(\vx, \vx) = 1$)} \nonumber
 \end{align}
@@ -1108,11 +1132,12 @@ If $k(\vx, \vx') = \hPhi(\vx)\tra \hPhi(\vx')$, then
 %Note that nothing in this derivation depends on details of $k_n$, except that $k_n( \vx, \vx) = 1$.
 %Note that this result holds for any base kernel $k_n$, as long as $k_n( \vx, \vx) = 1$.
 %  Because this is true for $k_2$ as well, this recursion holds in general, and we have that $k_{n+1}(x,y) = e^{k_n(x, y) - 1}$.  
-This formula lets expresses the composed kernel function $\kSE \circ k$ exactly in terms of evaluations of the original kernel function $k$.
+This formula lets expresses the composed kernel $(\kSE \circ k)$ exactly in terms of evaluations of the original kernel $k$.
 
 \subsection{Infinitely deep kernels}
-What happens when we repeat this composition of feature maps many times, starting with the squared-exp kernel?
-If the output variance $k(\vx,\vx) = 1$, then in the infinite limit, this operation converges to $\left(\kSE \circ \kSE \circ \kSE \circ \ldots \kSE\right)(\vx,\vx') = 1$ for all pairs of inputs, which corresponds to a prior on constant functions $f(\vx) = c$.
+What happens when we repeatedly compose feature maps many times, starting with the squared-exp kernel?
+If the output variance of the \kSE{} is normalized to ${k(\vx,\vx) = 1}$, then the infinite limit of composition with \kSE{} converges to ${\left(\kSE \circ \kSE \circ \kSE \circ \ldots \circ \kSE\right)(\vx,\vx') = 1}$ for all pairs of inputs.
+A constant covariance corresponds to a prior on constant functions ${f(\vx) = c}$.
 
 %Figure \ref{fig:deep_kernel_connected} shows this kernel at different depths, including the degenerate limit.  
 %
@@ -1121,12 +1146,15 @@ If the output variance $k(\vx,\vx) = 1$, then in the infinite limit, this operat
 
 %\subsubsection{A non-degenerate construction}
 
-As before, we can overcome this degeneracy by connecting the inputs $\vx$ to each layer.  To do so, we simply concatenate the feature vector at each layer, $\hPhi^{(\ell)}(\vx)$, with the input vector $\vx$:
+As above, we can overcome this degeneracy by connecting the input $\vx$ to each layer.
+To do so, we concatenate the composed feature vector at each layer, $\hPhi^{(1:\ell)}(\vx)$, with the input vector $\vx$, to produce an input-connected deep kernel $k_C^{(1:L)}$, defined by:
 %
 \begin{align}
 %k_1(\vx, \vx') & = \exp \left( -\frac{1}{2} ||\vx - \vx'||_2^2 \right) \\
- k^{(\ell + 1)}(\vx, \vx') % = \nonumber\\
-& = \exp \left( -\frac{1}{2} \left|\left| \left[ \! \begin{array}{c} \hPhi^{(\ell)}(\vx) \\ {\color{black} \vx} \end{array} \! \right]  - \left[ \! \begin{array}{c} \hPhi^{(\ell)}(\vx') \\ {\color{black} \vx'} \end{array} \! \right] \right| \right|_2^2 \right) \nonumber \\
+k_C^{(1:\ell + 1)}(\vx, \vx')
+& = \exp \left( -\frac{1}{2} \left|\left| 
+\left[ \! \begin{array}{c} \hPhi^{(1:\ell)}(\vx) \\ \vx \end{array} \! \right] - 
+\left[ \! \begin{array}{c} \hPhi^{(1:\ell)}(\vx') \\ \vx' \end{array} \! \right] \right| \right|_2^2 \right) \\
 %k_{n+1}(\vx, \vx') 
 %& = \exp \left( -\frac{1}{2} \sum_i \left[ \hphi_i(\vx) - \hphi_i(\vx') \right]^2 -\frac{1}{2} || \vx - \vx' ||_2^2 \right) \\
 %k_{n+1}(\vx, \vx') & = \exp\left ( -\frac{1}{2} \sum_i \left[ \hphi_i(\vx)^2 - 2 \hphi_i(\vx) \hphi_i(\vx') + \hphi_i(\vx')^2 \right]  -\frac{1}{2} || \vx - \vx' ||_2^2 \right) \\
@@ -1134,13 +1162,13 @@ As before, we can overcome this degeneracy by connecting the inputs $\vx$ to eac
 %k_2(\vx, \vx') & = \exp \left( -\frac{1}{2} \left[ k_1(\vx, \vx) - 2 k_1(\vx, \vx') + k_1(\vx', \vx') \right] \right) \\
 %k_{n+1}(\vx, \vx') 
 %& = \exp \left( k_n(\vx, \vx') - 1 -\frac{1}{2} || \vx - \vx' ||_2^2 \right)
-& = \exp \Big( -\frac{1}{2} \big[ k^{(\ell)}(\vx, \vx) - 2 k^{(\ell)}(\vx, \vx') % \nonumber \\ 
- + k^{(\ell)}(\vx', \vx') {\color{black} - || \vx - \vx' ||_2^2} \big] \Big)
+& = \exp \Big( -\frac{1}{2} \big[ k_C^{(1:\ell)}(\vx, \vx) - 2 k_C^{(1:\ell)}(\vx, \vx') 
+ + k_C^{(1:\ell)}(\vx', \vx') {\color{black} - || \vx - \vx' ||_2^2} \big] \Big) \nonumber
 \end{align}
 %
 Starting with the squared-exp kernel, this repeated mapping satisfies
 \begin{align}
-k^{(\infty)}(\vx, \vx') - \log \left( k^{(\infty)}(\vx, \vx') \right) = 1 + \frac{1}{2} || \vx - \vx' ||_2^2 \,.
+k_C^{(1:\infty)}(\vx, \vx') - \log \left( k_C^{(1:\infty)}(\vx, \vx') \right) = 1 + \frac{1}{2} || \vx - \vx' ||_2^2 \,.
 \end{align}
 %
 \begin{figure}
@@ -1148,7 +1176,7 @@ k^{(\infty)}(\vx, \vx') - \log \left( k^{(\infty)}(\vx, \vx') \right) = 1 + \fra
 \begin{tabular}{cc}
 Input-connected deep kernels & Draws from corresponding \gp{}s \\
 \hspace{-0.3cm}
-\rotatebox{90}{$\qquad \cov(f(x), f(x'))$}
+\rotatebox{90}{$\qquad \qquad k(x, x')$}
 \includegraphics[width=0.465\columnwidth, clip, trim = 1.3cm 0.4cm 0.9cm 0.3cm]{\deeplimitsfiguresdir/deep_kernel_connected} &
 \hspace{-0.3cm}
 \rotatebox{90}{$\qquad \qquad f(x)$}
@@ -1156,21 +1184,21 @@ Input-connected deep kernels & Draws from corresponding \gp{}s \\
 $ x - x'$ &  $ x - x'$
 \end{tabular}
 \caption[Infinitely deep kernels]{
-\emph{Left:}  Input-connected deep kernels of different depths.
-By connecting the inputs $\vx$ to each layer, the kernel can still depend on its input even after arbitrarily many layers of computation.
+\emph{Left:} Input-connected deep kernels of different depths.
+By connecting the input $\vx$ to each layer, the kernel can still depend on its input even after arbitrarily many layers of composition.
 \emph{Right:} Draws from \gp{}s with deep input-connected kernels.}
 \label{fig:deep_kernel_connected}
 \end{figure}
 %
-The solution to this recurrence has no closed form, but has a similar shape to the Ornstein-Uhlenbeck covariance ${\OU(x,x') = \exp( -|x - x'| )}$ but with lighter tails.
+The solution to this recurrence has no closed form, but for one input dimension, has a similar shape to the Ornstein-Uhlenbeck covariance ${\OU(x,x') = \exp( -|x - x'| )}$ but with lighter tails.
 %
 Samples from a \gp{} prior with this kernel are not differentiable, and are locally fractal.
-\Cref{fig:deep_kernel_connected} shows this kernel at different depths, as well as samples from the resulting \gp{} prior.
+\Cref{fig:deep_kernel_connected} shows this kernel at different depths, as well as samples from the resulting \gp{} priors.
 %\item This kernel has smaller correlation than the squared-exp everywhere except at $\vx = \vx'$.  
 %\item The tails have the same form as the squared-exp.
 
-We can also consider two other connectivity architectures: one in which each layer is connected to the output layer, and another in which every layer is connected to all subsequent layers.
-It is easy to show that in the limit of infinite depth, both these architectures converge to $k(\vx, \vx') = \delta( \vx, \vx' )$, a white noise kernel.
+We can also consider two related connectivity architectures: one in which each layer is connected to the output layer, and another in which every layer is connected to all subsequent layers.
+It is easy to show that in the limit of infinite depth of composing \kSE{} kernels, both these architectures converge to $k(\vx, \vx') = \delta( \vx, \vx' )$, the white noise kernel.
 
 
 
@@ -1205,7 +1233,7 @@ Kernels correspond to fixed feature maps, and so kernel learning is an example o
 As we saw in \cref{ch:kernels,ch:grammar}, kernels can capture rich structure and can enable many types of generalization.
  %, such as affine invariance in images \citep{kondor2008group}.
 %\cite{salakhutdinov2008using} used a deep neural network to learn feature transforms for kernels, which learn invariants in an unsupervised manner.
-The relatively uninteresting properties of the deep kernels derived in this section simply reflect the fact that an arbitrary computation, even if it is ``deep'', is not likely to give rise to a useful representation, unless combined with learning.
+We believe that the relatively uninteresting properties of the deep kernels derived in this section simply reflect the fact that an arbitrary computation, even if it is ``deep'', is not likely to give rise to a useful representation unless combined with learning.
 To put it another way, any fixed representation is unlikely to be useful unless it has been chosen specifically for the problem at hand.
 
 
@@ -1216,37 +1244,35 @@ To put it another way, any fixed representation is unlikely to be useful unless 
 \section{Related work}
 
 \subsubsection{Deep Gaussian processs}
-\citet[chapter 2]{neal1995bayesian} discussed the properties of arbitrarily deep Bayesian neural networks, including those that would give rise to deep \gp{}s.
+\citet[chapter 2]{neal1995bayesian} explored properties of arbitrarily deep Bayesian neural networks, including those that would give rise to deep \gp{}s.
 He noted that infinitely deep random neural networks without extra connections to the input would be equivalent to a Markov chain, and therefore would lead to degenerate priors on functions.
 He also suggested connecting the input to each layer in order to fix this problem.
-Much of the analysis in this chapter can be seen as a detailed investigation and vindication of these claims.
+Much of the analysis in this chapter can be seen as a more detailed investigation, and vindication, of these claims.
 
 The first instance of deep \gp{}s being used in practice was \citep{lawrence2007hierarchical}, who presented a model called ``hierarchical \gplvm{}s'', in which time was mapped through a composition of multiple \gp{}s to produce observations.
 
 %The term ``deep Gaussian processes'' first appeared in \citet{damianou2012deep}, where it referred to a latent variable model whose warping function was defined by a composition of \gp{}s.
-The term ``deep Gaussian processes'' was first used by \citet{damianou2012deep}, who also developed a variational inference method, analyzed the effect of automatic relevance determination, and showed that deep \gp{}S could learn with relatively little data.
+The term ``deep Gaussian processes'' was first used by \citet{damianou2012deep}, who developed a variational inference method, analyzed the effect of automatic relevance determination, and showed that deep \gp{}S could learn with relatively little data.
 %I propose that this model might be more clearly described as a ``deep \gplvm{}'', and that the term ``deep Gaussian process'' should be reserved for describing compositions of functions drawn from \gp{} priors.
 %
 They used the term ``deep \gp{}'' to refer both to supervised models (compositions of \gp{}s) and to unsupervised models (compositions of \gplvm{}s).
-This conflation may be reasonable, since the activations of the hidden layers are themselves latent variables.
-Depending on kernel parameters, these latent variables may or may not depend on the inputs in the layer below.
+This conflation may be reasonable, since the activations of the hidden layers are themselves latent variables, even in supervised settings:
+Depending on kernel parameters, each latent variable may or may not depend on the layer below.
+
 In general, supervised models can also be latent-variable models.
 For example, \citet{wang2012gaussian} investigated single-layer \gp{} regression models that had additional latent inputs.
 
 \subsubsection{Nonparametric neural networks}
 %Other Bayesian deep neural network models have been proposed by, for example, . % and Sum-product networks \cite{poon2011sum}  
-\citet{adams2010learning} proposed a prior on arbitrarily deep Bayesian networks with an unknown and unbounded number of hidden units in each layer.
-Their architecture has connections only between adjacent layers, and may also be expected to have similar pathologies to those of deep \gp{}s as the number of layers increases.
-
-Deep density networks \citep{rippel2013high} are constructed through a series of warpings of fixed output dimension, with penalty terms encouraging the preservation of information about lower layers.
-This is another promising approach to fixing the pathology discussed in \cref{sec:formalizing-pathology}.
+\citet{adams2010learning} proposed a prior on arbitrarily deep Bayesian networks with an unknown and unbounded number of parametric hidden units in each layer.
+Their architecture has connections only between adjacent layers, and so may be expected to have similar pathologies to those of deep \gp{}s as the number of layers increases.
 
 \citet{wilson2012gaussian} introduced Gaussian process regression networks, which are defined as a matrix product of draws from \gp{}s priors, rather than a composition.
 These networks have the form:
 %The form of a \gprn{} is
 %
 \begin{align}
-\vy(\vx) & = \vW(\vx) \vf(\vx) \qquad \textnormal{with each} \; f_{d}, W_{d,j} \simiid \GPt{\vzero}{\kSE + \kWN} .
+\vy(\vx) & = \vW^(\vx) \vf(\vx) \qquad \textnormal{with each} \; f_{d}, W_{d,j} \simiid \GPt{\vzero}{\kSE + \kWN} .
 \end{align}
 %
 We can easily define a ``deep'' Gaussian process regression network:
@@ -1266,26 +1292,29 @@ This prior on functions has a similar form to the Jacobian of a deep \gp{} (\cre
 %\end{align}
 %
 
-
-
+\subsubsection{Information-preserving architectures}
+Deep density networks \citep{rippel2013high} are constructed through a series of parametric warpings of fixed dimension, with penalty terms encouraging the preservation of information about lower layers.
+This is another promising approach to fixing the pathology discussed in \cref{sec:formalizing-pathology}.
 
 \subsubsection{Recurrent networks}
-\cite{bengio1994learning} and \cite{pascanu2012understanding} analyze a related problem with gradient-based learning in recurrent nets, the ``exploding-gradients'' problem.
+\citet{bengio1994learning} and \citet{pascanu2012understanding} analyze a related problem with gradient-based learning in recurrent networks, the ``exploding-gradients'' problem.
 They note that in recurrent neural networks, the size of the training gradient can grow or shrink exponentially as it is back-propagated, making gradient-based training difficult.
+
+\citet{hochreiter1997long} addressed the exploding-gradients problem by including hidden units designed to have stable gradients.
 
 \subsubsection{Deep kernels}
 
 The first systematic examination of deep kernels was done by \citet{cho2009kernel}, who derived closed-form composition rules for $\kSE$, polynomial, and arc-cosine kernels, and showed that deep arc-cosine kernels performed competitively in machine-vision applications when used in a \SVM{}.
 %\citet{cho2012kernel} 
 
-\cite{hermans2012recurrent} constructed deep kernels in a time-series setting, constructing kernels corresponding to infinite-width \emph{recurrent} neural networks.
+\citet{hermans2012recurrent} constructed deep kernels in a time-series setting, constructing kernels corresponding to infinite-width \emph{recurrent} neural networks.
 They also proposed concatenating the implicit feature vectors from previous time-steps with the current inputs, resulting in an architecture analogous to the input-connected architecture proposed by \citet[chapter 2]{neal1995bayesian}.
 
 \subsubsection{Analyses of deep learning}
-\cite{montavon2010layer} performed a layer-wise analysis of deep networks, and noted that the performance of \MLP{}s degrades as the number of layers with random weights increases.
+\citet{montavon2010layer} performed a layer-wise analysis of deep networks, and noted that the performance of \MLP{}s degrades as the number of layers with random weights increases.
 
-The experiments of \cite{saxe2011random} suggested that most of the performance of convolutional neural networks could be attributed to the architecture alone.
-Later, \cite{saxedynamics} looked at the dynamics of gradient-based training methods in deep \emph{linear} networks, as a tractable approximation to standard deep (nonlinear) neural networks.  
+The experiments of \citet{saxe2011random} suggested that most of the performance of convolutional neural networks could be attributed to the architecture alone.
+Later, \citet{saxedynamics} looked at the dynamics of gradient-based training methods in deep \emph{linear} networks as a tractable approximation to standard deep (nonlinear) neural networks.  
 
 
 
@@ -1299,14 +1328,14 @@ Later, \cite{saxedynamics} looked at the dynamics of gradient-based training met
 
 \subsubsection{Source code}
 Source code to produce all figures is available at \url{http://www.github.com/duvenaud/deep-limits}.
-The source code is also capable of producing visualizations of mappings such as \cref{fig:deep_map,fig:deep_map_connected} using neural nets instead of \gp{}s at each layer.
+This code is also capable of producing visualizations of mappings such as \cref{fig:deep_map,fig:deep_map_connected} using neural nets instead of \gp{}s at each layer.
 
 
 \section{Conclusions}
 
 %In this work, we established a number of propositions which help us gain insight into the properties of very deep models, and allow making informed choices regarding their architecture.
 
-This chapter showed that well-defined priors allow explicit examination of the assumptions being made about functions being modeled.
+This chapter demonstrated that well-defined priors allow explicit examination of the assumptions being made about functions being modeled by different neural network architectures.
 As an example of the sort of analysis made possible this way, we attempted to gain insight into the properties of deep neural networks by characterizing the sorts of functions likely to be obtained under different choices of priors on compositions of functions.
 %established a number of propositions which help us gain insight into the properties of very deep models, and allow making informed choices regarding their architecture.
 
@@ -1315,7 +1344,7 @@ First, we identified deep Gaussian processes as an easy-to-analyze model corresp
 %  We also showed several other connections between deep \MLP{}s and different Gaussian process models. %equivalences between multi-layer perceptions and deep \gp{}s --- namely, that a deep \gp{} can be written as an \MLP{}s with a finite number of nonparametric hidden units, or as an \MLP{} with infinitely-many parametric hidden units.
 %
 %Second, we characterized the derivatives and Jacobians of deep \gp{}s through products of independent Gaussian matrices. % can be characterized using random matrix theory, which we applied to establish results regarding the distribution over the Jacobian of the composition transformation. 
-We then showed that representations based on repeated composition of independent functions exhibit a pathology where the representations becomes invariant to all directions of variation but one. % This leads to extremely restricted expressiveness of such deep models in the limit of increasing number of layers. 
+We then showed that representations based on repeated composition of independent functions exhibit a pathology where the representations becomes invariant to all but one direction of variation. % This leads to extremely restricted expressiveness of such deep models in the limit of increasing number of layers. 
 Finally, we showed that this problem could be alleviated by connecting the input to each layer.
 %proposed a way to alleviate this problem: connecting the input to each layer of a deep representation allows us to construct priors on deep functions that do not exhibit the information-capacity pathology.
 %
@@ -1323,13 +1352,13 @@ We also examined properties of deep kernels, corresponding to arbitrarily many c
 %Finally, we derived models obtained by performing dropout on Gaussian processes, finding a tractable approximation to exact dropout in \gp{}s.
 
 Much recent work on deep networks has focused on weight initialization \citep{martens2010deep}, regularization \citep{lee2007sparse} and network architecture \citep{gens2013learning}.
-However, the interactions between these different design decisions can be complex and difficult to characterize.
+%However, the interactions between these different design decisions can be complex and difficult to characterize.
 %We propose to approach the design of deep architectures by examining the problem of assigning priors to nested compositions of functions.
 % Although inference in fully Bayesian models is generally challenging, well-defined priors allow us to encode our beliefs into models in a data-independent way. 
-If we can identify classes of priors that give our models desirable properties, these in turn may suggest regularization, initialization, and architecture choices that also provide such properties.
+If we can identify priors that give our models desirable properties, these in turn may suggest regularization, initialization, and architecture choices that also provide such properties.
 
 Existing neural network practice also requires expensive tuning of model hyperparameters such as the number of layers, the size of each layer, and regularization penalties by cross-validation.
-One advantage of deep \gp{}s is that the approximate marginal likelihood allows a principled method for automatically determining such model details.
+One advantage of deep \gp{}s is that the approximate marginal likelihood allows a principled method for automatically determining such model choices.
 
 
 
