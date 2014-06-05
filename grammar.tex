@@ -31,8 +31,9 @@ In \cref{ch:description}, we also show how to automatically generate English-lan
 
 This chapter is based on work done in collaboration with James Robert Lloyd, Roger Grosse, Joshua B. Tenenbaum, and Zoubin Ghahramani.
 It was published in \citet{DuvLloGroetal13} and \citet{LloDuvGroetal14}.
-Myself, James Lloyd and Roger Grosse jointly developed the idea of searching through a grammar-based language of \gp{} models, inspired by \citet{grosse2012exploiting}, and wrote the first versions of the code together.
-James Lloyd ran most of the experiments, while I constructed most of the figures.
+Myself, James Lloyd and Roger Grosse jointly developed the idea of searching through a grammar-based language of \gp{} models, inspired by \citet{grosse2012exploiting}, 
+and wrote the first versions of the code together.
+James Lloyd ran most of the experiments, and I constructed most of the figures.
 %I produced all of the figures.
 %Zoubin Ghahramani and Josh Tenenbaum provided many conceptual insights, as well as suggestions about how the resulting procedure could be most fruitfully applied.
 
@@ -328,7 +329,7 @@ In \cref{ch:description}, we extend this model visualization method to include a
 \label{sec:time_series}
 
 To investigate our method's ability to discover structure, we ran the kernel search on several time-series.
-In the following examples, the search was run to depth 10, using \kSE{}, \kRQ{}, \kLin{}, \kPer{} and \kWN{} as base kernels.
+In the following example, the search was run to depth 10, using \kSE{}, \kRQ{}, \kLin{}, \kPer{} and \kWN{} as base kernels.
 
 \begin{figure}[ht!]
 \newcommand{\wmgd}{0.5\columnwidth}  % width mauna decomp
@@ -361,7 +362,7 @@ The yearly periodic component has been rescaled for visibility.}
 \label{sec:extrapolation}
 \subsection{Mauna Loa atmospheric CO$\mathbf{_{2}}$}
 
-Our analyzed records of carbon dioxide levels recorded at the Mauna Loa observatory.
+Our method analyzed records of carbon dioxide levels recorded at the Mauna Loa observatory.
 Since this dataset was analyzed in detail by \citet{rasmussen38gaussian}, we can compare the kernel chosen by our method to a kernel constructed by human experts.
 
 \Cref{fig:mauna_grow} shows the posterior mean and variance on this dataset as the search depth increases.
