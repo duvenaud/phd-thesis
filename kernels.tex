@@ -220,9 +220,11 @@ Below, we will investigate ways to encode more structure into kernels.
 \section{Modeling sums of functions}
 \label{sec:modeling-sums-of-functions}
 An additive function is one which can be expressed as $f(\vx) = f_a(\vx) + f_b(\vx)$.
-%
+Additivity is a useful modeling assumption in a wide variety of contexts, especially if it allows us to make strong assumptions about the individual components which make up the sum.
+Restricting the flexibility of component functions often aids in building interpretable models, and sometimes enables extrapolation in high dimensions.
+
 %TODO: make the se_long + se_short figure a bit more obvious
-\begin{figure}
+\begin{figure}[h]
 \centering
 \begin{tabular}{cccc}
 %Composite & Draws from \gp{} & \gp{} posterior \\ \toprule
@@ -242,9 +244,6 @@ $\kSE^{(\textnormal{long})}$ denotes a $\kSE$ kernel whose lengthscale is long r
 }
 \label{fig:kernels_plus}
 \end{figure}
-%
-Additivity is a useful modeling assumption in a wide variety of contexts, especially if it allows us to make strong assumptions about the individual components which make up the sum.
-Restricting the flexibility of component functions often aids in building interpretable models, and sometimes enables extrapolation in high dimensions.
 
 It is easy to encode additivity into \gp{} models.
 Suppose functions ${\function_a, \function_b}$ are drawn independently from \gp{} priors:
@@ -263,6 +262,19 @@ Then the sum of those functions is simply another \gp{}:
 %
 Kernels $\kernel_a$ and $\kernel_b$ can be of different types, allowing us to model the data as a sum of independent functions, each possibly representing a different type of structure.
 We can sum any number of components this way.
+
+
+\subsection{Modeling noise}
+
+%We sometimes refer to a part of the signal that we don't care about, or don't expect to be able to extrapolate, as the noise.
+
+Additive noise can simply be modeled as another unknown function added to the signal.
+This is typically acheived using a local kernel such as \kSE{} with a short lengthscale, as in the fourth column of \cref{fig:kernels_plus}.
+The limit of a local kernel as its lengthscale goes to zero is a ``white noise'' (\kWN) kernel.
+Draws from a \gp{} with a $\kWN$ kernel are simply \iid draws from a Gaussian random variable.
+
+In practice, there may not be a clear distinction between ``signal'' and ``noise''.
+For example, \cref{sec:time_series} contains examples of models having long-term, medium-term, and short-term trends.
 
 
 \subsection{Additivity across multiple dimensions}

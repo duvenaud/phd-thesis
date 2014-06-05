@@ -374,10 +374,6 @@ These are the same components chosen in the kernel hand-constructed by \citet[ch
 We also plot the residuals modeled by a white noise ($\kWN$) component, showing that there is little obvious structure left in the data.
 More generally, some components capture slowly-changing structure while others capture quickly-varying struture, but there is no hard distinction between ``signal'' components and ``noise'' components.
 
-
-
-
-
 \begin{figure}[ht!]
 \centering
 \newcommand{\wagd}{0.48\columnwidth}  % width airline decomp
@@ -395,14 +391,21 @@ More generally, some components capture slowly-changing structure while others c
 \begin{tabular}{cc}
 \multicolumn{2}{c}{
 \begin{tabular}{c}
-Complete Model: $\kSE \kerntimes \Lin \kernplus \kPer \kerntimes \kLin \kerntimes \kSE \kernplus \kSE \kernplus \kWN \kerntimes \kLin$ \\
-\airdgfx{01-airline_all}
+Complete Model: $\kSE \kerntimes \Lin \kernplus \kPer \kerntimes \kLin \kerntimes \kSE \kernplus \kLin \kerntimes \kSE \kernplus \kWN \kerntimes \kLin$ \\
+\airdgfx{01-airline_all} \\
+%{\mb \includegraphics[width=\wagd,height=\hagd, clip, trim=4.5mm 60mm 77mm 37.3mm]{\grammarfiguresdir/airlinepages/pg_0002-crop} }
 \end{tabular}
 } \\
-Long-term trend: $\kSE \kerntimes \Lin$ & Yearly periodic: $\kPer \kerntimes \Lin \kerntimes \kSE$ \\
-\airdgfx{01-airline_1_extrap} & \airdgfx{01-airline_2_extrap} \\
+Long-term trend: $\kLin$ & Yearly periodic: $\kPer \kerntimes \Lin \kerntimes \kSE$ \\
+%{\mb \includegraphics[width=\wagd,height=\hagd, clip, trim=4.5mm 60mm 77mm 37.3mm]{\grammarfiguresdir/airlinepages/pg_0003-crop} } &
+\airdgfx{01-airline_1_extrap} & 
+\airdgfx{01-airline_2_extrap} \\
+%{\mb \includegraphics[width=\wagd,height=\hagd, clip, trim=4.5mm 60mm 77mm 43mm]{\grammarfiguresdir/airlinepages/pg_0004-crop} } \\
 Medium-term deviation: $\kSE$ & Growing noise: $\kWN \kerntimes \Lin$ \\
-\airdgfx{01-airline_3_extrap} & \airdgfx{01-airline_4_extrap}
+\airdgfx{01-airline_3_extrap} & 
+%{\mb \includegraphics[width=\wagd,height=\hagd, clip, trim=5mm 60mm 77mm 18.5mm]{\grammarfiguresdir/airlinepages/pg_0005-crop} } &
+%\airdgfx{01-airline_4_extrap} 
+{\mb \includegraphics[width=\wagd,height=\hagd, clip, trim=5mm 8.5mm 7.8cm 69.5mm]{\grammarfiguresdir/airlinepages/pg_0005-crop} }
 \end{tabular}
 \caption[Decomposition of airline dataset model]
 {\emph{First row:} The airline dataset and posterior after a search of depth 10.
@@ -669,13 +672,13 @@ All \gp{} parameter optimisation was performed by automated calls to the \GPML{}
 
 \section{Discussion}
 
-This chapter presented a system which constructs an appropriate model from an open-ended language  and automatically generates plots decomposing the different types of structure present in the model.
+This chapter presented a system which constructs a model from an open-ended language, and automatically generates plots decomposing the different types of structure present in the model.
 
 This was done by introducing a space of kernels defined by sums and products of a small number of base kernels.  
 The set of models in this space includes many standard regression models.
 We proposed a search procedure for this space of kernels, and argued that this search process parallels the process of model-building by statisticians.
 
-We found that the learned structures are often capable of accurate extrapolation in time-series datasets, and are competitive with widely used kernel classes on a variety of prediction tasks.
+We found that the learned structures are often capable of relatively accurate extrapolation in time-series datasets. %, and are competitive with widely used kernel classes on a variety of prediction tasks.
 The learned kernels can yield decompositions of a signal into diverse and interpretable components, enabling model-checking by humans.
 We hope that this procedure has the potential to make powerful statistical model-building techniques accessible to non-experts.
 

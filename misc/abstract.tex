@@ -6,18 +6,18 @@ These models, based on Gaussian processes, can capture many types of statistical
 Such structure can be encoded through \emph{kernels}, which have historically been chosen by hand by experts.
 We show how to automate this task, creating a system which explores an open-ended space of models and reports the structures discovered.
 
-To automatically construct Gaussian process models, we define a grammar over kernels and simply optimize approximate marginal likelihood using a breadth-first search.
-We also develop automatic model decomposition, visualization and description procedures.
-Combining these, we present a procedure which takes in a dataset and outputs an automatically-constructed model, along with a detailed report with graphs and automatically generated text illustrating the qualitatively different, and sometimes novel, types of structure discovered in that dataset.
-
 %This system automates parts of the model-building and analysis currently performed by statisticians.
 %automatically search over an open-ended space of models,
 
-The introductory chapters contain a tutorial showing how to express many types of structure through kernels, and how adding and multiplying different kernels combines their properties.
-We also show how composite kernels can produce priors over topological manifolds such as cylinders, toruses, and M\"{o}bius strips, as well as their higher-dimensional analogues.
+The introductory chapters contain a tutorial showing how to express many types of structure through kernels, and ways in which adding and multiplying different kernels combines their properties.
+Examples also show how composite kernels can produce priors over topological manifolds such as cylinders, toruses, and M\"{o}bius strips, as well as their higher-dimensional analogues.
+
+To automatically construct Gaussian process models, we search over sums and products of kernels, maximizing approximate marginal likelihood.
+We show how such models can be automatically decomposed, visualized, and described.
+Combining these results, we present a procedure which takes in a dataset and outputs an automatically-constructed model, along with a detailed report with plots and automatically generated text that illustrates the qualitatively different, and sometimes novel, types of structure discovered in the data.
 
 This thesis also explores several extensions to Gaussian process models.
 First, building on earlier work relating Gaussian processes and neural nets, we analyze natural extensions of these models to \emph{deep kernels} and \emph{deep Gaussian processes}.
-Second, we model sums of functions of all subsets of input variables, connecting this model class to the recently-developed regularization method of \emph{dropout}.
+Second, we examine a model class which sums over functions of all combinations of input variables, connecting this model class to the regularization method of \emph{dropout}.
 Third, we combine Gaussian processes with the Dirichlet process to produce the \emph{warped mixture model}: a Bayesian clustering model with nonparametric cluster shapes, and a corresponding latent space in which each cluster has an interpretable parametric form.
 \end{abstract}
