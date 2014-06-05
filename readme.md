@@ -48,8 +48,8 @@ Source Code for Experiments
 
 The experiments for each chapter all live in different github repos:
 
-* Expressing Structure with Kernels: [github.com/duvenaud/phd-thesis/code/](www.github.com/duvenaud/phd-thesis/code/)
-* Automatic Model Building: [github.com/jamesrobertlloyd/gp-structure-search/](www.github.com/jamesrobertlloyd/gp-structure-search/)
+* Expressing Structure with Kernels: [github.com/duvenaud/phd-thesis/code/](http://www.github.com/duvenaud/phd-thesis/code/)
+* Automatic Model Building: [github.com/jamesrobertlloyd/gp-structure-search/](http://www.github.com/jamesrobertlloyd/gp-structure-search/)
 * Automatic Model Description: [github.com/jamesrobertlloyd/gpss-research/](www.github.com/jamesrobertlloyd/gpss-research/)
 * Deep Gaussian Processes: [github.com/duvenaud/deep-limits/](www.github.com/duvenaud/deep-limits/)
 * Additive Gaussian Processes: [github.com/duvenaud/additive-gps/](www.github.com/duvenaud/additive-gps/)
