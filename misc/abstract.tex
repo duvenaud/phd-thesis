@@ -6,15 +6,30 @@ These models, based on Gaussian processes, can capture many types of statistical
 Such structure can be encoded through \emph{kernels}, which have historically been chosen by hand by experts.
 We show how to automate this task, creating a system which explores an open-ended space of models and reports the structures discovered.
 
-%This system automates parts of the model-building and analysis currently performed by statisticians.
-%automatically search over an open-ended space of models,
-
 The introductory chapters contain a tutorial showing how to express many types of structure through kernels, and ways in which adding and multiplying different kernels combines their properties.
-Examples also show how composite kernels can produce priors over topological manifolds such as cylinders, toruses, and M\"{o}bius strips, as well as their higher-dimensional analogues.
+Examples also show how symmetric kernels can produce priors over topological manifolds such as cylinders, toruses, and M\"{o}bius strips, as well as their higher-dimensional analogues.
 
 To automatically construct Gaussian process models, we search over sums and products of kernels, maximizing approximate marginal likelihood.
 We show how such models can be automatically decomposed, visualized, and described.
-Combining these results, we present a procedure which takes in a dataset and outputs an automatically-constructed model, along with a detailed report with plots and automatically generated text that illustrates the qualitatively different, and sometimes novel, types of structure discovered in the data.
+Combining these results, we present a procedure which takes in a dataset and outputs an automatically-constructed model, along with a detailed report with plots and automatically generated text that illustrate the qualitatively different, and sometimes novel, types of structure discovered in the data.
+
+%Models can automatically be constructed by searching over sums and products of kernels, maximizing the approximate marginal likelihood of the data.
+%We show how such models can be automatically decomposed into qualitatively different types of structure, how these components can be automatically visualized, and finally how they can be automatically described using text.
+
+%Later chapters present a procedure which, given a dataset, outputs an automatically-constructed model, along with a detailed report.
+%These reports contain plots and automatically generated text that illustrate the qualitatively different, and sometimes novel, types of structure discovered in the data.
+%Models are automatically constructed by searching over sums and products of kernels, maximizing approximate marginal likelihood.
+
+%We show how such models can be automatically decomposed, visualized, and described.
+%Combining these results, we present a procedure which takes in a dataset and outputs an automatically-constructed model, along with a detailed report.
+%These reports contain plots and automatically generated text that illustrate the qualitatively different, and sometimes novel, types of structure discovered in the data.
+
+%To automatically construct Gaussian process models, we search over sums and products of kernels, maximizing approximate marginal likelihood.
+%This model produced procedure combines the properties of existing kernels to produce possibly novel statistical structures.
+%We show how such models can be decomposed automatically into qualitatively different parts, and how each component can automatically be visualized and described through text.
+%Combining these results, we present a procedure which takes in a dataset and outputs an automatically-constructed model and a detailed report.
+%These reports contain plots and text illustrating each of the types of structure discovered in the data.
+
 
 This thesis also explores several extensions to Gaussian process models.
 First, building on earlier work relating Gaussian processes and neural nets, we analyze natural extensions of these models to \emph{deep kernels} and \emph{deep Gaussian processes}.

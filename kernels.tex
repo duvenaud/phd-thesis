@@ -50,11 +50,11 @@ $k(x, x') =$ &
 $\sigma_f^2 \exp\left(-\frac{(\inputVar - \inputVar')^2}{2\ell^2}\right)$ &
 $\sigma_f^2 \exp\left(-\frac{2}{\ell^2} \sin^2 \left( \pi \frac{\inputVar - \inputVar'}{p} \right)\right)$ &
 $\sigma_f^2 (\inputVar - c)(\inputVar' - c)$ \\[14pt]
-\raisebox{1cm}{Plot of kernel:} & \kernpic{se_kernel} & \kernpic{per_kernel} & \kernpic{lin_kernel}\\
+\raisebox{1cm}{Plot of $k(x,x')$:} & \kernpic{se_kernel} & \kernpic{per_kernel} & \kernpic{lin_kernel}\\
 & $x -x'$ & $x -x'$ & \fixedx \\
 %& & & \\
  & \large $\downarrow$ & \large $\downarrow$ & \large $\downarrow$  \\
-\raisebox{1cm}{\parbox{2.5cm}{Samples from \gp{} prior:}} & \kernpic{se_kernel_draws} & \kernpic{per_kernel_draws_s2} & \kernpic{lin_kernel_draws} \\
+\raisebox{1cm}{\parbox{2.7cm}{\raggedleft Functions $f(x)$ sampled from \gp{} prior:}} & \kernpic{se_kernel_draws} & \kernpic{per_kernel_draws_s2} & \kernpic{lin_kernel_draws} \\
 & $x$ & $x$ & $x$ \\
 Type of structure: & local variation & repeating structure & linear functions
 \end{tabular}
@@ -160,8 +160,8 @@ The third and fourth columns of \cref{fig:kernels_times} show two examples.
 \end{itemize}
 
 We can multiply any number of kernels together in this way to produce kernels combining several high-level properties.
-For example, the kernel $\kSE \kerntimes \kLin \kerntimes \kPer$ is a prior on functions which are locally periodic with linearly growing amplitude.
-We will a real datasets with this kind of structure in \cref{ch:grammar}.
+For example, the kernel $\kSE \kerntimes \kLin \kerntimes \kPer$ specifies a prior on functions which are locally periodic with linearly growing amplitude.
+We will see a real dataset having this kind of structure in \cref{ch:grammar}.
 
 
 \subsection{Building multi-dimensional models}
@@ -204,11 +204,11 @@ A product of two one-dimensional kernels gives rise to a prior on functions whic
 \label{fig:product-of-se-kernels}
 \end{figure}
 
-\ARD{} stands for Automatic Relevance Determination, so named because estimating the lengthscale parameters $\ell_1, \ell_2, \dots, \ell_D$, implicitly determines the ``relevance'' of each dimension.
+\ARD{} stands for automatic relevance determination, so named because estimating the lengthscale parameters $\ell_1, \ell_2, \dots, \ell_D$, implicitly determines the ``relevance'' of each dimension.
 Input dimensions with relatively large lengthscales imply relatively little variation along those dimensions in the function being modeled.
 
 $\seard$ kernels are the default kernel in most applications of \gp{}s.
-This may be partly because they have relatively few parameters to estimate, and those parameters are relatively interpretable.
+This may be partly because they have relatively few parameters to estimate, and because those parameters are relatively interpretable.
 In addition, there is a theoretical reason to use them: they are \emph{universal} kernels~\citep{micchelli2006universal}, capable of learning any continuous function given enough data, under some conditions.
 
 However, this flexibility means that they can sometimes be relatively slow to learn, due to the \emph{curse of dimensionality} \citep{bellman1956dynamic}.
@@ -253,7 +253,7 @@ Suppose functions ${\function_a, \function_b}$ are drawn independently from \gp{
 \function_b & \dist \GP(\mu_b, \kernel_b)
 \end{align}
 %
-Then the sum of those functions is simply another \gp{}:
+Then the distribution of the sum of those functions is simply another \gp{}:
 %
 \begin{align}
 %\function := 
@@ -268,20 +268,24 @@ We can sum any number of components this way.
 
 %We sometimes refer to a part of the signal that we don't care about, or don't expect to be able to extrapolate, as the noise.
 
-Additive noise can simply be modeled as another unknown function added to the signal.
-This is typically acheived using a local kernel such as \kSE{} with a short lengthscale, as in the fourth column of \cref{fig:kernels_plus}.
-The limit of a local kernel as its lengthscale goes to zero is a ``white noise'' (\kWN) kernel.
-Draws from a \gp{} with a $\kWN$ kernel are simply \iid draws from a Gaussian random variable.
+Additive noise can be modeled as an unknown, quickly-varying function added to the signal.
+This structure can be incorporated into a \gp{} model by adding a local kernel such as an \kSE{} with a short lengthscale, as in the fourth column of \cref{fig:kernels_plus}.
+The limit of the $\kSE$ kernel as its lengthscale goes to zero is a ``white noise'' (\kWN) kernel.
+Function values drawn from a \gp{} with a $\kWN$ kernel are independent draws from a Gaussian random variable.
 
-In practice, there may not be a clear distinction between ``signal'' and ``noise''.
+Given a kernel containing both signal and noise components, we may wish to isolate only the signal components.
+\Cref{sec:posterior-variance} shows how to decompose a \gp{} posterior into each of its additive components.
+
+In practice, there may not be a clear distinction between signal and noise.
 For example, \cref{sec:time_series} contains examples of models having long-term, medium-term, and short-term trends.
+Which parts we designate as the ``signal'' sometimes depends on the task at hand.
 
 
 \subsection{Additivity across multiple dimensions}
 \label{sec:additivity-multiple-dimensions}
 
 When modeling functions of multiple dimensions, summing kernels can give rise to additive structure across different dimensions.
-To be more precise, if the kernels being added together are functions of only a subset of input dimensions, then the implied prior over functions decomposes in the same way.
+To be more precise, if the kernels being added together are each functions of only a subset of input dimensions, then the implied prior over functions decomposes in the same way.
 %
 \begin{figure}
 \centering
@@ -302,7 +306,7 @@ $f_1(x_1) \sim \GP\left(0, k_1\right)$ & & $f_2(x_2) \sim \GP\left(0, k_2\right)
 \end{tabular}
 \caption[Additive kernels correspond to additive functions]{
 A sum of two orthogonal one-dimensional kernels.
-\emph{Top row:} An additive kernel is any sum of kernels.
+\emph{Top row:} An additive kernel is a sum of kernels.
 \emph{Bottom row:} A draw from an additive kernel corresponds to a sum of draws from independent \gp{} priors, each having the corresponding kernel.
 }
 \label{fig:sum-of-kernels}
@@ -419,7 +423,7 @@ The vertical axis is the same for all plots.
 %
 
 \Cref{fig:interpretable functions} shows the marginal posterior distribution of each of the eight components in \cref{eq:concrete}.
-The parameters controlling the variance of two of the components, Coarse and Fine, were set to zero, meaning that the marginal likelihood preferred a parsimonious model which did not depend on these dimensions.
+The parameters controlling the variance of two of the components, ``coarse'' and ``fine'', were set to zero, meaning that the marginal likelihood preferred a parsimonious model which did not depend on these dimensions.
 This is an example of the automatic sparsity that arises by maximizing marginal likelihood in \gp{} models, and another example of automatic relevance determination (\ARD) \citep{neal1995bayesian}.
 
 The ability to learn kernel parameters in this way is much more difficult when using non-probabilistic methods such as Support Vector Machines \citep{cortes1995support}, for which cross-validation is often the best method to select kernel parameters.
@@ -435,33 +439,33 @@ Here we derive the posterior variance and covariance of all of the additive comp
 These formulas allow one to make plots such as \cref{fig:interpretable functions}.
 %These formulas let us plot the marginal variance of each component separately.  These formulas can also be used to examine the posterior covariance between pairs of components.
 
-First, we will write down the joint prior over the sum of two functions drawn from \gp{} priors.
-We distinguish between $\vecf(\vX)$ (the function values at the training locations) and  $\vecf(\vX^\star)$ (the function values at some set of query locations).
+First, we write down the joint prior distribution over two functions drawn independently from \gp{} priors, and their sum.
+We distinguish between $\vecf(\vX)$ (the function values at training locations $[\vx_1, \vx_2, \ldots, \vx_N]\tra \defeq \vX$) and  $\vecf(\vX^\star)$ (the function values at some set of query locations $[\vx_1^\star, \vx_2^\star, \ldots, \vx_N^\star]\tra \defeq \vX^\star$).
 % so that it's clear which matrices to use to extrapolate.
 
-If $f_1$ and $f_2$ are \emph{a priori} independent, and $f_1 \sim \gp( \mu_1, k_1)$ and $f_2 \sim \gp( \mu_2, k_2)$, then
+Formally, if $f_1$ and $f_2$ are \emph{a priori} independent, and $f_1 \sim \gp( \mu_1, k_1)$ and ${f_2 \sim \gp( \mu_2, k_2)}$, then
 %
 \begin{align}
-\left[ \begin{array}{l} 
+\left[ \! \begin{array}{l} 
 \vf_1(\vX) \\
 \vf_1(\vX^\star) \\
 \vf_2(\vX) \\
 \vf_2(\vX^\star) \\
 \vf_1(\vX) + \vf_2(\vX) \\
 \vf_1(\vX^\star) + \vf_2(\vX^\star)
-\end{array} \right]
+\end{array} \! \right]
 \sim
 \Nt{
-\left[ \begin{array}{c} \vmu_1 \\ \vmu_1^\star \\ \vmu_2 \\ \vmu_2^\star \\ \vmu_1 + \vmu_2 \\ \vmu_1^\star + \vmu_2^\star \end{array} \right]
+\left[ \! \begin{array}{c} \vmu_1 \\ \vmu_1^\star \\ \vmu_2 \\ \vmu_2^\star \\ \vmu_1 + \vmu_2 \\ \vmu_1^\star + \vmu_2^\star \end{array} \! \right] \!
 }
-{\left[ \begin{array}{cccccc} 
+{\! \left[ \! \begin{array}{cccccc} 
 \vK_1 & \vK_1^\star & 0 & 0 & \vK_1 & \vK_1^\star \\ 
-\vK_1^\star & \vK_1^{\star\star} & 0 & 0 & \vK_1^\star & \vK_1^{\star\star} \\
-0 & 0 & \vK_2 & \vK_2^\star & \vK_2 & \vK_2^\star \\ 
-0 & 0 & \vK_2^\star & \vK_2^{\star\star} & \vK_2^\star & \vK_2^{\star\star} \\
-\vK_1 & \vK_1^\star & \vK_2 & \vK_2^\star & \vK_1 + \vK_2 & \vK_1^\star + \vK_2^\star \\ 
-\vK_1^\star & \vK_1^{\star\star}  & \vK_2^\star & \vK_2^{\star\star}  & \vK_1^\star + \vK_2^\star & \vK_1^{\star\star} + \vK_2^{\star\star}\\
-\end{array} \right]
+{\vK_1^\star}\tra & \vK_1^{\star\star} & 0 & 0 & \vK_1^\star & \vK_1^{\star\star} \\
+0 & 0 & \vK_2 & {\vK_2^\star} & \vK_2 & \vK_2^\star \\ 
+0 & 0 & {\vK_2^\star}\tra & \vK_2^{\star\star} & \vK_2^\star & \vK_2^{\star\star} \\
+{\vK_1} & {\vK_1^\star}\tra & \vK_2 & {\vK_2^\star}\tra & \vK_1 + \vK_2 & \vK_1^\star + \vK_2^\star \\ 
+{\vK_1^\star}\tra & \vK_1^{\star\star}  & {\vK_2^\star}\tra & \vK_2^{\star\star}  & {\vK_1^\star}\tra + {\vK_2^\star}\tra & \vK_1^{\star\star} + \vK_2^{\star\star}\\
+\end{array} \! \right]
 }
 \end{align}
 %
@@ -469,16 +473,16 @@ where we represent the Gram matrices, whose $i,j$th entry is given by $k(\vx_i, 
 % evaluated at all pairs of vectors in bold capitals as ${\vK_{i,j} = k(\vx_i, \vx_j)}$.
 %
 \begin{align}
-\vK_1 & = k_1( \vX, \vX ) \\
-\vK_1^\star & = k_1( \vX^\star, \vX ) \\
-\vK_1^{\star\star} & = k_1( \vX^\star, \vX^\star )
+\vK_i & = k_i( \vX, \vX ) \\
+\vK_i^\star & = k_i( \vX, \vX^\star ) \\
+\vK_i^{\star\star} & = k_i( \vX^\star, \vX^\star )
 \end{align}
 
-The formula for Gaussian conditionals, \cref{eq:gauss_conditional}, can be used to give the conditional distribution of a \gp{}-distributed function conditioned on its sum with another \gp{}-distributed function:
+The formula for Gaussian conditionals \ref{eq:gauss_conditional} can be used to give the conditional distribution of a \gp{}-distributed function conditioned on its sum with another \gp{}-distributed function:
 %
 \begin{align}
-\vf_1(\vX^\star) | \vf_1(\vX) + \vf_2(\vX) \sim \Normal \Big( 
-& \vmu_1^\star + \vK_1^{\star\tra} (\vK_1 + \vK_2)\inv \left[ \vf_1(\vX) + \vf_2(\vX) - \vmu_1 - \vmu_2 \right], \nonumber \\
+\vf_1(\vX^\star) \big| \vf_1(\vX) + \vf_2(\vX) \sim \Normal \Big( 
+& \vmu_1^\star + \vK_1^{\star\tra} (\vK_1 + \vK_2)\inv \big[ \vf_1(\vX) + \vf_2(\vX) - \vmu_1 - \vmu_2 \big], \nonumber \\
 & \vK_1^{\star\star} - \vK_1^{\star\tra} (\vK_1 + \vK_2)\inv \vK_1^{\star} \Big)
 %\vf_1(\vx^\star) | \vf(\vx) \sim \mathcal{N}\big( 
 %& \vmu_1(\vx^\star) + \vk_1(\vx^{\star}, \vx)  \left[ \vK_1(\vx, \vx) + \vK_2(\vx, \vx) \right]\inv \left( \vf(\vx) - \vmu_1(\vx) - \vmu_2(\vx) \right) , \nonumber \\
@@ -498,7 +502,7 @@ To extend these formulas to a sum of more than two functions, the term $\vK_1 + 
 We can also compute the posterior covariance between any two components, conditioned on their sum:
 %
 \begin{align}
-\covargs{ \vf_1(\vX^\star)}{\vf_2(\vX^\star) | \vf(\vX) } 
+\Cov \big[ \vf_1(\vX^\star), \vf_2(\vX^\star) \big| \vf(\vX) \big]
 & = - \vK_1^{\star\tra} (\vK_1 + \vK_2)\inv \vK_2^\star
 %\covargs{\vf_1(\vx^\star)}{\vf_2(\vx^\star) | \vf(\vx) }
 %& = - \vk_1(\vx^{\star}, \vx)  \left[ \vK_1(\vx, \vx) + \vK_2(\vx, \vx) \right] \inv \vk_1(\vx, \vx^{\star}) 
@@ -533,13 +537,13 @@ Red indicates high correlation, teal indicates no correlation, and blue indicate
 Plots on the diagonal show posterior correlations within each component.
 %Off-diagonal plots show posterior covariance between each pair of functions, as a function of both inputs.
 %Negative correlation means that one function is high and the other low, but which one is uncertain.
-Dimensions `Coarse' and `Fine' are not shown, because their variance is zero.
+Dimensions ``coarse'' and ``fine'' are not shown, because their variance is zero.
 }
 \label{fig:interpretable interactions}
 \end{figure}
 %
-\Cref{fig:interpretable interactions} shows the posterior correlation between all non-zero components of the concrete model.
-Most of the correlation occurs within components, but there is also negative correlation between the ``Cement'' and ``Slag'' variables.
+For example, \cref{fig:interpretable interactions} shows the posterior correlation between all non-zero components of the concrete model.
+Most of the correlation occurs within components, but there is also negative correlation between the ``cement'' and ``slag'' variables.
 This reflects an ambiguity in the model about which one of these functions is high and the other low.
 
 
