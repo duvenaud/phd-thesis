@@ -1062,7 +1062,7 @@ However, as we saw in \cref{ch:kernels,ch:grammar,ch:additive}, structured, non-
 %be constructed through addition and multiplication which 
 allow extrapolation.
 Another way to build non-local kernels is by composing fixed feature maps, creating \emph{deep kernels}.
-To return to an example given in \cref{sec:expressing-symmetries}, periodic kernels can be viewed as a 2-layer-deep kernel, in which the first layer maps $x \rightarrow [\sin(x), \cos(x)]$, and the second layer maps through basis functions corresponding to the \humble{SE} kernel.
+To return to an example given in \cref{sec:expressing-symmetries}, periodic kernels can be viewed as a 2-layer-deep kernel, in which the first layer maps $x \rightarrow [\sin(x), \cos(x)]$, and the second layer maps through basis functions corresponding to the implicity feature map giving rise to an \kSE{} kernel.
 
 This section builds on the work of \citet{cho2009kernel}, who derived several kinds of deep kernels by composing multiple layers of feature mappings.
 
@@ -1072,12 +1072,12 @@ This section builds on the work of \citet{cho2009kernel}, who derived several ki
 
 
 %Given a kernel $k_1(\vx, \vx') = \hPhi(\vx) \tra \hPhi(\vx')$, 
-In principle, we can compose the implicit feature maps of any two kernels $k_a$ and $k_b$ to get a new kernel, which we'll denote by $\left( k_b \circ k_a \right)$:
+In principle, one can compose the implicit feature maps of any two kernels $k_a$ and $k_b$ to get a new kernel, which we denote by $\left( k_b \circ k_a \right)$:
 %
 \begin{align}
 k_a(\vx, \vx') & = \hPhi_a(\vx) \tra \hPhi_a(\vx') \\
 k_b(\vx, \vx') & = \hPhi_b(\vx) \tra \hPhi_b(\vx') \\
-\left( k_b \circ k_a \right)(\vx, \vx') & = k_b \left(\hPhi_a(\vx), \hPhi_a(\vx') \right) 
+\left( k_b \circ k_a \right)(\vx, \vx') & = k_b \big(\hPhi_a(\vx), \hPhi_a(\vx') \big) 
  = \left[ \hPhi_b \left( \hPhi_a(\vx) \right)\right] \tra \hPhi_b \left(\hPhi_a(\vx') \right)
 \end{align}
 %
@@ -1118,10 +1118,10 @@ If $k(\vx, \vx') = \hPhi(\vx)\tra \hPhi(\vx')$, then
 %Note that nothing in this derivation depends on details of $k_n$, except that $k_n( \vx, \vx) = 1$.
 %Note that this result holds for any base kernel $k_n$, as long as $k_n( \vx, \vx) = 1$.
 %  Because this is true for $k_2$ as well, this recursion holds in general, and we have that $k_{n+1}(x,y) = e^{k_n(x, y) - 1}$.  
-This formula lets expresses the composed kernel $(\kSE \circ k)$ exactly in terms of evaluations of the original kernel $k$.
+This formula expresses the composed kernel $(\kSE \circ k)$ exactly in terms of evaluations of the original kernel $k$.
 
 \subsection{Infinitely deep kernels}
-What happens when we repeatedly compose feature maps many times, starting with the squared-exp kernel?
+What happens when one repeatedly composes feature maps many times, starting with the squared-exp kernel?
 If the output variance of the \kSE{} is normalized to ${k(\vx,\vx) = 1}$, then the infinite limit of composition with \kSE{} converges to ${\left(\kSE \circ \kSE \circ \kSE \circ \ldots \circ \kSE\right)(\vx,\vx') = 1}$ for all pairs of inputs.
 A constant covariance corresponds to a prior on constant functions ${f(\vx) = c}$.
 
@@ -1133,7 +1133,7 @@ A constant covariance corresponds to a prior on constant functions ${f(\vx) = c}
 %\subsubsection{A non-degenerate construction}
 
 As above, we can overcome this degeneracy by connecting the input $\vx$ to each layer.
-To do so, we concatenate the composed feature vector at each layer, $\hPhi^{(1:\ell)}(\vx)$, with the input vector $\vx$, to produce an input-connected deep kernel $k_C^{(1:L)}$, defined by:
+To do so, we concatenate the composed feature vector at each layer, $\hPhi^{(1:\ell)}(\vx)$, with the input vector $\vx$ to produce an input-connected deep kernel $k_C^{(1:L)}$, defined by:
 %
 \begin{align}
 %k_1(\vx, \vx') & = \exp \left( -\frac{1}{2} ||\vx - \vx'||_2^2 \right) \\
@@ -1167,7 +1167,7 @@ Input-connected deep kernels & Draws from corresponding \gp{}s \\
 \hspace{-0.3cm}
 \rotatebox{90}{$\qquad \qquad f(x)$}
 \includegraphics[width=0.44\columnwidth, clip, trim = 1.29cm 0.1cm 0.9cm 0.35cm]{\deeplimitsfiguresdir/deep_kernel_connected_draws} \\
-$ x - x'$ &  $ x - x'$
+$x - x'$ &  $x$
 \end{tabular}
 \caption[Infinitely deep kernels]{
 \emph{Left:} Input-connected deep kernels of different depths.
@@ -1176,14 +1176,14 @@ By connecting the input $\vx$ to each layer, the kernel can still depend on its 
 \label{fig:deep_kernel_connected}
 \end{figure}
 %
-The solution to this recurrence has no closed form, but for one input dimension, has a similar shape to the Ornstein-Uhlenbeck covariance ${\OU(x,x') = \exp( -|x - x'| )}$ but with lighter tails.
-%
-Samples from a \gp{} prior with this kernel are not differentiable, and are locally fractal.
-\Cref{fig:deep_kernel_connected} shows this kernel at different depths, as well as samples from the resulting \gp{} priors.
+The solution to this recurrence is related to the Lambert W function~\citep{corless1996lambertw} and has no closed form.
+In one input dimension, it has a similar shape to the Ornstein-Uhlenbeck covariance ${\OU(x,x') = \exp( -|x - x'| )}$ but with lighter tails.
+Samples from a \gp{} prior having this kernel are not differentiable, and are locally fractal.
+\Cref{fig:deep_kernel_connected} shows this kernel at different depths, as well as samples from the corresponding \gp{} priors.
 %\item This kernel has smaller correlation than the squared-exp everywhere except at $\vx = \vx'$.  
 %\item The tails have the same form as the squared-exp.
 
-We can also consider two related connectivity architectures: one in which each layer is connected to the output layer, and another in which every layer is connected to all subsequent layers.
+One can also consider two related connectivity architectures: one in which each layer is connected to the output layer, and another in which every layer is connected to all subsequent layers.
 It is easy to show that in the limit of infinite depth of composing \kSE{} kernels, both these architectures converge to $k(\vx, \vx') = \delta( \vx, \vx' )$, the white noise kernel.
 
 
@@ -1250,8 +1250,8 @@ For example, \citet{wang2012gaussian} investigated single-layer \gp{} regression
 
 \subsubsection{Nonparametric neural networks}
 %Other Bayesian deep neural network models have been proposed by, for example, . % and Sum-product networks \cite{poon2011sum}  
-\citet{adams2010learning} proposed a prior on arbitrarily deep Bayesian networks with an unknown and unbounded number of parametric hidden units in each layer.
-Their architecture has connections only between adjacent layers, and so may be expected to have similar pathologies to those of deep \gp{}s as the number of layers increases.
+\citet{adams2010learning} proposed a prior on arbitrarily deep Bayesian networks having an unknown and unbounded number of parametric hidden units in each layer.
+Their architecture has connections only between adjacent layers, and so may have similar pathologies to the one discussed in the chapter as the number of layers increases.
 
 \citet{wilson2012gaussian} introduced Gaussian process regression networks, which are defined as a matrix product of draws from \gp{}s priors, rather than a composition.
 These networks have the form:
@@ -1283,10 +1283,11 @@ Deep density networks \citep{rippel2013high} are constructed through a series of
 This is another promising approach to fixing the pathology discussed in \cref{sec:formalizing-pathology}.
 
 \subsubsection{Recurrent networks}
-\citet{bengio1994learning} and \citet{pascanu2012understanding} analyze a related problem with gradient-based learning in recurrent networks, the ``exploding-gradients'' problem.
-They note that in recurrent neural networks, the size of the training gradient can grow or shrink exponentially as it is back-propagated, making gradient-based training difficult.
+\citet{bengio1994learning} and \citet{pascanu2012understanding} analyzed a related problem with gradient-based learning in recurrent networks, the ``exploding-gradients'' problem.
+They noted that in recurrent neural networks, the size of the training gradient can grow or shrink exponentially as it is back-propagated, making gradient-based training difficult.
 
-\citet{hochreiter1997long} addressed the exploding-gradients problem by including hidden units designed to have stable gradients.
+\citet{hochreiter1997long} addressed the exploding-gradients problem by introducing hidden units designed to have stable gradients.
+This architecture is known as long short-term memory.
 
 \subsubsection{Deep kernels}
 
@@ -1297,9 +1298,9 @@ The first systematic examination of deep kernels was done by \citet{cho2009kerne
 They also proposed concatenating the implicit feature vectors from previous time-steps with the current inputs, resulting in an architecture analogous to the input-connected architecture proposed by \citet[chapter 2]{neal1995bayesian}.
 
 \subsubsection{Analyses of deep learning}
-\citet{montavon2010layer} performed a layer-wise analysis of deep networks, and noted that the performance of \MLP{}s degrades as the number of layers with random weights increases.
+\citet{montavon2010layer} performed a layer-wise analysis of deep networks, and noted that the performance of \MLP{}s degrades as the number of layers with random weights increases, a result consistent with the analysis of this chapter.
 
-The experiments of \citet{saxe2011random} suggested that most of the performance of convolutional neural networks could be attributed to the architecture alone.
+The experiments of \citet{saxe2011random} suggested that most of the good performance of convolutional neural networks could be attributed to the architecture alone.
 Later, \citet{saxedynamics} looked at the dynamics of gradient-based training methods in deep \emph{linear} networks as a tractable approximation to standard deep (nonlinear) neural networks.  
 
 
@@ -1322,11 +1323,11 @@ This code is also capable of producing visualizations of mappings such as \cref{
 %In this work, we established a number of propositions which help us gain insight into the properties of very deep models, and allow making informed choices regarding their architecture.
 
 This chapter demonstrated that well-defined priors allow explicit examination of the assumptions being made about functions being modeled by different neural network architectures.
-As an example of the sort of analysis made possible this way, we attempted to gain insight into the properties of deep neural networks by characterizing the sorts of functions likely to be obtained under different choices of priors on compositions of functions.
+As an example of the sort of analysis made possible by this approach, we attempted to gain insight into the properties of deep neural networks by characterizing the sorts of functions likely to be obtained under different choices of priors on compositions of functions.
 %established a number of propositions which help us gain insight into the properties of very deep models, and allow making informed choices regarding their architecture.
 
 %First, we identified equivalences between multi-layer perceptions and deep \gp{}s --- namely, that a deep \gp{} can be written as an \MLP{}s with a finite number of nonparametric hidden units, or as an \MLP{} with infinitely-many parametric hidden units.
-First, we identified deep Gaussian processes as an easy-to-analyze model corresponding to multi-layer preceptrons with nonparametric activation functions.
+First, we identified deep Gaussian processes as an easy-to-analyze model corresponding to multi-layer preceptrons having nonparametric activation functions.
 %  We also showed several other connections between deep \MLP{}s and different Gaussian process models. %equivalences between multi-layer perceptions and deep \gp{}s --- namely, that a deep \gp{} can be written as an \MLP{}s with a finite number of nonparametric hidden units, or as an \MLP{} with infinitely-many parametric hidden units.
 %
 %Second, we characterized the derivatives and Jacobians of deep \gp{}s through products of independent Gaussian matrices. % can be characterized using random matrix theory, which we applied to establish results regarding the distribution over the Jacobian of the composition transformation. 
@@ -1334,14 +1335,14 @@ We then showed that representations based on repeated composition of independent
 Finally, we showed that this problem could be alleviated by connecting the input to each layer.
 %proposed a way to alleviate this problem: connecting the input to each layer of a deep representation allows us to construct priors on deep functions that do not exhibit the information-capacity pathology.
 %
-We also examined properties of deep kernels, corresponding to arbitrarily many compositions of fixed features.
+We also examined properties of deep kernels, corresponding to arbitrarily many compositions of fixed feature maps.
 %Finally, we derived models obtained by performing dropout on Gaussian processes, finding a tractable approximation to exact dropout in \gp{}s.
 
 Much recent work on deep networks has focused on weight initialization \citep{martens2010deep}, regularization \citep{lee2007sparse} and network architecture \citep{gens2013learning}.
 %However, the interactions between these different design decisions can be complex and difficult to characterize.
 %We propose to approach the design of deep architectures by examining the problem of assigning priors to nested compositions of functions.
 % Although inference in fully Bayesian models is generally challenging, well-defined priors allow us to encode our beliefs into models in a data-independent way. 
-If we can identify priors that give our models desirable properties, these in turn may suggest regularization, initialization, and architecture choices that also provide such properties.
+If we can identify priors that give our models desirable properties, these might in turn suggest regularization, initialization, and architecture choices that also provide such properties.
 
 Existing neural network practice also requires expensive tuning of model hyperparameters such as the number of layers, the size of each layer, and regularization penalties by cross-validation.
 One advantage of deep \gp{}s is that the approximate marginal likelihood allows a principled method for automatically determining such model choices.
