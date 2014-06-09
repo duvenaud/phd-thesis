@@ -41,11 +41,11 @@ This has been a main point to my literary thinking all my life.''
 
 The previous chapter showed how to automatically build structured models by searching through a language of kernels.
 It also showed how to decompose the resulting models into the different types of structure present, and how to visually illustrate the type of structure captured by each component.
-This chapter shows how automatically describe the resulting model structures with English text.
+This chapter shows how automatically describe the resulting model structures using English text.
 
-The main idea is to treat every component of a product kernel as an adjective, or as a short phrase that modifies the description of a kernel.
+The main idea is to describe every part of a given product of kernels as an adjective, or as a short phrase that modifies the description of a kernel.
 To see how this could work, recall that the model decomposition plots of \cref{ch:grammar} showed that most of the structure in each component was determined by that component's kernel.
-Even across different datasets, the meaning of individual parts of kernels is consistent in some ways.
+Even across different datasets, the meanings of individual parts of different kernels are consistent in some ways.
 For example, $\kPer$ indicates repeating structure, and $\kSE$ indicates smooth change over time.
 
 This chapter also presents a system that generates reports combining automatically generated text and plots which highlight interpretable features discovered in a data sets.
@@ -54,17 +54,17 @@ A complete example of an automatically-generated report can be found in appendix
 The work appearing in this chapter was written in collaboration with James Robert Lloyd, Roger Grosse, Joshua B. Tenenbaum, and Zoubin Ghahramani, and was published in \citet{LloDuvGroetal14}.
 The procedure translating kernels into adjectives developed out of discussions between James and myself.
 James Lloyd wrote the code to automatically generate reports, and ran all of the experiments.
-The paper (upon which this chapter is based) was written mainly by James Lloyd and myself.%, and Zoubin Ghahramani, with many helpful contributions and suggestions from Roger Grosse and Josh Tenenbaum.
+The paper upon which this chapter is based was written mainly by both James Lloyd and I.%, and Zoubin Ghahramani, with many helpful contributions and suggestions from Roger Grosse and Josh Tenenbaum.
 
 
 \section{Generating descriptions of composite kernels}
 
 There are two main features of our language of \gp{} models that allow description to be performed automatically.
-Firstly, any kernel expression in the language can be simplified into a sum of products.
-As discussed in \cref{sec:modeling-sums-of-functions}, a sum of kernels corresponds to a sum of functions, so each product can be described separately as part of a sum.
+First, any kernel expression in the language can be simplified into a sum of products.
+As discussed in \cref{sec:modeling-sums-of-functions}, a sum of kernels corresponds to a sum of functions, so each resulting product of kernels can be described separately, as part of a sum.
 Second, each kernel in a product modifies the resulting model in a consistent way.
 Therefore, one can describe a product of kernels by concatenating descriptions of the effect of each part of the product.
-One part needs to be described using a noun.
+One part of the product needs to be described using a noun, which is modified by the other parts.
 
 For example, one can describe the product of kernels $\kPer \kerntimes \kSE$ by representing $\kPer$ by a noun (``a periodic function'') modified by a phrase representing the effect of the $\kSE$ kernel (``whose shape varies smoothly over time'').
 To simplify the system, we restricted base kernels to the set $\{\kC$, $\kLin$, $\kWN$, $\kSE$, $\kPer$, and $\vsigma\}$.
@@ -90,8 +90,8 @@ After applying these rules, any composite kernel expressible by the grammar can 
 K \prod_m \kLin^{(m)} \prod_n \boldsymbol\sigma^{(n)},
 \label{eq:sop}
 \end{align}
-where $K$ is one of $\{\kWN, \kC, \kSE, \prod_k \kPer^{(k)}\}$ or $\{\kSE \prod_k \kPer^{(k)}\}$, 
-and $\prod_i\kernel^{(i)}$ denotes a product of kernels, each with different parameters.
+where $K$ is one of $\{\kWN, \kC, \kSE, \prod_k \kPer^{(k)}\}$ or $\{\kSE \times \prod_k \kPer^{(k)}\}$, 
+and $\prod_i\kernel^{(i)}$ denotes a product of kernels, each having different parameters.
 Superscripts denote different instances of the same kernel appearing in a product: $\SE^{(1)}$ can have different kernel parameters than $\kSE^{(2)}$.
 
 
@@ -124,13 +124,13 @@ modifies the covariance in the same way as multiplying by a function drawn from 
 This follows from the fact that if ${f_1(x) \dist \gp{}(0, \kernel_1)}$ and ${f_2(x) \dist \gp{}(0, \kernel_2)}$ then
 %
 \begin{align}
-{\textrm{Cov} \left[f_1(x)f_2(x), f_1(x')f_2(x') \right] = k_1(x,x')k_2(x,x')}.
+{\textrm{Cov} \big[f_1(x)f_2(x), \; f_1(x')f_2(x') \big] = k_1(x,x') \kerntimes k_2(x,x')}.
 \end{align}
 %
 Put more plainly, a \gp{} whose covariance is a product of kernels has the same covariance as a product of two functions, each drawn from the corresponding \gp{} prior.
-However, the distribution of $f_1 \kerntimes f_2$ is not \gp{} distributed -- it has higher central moments as well.
-This identity can be used to generate a cumbersome ``worst-case'' description in cases where a more concise description of the effect of a kernel is not known.
-For example, it is used in our system to describe the product of more than one periodic kernel.
+However, the distribution of $f_1 \kerntimes f_2$ is not always \gp{} distributed -- it can have third and higher central moments as well.
+This identity can be used to generate a cumbersome ``worst-case'' description in cases where a more concise description of the effect of a kernel is not available.
+For example, it is used in our system to describe products of more than one periodic kernel.
 \end{itemize}
 
 \Cref{table:modifiers} gives the corresponding description of the effect of each type of kernel in a product, written as a post-modifier.
@@ -198,19 +198,19 @@ In our system, the head noun is chosen according to the following ordering:
 %\ie $\kPer$ is always chosen as the head noun when present.
 Combining \cref{table:modifiers,table:nouns} with ordering \ref{eq:noun-ordering} provides a general method to produce descriptions of sums and products of these base kernels.
 
-\subsubsection{Extensions}
 
+\subsubsection{Extensions and refinements}
 %\subsubsection{Refinements to the Descriptions}
-In practice, the system also incorporate a number of other rules which help to make the descriptions shorter, easier to parse, or clearer:
+In practice, the system also incorporates a number of other rules which help to make the descriptions shorter, easier to parse, or clearer:
 %There are a number of ways in which the descriptions of the kernels can be made more interpretable and informative:
 \begin{itemize}
 %  \item We incorporate rules for which kernel is chosen as the head noun can change the interpretability of a description.
-  \item The system add extra adjectives depending on kernel parameters.
+  \item The system adds extra adjectives depending on kernel parameters.
         For example, an $\kSE$ with a relatively short lengthscale might be described as ``a rapidly-varying smooth function'' as opposed to just ``a smooth function''.
   \item Descriptions can include kernel parameters.
         For example, the system might write that a function is ``repeating with a period of 7 days''.
   \item Descriptions can include extra information about the model not contained in the kernel.
-        For example, based on the slope of the posterior mean, the system might write ``a linearly increasing function'' as opposed to ``a linear function''.
+        For example, based on the posterior distribution over the function's slope, the system might write ``a linearly increasing function'' as opposed to ``a linear function''.
   \item Some kernels can be described through pre-modifiers.
         For example, the system might write ``an approximately periodic function'' as opposed to ``a periodic function whose shape changes smoothly''.
 \end{itemize}
@@ -221,7 +221,7 @@ In practice, the system also incorporate a number of other rules which help to m
 
 \subsubsection{Ordering additive components}
 
-The reports generated by our system attempt to present the most interesting or important features of a data set first.
+The reports generated by our system attempt to present the most interesting or important features of a dataset first.
 As a heuristic, the system orders components by always adding next the component which most reduces the 10-fold cross-validated mean absolute error.
 
 
@@ -231,7 +231,7 @@ As a heuristic, the system orders components by always adding next the component
 This section shows an example of our procedure describing a compound kernel containing every type of base kernel in our set:
 %
 \begin{align}
-\kSE \times (\kWN \kerntimes \kLin \kernplus \kCP(\kC, \kPer)).
+\kSE \kerntimes (\kWN \kerntimes \kLin \kernplus \kCP(\kC, \kPer)).
 \end{align}
 %
 The kernel is first converted into a sum of products, and the changepoint is converted into sigmoidal kernels (recall the definition of changepoint kernels in \cref{sec:changepoint-definition}):
@@ -283,15 +283,15 @@ This dataset is shown in \cref{fig:solar}.
 This time series has two pertinent features: 
 First, a roughly 11-year cycle of solar activity.
 Second, a period lasting from 1645 to 1715 having almost no variance.
-This flat region corresponds to the Maunder minimum, a period in which sunspots were extremely rare \citep{lean1995reconstruction}.
-The Maunder minimum is an example of the type of structure which can be captured by change-windows.
+This flat region is known as to the Maunder minimum, a period in which sunspots were extremely rare \citep{lean1995reconstruction}.
+The Maunder minimum is an example of the type of structure that can be captured by change-windows.
 
 \begin{figure}[ht!]
 \centering
 \fbox{\includegraphics[trim=0cm 10.8cm 0cm 9.3cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/solarpages/pg_0002-crop}}
 \caption[Automatically-generated description of the solar irradiance data set]
 {Automatically generated descriptions of the first four components discovered by \procedurename{} on the solar irradiance data set.
-The dataset has been decomposed into diverse structures with simple descriptions.}
+The dataset has been decomposed into diverse structures having concise descriptions.}
 \label{fig:exec}
 \end{figure}
 
@@ -344,7 +344,7 @@ This part of the report isolates and describes the approximately 11-year sunspot
 \end{figure}
 %
 The complete report generated on this dataset can be found in appendix~\ref{ch:example-solar}.
-This report also contains samples from the model posterior.
+Each report also contains samples from the model posterior.
 
 
 
@@ -359,8 +359,8 @@ This report also contains samples from the model posterior.
 %\label{fig:airline}
 %\end{figure}
 
-Next, we present excerpts of the description generated by our procedure on a model of international airline passenger counts over time. %, shown in \cref{fig:airline}.
-The model described is the same as that shown in \cref{fig:airline_decomp}.
+Next, we present excerpts of the description generated by our procedure on a model of international airline passenger counts over time, shown in \cref{fig:airline_decomp}.
+%The model described is the same as that shown in \cref{fig:airline_decomp}.
 %constructed by \procedurename{} has four components: $\kLin \kernplus \kSE \kerntimes \kPer \kerntimes \kLin \kernplus \kSE \kernplus \kWN \kerntimes \kLin$, with 
 %
 High-level descriptions of the four components discovered are shown in \cref{fig:exec-airline}.
@@ -369,7 +369,7 @@ High-level descriptions of the four components discovered are shown in \cref{fig
 \centering
 \fbox{\includegraphics[trim=0cm 9.5cm 0cm 9.25cm, clip, width=0.98\columnwidth]{\grammarfiguresdir/airlinepages/pg_0002-crop}}
 \caption[Short descriptions of the four components of the airline model]
-{Short descriptions of the four components of the airline model.}
+{Short descriptions of the four components of a model describing the airline dataset.}
 \label{fig:exec-airline}
 %\end{figure}
 %
@@ -410,10 +410,10 @@ Other example reports describing a wide variety of time-series can be found at \
 
 \section{Related work}
 \label{sec:description-related-work}
-To the best of our knowledge, our procedure is the first example of automatic description of nonparametric statistical models.
+To the best of our knowledge, our procedure is the first example of automatic textual description of a nonparametric statistical model.
 However, systems with natural language output have been developed for automatic video description \citep{barbu2012video} and automated theorem proving \citep{ganesalingam2013fully}.
 
-Although not a description procedure, \citet{durrande2013gaussian} developed an analytic method for decomposing a \gp{} posterior into entirely periodic and entirely non-periodic parts, even when using non-periodic kernels.
+Although not a description procedure, \citet{durrande2013gaussian} developed an analytic method for decomposing \gp{} posteriors into entirely periodic and entirely non-periodic parts, even when using non-periodic kernels.
 
 
 
@@ -427,8 +427,8 @@ During development, we noted several difficulties with this overall approach:
 \item {\bf Some kernels are hard to describe.}
 For instance, we did not include the $\kRQ$ kernel in the text-generation procedure.
 This was done for several reasons.
-First, the $\kRQ$ kernel can be equivalently expressed as a scale mixture of $\kSE$ kernels.
-Second, it was difficult to think of a clear and concise description for the hyperparameter which controls the heaviness of the tails of the $\kRQ$ kernel.
+First, the $\kRQ$ kernel can be equivalently expressed as a scale mixture of $\kSE$ kernels, making it redundant in principle.
+Second, it was difficult to think of a clear and concise description for effect of the hyperparameter that controls the heaviness of the tails of the $\kRQ$ kernel.
 Third, a product of two $\kRQ$ kernels does not give another $\kRQ$ kernel, which raises the question of how to concisely describe products of $\kRQ$ kernels.
 
 \item {\bf Reliance on additivity.}
@@ -453,12 +453,12 @@ Source code to perform all experiments is available at \\\url{http://www.github.
 
 
 \section{Conclusions}
-This chapter presented a system which automatically generates detailed reports describing patterns captured by a \gp{} model.
-The properties of \gp{}s and the kernels being used allows a modular description, avoiding an exponential blowup in the number of special cases that needed to be considered.
+This chapter presented a system which automatically generates detailed reports describing statistical structure captured by a \gp{} model.
+The properties of \gp{}s and the kernels being used allow a modular description, avoiding an exponential blowup in the number of special cases that need to be considered.
 
-Combined with the model search of \cref{ch:grammar}, this gives a procedure combining all the elements of an automatic statistician listed in \cref{sec:ingredients}:
-an open-ended language of models, a search through model space, a model comparison procedure, and a model description procedure.
-Each particular element used in the procedure presented here is merely a proof-of-concept.
+Combining this procedure with the model search of \cref{ch:grammar} gives a system ombining all the elements of an automatic statistician listed in \cref{sec:ingredients}:
+an open-ended language of models, a method to search through model space, a model comparison procedure, and a model description procedure.
+Each particular element used in the system presented here is merely a proof-of-concept.
 However, even this simple prototype demonstrated the ability to discover and describe a variety of patterns in time series.
 
 %We hope that systems such as these will allow the use of
