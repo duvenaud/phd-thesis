@@ -458,7 +458,7 @@ Formally, if $f_1$ and $f_2$ are \emph{a priori} independent, and $f_1 \sim \gp(
 \Nt{
 \left[ \! \begin{array}{c} \vmu_1 \\ \vmu_1^\star \\ \vmu_2 \\ \vmu_2^\star \\ \vmu_1 + \vmu_2 \\ \vmu_1^\star + \vmu_2^\star \end{array} \! \right] \!
 }
-{\! \left[ \! \begin{array}{cccccc} 
+{\! \left[ \! \begin{array}{llllll}%{cccccc} 
 \vK_1 & \vK_1^\star & 0 & 0 & \vK_1 & \vK_1^\star \\ 
 {\vK_1^\star}\tra & \vK_1^{\star\star} & 0 & 0 & \vK_1^\star & \vK_1^{\star\star} \\
 0 & 0 & \vK_2 & {\vK_2^\star} & \vK_2 & \vK_2^\star \\ 
@@ -499,7 +499,7 @@ To extend these formulas to a sum of more than two functions, the term $\vK_1 + 
 \subsubsection{Posterior covariance of additive components}
 
 %One of the advantages of using a generative, model-based approach is that we can examine any aspect of the model we wish to.
-We can also compute the posterior covariance between any two components, conditioned on their sum:
+One can also compute the posterior covariance between any two components, conditioned on their sum:
 %
 \begin{align}
 \Cov \big[ \vf_1(\vX^\star), \vf_2(\vX^\star) \big| \vf(\vX) \big]
@@ -553,7 +553,7 @@ This reflects an ambiguity in the model about which one of these functions is hi
 
 \section{Changepoints}
 \label{sec:changepoint-definition}
-An example of how combining kernels can give rise to more structured priors is given by changepoint kernels.
+An example of how combining kernels can give rise to more structured priors is given by changepoint kernels, which can express a change between different types of structure.
 Changepoints kernels can be defined through addition and multiplication with sigmoidal functions such as $\sigma(x) = \nicefrac{1}{1 + \exp(-x)}$:
 %
 \begin{align}
@@ -615,11 +615,12 @@ any positive-definite kernel can be represented as the inner product between a f
 k(\vx, \vx') = \feat(\vx)\tra \feat(\vx')
 \end{align}
 
-For example, the squared-exponential kernel ($\kSE$) on the real line has a representation in terms of infinitely many radial-basis functions of the form ${h_i(x) \propto \exp( -\frac{1}{2} \frac{(x - c_i)^2}{2\ell^2})}$.
+For example, the squared-exponential kernel ($\kSE$) on the real line has a representation in terms of infinitely many radial-basis functions of the form ${h_i(x) \propto \exp( -\frac{1}{4\ell^2} (x - c_i)^2)}$.
 More generally, any stationary kernel can be represented by a set of sines and cosines - a Fourier representation \citep{bochner1959lectures}.
-In general, any particular feature representation of a kernel is not unique~\citep{minh2006mercer}.
+In general, any particular feature representation of a kernel is not necessarily unique~\citep{minh2006mercer}.
 
-In some cases, $\InputSpace$ can even be the infinite-dimensional feature mapping of another kernel.  Composing feature maps in this way leads to \emph{deep kernels}, explored in \cref{sec:deep_kernels}.
+In some cases, the input to a kernel, $\vx$, can even be the implicit infinite-dimensional feature mapping of another kernel.
+Composing feature maps in this way leads to \emph{deep kernels}, which are explored in \cref{sec:deep_kernels}.
 %\cref{ch:deep-limits}.
 
 
@@ -681,7 +682,7 @@ k_a(\iva, \iva') \times k_b(\iva, \iva')
 \end{align}
 %
 In words, the features of $k_a \kerntimes k_b$ are made of up all pairs of the original two sets of features.
-For example, the features of the product of two one-dimensional $\kSE$ kernels cover the plane with two-dimensional radial-basis functions of the form
+For example, the features of the product of two one-dimensional $\kSE$ kernels $(\kSE_1 \kerntimes \kSE_2)$ cover the plane with two-dimensional radial-basis functions of the form:
 %
 \begin{align}
 h_{ij}(x_1, x_2) \propto \exp \left( -\frac{1}{2} \frac{(x_1 - c_i)^2}{2\ell_1^2} \right) \exp \left( -\frac{1}{2} \frac{(x_2 - c_j)^2}{2\ell_2^2} \right)
@@ -701,7 +702,7 @@ This section looks at different ways to encode symmetries into a prior on functi
 Many types of symmetry can be enforced through operations on the kernel.
 
 We will demonstrate the properties of the resulting models by sampling functions from their priors.
-By using these functions to define warpings from $\Reals^2 \to \Reals^3$, we will show how to build a nonparametric prior on an open-ended family of topological manifolds, such as cylinders, toruses, and M\"{o}bius strips.
+By using these functions to define smooth mappings from $\Reals^2 \to \Reals^3$, we will show how to build a nonparametric prior on an open-ended family of topological manifolds, such as cylinders, toruses, and M\"{o}bius strips.
 
 \subsection{Three recipes for invariant priors}
 
@@ -711,17 +712,17 @@ Consider the scenario where we have a finite set of transformations of the input
 f(\vx) = f(g(\vx))  \quad \forall \vx \in \mathcal{X}, \quad \forall g \in G
 \end{align}
 %
-As an example, imagine we want to build a model of functions invariant to swapping their inputs: $f(x_1, x_2) = f(x_2, x_1)$.
-Being invariant to a set of operations is equivalent to being invariant to all compositions of those operations, the set of which form a group. \citep[chapter 21]{armstrong1988groups}.
-In our example, the elements of the group $\gswitch$ containing the operations the functions are invariant to has two elements:%, and is an example of the symmetric group $S2$:
+As an example, imagine we wish to build a model of functions invariant to swapping their inputs: $f(x_1, x_2) = f(x_2, x_1)$, $\forall x_1,x_2$.
+Being invariant to a set of operations is equivalent to being invariant to all compositions of those operations, the set of which forms a group. \citep[chapter 21]{armstrong1988groups}.
+In our example, the elements of the group $\gswitch$ containing all operations the functions are invariant to has two elements:%, and is an example of the symmetric group $S2$:
 %
 \begin{align}
 g_1([x_1, x_2]) & = [x_2, x_1] \qquad \textnormal{(swap)} \\
 g_2([x_1, x_2]) & = [x_1, x_2] \qquad \textnormal{(identity)}
 \end{align}
-%
-How can we construct a prior on functions which respect these symmetries?
 
+
+How can we construct a prior on functions which respect these symmetries?
 \citet{ginsbourger2012argumentwise} and \citet{Invariances13} showed that the only way to construct a \gp{} prior on functions which respect a set of invariances is to construct a kernel which respects the same invariances with respect to each of its two inputs:
 %
 \begin{align}
@@ -729,6 +730,7 @@ k(\vx, \vx') = k( g(\vx), g(\vx')), \quad \forall \vx, \vx' \in \InputSpace, \qu
 \end{align}
 %
 Formally, given a finite group $G$ whose elements are operations to which we wish our function to remain invariant, and $f \sim \GPt{0}{k(\vx,\vx')}$, then every $f$ is invariant under $G$ (up to a modification) if and only if $k(\cdot, \cdot)$ is argument-wise invariant under $G$.
+See \citet{Invariances13} for details.
 
 It might not always be clear how to construct a kernel respecting such argument-wise invariances.
 %Fortunately, for finite groups, there are a few simple ways to transform any kernel into one which is argument-wise invariant to actions under any finite group:
@@ -744,6 +746,7 @@ Additive method & Projection method & Product method \\[0.5ex]
 \includegraphics[width=0.3\columnwidth]{\symmetryfigsdir/symmetric-xy-prod-sample}\\
 %$k(x, y, x', y') + k(x, y, y', x')$ & $k(x, y, x', y') \times k(x, y, y', x')$ & $k( \min(x, y), \max(x,y),$ \\
 % $+ k(y, x, x', y') + k(y, x, y', x')$ & $\times k(y, x, x', y') \times k(y, x, y', x')$ & $\min(x', y'), \max(x',y') )$
+%Draw from \gp{} with kernel: & Draw from \gp{} with kernel: &  Draw from \gp{} with kernel: \\
 $\begin{array}{r@{}l@{}}
 %& \kSE(x_1, x_2, x_1', x_2') \\ + \,\, & \kSE(x_1, x_2, x_2', x_1')
 & \kSE(x_1, x_1')\kerntimes \kSE(x_2, x_2') \\ + \,\, & \kSE(x_1, x_2')\kerntimes\kSE(x_2, x_1')
@@ -758,7 +761,9 @@ $\begin{array}{r@{}l@{}}
 & \kSE(x_1, x_1')\kerntimes \kSE( x_2, x_2') \\ \times \,\, & \kSE(x_1, x_2')\kerntimes \kSE(x_2, x_1')
 \end{array}$
 \end{tabular}
-\caption[Three ways to introduce symmetry]{Three methods of introducing symmetry, illustrated through draws from the corresponding priors.
+\caption[Three ways to introduce symmetry]{
+Functions drawn from three distinct \gp{} priors, each expressing symmetry about the line $x_1 = x_2$ using a different type of construction.
+%Three methods of introducing symmetry, illustrated through draws from the corresponding priors.
 %Left:  The additive method.
 %Center: The product method.
 %Right: The projection method.
@@ -793,29 +798,29 @@ This construction has the property that the marginal variance is doubled near $x
 
 
 \item {\bf Project onto a fundamental domain.}
-\citet{Invariances13} also explore the possibility of projecting each datapoint into a fundamental domain of the group, using a mapping $A_G$:
+\citet{Invariances13} also explored the possibility of projecting each datapoint into a fundamental domain of the group, using a mapping $A_G$:
 %
 \begin{align}
 k_\textnormal{proj}(\vx, \vx') = k( A_G(\vx), A_G( \vx') )
 \end{align}
 %
-For the group $\gswitch$, a fundamental domain is $\{x_1, x_2 : x_1 < x_2\}$, which can be mapped to using $A_{\gswitch}( x_1, x_2 ) = \big[ \min(x_1, x_2), \max(x_1, x_2) \big]$.
+For example, a fundamental domain of the group $\gswitch$ is all ${\{x_1, x_2 : x_1 < x_2\}}$, a set which can be mapped to using $A_{\gswitch}( x_1, x_2 ) = \big[ \min(x_1, x_2), \max(x_1, x_2) \big]$.
 Constructing a kernel using this method introduces a non-differentiable  ``seam'' along $x_1 = x_2$, as shown in \cref{fig:add_vs_min}(center).
 %The projection method also works for infinite groups, as we shall see below.
 
 \item {\bf Multiply over the orbit.}
 %\citet{adams2013product}
-Ryan P. Adams (personal communication) suggested a construction enforcing invariances through products over the orbits:
+Ryan P. Adams (personal communication) suggested a construction enforcing invariances through a double product over the orbits:
 %
 \begin{align}
 k_\textnormal{sum}(\vx, \vx') = \prod_{g \in G} \prod_{g' \in G} k( g( \vx ), g'( \vx') )
 \end{align}
 %
-This method can sometimes produce \gp{} priors with zero variance in some regions of the space, as in \cref{fig:add_vs_min}(right).
+This method can sometimes produce \gp{} priors with zero variance in some regions, as in \cref{fig:add_vs_min}(right).
 %We include it here to show that each of these methods for enforcing symmetries modifies the resulting model in other ways as well.
 \end{enumerate}
 %
-There are many possible ways to achieve a given symmetry, but we must be careful to do so without compromising other qualities of the model we are constructing.
+There are often many possible ways to achieve a given symmetry, but we must be careful to do so without compromising other qualities of the model we are constructing.
 For example, simply setting $k(\vx, \vx') = 0$ gives rise to a \gp{} prior which obeys \emph{all possible} symmetries, but this is presumably not a model we wish to use.
 
 
@@ -847,23 +852,23 @@ A fundamental domain of the symmetry group is a circle, so the kernel
 %
 %We can also apply rotational symmetry repeatedy to a single dimension.
 achieves the invariance in \cref{eq:periodic_invariance}.
-Simple algebra reduces this kernel to the form shown in \cref{fig:basic_kernels}.
+Simple algebra reduces this kernel to the form given in \cref{fig:basic_kernels}.
 
 %We could also build a periodic kernel with period $\tau$ by the mapping $A(x) = \mod(x, \tau)$.
 %However, samples from this prior would be discontinuous at every integer multiple of $\tau$.
 
 \subsection{Example: Symmetry about zero}
 
-Another simple example of an easily-enforceable symmetry is symmetry about zero:
+Another example of an easily-enforceable symmetry is symmetry about zero:
 %
 \begin{align}
-f(x) = f( -x)
+f(x) = f( -x) .
 \end{align}
 %
-using the sum over orbits method, by the transform
+This symmetry can be enforced using the sum over orbits method, by the transform
 %
 \begin{align}
-k_{\textnormal{reflect}}(x, x') & = k(x, x') + k(x, -x') + k(-x, x') + k(-x, -x')
+k_{\textnormal{reflect}}(x, x') & = k(x, x') + k(x, -x') + k(-x, x') + k(-x, -x').
 \end{align}
 
 %This transformation can be applied to any subset of dimensions
@@ -890,7 +895,7 @@ k_{\textnormal{reflect}}(x, x') & = k(x, x') + k(x, -x') + k(-x, x') + k(-x, -x'
 Many models of images are invariant to spatial translations \citep{lecun1995convolutional}.
 Similarly, many models of sounds are also invariant to translation through time.
 
-This sort of translation invariance is completely distinct from the stationarity of kernels such as $\kSE$ or $\kPer$.
+Note that this sort of translation invariance is completely distinct from the stationarity of kernels such as $\kSE$ or $\kPer$.
 A stationary kernel implies that the prior is invariant to translations of the entire training and test set.
 In contrast, here we use translation invariance to refer to situations where the signal has been discretized, and each pixel (or the audio equivalent) corresponds to a different input dimension.
 We are interested in creating priors on functions that are invariant to swapping pixels in a manner that corresponds to shifting the signal in some direction:
@@ -907,19 +912,19 @@ For example, in a one-dimensional image or audio signal, translation of an input
 \shift(\vx, i) = \big[ x_{\mod( i + 1, D )}, x_{\mod( i + 2, D )}, \dots, x_{\mod( i + D, D )} \big]\tra
 \end{align}
 %
-As above, translation invariance in one dimension can be achieved by a double sum over the orbit
+As above, translation invariance in one dimension can be achieved by a double sum over the orbit, given an initial translation-sensitive kernel between signals $k$:
 %
 \begin{align}
 %k \left( (x_1, x_2, \dots, x_D ), (x_1', x_2', \dots, x_D' ) \right) & = %\nonumber \\
 %\sum_{i=1}^D \prod_{j=1}^D k( x_j, x_{ i + j \textnormal{mod $D$} }' )
 k_\textnormal{invariant} \left( \vx, \vx' \right) = %\nonumber \\
-\sum_{i=1}^D \sum_{j=1}^D k( \shift(\vx, i), \shift(\vx, j) ) \,,
+\sum_{i=1}^D \sum_{j=1}^D k( \shift(\vx, i), \shift(\vx, j) ) \,.
 \end{align}
 %
-defining the covariance between two signals to be the sum of all covariances between all translations of those two signals.
+%This construction defines the kernel between two signals to be the sum of a kernel between all translations of those two signals.
 
 The extension to two dimensions, $\shift(\vx, i, j)$, is straightforward, but notationally cumbersome.
-\citet{kondor2008group} built a more elaborate kernel between images, approximately invariant to both translation and rotation, using the projection method.
+\citet{kondor2008group} built a more elaborate kernel between images that was approximately invariant to both translation and rotation, using the projection method.
 
 %Is there a pathology of the additive construction that appears in the limit?
 
@@ -935,13 +940,14 @@ The extension to two dimensions, $\shift(\vx, i, j)$, is straightforward, but no
 
 In this section we give a geometric illustration of the symmetries encoded by different compositions of kernels.
 The work presented in this section is based on a collaboration with David Reshef, Roger Grosse, Joshua B. Tenenbaum, and Zoubin Ghahramani.
-The derivation of the M\"obius kernel was an original contribution by myself.
+The derivation of the M\"obius kernel was my original contribution.
 
 Priors on functions obeying invariants can be used to create a prior on topological manifolds by using such functions to warp a simply-connected surface into a higher-dimensional space.
-For example, to build a prior on 2-dimensional manifolds embedded in 3-dimensional space, we simply need a prior on mappings from $\mathbb{R}^2$ to $\mathbb{R}^3$, which we can construct using three independent functions $[f_1(\vx), f_2(\vx), f_3(\vx)]$, each mapping from $\mathbb{R}^2$ to $\mathbb{R}$.
-\gp{} priors on the mapping functions implictly give rise to a prior on warped surfaces.
-Symmetries in $[f_1, f_2, f_3]$ will connect different parts of the manifolds, giving rise to non-trivial topologies on the sampled surfaces.
-%
+For example, one can build a prior on 2-dimensional manifolds embedded in 3-dimensional space through a prior on mappings from $\mathbb{R}^2$ to $\mathbb{R}^3$.
+Such mappings can be constructed using three independent functions $[f_1(\vx), f_2(\vx), f_3(\vx)]$, each mapping from $\mathbb{R}^2$ to $\mathbb{R}$.
+Different \gp{} priors on these functions will implictly give rise to different priors on warped surfaces.
+Symmetries in $[f_1, f_2, f_3]$ can connect different parts of the manifolds, giving rise to non-trivial topologies on the sampled surfaces.
+
 \begin{figure}
 \renewcommand{\tabcolsep}{1mm}
 \begin{tabular}{ccc}
@@ -956,11 +962,11 @@ By enforcing that the functions mapping from $\mathbb{R}^2$ to $\mathbb{R}^3$ ob
 }
 \label{fig:gen_surf}
 \end{figure}
-%
-\Cref{fig:gen_surf} shows 2D meshes warped into 3D by functions drawn from \gp{} priors with different kernels, giving rise to a variety of different topologies.
+
+\Cref{fig:gen_surf} shows 2D meshes warped into 3D by functions drawn from \gp{} priors with various kernels, giving rise to a different topologies.
 %
 Higher-dimensional analogues of these shapes can be constructed by increasing the latent dimension and including corresponding terms in the kernel.
-For example, an $N$-dimensional space with kernel $\kPer_1 \kerntimes \kPer_2 \kerntimes \ldots \kerntimes \kPer_N$ will give rise to a prior on $N$-dimensional toruses.
+For example, an $N$-dimensional latent space using kernel $\kPer_1 \kerntimes \kPer_2 \kerntimes \ldots \kerntimes \kPer_N$ will give rise to a prior on manifolds having the topology of $N$-dimensional toruses, ignoring self-intersections.
 
 This construction is similar in spirit to the \gp{} latent variable model (\gplvm{}) of \citet{lawrence2005probabilistic}, which learns a latent embedding of the data into a low-dimensional space, using a \gp{} prior on the mapping from the latent space to the observed space.
 
@@ -970,34 +976,6 @@ This construction is similar in spirit to the \gp{} latent variable model (\gplv
 
 %A prior on functions on M\"{o}bius strips can be constructed by enforcing the symmetries:
 
-A space having the topology of a M\"{o}bius strip can be constructed by enforcing the following invariance to the following operations~\citep[chapter 7]{reid2005geometry}:
-%A function defined on a M\"{o}bius strips can be constructed by enforcing the symmetries~\citep[chapter 7]{reid2005geometry}:
-%
-%\begin{align}
-%f(x_1, x_2) & = f( x_1 + \tau, x_2) \qquad \textnormal{(periodic in $x_1$)} \label%{eq:mobius_symmetry_x} \\
-%f(x_1, x_2) & = f( x_1, x_2 + \tau) \qquad \textnormal{(periodic in $x_2$)} \label%{eq:mobius_symmetry_y} \\
-%f(x_1, x_2) & = f( x_2, x_1)  \quad \,\,\,\; \qquad \textnormal{(symmetric about $x_1 = x_2$)}
-%\label{eq:mobius_symmetry_xy}
-%\end{align}
-\begin{align}
-g_{p_1}([x_1, x_2]) & = [ x_1 + \tau, x_2] \qquad \textnormal{(periodic in $x_1$)} \label{eq:mobius_symmetry_x} \\
-g_{p_2}([x_1, x_2]) & = [ x_1, x_2 + \tau] \qquad \textnormal{(periodic in $x_2$)} \label{eq:mobius_symmetry_y} \\
-g_s([x_1, x_2]) & = [ x_2, x_1]  \quad \,\,\,\; \qquad \textnormal{(symmetric about $x_1 = x_2$)}
-\label{eq:mobius_symmetry_xy}
-\end{align}
-%
-\Cref{sec:expressing-symmetries} already showed how to build \gp{} priors invariant to each of these types of transformations.
-We'll call a kernel which enforces all of these symmetries a \emph{M\"{o}bius kernel}.
-An example of such a kernel is:
-%
-\begin{align}
-k(x_1, x_2, x_1', x_2') = 
-\Per(x_1, x_1') \kerntimes \Per(x_2, x_2') \kernplus
-\Per(x_1, x_2') \kerntimes \Per(x_2, x_1')
-\end{align}
-%
-Moving along the diagonal $x_1 = x_2$ of a function drawn from the corresponding \gp{} prior is equivalent to moving along the edge of a notional M\"{o}bius strip which has had that function mapped on to its surface.
-\Cref{fig:mobius}(a) shows an example of a function drawn from such a prior.
 %
 \begin{figure}
 \begin{tabular}[t]{ccc}
@@ -1034,10 +1012,39 @@ Image adapted from \citet{sudanesepict}.
 \label{fig:mobius}
 \end{figure}
 %
-\Cref{fig:mobius}(b) shows an example of a 2D mesh mapped to 3D by functions drawn from such a prior.
+
+A space having the topology of a M\"{o}bius strip can be constructed by enforcing invariance to the following operations~\citep[chapter 7]{reid2005geometry}:
+%A function defined on a M\"{o}bius strips can be constructed by enforcing the symmetries~\citep[chapter 7]{reid2005geometry}:
+%
+%\begin{align}
+%f(x_1, x_2) & = f( x_1 + \tau, x_2) \qquad \textnormal{(periodic in $x_1$)} \label%{eq:mobius_symmetry_x} \\
+%f(x_1, x_2) & = f( x_1, x_2 + \tau) \qquad \textnormal{(periodic in $x_2$)} \label%{eq:mobius_symmetry_y} \\
+%f(x_1, x_2) & = f( x_2, x_1)  \quad \,\,\,\; \qquad \textnormal{(symmetric about $x_1 = x_2$)}
+%\label{eq:mobius_symmetry_xy}
+%\end{align}
+\begin{align}
+g_{p_1}([x_1, x_2]) & = [ x_1 + \tau, x_2] \qquad \textnormal{(periodic in $x_1$)} \label{eq:mobius_symmetry_x} \\
+g_{p_2}([x_1, x_2]) & = [ x_1, x_2 + \tau] \qquad \textnormal{(periodic in $x_2$)} \label{eq:mobius_symmetry_y} \\
+g_s([x_1, x_2]) & = [ x_2, x_1]  \quad \,\,\,\; \qquad \textnormal{(symmetric about $x_1 = x_2$)}
+\label{eq:mobius_symmetry_xy}
+\end{align}
+%
+\Cref{sec:expressing-symmetries} already showed how to build \gp{} priors invariant to each of these types of transformations.
+We'll call a kernel which enforces these symmetries a \emph{M\"{o}bius kernel}.
+An example of such a kernel is:
+%
+\begin{align}
+k(x_1, x_2, x_1', x_2') = 
+\Per(x_1, x_1') \kerntimes \Per(x_2, x_2') \kernplus
+\Per(x_1, x_2') \kerntimes \Per(x_2, x_1')
+\end{align}
+%
+Moving along the diagonal $x_1 = x_2$ of a function drawn from the corresponding \gp{} prior is equivalent to moving along the edge of a notional M\"{o}bius strip which has had that function mapped on to its surface.
+\Cref{fig:mobius}(left) shows an example of a function drawn from such a prior.
+\Cref{fig:mobius}(center) shows an example of a 2D mesh mapped to 3D by functions drawn from such a prior.
 This surface doesn't resemble the typical representation of a M\"{o}bius strip,
 %, because the edge of the M\"{o}bius strip is in roughly circular shape, as opposed to the double-loop that one obtains by gluing a strip of paper with a single twist.
-but instead resembles an embedding known as the Sudanese M\"{o}bius strip \citep{sudanese1984}, shown in \cref{fig:mobius}(c).
+but instead resembles an embedding known as the Sudanese M\"{o}bius strip \citep{sudanese1984}, shown in \cref{fig:mobius}(right).
 
 %Another classic example of a function living on a Mobius strip is the auditory quality of 2-note intervals.  The harmony of a pair of notes is periodic (over octaves) for each note, and the 
 
@@ -1051,7 +1058,7 @@ but instead resembles an embedding known as the Sudanese M\"{o}bius strip \citep
 
 %There is a simple way to do \gp{} regression over categorical variables:
 Categorical variables are variables which can take values only from a discrete, unordered set, such as $\{\texttt{blue}, \texttt{green}, \texttt{red}\}$.
-A flexible way to construct a kernel over categorical variables is to represent that variable by a set of binary variables, using a one-of-k encoding.
+A simple way to construct a kernel over categorical variables is to represent that variable by a set of binary variables, using a one-of-k encoding.
 For example, if $\vx$ can take one of four values, $x \in \{ \texttt{A}, \texttt{B}, \texttt{C}, \texttt{D}\}$, then a one-of-k encoding of $x$ will correspond to four binary inputs, and $\oneofk(\texttt{C}) = [0, 0, 1, 0]$.
 Given a one-of-k encoding, we can place any multi-dimensional kernel on that space, such as the \seard{}:
 %
@@ -1060,16 +1067,18 @@ k_{\textnormal{categorical}}( x, x') = \seard( \oneofk(x), \oneofk(x') )
 \end{align}
 %
 Short lengthscales on any particular dimension of the $\seard$ kernel indicate that the function value corresponding to that category is uncorrelated with the others.
-
-A more flexible parameterization suggested by 
+More flexible parameterizations are also possible~\citep{pinheiro1996unconstrained}.
+%A more flexible parameterization suggested by 
 %\citet{swersky2013categorical}
-Kevin Swersky (personal communication) allows complete flexibility about which pairs of categories are similar to one another, replacing the $\seard$ kernel with a fully-parameterized kernel, $\sefull$:
+%Kevin Swersky (personal communication) allows complete flexibility about which pairs of categories are similar to one another, replacing the $\seard$ kernel with a fully-parameterized kernel, $\sefull$:
 %
-\begin{align}
-\sefull( \vx, \vx') = \sigma^2_f \exp \left( -\frac{1}{2} \vx\tra \vL \vx' \right)
-\end{align}
+%\begin{align}
+%\sefull( \vx, \vx') = \sigma^2_f \exp \left( -\frac{1}{2} \vx\tra \vL \vx' \right)
+%\end{align}
 %
-where $\vL$ is a symmetric matrix, individually parameterizing the covariance between each pair of function values of categories.
+%where $\vL$ is a symmetric matrix, individually parameterizing the covariance between each pair of function values of categories.
+
+
 
 %Then, simply put a product of kernels on those dimensions.
 %This is the same as putting one SE ARD kernel on all of them.
@@ -1078,7 +1087,17 @@ where $\vL$ is a symmetric matrix, individually parameterizing the covariance be
 %If you notice that the estimated lengthscales for your categorical variables is short, your model is saying that it's not sharing any information between data of different categories. 
 
 
+\subsection{Multiple outputs}
 
+Any \gp{} prior can easily be extended to the model multiple outputs: ${f_1(\vx), f_2(\vx), \dots, f_T(\vx)}$.
+This can be done by building a model of a single-output function which has had an extra input added that denotes the index of the output: $f_i(\vx) = f(\vx, i)$.
+This can be done by extending the original kernel $k(\vx, \vx')$ to have an extra discrete input dimension: $k(\vx, i, \vx', i')$
+
+A simple and flexible construction multiplies the original kernel $k(\vx, \vx')$ with a categorical kernel on the output index~\citep{bonilla2007multi}:
+%
+\begin{align}
+k(\vx, i, \vx', i') = k_{\vx}(\vx, \vx') \kerntimes k_i(i,i')
+\end{align}
 
 
 
@@ -1135,10 +1154,10 @@ Long-term trend & Weekly periodicity &Yearly periodicity \\
 %\subsection{Learning Kernel Parameters}
 
 This chapter outlined ways to choose the parametric form of a kernel in order to express different sorts of structure.
-Once the parametric form has been chosen, one still needs to choose, or integrating over, the kernel parameters.
+Once the parametric form has been chosen, one still needs to choose, or integrate over, the kernel parameters.
 %Fortunately, typical kernels only have $\mathcal{O}(D)$ parameters, meaning that if $N$ is reasonably large, these parameters can be estimated by maximum marginal likelihood.
-If the kernel we construct has relatively few parameters, these parameters can be estimated by maximum marginal likelihood, using gradient-based optimizers.
-The kernel parameters estimated in the examples above were optimized using the \GPML{} toolbox, available at \url{http://www.gaussianprocess.org/gpml/code}.
+If the kernel relatively few parameters, these parameters can be estimated by maximum marginal likelihood, using gradient-based optimizers.
+The kernel parameters estimated in \cref{sec:additivity-extrapolation,sec:concrete} were optimized using the \GPML{} toolbox~\citep{GPML}, available at \\\url{http://www.gaussianprocess.org/gpml/code}.
 
 %\subsection{Choosing the Kernel Form}
 %The marginal likelihood of a model is useful for choosing among parameters.
@@ -1153,8 +1172,8 @@ The kernel parameters estimated in the examples above were optimized using the \
 %We demonstrate that marginal likeihood an be used to automatically search over such structures.
 
 A systematic search over kernel parameters is necessary when appropriate parameters aren't known.
-Likewise, sometimes appropriate kernel structures are hard to guess.
-The next chapter will show how to perform an automatic search not just over the kernel parameters, but also over the open-ended space of kernel expressions.
+Similarily, sometimes appropriate kernel structure is hard to guess.
+The next chapter will show how to perform an automatic search not just over kernel parameters, but also over an open-ended space of kernel expressions.
 
 \subsubsection{Source code}
 Source code to produce all figures and examples in this chapter is available at \\\url{http://www.github.com/duvenaud/phd-thesis}.
