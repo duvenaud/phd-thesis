@@ -462,13 +462,13 @@ We then approximate $p(\vx_\star | \vX, \vY)$ by sampling points from the poster
 \item Draw a latent cluster mean $\vmu_\star \sim {\cal N}(\vu_{z_\star},(r_{z_\star}\vR_\star)\inv)$
 \item Draw latent coordinates $\vx_\star \sim {\cal N}(\vmu_\star,\vR_\star\inv)$
 \item For each observed dimension $d = 1, 2, \ldots, D$, \\ draw observed coordinates 
-$\vy^\star_d \sim {\cal N}(\vk_\star\tra \vK\inv \vY_{:,d}, k(\vx_\star,\vx_\star) - \vk_\star\tra \vK\inv \vk_\star)$
+$y^\star_d \sim {\cal N}(\vk_\star\tra \vK\inv \vY_{:,d}, k(\vx_\star,\vx_\star) - \vk_\star\tra \vK\inv \vk_\star)$
 \end{enumerate}
 %
 If $z_\star$ is assigned to a new component in step 1, the prior Gaussian-Wishart distribution \eqref{eq:normal-wishar-prior} is used for sampling in steps 2 and 3.
 The density drawn from in step 5 is the predictive distribution of a \gp{}, where
 %
-$\vk_\star=( k(\vx_\star, \vx_1), \cdots, k(\vx_\star, \vx_N))\tra$ and $\vY_{:,d}$ represents the $d$th column of $\vY$.
+$\vk_\star=[ k(\vx_\star, \vx_1), k(\vx_\star, \vx_2), \cdots, k(\vx_\star, \vx_N)]\tra$ and $\vY_{:,d}$ represents the $d$th column of $\vY$.
 
 Each step of this sampling procedure draws from the exact conditional distribution, so the Monte Carlo estimate of the conditional predictive density $p(\vy_\star | \vX, \vY)$ will converge to the true marginal distribution as the number of samples increases.
 Since the observations $\vy_\star$ are conditionally normally distributed, each one adds a smooth contribution to the empirical Monte Carlo estimate of the posterior density, as opposed to a collection of point masses.
