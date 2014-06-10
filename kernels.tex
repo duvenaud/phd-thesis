@@ -946,13 +946,13 @@ The derivation of the M\"obius kernel was my original contribution.
 Priors on functions obeying invariants can be used to create a prior on topological manifolds by using such functions to warp a simply-connected surface into a higher-dimensional space.
 For example, one can build a prior on 2-dimensional manifolds embedded in 3-dimensional space through a prior on mappings from $\mathbb{R}^2$ to $\mathbb{R}^3$.
 Such mappings can be constructed using three independent functions $[f_1(\vx), f_2(\vx), f_3(\vx)]$, each mapping from $\mathbb{R}^2$ to $\mathbb{R}$.
-Different \gp{} priors on these functions will implicitly give rise to different priors on warped surfaces.
+Different \gp{} priors on these functions will implictly give rise to different priors on warped surfaces.
 Symmetries in $[f_1, f_2, f_3]$ can connect different parts of the manifolds, giving rise to non-trivial topologies on the sampled surfaces.
 
 \begin{figure}
 \renewcommand{\tabcolsep}{1mm}
 \begin{tabular}{ccc}
-Euclidean $( \SE_1 \times \SE_2 )$  & Cylinder $( \SE_1 \times \Per_2 )$ & Toroid $( \Per_1 \times \Per_2 )$\\
+Euclidian $( \SE_1 \times \SE_2 )$  & Cylinder $( \SE_1 \times \Per_2 )$ & Toroid $( \Per_1 \times \Per_2 )$\\
 \hspace{-0.5cm}\includegraphics[width=0.33\columnwidth,clip=true,trim=10mm 10mm 1mm 1mm]{\topologyfiguresdir/manifold} &
 \includegraphics[width=0.33\columnwidth,clip=true,trim=10mm 10mm 10mm 10mm]{\topologyfiguresdir/cylinder} &
 \includegraphics[width=0.33\columnwidth,clip=true,trim=1mm 1mm 1mm 1mm]{\topologyfiguresdir/torus} \\
@@ -1092,9 +1092,9 @@ More flexible parameterizations are also possible~\citep{pinheiro1996unconstrain
 
 Any \gp{} prior can easily be extended to the model multiple outputs: ${f_1(\vx), f_2(\vx), \dots, f_T(\vx)}$.
 This can be done by building a model of a single-output function which has had an extra input added that denotes the index of the output: $f_i(\vx) = f(\vx, i)$.
-This can be done by extending the original kernel $k(\vx, \vx')$ to have an extra discrete input dimension: $k(\vx, i, \vx', i')$
+This can be done by extending the original kernel $k(\vx, \vx')$ to have an extra discrete input dimension: $k(\vx, i, \vx', i')$.
 
-A simple and flexible construction multiplies the original kernel $k(\vx, \vx')$ with a categorical kernel on the output index~\citep{bonilla2007multi}:
+A simple and flexible construction of such a kernel multiplies the original kernel $k(\vx, \vx')$ with a categorical kernel on the output index~\citep{bonilla2007multi}:
 %
 \begin{align}
 k(\vx, i, \vx', i') = k_{\vx}(\vx, \vx') \kerntimes k_i(i,i')
@@ -1172,7 +1172,7 @@ The kernel parameters estimated in \cref{sec:additivity-extrapolation,sec:concre
 %To do so, we simple need to compare the marginal likelihood of the data
 %We demonstrate that marginal likeihood an be used to automatically search over such structures.
 
-A systematic search over kernel parameters is necessary when appropriate parameters aren't known.
+A systematic search over kernel parameters is necessary when appropriate parameters are not known.
 Similarly, sometimes appropriate kernel structure is hard to guess.
 The next chapter will show how to perform an automatic search not just over kernel parameters, but also over an open-ended space of kernel expressions.
 

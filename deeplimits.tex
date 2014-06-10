@@ -20,9 +20,9 @@ By viewing neural networks this way, one can analyze their properties without re
 %To shed light on this problem, we analyze the analogous problem of constructing useful priors on compositions of functions.
 As a starting point, we will relate neural networks to Gaussian processes, and examine a class of infinitely-wide, deep neural networks called \emph{deep Gaussian processes}: compositions of functions drawn from \gp{} priors.
 Deep \gp{}s are an attractive model class to study for several reasons.
-First, \citet{damianou2012deep} showed that the probabilistic nature of deep \gp{}s guards against overfitting.
+First, \citet{damianou2012deep} showed that the probabilistic nature of deep \gp{}s gaurds against overfitting.
 Second, \citet{hensman2014deep} showed that stochastic variational inference is possible in deep \gp{}s, allowing mini-batch training on large datasets.
-Third, the availability of an approximation to the marginal likelihood allows one to automatically tune the model architecture without the need for cross-validation.
+Third, the availabilty of an approximation to the marginal likelihood allows one to automatically tune the model architecture without the need for cross-validation.
 %Together, these results suggest that deep \gp{}s are a promising alternative to neural nets.
 %For the analysis in this chapter, 
 Finally, deep \gp{}s are attractive from a model-analysis point of view, because they remove some of the details of finite neural networks. %, such as the number of hidden units
@@ -67,7 +67,7 @@ Therefore, understanding general properties of function compositions might helps
 %\vspace{-0.05in}
 \subsection{Single-hidden-layer models}
 
-First, we relate neural networks to standard ``shallow'' Gaussian processes, using the standard neural network architecture known as the multi-layer perceptron (\MLP{})~\citep{rosenblatt1962principles}.
+First, we relate neural networks to standard ``shallow'' Gaussian processes, using the standard neural network architecture known as the multi-layer perceptrion (\MLP{})~\citep{rosenblatt1962principles}.
 In the typical definition of an \MLP{} with one hidden layer, the hidden unit activations are defined as:
 %
 \begin{align}
@@ -109,17 +109,18 @@ However, to avoid confusion, we refer to layers with infinitely-many nodes as ``
 \end{align}
 A joint Gaussian distribution between any set of function values is the definition of a Gaussian process.
 %Thus we can say that $f \sim \GPt{0}{
+
 The result is surprisingly general:
 it puts no constraints on the features (other than having uniformly bounded activation), nor does it require that the feature weights $\vnetweights$ be Gaussian distributed.  
+An \MLP{} with a finite number of nodes also gives rise to a \gp{}, but only if the distribution on $\vnetweights$ is Gaussian.
 
-One can also work backwards to derive a one-layer \MLP{} from any \gp{}.
+
+One can also work backwards to derive a one-layer \MLP{} from any \gp{}:
 Mercer's theorem, discussed in \cref{sec:mercer}, implies that any positive-definite kernel function corresponds to an inner product of features: $k(\vx, \vx') = \hPhi(\vx) \tra \hPhi(\vx')$.
-An \MLP{} having a finite number of fixed hidden nodes gives rise to a \gp{} if and only if the weights $\vnetweights$ are jointly Gaussian distributed.
+%An \MLP{} having a finite number of fixed hidden nodes gives rise to a \gp{} if and only if the weights $\vnetweights$ are jointly Gaussian distributed.
 
-Thus in the one-hidden-layer case, the correspondence between \MLP{}s and \gp{}s is straightforward;
+Thus, in the one-hidden-layer case, the correspondence between \MLP{}s and \gp{}s is straightforward:
 the implicit features $\hPhi(\vx)$ of the kernel correspond to hidden units of an \MLP{}.
-
-
 
 
 % For tikz figures in deep limits
@@ -409,7 +410,7 @@ A neural net with fixed activation functions corresponding to a 3-layer deep \gp
 \\[0.5em]
 \hline
 \\[-0.5em]
-A net with nonparametric activation functions corresponding to a 3-layer deep \gp{}\\
+A net with nonpararametric activation functions corresponding to a 3-layer deep \gp{}\\
 \\
 %\begin{tabular}{c}
 \begin{tikzpicture}[shorten >=1pt,->,draw=black!50, node distance=\layersep]
@@ -1000,7 +1001,7 @@ As depth increases, the density becomes more complex without concentrating only 
 \end{tabular}
 \caption[Distribution of singular values of an input-connected deep \sgp{}]
 {The distribution of singular values drawn from 5-dimensional input-connected deep \gp{} priors, 25 layers deep (\emph{Left}) and 50 layers deep (\emph{Right}).
-Compared to the standard architecture, the singular values are more likely to remain the same size as one another, meaning that the model outputs are more often sensitive to several directions of variation in the input.}
+Compared to the standard architecure, the singular values are more likely to remain the same size as one another, meaning that the model outputs are more often sensitive to several directions of variation in the input.}
 \label{fig:good_spectrum}
 \end{figure}
 %
@@ -1061,7 +1062,7 @@ However, as we saw in \cref{ch:kernels,ch:grammar,ch:additive}, structured, non-
 %be constructed through addition and multiplication which 
 allow extrapolation.
 Another way to build non-local kernels is by composing fixed feature maps, creating \emph{deep kernels}.
-To return to an example given in \cref{sec:expressing-symmetries}, periodic kernels can be viewed as a 2-layer-deep kernel, in which the first layer maps $x \rightarrow [\sin(x), \cos(x)]$, and the second layer maps through basis functions corresponding to the implicit feature map giving rise to an \kSE{} kernel.
+To return to an example given in \cref{sec:expressing-symmetries}, periodic kernels can be viewed as a 2-layer-deep kernel, in which the first layer maps $x \rightarrow [\sin(x), \cos(x)]$, and the second layer maps through basis functions corresponding to the implicity feature map giving rise to an \kSE{} kernel.
 
 This section builds on the work of \citet{cho2009kernel}, who derived several kinds of deep kernels by composing multiple layers of feature mappings.
 
@@ -1228,7 +1229,7 @@ To put it another way, any fixed representation is unlikely to be useful unless 
 
 \section{Related work}
 
-\subsubsection{Deep Gaussian processes}
+\subsubsection{Deep Gaussian processs}
 \citet[chapter 2]{neal1995bayesian} explored properties of arbitrarily deep Bayesian neural networks, including those that would give rise to deep \gp{}s.
 He noted that infinitely deep random neural networks without extra connections to the input would be equivalent to a Markov chain, and therefore would lead to degenerate priors on functions.
 He also suggested connecting the input to each layer in order to fix this problem.
