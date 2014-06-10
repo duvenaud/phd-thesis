@@ -12,8 +12,7 @@
 \end{quotation}
 
 
-
-When training deep networks, choosing appropriate architectures and regularization strategies is important for good predictive performance.
+When training deep neural networks, choosing appropriate architectures and regularization strategies is important for good predictive performance.
 In this chapter, we propose to study this problem by viewing deep nets as priors on functions.
 By viewing neural networks this way, one can analyze their properties without reference to any particular dataset, loss function, or training method.
 %Instead, we one ask what sorts of information-processing structures these priors give rise to, and check whether those structures are the same sort which we expect to find in useful models.
@@ -21,12 +20,12 @@ By viewing neural networks this way, one can analyze their properties without re
 %To shed light on this problem, we analyze the analogous problem of constructing useful priors on compositions of functions.
 As a starting point, we will relate neural networks to Gaussian processes, and examine a class of infinitely-wide, deep neural networks called \emph{deep Gaussian processes}: compositions of functions drawn from \gp{} priors.
 Deep \gp{}s are an attractive model class to study for several reasons.
-Firstly, \citet{damianou2012deep} showed that the probabilistic nature of deep \gp{}s gaurds against overfitting.
+First, \citet{damianou2012deep} showed that the probabilistic nature of deep \gp{}s gaurds against overfitting.
 Second, \citet{hensman2014deep} showed that stochastic variational inference is possible in deep \gp{}s, allowing mini-batch training on large datasets.
 Third, the availabilty of an approximation to the marginal likelihood allows one to automatically tune the model architecture without the need for cross-validation.
 %Together, these results suggest that deep \gp{}s are a promising alternative to neural nets.
 %For the analysis in this chapter, 
-Finally, deep \gp{}s are attractive from a model-analysis point of view, because they abstract away some of the details of finite neural networks. %, such as the number of hidden units
+Finally, deep \gp{}s are attractive from a model-analysis point of view, because they remove some of the details of finite neural networks. %, such as the number of hidden units
 
 Our analysis will show that in standard architectures, the representational capacity of standard deep networks tends to decrease as the number of layers increases, retaining only a single degree of freedom in the limit.
 We propose an alternate network architecture that connects the input to each layer that does not suffer from this pathology.
@@ -95,7 +94,7 @@ f(\vx) = \frac{1}{K}{\mathbf \vnetweights}\tra \hPhi(\vx) = \frac{1}{K} \sum_{i=
 %
 with fixed%
 \footnote{The above derivation gives the same result if the parameters of the hidden units are random, since in the infinite limit, their distribution on outputs is always the same with probability one.
-However, to avoid confusion, we refer to layers with infinitely-many nodes as``fixed''.
+However, to avoid confusion, we refer to layers with infinitely-many nodes as ``fixed''.
 }
  features $\left[ \hphi_1(\vx), \dots, \hphi_K(\vx) \right]\tra = \hPhi(\vx)$ and i.i.d. $\netweights$'s with zero mean and finite variance $\sigma^2$, the central limit theorem implies that as the number of features $K$ grows, any two function values $f(\vx)$ and $f(\vx')$ have a joint distribution approaching a Gaussian:
 %
@@ -110,17 +109,17 @@ However, to avoid confusion, we refer to layers with infinitely-many nodes as``f
 \end{align}
 A joint Gaussian distribution between any set of function values is the definition of a Gaussian process.
 %Thus we can say that $f \sim \GPt{0}{
-
 The result is surprisingly general:
 it puts no constraints on the features (other than having uniformly bounded activation), nor does it require that the feature weights $\vnetweights$ be Gaussian distributed.  
 
 One can also work backwards to derive a one-layer \MLP{} from any \gp{}.
-Mercer's theorem implies that any positive-definite kernel function corresponds to an inner product of features: $k(\vx, \vx') = \hPhi(\vx) \tra \hPhi(\vx')$.
-%
-Thus in the one-hidden-layer case, the correspondence between \MLP{}s and \gp{}s is straightforward:
+Mercer's theorem, discussed in \cref{sec:mercer}, implies that any positive-definite kernel function corresponds to an inner product of features: $k(\vx, \vx') = \hPhi(\vx) \tra \hPhi(\vx')$.
+An \MLP{} having a finite number of fixed hidden nodes gives rise to a \gp{} if and only if the weights $\vnetweights$ are jointly Gaussian distributed.
+
+Thus in the one-hidden-layer case, the correspondence between \MLP{}s and \gp{}s is straightforward;
 the implicit features $\hPhi(\vx)$ of the kernel correspond to hidden units of an \MLP{}.
 
-An \MLP{} with a finite number of fixed hidden nodes gives rise to a \gp{} if and only if the weights $\vnetweights$ are jointly Gaussian distributed.
+
 
 
 % For tikz figures in deep limits

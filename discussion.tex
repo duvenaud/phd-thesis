@@ -1,7 +1,7 @@
 \input{common/header.tex}
 \inbpdocument
 
-\chapter{Conclusions and Outlook}
+\chapter{Discussion}
 \label{ch:discussion}
 
 This chapter summarizes the contributions of this thesis, articulates some of the questions raised by this work, and relates the kernel-based model-building procedure of \cref{ch:kernels,ch:grammar,ch:description} to the larger project of automating statistics and machine learning.
@@ -13,7 +13,7 @@ This chapter summarizes the contributions of this thesis, articulates some of th
 The main contribution of this thesis was to develop a way to automate the construction of structured, interpretable nonparametric regression models using Gaussian processes.
 This was done in several parts:
 First, \cref{ch:kernels} presented a systematic overview of kernel construction techniques, and examined the resulting \gp{} priors.
-Next, \cref{ch:grammar} showed the viability of a breadth-first search over an open-ended space of kernels, and showed that the corresponding \gp{} models could be automatically decomposed into diverse parts illustrating the structure found in the data.
+Next, \cref{ch:grammar} showed the viability of a search over an open-ended space of kernels, and showed that the corresponding \gp{} models could be automatically decomposed into diverse parts allowing visualization of the structure found in the data.
 \Cref{ch:description} showed that sometimes parts of kernels can be described modularly, allowing automatically written text to be included in detailed reports describing \gp{} models.
 An example report is included in appendix~\ref{ch:example-solar}.
 Together, these chapters demonstrate a proof-of-concept of what could be called an ``automatic statistician'' capable of the performing some of the model construction and analysis currently performed by experts.
@@ -70,13 +70,14 @@ To begin to automate the practice of statistics, developing model-description pr
 At first glance, automatic model description may seem to require a decomposition of the model being described into discrete components, as in the additive decomposition demonstrated in \cref{ch:kernels,ch:grammar,ch:description}.
 %For example, \cref{ch:description} showed that composite kernels allow automatic visualization and desription of low-dimensional structure.
 
-On the other hand, \citet{damianou2012deep} showed that deep \gp{}s allow summarization of high-dimensional structure through sampling from the posterior, examining the dimension of each latent layer, visualizing latent coordinates, and examining how the predictive distribution changes as one moves in the latent space.
+On the other hand, most probabilistic models allow a form of summarization of high-dimensional structure through sampling from the posterior.
+For the specific case of deep \gp{}s, \citet{damianou2012deep} showed that these models allow summarization through examining the dimension of each latent layer, visualizing latent coordinates, and examining how the predictive distribution changes as one moves in the latent space.
 Perhaps more sophisticated procedures could also allow intelligible text-based descriptions of such models.
 
 \end{itemize}
 
 The warped mixture model of \cref{ch:warped} represents a compromise between these two approaches, combining a discrete clustering model with an unstructured warping function.
-However, the explicit clusterting model may by unnecessary: the results of \citet{damianou2012deep} suggest that clustering can be automatically (but implicitly) accomplished by a sufficiently deep, unstructured \gp{}.
+However, the explicit clustering model may by unnecessary: the results of \citet{damianou2012deep} suggest that clustering can be automatically (but implicitly) accomplished by a sufficiently deep, unstructured \gp{}.
 
 
 
@@ -98,14 +99,15 @@ An alternative, bottom-up, approach is to design procedures which extend and com
 The language of models proposed in \cref{ch:grammar} is an example of this bottom-up approach.
 Another example is \citet{roger-grosse-thesis}, who built an open-ended language of matrix decomposition models and a corresponding compositional language of relatively efficient approximate inference algorithms.
 Similarily, \citet{christian-thesis} showed how to compose inference algorithms for sequence models.
-These approaches have the advantage that inference is usually feasible for any model in the language, but extending the language may require developing new inference algorithms.
+These approaches have the advantage that inference is usually feasible for any model in the language.
+However, extending these languages may require developing new inference algorithms.
 
 If sufficiently powerful building-blocks are composed, the line between the top-down and bottom-up approaches becomes blurred.
 For example, deep generative models~\citep{adams2010learning,damianou2012deep,rippel2013high,bengio2013generalized,salakhutdinov2009deep} could be considered an example of the bottom-up approach, since they compose individual model ``layers'' to produce more powerful models.
 However, large neural nets can capture enough different types of structure that they could also be seen as an example of the universalist, top-down approach.
 %As well, inference in these models has so far been done in a one-size-fits all approach, ignoring the particular structure of a given problem.
 
-\section{End note}
+\section{Conclusion}
 It seems clear that one way or another, large parts of the existing practice of model-building will eventually be automated.
 However, it remains to be seen which of the above model-building approaches will be most useful.
 I hope that this thesis will contribute to our understanding of the strengths and weaknesses of these different approaches, and towards the use of more powerful model classes by practitioners in other fields.
