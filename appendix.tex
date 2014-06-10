@@ -34,7 +34,7 @@ In this case, the necessary covariance matrices are given by:
 \vSigma_{BA} & = k(\vX, \vX^\star) \\
 \vSigma_{BB} & = k(\vX, \vX)
 \end{align}
-and similarily for the mean vectors.
+and similarly for the mean vectors.
 
 
 
@@ -123,10 +123,10 @@ The search used in the multidimensional regression experiments in \cref{sec:synt
 \mathcal{B} &\to& \mathcal{B'}
 \end{eqnarray}
 %
-where $\mathcal{S}$ represents any kernel subexpression and $\mathcal{B}$ is any base kernel within a kernel expression.
+where $\mathcal{S}$ represents any kernel sub-expression and $\mathcal{B}$ is any base kernel within a kernel expression.
 These search operators represent addition, multiplication and replacement.
-When the multiplication operator is applied to a subexpression which includes a sum of subexpressions, parentheses () are introduced.
-For instance, if rule \eqref{eq:search-multiply} is applied to the subexpression $k_1 + k_2$, the resulting expression is $(k_1 \kernplus k_2) \kerntimes \mathcal{B}$.
+When the multiplication operator is applied to a sub-expression which includes a sum of sub-expressions, parentheses () are introduced.
+For instance, if rule \eqref{eq:search-multiply} is applied to the sub-expression $k_1 + k_2$, the resulting expression is $(k_1 \kernplus k_2) \kerntimes \mathcal{B}$.
 
 Afterwards, we added several more search operators in order to speed up the search.
 This expanded set of operators was used in the experiments in \cref{sec:time_series,sec:Predictive accuracy on time series,ch:description}.
@@ -174,7 +174,7 @@ This dataset was previously analyzed by \citet{lean1995reconstruction}.
 
 The structure search was run using the \procedurename-interpretable variant, with base kernels $\kSE$, $\kLin$, $\kC$, $\kPer$, $\vsigma$, and $\kWN$.
 
-Other example reports can be found at \url{http://www.mlg.eng.cam.ac.uk/Lloyd/abcdoutput/}, including anlyses of wheat prices, temperature records, call centre volumes, radio interference, gas production, unemployment, number of births, and wages over time.
+Other example reports can be found at \url{http://www.mlg.eng.cam.ac.uk/Lloyd/abcdoutput/}, including analyses of wheat prices, temperature records, call centre volumes, radio interference, gas production, unemployment, number of births, and wages over time.
 
 \newcommand{\solarreportpage}[1]{\includegraphics[width=\columnwidth]{figures/solarpages/02-solar-seperate-pages-#1}}
 
@@ -440,7 +440,7 @@ When inference is done this way, approximating the predictive density only requi
 For our model, we use approximate integration to estimate $p(\vy_\star)$.
 This is done for two reasons:
 First, multiple latent points (possibly from different clusters) can map to the same observed point, meaning the standard method can underestimate $p(\vy_\star)$.
-Second, because we do not optimize the latent coordinates of training points, but instead sample them, we would need to optimize each $p(\vx_\star)$ seperately for each sample in the Markov chain.
+Second, because we do not optimize the latent coordinates of training points, but instead sample them, we would need to optimize each $p(\vx_\star)$ separately for each sample in the Markov chain.
 One advantage of our method is that it gives estimates for all $p(\vy_\star)$ at once.
 However, it may not be as accurate in very high observed dimensions, when the volume to sample over is relatively large.
 

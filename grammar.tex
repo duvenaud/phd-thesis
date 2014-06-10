@@ -155,7 +155,7 @@ Additive \gp{}s & \eg $\prod_d (1 + \kSE_d) $ & \Cref{ch:additive}
 \end{tabular}
 \caption[Common regression models expressible in the kernel language]
 {Existing regression models expressible by sums and products of base kernels.
-$\cos(\cdot, \cdot)$ is a special case of our reparametrized $\kPer(\cdot, \cdot)$.
+$\cos(\cdot, \cdot)$ is a special case of our reparameterized $\kPer(\cdot, \cdot)$.
 }
 \label{table:motifs}
 \end{table}
@@ -247,7 +247,7 @@ The dashed line marks the end of the dataset.
 
 \Cref{fig:mauna_search_tree} shows an example search tree followed by our algorithm.
 \Cref{fig:mauna_grow} shows how the resulting model changes as the search is followed.
-In practice, we also include extra operators which propose commonly-occuring structures, such as changepoints.
+In practice, we also include extra operators which propose commonly-occurring structures, such as changepoints.
 A complete list is contained in appendix~\ref{sec:search-operators}.
 
 Our search operators have rough parallels with strategies used by human researchers to construct regression models.
@@ -271,7 +271,7 @@ This corresponds to adding or multiplying with kernels on dimensions not yet inc
 
 Unfortunately, optimizing the marginal likelihood over parameters is not a convex optimization problem, and the space can have many local optima.
 For example, in data having periodic structure, integer multiples of the true period (harmonics) are often local optima. 
-We take advantage of our search procedure to provide reasonable initializations: all parameters which were part of the previous kernel are initialized to their previous values. Newly introduced paramters are initialized randomly.
+We take advantage of our search procedure to provide reasonable initializations: all parameters which were part of the previous kernel are initialized to their previous values. Newly introduced parameters are initialized randomly.
 In the newly proposed kernel, all parameters are then optimized using conjugate gradients.
 This procedure is not guaranteed to find the global optimum, but it implements the commonly used heuristic of iteratively modeling residuals.
 
@@ -385,7 +385,7 @@ These components have similar structure to the kernel hand-constructed by \citet
 \end{align}
 
 We also plot the residuals modeled by a white noise ($\kWN$) component, showing that there is little obvious structure left in the data.
-More generally, some components capture slowly-changing structure while others capture quickly-varying struture, but often there is no hard distinction between ``signal'' components and ``noise'' components.
+More generally, some components capture slowly-changing structure while others capture quickly-varying structure, but often there is no hard distinction between ``signal'' components and ``noise'' components.
 
 \begin{figure}[ht!]
 \centering
@@ -517,7 +517,7 @@ An examination of the structure discovered by the automatic equation-learning so
 \citet{kemp2008discovery} learned the structural form of graphs that modeled human similarity judgements.
 Their grammar on graph structures includes planes, trees, and cylinders.
 Some of their discrete graph structures have continuous analogues in our language of models.
-For example, $\SE_1 \kerntimes \SE_2$ and $\SE_1 \kerntimes \Per_2$ can be seen as mapping the data onto a Euclidian surface and a cylinder, respectively.
+For example, $\SE_1 \kerntimes \SE_2$ and $\SE_1 \kerntimes \Per_2$ can be seen as mapping the data onto a Euclidean surface and a cylinder, respectively.
 \Cref{sec:topological-manifolds} examined these structures in more detail.
 
 \citet{diosan2007evolving} and \citet{bing2010gp} learned composite kernels for support vector machines and relevance vector machines, respectively, using genetic search algorithms to optimize cross-validation error.
@@ -736,7 +736,7 @@ The automatic model-building procedure described in this chapter could also be u
 Discovering structure such as additivity in a problem could be expected to decrease the number of samples needed.
 
 
-\subsubsection{Incroporating uncertainty in the structure}
+\subsubsection{Incorporating uncertainty in the structure}
 \fi
 
 
