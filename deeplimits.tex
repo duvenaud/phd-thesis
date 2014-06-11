@@ -11,9 +11,10 @@
 \hspace*{\fill} \emph{ -- Peter Orbanz}, personal communication
 \end{quotation}
 
-
+%A less structured, but more flexible alternative to the \gp{} models explored in this thesis
+For modeling high-dimensional functions, a popular alternative to the Gaussian process models explored earlier in this thesis are deep neural networks.
 When training deep neural networks, choosing appropriate architectures and regularization strategies is important for good predictive performance.
-In this chapter, we propose to study this problem by viewing deep nets as priors on functions.
+In this chapter, we propose to study this problem by viewing deep neural networks as priors on functions.
 By viewing neural networks this way, one can analyze their properties without reference to any particular dataset, loss function, or training method.
 %Instead, we one ask what sorts of information-processing structures these priors give rise to, and check whether those structures are the same sort which we expect to find in useful models.
 
@@ -1058,7 +1059,7 @@ In particular, care would need to be taken to ensure that the networks do not pr
 \label{sec:deep_kernels}
 
 \cite{ bengio2006curse} showed that kernel machines have limited generalization ability when they use ``local'' kernels such as the squared-exp.
-However, as we saw in \cref{ch:kernels,ch:grammar,ch:additive}, structured, non-local kernels can 
+However, as shown in \cref{ch:kernels,ch:grammar,ch:additive}, structured, non-local kernels can 
 %be constructed through addition and multiplication which 
 allow extrapolation.
 Another way to build non-local kernels is by composing fixed feature maps, creating \emph{deep kernels}.
@@ -1122,7 +1123,7 @@ This formula expresses the composed kernel $(\kSE \circ k)$ exactly in terms of 
 
 \subsection{Infinitely deep kernels}
 What happens when one repeatedly composes feature maps many times, starting with the squared-exp kernel?
-If the output variance of the \kSE{} is normalized to ${k(\vx,\vx) = 1}$, then the infinite limit of composition with \kSE{} converges to ${\left(\kSE \circ \kSE \circ \kSE \circ \ldots \circ \kSE\right)(\vx,\vx') = 1}$ for all pairs of inputs.
+If the output variance of the \kSE{} is normalized to ${k(\vx,\vx) = 1}$, then the infinite limit of composition with \kSE{} converges to ${\left(\kSE \circ \kSE \circ \ldots \circ \kSE\right)(\vx,\vx') = 1}$ for all pairs of inputs.
 A constant covariance corresponds to a prior on constant functions ${f(\vx) = c}$.
 
 %Figure \ref{fig:deep_kernel_connected} shows this kernel at different depths, including the degenerate limit.  
