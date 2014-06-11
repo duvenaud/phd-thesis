@@ -18,7 +18,7 @@
 
 Prediction, extrapolation, and induction are all examples of learning a function from data.
 There are many ways to learn functions, but one particularly elegant way is by probabilistic inference.
-This type of method takes a group of hypotheses (a \emph{model}), then weights those hypotheses based on how well their predictions match the data.
+Probabilistic inference takes a group of hypotheses (a \emph{model}), and weights those hypotheses based on how well their predictions match the data.
 Keeping around all the hypotheses that match the data helps guard against over-fitting.
 Comparing different models is a way to find which sorts of structure are present in a dataset.
 
@@ -26,7 +26,7 @@ To be able to learn a wide variety of structures, we would like to have an expre
 We would like to be able to represent simple kinds of functions, such as linear functions or polynomials.
 We would also like to have models of arbitrarily complex functions, specified in terms of high-level properties such as how smooth they are, whether they repeat over time, or which symmetries they have.
 
-The beginning of thesis will show how to build such a language using Gaussian processes (\gp{}s), a tractable class of models of functions.
+The beginning of this thesis will show how to build such a language using Gaussian processes (\gp{}s), a tractable class of models of functions.
 This chapter will introduce the basic properties of \gp{}s.
 The next chapter will describe how to model different types of structure using \gp{}s.
 
@@ -58,7 +58,7 @@ All plots have the same axes.
 \end{figure}
 %
 %Figure \ref{fig:gp-post} shows a Gaussian process distribution, as it is conditioned on more and more observations.
-To be precise, a \gp{} is any distribution over functions such that any finite subset of function values $f(\vx_1), f(\vx_2), \ldots f(\vx_N)$ have a joint Gaussian distribution \citep[chapter 2]{rasmussen38gaussian}.
+To be precise, a \gp{} is any distribution over functions such that any finite set of function values $f(\vx_1), f(\vx_2), \ldots f(\vx_N)$ have a joint Gaussian distribution \citep[chapter 2]{rasmussen38gaussian}.
 A \gp{} model, before conditioning on data, is completely specified by its mean function,
 %
 \begin{align}
@@ -74,7 +74,7 @@ and its covariance function, also called the \emph{kernel}:
 %
 It is common practice to assume that the mean function is simply zero everywhere, since uncertainty about the mean function can be taken into account by adding an extra term to the kernel.
 
-After accounting for the mean, the kind of structure which can be captured by a \gp{} model is entirely determined by its kernel.
+After accounting for the mean, the kind of structure that can be captured by a \gp{} model is entirely determined by its kernel.
 The kernel determines how the model generalizes, or extrapolates to new data.
 
 There are many possible choices of covariance function, and we can specify a wide range of models just by specifying the kernel of a \gp{}.
@@ -147,7 +147,7 @@ For example, compared to neural networks, relatively few parameters need to be e
 %In contrast, much of the neural network literature is devoted to techniques for regularization and optimization.
 %TODO: add some citations.
 
-\item {\bf Model Selection.}
+\item {\bf Model selection.}
 A side benefit of being able to integrate over all hypotheses is that we can compute the marginal likelihood of the data given a model.
 This gives us a principled way of comparing different models.
 
@@ -187,7 +187,7 @@ However, this problem can be addressed by approximate inference schemes~\citep{s
 The predictive distribution of a standard \gp{} model is Gaussian.
 We may sometimes with to use non-Gaussian predictive likelihoods, for example in order to be robust to outliers, or to perform classification.
 Using non-Gaussian likelihoods requires approximate inference.
-Fortunately, mature software packages exist~\citep{GPy, GPML, VanRiiHarJylVeh14} which can automatically perform approximate inference for a wide variety of non-Gaussian likelihoods, as well as using sparse approximations.
+Fortunately, mature software packages exist~\citep{GPy, GPML, VanRiiHarJylVeh14} which can automatically perform approximate inference for a wide variety of non-Gaussian likelihoods, and also implement sparse approximations.
 %\item {\bf Symmetric}
 %The predictive distribution of a \gp{} is always symmetric about its mean function.
 %This means that \gp{} models are inappropriate for modeling non-negative functions, such as likelihoods.
@@ -207,7 +207,7 @@ Kernel parameters can be set automatically by maximizing the marginal likelihood
 
 \section{Outline and contributions of thesis}
 
-The main contribution of this thesis is to develop a method to automatically model, visualize, and describe structure in data, by searching through an open-ended language of regression models.
+The main contribution of this thesis is to develop a method to automatically model, visualize, and describe a variety of statistical structures in data, by searching through an open-ended language of regression models.
 This thesis also includes a set of related results showing how Gaussian processes can be extended or composed with other models.
 %Furthermore, the fact that the marginal likelihood is available means that we can evaluate how much evidence the data provides for one structure over another, allowing an automatic search to construct models for us.
 
@@ -232,8 +232,8 @@ A simple change to the network architecture fixes this pathology.
 We relate these models to neural networks, and as a side effect derive several forms of \emph{infinitely deep kernels}.
 
 Chapter~\ref{ch:additive} examines a more limited, but much faster way of discovering structure using \gp{}s.
-Specifying a kernel with many different types of structure, we use kernel parameters to discard whichever types of structure are \emph{not} found in the current dataset.
-The model class we examine is called \emph{additive Gaussian processes}, a model summing over exponentially-many \gp{}s, each depending on a different subset of the input variables.
+Specifying a kernel having many different types of structure, we use kernel parameters to discard whichever types of structure are \emph{not} found in the current dataset.
+The particular model class we examine is called \emph{additive Gaussian processes}, a model summing over exponentially-many \gp{}s, each depending on a different subset of the input variables.
 We give a polynomial-time inference algorithm for this model, and relate it to other model classes.
 For example, additive \gp{}s are shown to have the same covariance as a \gp{} that uses \emph{dropout}, a recently developed regularization technique for neural networks.
 

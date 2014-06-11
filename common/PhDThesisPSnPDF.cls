@@ -222,13 +222,14 @@ supported!}
       breaklinks=true,
       linktocpage, 
       colorlinks=true, 
-      linkcolor=mydarkblue, 
-      urlcolor=mydarkblue,
-      citecolor=mydarkblue, 
-      anchorcolor=green,
-%      pagebackref,
-%      hyperindex = true,
-%      hyperfigures
+      linkcolor=black, 
+      urlcolor=black,
+      citecolor=black, 
+      anchorcolor=black,
+%      linkcolor=mydarkblue, 
+%      urlcolor=mydarkblue,
+%      citecolor=mydarkblue, 
+%      anchorcolor=green
     }
     
     \ifPHD@custommargin
