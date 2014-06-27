@@ -174,14 +174,14 @@ The basic operations we can perform on any part $k$ of a kernel are:
 \begin{center}
 \begin{tabular}{rccl}
 \textnormal{Replacement:}    & $\kernel$ & $\to$ & $\kernel'$\\
-\textnormal{Addition:}       & $\kernel$ & $\to$ & $\kernel + \kernel'$\\
-\textnormal{Multiplication:} & $\kernel$ &  $\to$ & $\kernel \times \kernel'$\\
+\textnormal{Addition:}       & $\kernel$ & $\to$ & $(\kernel + \kernel')$\\
+\textnormal{Multiplication:} & $\kernel$ &  $\to$ & $(\kernel \times \kernel')$\\
 \end{tabular}
 \end{center}
 %
 where $k'$ is a new base kernel.
 These operators can generate all possible algebraic expressions involving addition and multiplication of base kernels.
-To see this, observe that if we restricted the addition and multiplication rules to only apply to base kernels, we would obtain a context-free grammar which generates the set of algebraic expressions.
+To see this, observe that if we restricted the addition and multiplication rules to only apply to base kernels, we would obtain a grammar which generates the set of algebraic expressions.
 
 \begin{figure}
 \centering
@@ -236,7 +236,7 @@ Level 1: & Level 2: & Level 3: \\
 \maunadecomp{0} & \maunadecomp{1} & \maunadecomp{2} \\[0.5em]
 \end{tabular}
 \caption[Progression of models as the search depth increases]
-{Posterior mean and variance for different depths of kernel search on the Mauna Loa dataset.
+{Posterior mean and variance for different depths of kernel search on the Mauna Loa dataset, described in \cref{sec:extrapolation}.
 The dashed line marks the end of the dataset.
 \emph{Left:} First, the function is only modeled as a locally smooth function, and the extrapolation is poor.
 \emph{Middle:} A periodic component is added, and the extrapolation improves.
@@ -303,6 +303,8 @@ where $p(D|M)$ is the marginal likelihood of the data evaluated at the optimized
 Because BIC is a function of the number of parameters in a model, we did not count kernel parameters known to not affect the model.
 For example, when two kernels are multiplied, one of their output variance parameters becomes redundant, and can be ignored.
 
+The assumptions made by \BIC{} are clearly inappropriate for the model class being considered.
+For instance, \BIC{} assumes that the data are \iid given the model parameters, which is not true except under a white noise kernel.
 Other more sophisticated approximations are possible, such as Laplace's approximation.
 We chose to try \BIC{} first because of its simplicity, and it performed reasonably well in our experiments.
 
@@ -316,7 +318,7 @@ We can always express any kernel structure as a sum of products of kernels by di
 For example,
 %
 \begin{align}
-\SE \kerntimes (\RQ \kernplus \Lin) = \SE \kerntimes  \RQ \kernplus \SE \kerntimes \Lin
+\SE \kerntimes (\RQ \kernplus \Lin) = \SE \kerntimes  \RQ \kernplus \SE \kerntimes \Lin \,.
 \end{align}
 %
 When all kernels in a product apply to the same dimension, we can use the formulas in \cref{sec:posterior-variance} to visualize the marginal posterior distribution of that component.
@@ -361,8 +363,8 @@ The yearly periodic component has been rescaled for clarity.}
 \label{fig:mauna_decomp}
 \end{figure}
 
-\label{sec:extrapolation}
 \subsection{Mauna Loa atmospheric CO$\mathbf{_{2}}$}
+\label{sec:extrapolation}
 
 First, our method analyzed records of carbon dioxide levels recorded at the Mauna Loa observatory~\citep{co2data}.
 Since this dataset was analyzed in detail by \citet[chapter 5]{rasmussen38gaussian}, we can compare the kernel chosen by our method to a kernel constructed by human experts.
@@ -674,9 +676,9 @@ $\SE_1 \kerntimes \SE_2 \kernplus \SE_2 \kerntimes \SE_3$ & 4 & $\SE_1 \kerntime
 
 
 \Cref{tbl:synthetic} shows the results.
-For the highest signal-to-noise ratio, \procedurename{} finds all relevant structure except in one case.
+For the highest signal-to-noise ratio, \procedurename{} usually recoveres the correct structure.
 The reported additional linear structure in the last row can be explained the fact that functions sampled from \kSE{} kernels with long length-scales occasionally have near-linear trends.
-As the noise increases, our method generally backs off to simpler structures rather than over-fitting.
+As the noise increases, our method generally backs off to simpler structures rather than reporting spurious structure.
 
 \subsubsection{Source code}
 All \gp{} parameter optimization was performed by automated calls to the \GPML{} toolbox~\citep{GPML}.

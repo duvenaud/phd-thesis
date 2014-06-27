@@ -146,20 +146,21 @@ Working with kernels, rather than the parametric form of the function itself, al
 Here, we discuss a few examples:
 
 \begin{itemize}
-\item {\bf Polynomial Regression.}
-By multiplying together $T$ linear kernels, we obtain a prior on polynomials of degree $T$.
-The first column of \cref{fig:kernels_times} shows a quadratic kernel.
-
 \item {\bf Locally Periodic Functions.}
 In univariate data, multiplying a kernel by \kSE{} gives a way of converting global structure to local structure.
 For example, $\Per$ corresponds to exactly periodic structure, whereas $\Per \kerntimes \SE$ corresponds to locally periodic structure, as shown in the second column of \cref{fig:kernels_times}.
+
+\item {\bf Polynomial Regression.}
+By multiplying together $T$ linear kernels, we obtain a prior on polynomials of degree $T$.
+%This class of functions also has a simple parametric form.
+The first column of \cref{fig:kernels_times} shows a quadratic kernel.
 
 \item {\bf Functions with Growing Amplitude.}
 Multiplying by a linear kernel means that the marginal standard deviation of the function being modeled grows linearly away from the location given by kernel parameter $c$.
 The third and fourth columns of \cref{fig:kernels_times} show two examples.
 \end{itemize}
 
-We can multiply any number of kernels together in this way to produce kernels combining several high-level properties.
+One can multiply any number of kernels together in this way to produce kernels combining several high-level properties.
 For example, the kernel $\kSE \kerntimes \kLin \kerntimes \kPer$ specifies a prior on functions which are locally periodic with linearly growing amplitude.
 We will see a real dataset having this kind of structure in \cref{ch:grammar}.
 
@@ -261,7 +262,7 @@ Then the distribution of the sum of those functions is simply another \gp{}:
 \end{align}
 %
 Kernels $\kernel_a$ and $\kernel_b$ can be of different types, allowing us to model the data as a sum of independent functions, each possibly representing a different type of structure.
-We can sum any number of components this way.
+Any number of components can be summed this way.
 
 
 \subsection{Modeling noise}
@@ -317,6 +318,7 @@ For example,
 \begin{align}
 %\function := 
 f(x_1, x_2) \dist \GP(0, \kernel_1(x_1, x_1') + \kernel_2(x_2, x_2'))
+\label{eq:simple-additive-gp}
 \end{align}
 %
 is equivalent to the model
@@ -377,10 +379,9 @@ In high dimensions, we can also consider sums of functions of multiple input dim
 \subsection{Example: An additive model of concrete strength}
 \label{sec:concrete}
 
-To illustrate how additive kernels give rise to interpretable models, we built an additive model of the strength of concrete as a function of the amount of seven different ingredients, plus the age of the concrete \citep{yeh1998modeling}.
+To illustrate how additive kernels give rise to interpretable models, we built an additive model of the strength of concrete as a function of the amount of seven different ingredients (cement, slag, fly ash, water, plasticizer, coarse aggregate and fine aggregate), and the age of the concrete \citep{yeh1998modeling}.
 %We model measurements of the compressive strength of concrete, as a function of the concentration of 7 ingredients, plus the age of the concrete.
-
-Our simple additive model looks like
+Our simple model is a sum of 8 different one-dimensional functions, each depending on one of these variables:
 %
 \begin{align}
 f(\vx) & = 
@@ -390,28 +391,33 @@ f_1(\textnormal{cement}) + f_2(\textnormal{slag}) + f_3(\textnormal{fly ash}) + 
 \end{align}
 %
 where $\textnormal{noise} \simiid \Nt{0}{\sigma^2_n}$.
-The corresponding kernel has 9 additive components.
-After learning the kernel parameters by maximizing the marginal likelihood of the data, we can visualize the predictive distribution of each component of the model.
-%
-%
-\newcommand{\concretepic}[1]{\includegraphics[width=0.31\columnwidth]{\decompfigsdir/concrete-component-#1}}
+%The corresponding kernel has 9 additive components.
+Each of the functions $f_1, f_2, \ldots, f_8$ was modeled using a \gp{} with an $\kSE$ kernel.
+These eight $\kSE$ kernels plus a white noise kernel were added together as in \cref{eq:simple-additive-gp} to form a single \gp{} model whose kernel had 9 additive components.
+
+After learning the kernel parameters by maximizing the marginal likelihood of the data, one can visualize the predictive distribution of each component of the model.
+
+\newcommand{\concretepic}[1]{\includegraphics[width=0.3\columnwidth]{\decompfigsdir/concrete-component-#1}}
 \newcommand{\concretelegend}[0]{\raisebox{5mm}{\includegraphics[trim=56mm 1mm 2.1mm 34mm, clip, width=0.24\columnwidth]{\decompfigsdir/concrete-component-8-legend}}}
 %
 \begin{figure}[h!]
 \centering
-\begin{tabular}{ccc}
+\begin{tabular}{cccc}
 %\includegraphics[width=0.3\textwidth]{\additivefigsdir/interpretable_1st_order1.pdf} &
 %\includegraphics[width=0.3\textwidth]{\additivefigsdir/interpretable_1st_order2.pdf}& 
-Cement & Slag & Fly Ash\\
+\hspace{-6mm}\raisebox{0.7cm}{\rotatebox{90}{strength}}\hspace{-7mm} &
 \concretepic{1} & \concretepic{2} & \concretepic{3} \\
- Water & Plasticizer & Coarse\\
+& cement (kg/m$^3$) & slag (kg/m$^3$) & fly ash (kg/m$^3$)\\[4mm]
+\hspace{-6mm}\raisebox{0.7cm}{\rotatebox{90}{strength}}\hspace{-7mm} &
 \concretepic{4} & \concretepic{5} & \concretepic{6} \\
- Fine & Age \\
- \concretepic{7} & \concretepic{8} & \concretelegend \\
+& water (kg/m$^3$) & plasticizer (kg/m$^3$) & coarse (kg/m$^3$) \\[4mm]
+\hspace{-6mm}\raisebox{0.7cm}{\rotatebox{90}{strength}}\hspace{-7mm} &
+\concretepic{7} & \concretepic{8} & \concretelegend \\
+& fine (kg/m$^3$) & age (days) \\
 \end{tabular}
 \caption[Decomposition of posterior into interpretable one-dimensional functions]
-{The predictive distribution of each component of a multi-dimensional additive model.
-Blue crosses indicate the original data projected on to each dimension, red indicates the marginal posterior density, and colored lines are samples from the marginal posterior of each component.
+{The predictive distribution of each one-dimensional function in a multi-dimensional additive model.
+Blue crosses indicate the original data projected on to each dimension, red indicates the marginal posterior density of each function, and colored lines are samples from the marginal posterior distribution of each one-dimensional function.
 The vertical axis is the same for all plots.
 %The black line is the posterior mean of a \sgp{} with only one term in its kernel.
 %Right:  the posterior mean of a \sgp{} with only one second-order term in its kernel.
@@ -420,10 +426,9 @@ The vertical axis is the same for all plots.
 }
 \label{fig:interpretable functions}
 \end{figure}
-%
 
-\Cref{fig:interpretable functions} shows the marginal posterior distribution of each of the eight components in \cref{eq:concrete}.
-The parameters controlling the variance of two of the components, ``coarse'' and ``fine'', were set to zero, meaning that the marginal likelihood preferred a parsimonious model which did not depend on these dimensions.
+\Cref{fig:interpretable functions} shows the marginal posterior distribution of each of the eight one-dimensional functions in the model. %\cref{eq:concrete}.
+The parameters controlling the variance of two of the functions, $f_6(\textnormal{coarse})$ and $f_7(\textnormal{fine})$ were set to zero, meaning that the marginal likelihood preferred a parsimonious model which did not depend on these inputs.
 This is an example of the automatic sparsity that arises by maximizing marginal likelihood in \gp{} models, and another example of automatic relevance determination (\ARD) \citep{neal1995bayesian}.
 
 The ability to learn kernel parameters in this way is much more difficult when using non-probabilistic methods such as Support Vector Machines \citep{cortes1995support}, for which cross-validation is often the best method to select kernel parameters.
@@ -499,7 +504,7 @@ To extend these formulas to a sum of more than two functions, the term $\vK_1 + 
 \subsubsection{Posterior covariance of additive components}
 
 %One of the advantages of using a generative, model-based approach is that we can examine any aspect of the model we wish to.
-One can also compute the posterior covariance between any two components, conditioned on their sum:
+One can also compute the posterior covariance between the height of any two functions, conditioned on their sum:
 %
 \begin{align}
 \Cov \big[ \vf_1(\vX^\star), \vf_2(\vX^\star) \big| \vf(\vX) \big]
@@ -509,19 +514,19 @@ One can also compute the posterior covariance between any two components, condit
 \label{eq:post-component-cov}
 \end{align}
 %
-If this quantity is negative, it means that there is ambiguity about which of the two components explains the data at that location.
+If this quantity is negative, it means that there is ambiguity about which of the two functions is high or low at that location.
 \begin{figure}
 \centering
 \renewcommand{\tabcolsep}{1mm}
 \def\incpic#1{\includegraphics[width=0.11\columnwidth]{../figures/decomp/concrete-#1}}
 \begin{tabular}{p{2mm}*{6}{c}}
- & {Cement} & {Slag} & {Fly Ash} & {Water} & \parbox{0.1\columnwidth}{Plasticizer} & {Age} \\ 
- \rotatebox{90}{{Cement}} & \incpic{Cement-Cement} & \incpic{Cement-Slag} & \incpic{Cement-Fly-Ash} & \incpic{Cement-Water} & \incpic{Cement-Plasticizer} & \incpic{Cement-Age} \\ 
- \rotatebox{90}{{Slag}} & \incpic{Slag-Cement} & \incpic{Slag-Slag} & \incpic{Slag-Fly-Ash} & \incpic{Slag-Water} & \incpic{Slag-Plasticizer} & \incpic{Slag-Age} \\ 
- \rotatebox{90}{{Fly Ash}} & \incpic{Fly-Ash-Cement} & \incpic{Fly-Ash-Slag} & \incpic{Fly-Ash-Fly-Ash} & \incpic{Fly-Ash-Water} & \incpic{Fly-Ash-Plasticizer} & \incpic{Fly-Ash-Age} \\ 
- \rotatebox{90}{{$\quad$Water}} & \incpic{Water-Cement} & \incpic{Water-Slag} & \incpic{Water-Fly-Ash} & \incpic{Water-Water} & \incpic{Water-Plasticizer} & \incpic{Water-Age} \\ 
- \rotatebox{90}{\parbox{0.1\columnwidth}{Plasticizer}} & \incpic{Plasticizer-Cement} & \incpic{Plasticizer-Slag} & \incpic{Plasticizer-Fly-Ash} & \incpic{Plasticizer-Water} & \incpic{Plasticizer-Plasticizer} & \incpic{Plasticizer-Age} \\ 
- \rotatebox{90}{{Age}} & \incpic{Age-Cement} & \incpic{Age-Slag} & \incpic{Age-Fly-Ash} & \incpic{Age-Water} & \incpic{Age-Plasticizer} & \incpic{Age-Age} \\
+  & {cement} & {slag} & {fly ash} & {water} & \parbox{0.1\columnwidth}{plasticizer} & {age} \\
+ \rotatebox{90}{{$\;\;$cement}} & \incpic{Cement-Cement} & \incpic{Cement-Slag} & \incpic{Cement-Fly-Ash} & \incpic{Cement-Water} & \incpic{Cement-Plasticizer} & \incpic{Cement-Age} \\ 
+ \rotatebox{90}{{$\;\;$$\;\;$slag}} & \incpic{Slag-Cement} & \incpic{Slag-Slag} & \incpic{Slag-Fly-Ash} & \incpic{Slag-Water} & \incpic{Slag-Plasticizer} & \incpic{Slag-Age} \\ 
+ \rotatebox{90}{{$\;\;$fly ash}} & \incpic{Fly-Ash-Cement} & \incpic{Fly-Ash-Slag} & \incpic{Fly-Ash-Fly-Ash} & \incpic{Fly-Ash-Water} & \incpic{Fly-Ash-Plasticizer} & \incpic{Fly-Ash-Age} \\ 
+ \rotatebox{90}{{$\quad$water}} & \incpic{Water-Cement} & \incpic{Water-Slag} & \incpic{Water-Fly-Ash} & \incpic{Water-Water} & \incpic{Water-Plasticizer} & \incpic{Water-Age} \\ 
+ \rotatebox{90}{{plasticizer}} & \incpic{Plasticizer-Cement} & \incpic{Plasticizer-Slag} & \incpic{Plasticizer-Fly-Ash} & \incpic{Plasticizer-Water} & \incpic{Plasticizer-Plasticizer} & \incpic{Plasticizer-Age}\\
+\rotatebox{90}{$\;\;$$\;\;$\phantom{t}age} & \incpic{Age-Cement} & \incpic{Age-Slag} & \incpic{Age-Fly-Ash} & \incpic{Age-Water} & \incpic{Age-Plasticizer} & \incpic{Age-Age} \\
  \end{tabular}
  \fbox{
 \begin{tabular}{c}
@@ -530,20 +535,21 @@ If this quantity is negative, it means that there is ambiguity about which of th
 \end{tabular}
 }
 \caption[Visualizing posterior correlations between components]
-{Posterior correlations between, and within, the additive components explaining the concrete dataset.
-Each plot shows the posterior correlations between two components, plotted over the domain of the data $\pm 5\%$.
+{Posterior correlations between the heights of the one-dimensional functions in \cref{eq:concrete}, whose sum models concrete strength.
+%Each plot shows the posterior correlations between the height of two functions, evaluated across the range of the data upon which they depend.
 %Color indicates the amount of correlation between the function value of the two components.
 Red indicates high correlation, teal indicates no correlation, and blue indicates negative correlation.
-Plots on the diagonal show posterior correlations within each component.
+Plots on the diagonal show posterior correlations within each function.
+Correlations are evaluated over the same input ranges as in \cref{fig:interpretable functions}. 
 %Off-diagonal plots show posterior covariance between each pair of functions, as a function of both inputs.
 %Negative correlation means that one function is high and the other low, but which one is uncertain.
-Dimensions ``coarse'' and ``fine'' are not shown, because their variance is zero.
+Correlations with $f_6(\textnormal{coarse})$ and $f_7(\textnormal{fine})$ are not shown, because their estimated variance was zero.
 }
 \label{fig:interpretable interactions}
 \end{figure}
 %
 For example, \cref{fig:interpretable interactions} shows the posterior correlation between all non-zero components of the concrete model.
-Most of the correlation occurs within components, but there is also negative correlation between the ``cement'' and ``slag'' variables.
+This figure shows that most of the correlation occurs within components, but there is also negative correlation between the ``cement'' and ``slag'' variables.
 This reflects an ambiguity in the model about which one of these functions is high and the other low.
 
 
@@ -664,7 +670,7 @@ their addition has the form:
 %
 \begin{align}
 k_a(\iva, \iva') + k_b(\iva, \iva')
-& = \feata(\iva)\tra \featb(\iva') + \feata(\iva)\tra \featb(\iva') 
+& = \feata(\iva)\tra \feata(\iva') + \featb(\iva)\tra \featb(\iva') 
  = \colvec{\feata(\iva)}{\featb(\iva)}\tra \colvec{\feata(\iva')}{\featb(\iva')}
 \end{align}
 %
@@ -777,6 +783,7 @@ All three methods introduce a different type of nonstationarity.
 \begin{enumerate}
 
 \item {\bf Sum over the orbit.} 
+The \emph{orbit} of $x$ with respect to a group $G$ is ${\{g(x) : g \in G\}}$, the set obtained by applying each element of $G$ to $x$.
 \citet{ginsbourger2012argumentwise} and \citet{kondor2008group} suggest enforcing invariances through a double sum over the orbits of $\vx$ and $\vx'$ with respect to G:
 %
 \begin{align}

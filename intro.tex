@@ -19,17 +19,24 @@
 Prediction, extrapolation, and induction are all examples of learning a function from data.
 There are many ways to learn functions, but one particularly elegant way is by probabilistic inference.
 Probabilistic inference takes a group of hypotheses (a \emph{model}), and weights those hypotheses based on how well their predictions match the data.
-Keeping around all the hypotheses that match the data helps guard against over-fitting.
-Comparing different models is a way to find which sorts of structure are present in a dataset.
+This approach is appealing for two reasons.
+First, keeping all hypotheses that match the data helps to guard against over-fitting.
+Second, comparing how well a dataset is fit by different models gives a way of finding which sorts of structure are present in that data. % models having different types of structure is a way to find which sorts of structure are present in a dataset.
 
-To be able to learn a wide variety of structures, we would like to have an expressive language of models of functions.
-We would like to be able to represent simple kinds of functions, such as linear functions or polynomials.
-We would also like to have models of arbitrarily complex functions, specified in terms of high-level properties such as how smooth they are, whether they repeat over time, or which symmetries they have.
-
-The beginning of this thesis will show how to build such a language using Gaussian processes (\gp{}s), a tractable class of models of functions.
-This chapter will introduce the basic properties of \gp{}s.
-The next chapter will describe how to model different types of structure using \gp{}s.
-
+%This thesis will be concerned with finding structure in functions.
+%The types of structure examined in this thesis 
+One can construct models of functions having many different types of structure, such as additivity, symmetry, periodicity, changepoints, or combinations of these, using Gaussian processes (\gp{}s).
+%To be able to learn a wide variety of structures, we would like to have an expressive language of models of functions.
+%We would like to be able to represent simple kinds of functions, such as linear functions or polynomials.
+%We would also like to have models of arbitrarily complex functions, specified in terms of high-level properties such as how smooth they are, whether they repeat over time, or which symmetries they have.
+%Chapters 2 and 3 will
+%
+%All of these models of function can be constructed using Gaussian processes (\gp{}s).%, a tractable class of models of functions.
+%
+%This chapter will introduce the basic properties of \gp{}s.
+Chapter \ref{ch:kernels} will describe how to model these different types of structure using \gp{}s.
+This short chapter will introduce the basic properties of \gp{}s, and provide an outline of the thesis.
+%Chapter \ref{ch:grammar} will show how searching over many
 
 
 
@@ -40,10 +47,13 @@ Gaussian processes are a simple and general class of models of functions.
 \begin{figure}[t]
 \begin{centering}
 \begin{tabular}{cc}
-\includegraphics[width=0.48\textwidth]{\introfigsdir/fuzzy-0} & 
-\includegraphics[width=0.48\textwidth]{\introfigsdir/fuzzy-1} \\
-\includegraphics[width=0.48\textwidth]{\introfigsdir/fuzzy-2} & 
-\includegraphics[width=0.48\textwidth]{\introfigsdir/fuzzy-3}
+\hspace{-3mm}\raisebox{2cm}{$f(x)$}
+\includegraphics[width=0.46\textwidth]{\introfigsdir/fuzzy-0} & 
+\includegraphics[width=0.46\textwidth]{\introfigsdir/fuzzy-1} \\
+\hspace{-3mm}\raisebox{2cm}{$f(x)$}
+\includegraphics[width=0.46\textwidth]{\introfigsdir/fuzzy-2} & 
+\includegraphics[width=0.46\textwidth]{\introfigsdir/fuzzy-3} \\[-1mm]
+$x$ & $x$
 \end{tabular}
 \end{centering}
 \caption[A one-dimensional Gaussian process posterior]
@@ -86,17 +96,18 @@ One of the main difficulties in using \gp{}s is constructing a kernel which repr
 \subsection{Model selection}
 
 The crucial property of \gp{}s that allows us to automatically construct models is that we can compute the \emph{marginal likelihood} of a dataset given a particular model, also known as the \emph{evidence} \citep{mackay1992bayesian}.
-The marginal likelihood allows us to compare models and automatically discover the appropriate amount of detail to use, due to Bayesian Occam's razor \citep{rasmussen2001occam,mackay2003information}.
-
-Choosing a kernel, or kernel parameters, by maximizing the marginal likelihood will typically result in selecting the \emph{least} flexible model which still captures all the structure in the data.
-For example, if a kernel has a parameter which controls the smoothness of the functions it models, the maximum-likelihood estimate of that parameter will usually correspond to the smoothest family of functions consistent with the observed function values.
-
-Here is the marginal likelihood under a \gp{} prior of observing a set of function values $\left[ f(\vx_1), f(\vx_2), \ldots f(\vx_N)  \right] \defeq \vf(\vX)$ at locations $\vX$:
+The marginal likelihood allows one to compare models, automatically balancing between the capacity of a model and its fit to the data~\citep{rasmussen2001occam,mackay2003information}.
+%discover the appropriate amount of detail to use, due to Bayesian Occam's razor 
+%
+%Choosing a kernel, or kernel parameters, by maximizing the marginal likelihood will typically result in selecting the \emph{least} flexible model which still captures all the structure in the data.
+%For example, if a kernel has a parameter which controls the smoothness of the functions it models, the maximum-likelihood estimate of that parameter will usually correspond to the smoothest family of functions consistent with the observed function values.
+%
+The marginal likelihood under a \gp{} prior of a set of function values $\left[ f(\vx_1), f(\vx_2), \ldots f(\vx_N)  \right] \defeq \vf(\vX)$ at locations $\vX$ is given by:
 % given by the rows of $\vX$:
 %
 \begin{align}
 p(\funcval | \vX, \mu(\cdot), k(\cdot, \cdot)) & = \N{\funcval}{\mu(\vX)}{k(\vX, \vX)} \label{eq:gp_marg_lik} \\
-& = (2\pi)^{-\frac{N}{2}} \times \underwrite{ |k(\vX, \vX)|^{-\frac{1}{2}}\,}{\parbox{2.5cm}{\parbox{3.5cm}{\footnotesize discourages flexibility}}} \nonumber \\
+& = (2\pi)^{-\frac{N}{2}} \times \underwrite{ |k(\vX, \vX)|^{-\frac{1}{2}}\,}{\parbox{2.5cm}{\parbox{4cm}{\footnotesize controls model capacity}}} \nonumber \\
  & \qquad \times \underwrite{\exp \left\{ -\frac{1}{2} \left( \funcval - \boldsymbol\mu(\vX) \right)\tra k(\vX, \vX)\inv \left(\funcval - \boldsymbol\mu(\vX) \right) \right\}}{\footnotesize encourages fit with data} \nonumber
 \end{align}
 %
