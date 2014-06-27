@@ -153,7 +153,7 @@ housing  & $0.1 $ & $0.6 $ & ${\bf 80.6 }$ & $1.4 $ & $1.8 $ & $0.8 $ & $0.7 $ &
 
 On different datasets, the dominant order of interaction estimated by the additive model varies widely.
 In some cases, the variance is concentrated almost entirely onto a single order of interaction.
-This may may be a side-effect of using the same lengthscales for all orders of interaction.; lengthscales appropriate for low-dimensional regression might not be appropriate for high-dimensional regression.
+This may may be a side-effect of using the same lengthscales for all orders of interaction; lengthscales appropriate for low-dimensional regression might not be appropriate for high-dimensional regression.
 A re-scaling of lengthscales which preserves relative average distances between datapoints might be expected to improve the model.
 %An additive \gp{} with all of its variance coming from the 1st order is equivalent to a sum of one-dimensional functions.
 %An additive \gp{} with all its variance coming from the $D$th order is equivalent to a \gp{} with an \seard{} kernel.
@@ -219,7 +219,7 @@ e_{n-1}(k_1, k_2, \dots,k_{j-1},k_{j+1}, \dots k_D)
 \label{eq:additive-derivatives}
 \end{align}
 %
-\Cref{eq:additive-derivatives} gives the terms that $k_j$ is multiplied by in the original polynomial, which are the terms required by the chain rule.
+\Cref{eq:additive-derivatives} gives all terms that $k_j$ is multiplied by in the original polynomial, which are exactly the terms required by the chain rule.
 These derivatives allow gradient-based optimization of the base kernel parameters with respect to the marginal likelihood.
 
 

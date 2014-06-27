@@ -146,14 +146,14 @@ Working with kernels, rather than the parametric form of the function itself, al
 Here, we discuss a few examples:
 
 \begin{itemize}
-\item {\bf Locally Periodic Functions.}
-In univariate data, multiplying a kernel by \kSE{} gives a way of converting global structure to local structure.
-For example, $\Per$ corresponds to exactly periodic structure, whereas $\Per \kerntimes \SE$ corresponds to locally periodic structure, as shown in the second column of \cref{fig:kernels_times}.
-
 \item {\bf Polynomial Regression.}
 By multiplying together $T$ linear kernels, we obtain a prior on polynomials of degree $T$.
 %This class of functions also has a simple parametric form.
 The first column of \cref{fig:kernels_times} shows a quadratic kernel.
+
+\item {\bf Locally Periodic Functions.}
+In univariate data, multiplying a kernel by \kSE{} gives a way of converting global structure to local structure.
+For example, $\Per$ corresponds to exactly periodic structure, whereas $\Per \kerntimes \SE$ corresponds to locally periodic structure, as shown in the second column of \cref{fig:kernels_times}.
 
 \item {\bf Functions with Growing Amplitude.}
 Multiplying by a linear kernel means that the marginal standard deviation of the function being modeled grows linearly away from the location given by kernel parameter $c$.
@@ -381,7 +381,7 @@ In high dimensions, we can also consider sums of functions of multiple input dim
 
 To illustrate how additive kernels give rise to interpretable models, we built an additive model of the strength of concrete as a function of the amount of seven different ingredients (cement, slag, fly ash, water, plasticizer, coarse aggregate and fine aggregate), and the age of the concrete \citep{yeh1998modeling}.
 %We model measurements of the compressive strength of concrete, as a function of the concentration of 7 ingredients, plus the age of the concrete.
-Our simple model is a sum of 8 different one-dimensional functions, each depending on one of these variables:
+Our simple model is a sum of 8 different one-dimensional functions, each depending on only one of these quantities:
 %
 \begin{align}
 f(\vx) & = 
@@ -521,12 +521,12 @@ If this quantity is negative, it means that there is ambiguity about which of th
 \def\incpic#1{\includegraphics[width=0.11\columnwidth]{../figures/decomp/concrete-#1}}
 \begin{tabular}{p{2mm}*{6}{c}}
   & {cement} & {slag} & {fly ash} & {water} & \parbox{0.1\columnwidth}{plasticizer} & {age} \\
- \rotatebox{90}{{$\;\;$cement}} & \incpic{Cement-Cement} & \incpic{Cement-Slag} & \incpic{Cement-Fly-Ash} & \incpic{Cement-Water} & \incpic{Cement-Plasticizer} & \incpic{Cement-Age} \\ 
- \rotatebox{90}{{$\;\;$$\;\;$slag}} & \incpic{Slag-Cement} & \incpic{Slag-Slag} & \incpic{Slag-Fly-Ash} & \incpic{Slag-Water} & \incpic{Slag-Plasticizer} & \incpic{Slag-Age} \\ 
+ \rotatebox{90}{$\;\;$ cement} & \incpic{Cement-Cement} & \incpic{Cement-Slag} & \incpic{Cement-Fly-Ash} & \incpic{Cement-Water} & \incpic{Cement-Plasticizer} & \incpic{Cement-Age} \\ 
+ \rotatebox{90}{$\;\;\;\;$ slag} & \incpic{Slag-Cement} & \incpic{Slag-Slag} & \incpic{Slag-Fly-Ash} & \incpic{Slag-Water} & \incpic{Slag-Plasticizer} & \incpic{Slag-Age} \\ 
  \rotatebox{90}{{$\;\;$fly ash}} & \incpic{Fly-Ash-Cement} & \incpic{Fly-Ash-Slag} & \incpic{Fly-Ash-Fly-Ash} & \incpic{Fly-Ash-Water} & \incpic{Fly-Ash-Plasticizer} & \incpic{Fly-Ash-Age} \\ 
  \rotatebox{90}{{$\quad$water}} & \incpic{Water-Cement} & \incpic{Water-Slag} & \incpic{Water-Fly-Ash} & \incpic{Water-Water} & \incpic{Water-Plasticizer} & \incpic{Water-Age} \\ 
  \rotatebox{90}{{plasticizer}} & \incpic{Plasticizer-Cement} & \incpic{Plasticizer-Slag} & \incpic{Plasticizer-Fly-Ash} & \incpic{Plasticizer-Water} & \incpic{Plasticizer-Plasticizer} & \incpic{Plasticizer-Age}\\
-\rotatebox{90}{$\;\;$$\;\;$\phantom{t}age} & \incpic{Age-Cement} & \incpic{Age-Slag} & \incpic{Age-Fly-Ash} & \incpic{Age-Water} & \incpic{Age-Plasticizer} & \incpic{Age-Age} \\
+\rotatebox{90}{$\;\;\;$ \phantom{t}age} & \incpic{Age-Cement} & \incpic{Age-Slag} & \incpic{Age-Fly-Ash} & \incpic{Age-Water} & \incpic{Age-Plasticizer} & \incpic{Age-Age} \\
  \end{tabular}
  \fbox{
 \begin{tabular}{c}
@@ -539,7 +539,7 @@ If this quantity is negative, it means that there is ambiguity about which of th
 %Each plot shows the posterior correlations between the height of two functions, evaluated across the range of the data upon which they depend.
 %Color indicates the amount of correlation between the function value of the two components.
 Red indicates high correlation, teal indicates no correlation, and blue indicates negative correlation.
-Plots on the diagonal show posterior correlations within each function.
+Plots on the diagonal show posterior correlations between different values of the same function.
 Correlations are evaluated over the same input ranges as in \cref{fig:interpretable functions}. 
 %Off-diagonal plots show posterior covariance between each pair of functions, as a function of both inputs.
 %Negative correlation means that one function is high and the other low, but which one is uncertain.
@@ -549,7 +549,7 @@ Correlations with $f_6(\textnormal{coarse})$ and $f_7(\textnormal{fine})$ are no
 \end{figure}
 %
 For example, \cref{fig:interpretable interactions} shows the posterior correlation between all non-zero components of the concrete model.
-This figure shows that most of the correlation occurs within components, but there is also negative correlation between the ``cement'' and ``slag'' variables.
+This figure shows that most of the correlation occurs within components, but there is also negative correlation between the height of $f_1(\textnormal{cement})$ and $f_2(\textnormal{slag})$.
 This reflects an ambiguity in the model about which one of these functions is high and the other low.
 
 
