@@ -154,7 +154,7 @@ housing  & $0.1 $ & $0.6 $ & ${\bf 80.6 }$ & $1.4 $ & $1.8 $ & $0.8 $ & $0.7 $ &
 On different datasets, the dominant order of interaction estimated by the additive model varies widely.
 In some cases, the variance is concentrated almost entirely onto a single order of interaction.
 This may may be a side-effect of using the same lengthscales for all orders of interaction; lengthscales appropriate for low-dimensional regression might not be appropriate for high-dimensional regression.
-A re-scaling of lengthscales which preserves relative average distances between datapoints might be expected to improve the model.
+%A re-scaling of lengthscales which enforces similar distances between datapoints might improve the model.
 %An additive \gp{} with all of its variance coming from the 1st order is equivalent to a sum of one-dimensional functions.
 %An additive \gp{} with all its variance coming from the $D$th order is equivalent to a \gp{} with an \seard{} kernel.
 %
@@ -209,7 +209,7 @@ Each iteration has cost $\mathcal{O}(D)$, given the next-lowest polynomial.
 \subsubsection{Evaluation of derivatives}
 
 Conveniently, we can use the same trick to efficiently compute the necessary derivatives of the additive kernel with respect to the base kernels.
-This can be done by removing the base kernel of interest $k_j$ from each term of the polynomials:
+This can be done by removing the base kernel of interest, $k_j$, from each term of the polynomials:
 %
 \begin{align}
 \frac{\partial k_{add_n}}{\partial k_j} = 

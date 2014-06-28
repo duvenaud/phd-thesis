@@ -429,7 +429,7 @@ The vertical axis is the same for all plots.
 
 \Cref{fig:interpretable functions} shows the marginal posterior distribution of each of the eight one-dimensional functions in the model. %\cref{eq:concrete}.
 The parameters controlling the variance of two of the functions, $f_6(\textnormal{coarse})$ and $f_7(\textnormal{fine})$ were set to zero, meaning that the marginal likelihood preferred a parsimonious model which did not depend on these inputs.
-This is an example of the automatic sparsity that arises by maximizing marginal likelihood in \gp{} models, and another example of automatic relevance determination (\ARD) \citep{neal1995bayesian}.
+This is an example of the automatic sparsity that arises by maximizing marginal likelihood in \gp{} models, and is another example of automatic relevance determination (\ARD) \citep{neal1995bayesian}.
 
 The ability to learn kernel parameters in this way is much more difficult when using non-probabilistic methods such as Support Vector Machines \citep{cortes1995support}, for which cross-validation is often the best method to select kernel parameters.
 
@@ -535,11 +535,11 @@ If this quantity is negative, it means that there is ambiguity about which of th
 \end{tabular}
 }
 \caption[Visualizing posterior correlations between components]
-{Posterior correlations between the heights of the one-dimensional functions in \cref{eq:concrete}, whose sum models concrete strength.
+{Posterior correlations between the heights of different one-dimensional functions in \cref{eq:concrete}, whose sum models concrete strength.
 %Each plot shows the posterior correlations between the height of two functions, evaluated across the range of the data upon which they depend.
 %Color indicates the amount of correlation between the function value of the two components.
 Red indicates high correlation, teal indicates no correlation, and blue indicates negative correlation.
-Plots on the diagonal show posterior correlations between different values of the same function.
+Plots on the diagonal show posterior correlations between different evaluations of the same function.
 Correlations are evaluated over the same input ranges as in \cref{fig:interpretable functions}. 
 %Off-diagonal plots show posterior covariance between each pair of functions, as a function of both inputs.
 %Negative correlation means that one function is high and the other low, but which one is uncertain.
@@ -550,7 +550,7 @@ Correlations with $f_6(\textnormal{coarse})$ and $f_7(\textnormal{fine})$ are no
 %
 For example, \cref{fig:interpretable interactions} shows the posterior correlation between all non-zero components of the concrete model.
 This figure shows that most of the correlation occurs within components, but there is also negative correlation between the height of $f_1(\textnormal{cement})$ and $f_2(\textnormal{slag})$.
-This reflects an ambiguity in the model about which one of these functions is high and the other low.
+%This reflects an ambiguity in the model about which one of these functions is high and the other low.
 
 
 

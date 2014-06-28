@@ -23,9 +23,12 @@ This approach is appealing for two reasons.
 First, keeping all hypotheses that match the data helps to guard against over-fitting.
 Second, comparing how well a dataset is fit by different models gives a way of finding which sorts of structure are present in that data. % models having different types of structure is a way to find which sorts of structure are present in a dataset.
 
-%This thesis will be concerned with finding structure in functions.
+This thesis focuses on constructing models of functions.
 %The types of structure examined in this thesis 
-One can construct models of functions that have many different types of structure, such as additivity, symmetry, periodicity, changepoints, or combinations of these, using Gaussian processes (\gp{}s).
+Chapter \ref{ch:kernels} describes how to model functions having many different types of structure, such as additivity, symmetry, periodicity, changepoints, or combinations of these, using Gaussian processes (\gp{}s).
+Chapters \ref{ch:grammar} and \ref{ch:description} show how such models can be automatically constructed from data, and then automatically described.
+Later chapters explore several extensions of these models.
+%will describe how to model functions having many different types of structure, such as additivity, symmetry, periodicity, changepoints, or combinations of these, using Gaussian processes (\gp{}s).
 %To be able to learn a wide variety of structures, we would like to have an expressive language of models of functions.
 %We would like to be able to represent simple kinds of functions, such as linear functions or polynomials.
 %We would also like to have models of arbitrarily complex functions, specified in terms of high-level properties such as how smooth they are, whether they repeat over time, or which symmetries they have.
@@ -34,7 +37,7 @@ One can construct models of functions that have many different types of structur
 %All of these models of function can be constructed using Gaussian processes (\gp{}s).%, a tractable class of models of functions.
 %
 %This chapter will introduce the basic properties of \gp{}s.
-Chapter \ref{ch:kernels} will describe how to model these different types of structure using \gp{}s.
+%Chapter \ref{ch:kernels} will describe how to model these different types of structure using \gp{}s.
 This short chapter introduces the basic properties of \gp{}s, and provides an outline of the thesis.
 %Chapter \ref{ch:grammar} will show how searching over many
 
@@ -96,7 +99,7 @@ One of the main difficulties in using \gp{}s is constructing a kernel which repr
 \subsection{Model selection}
 
 The crucial property of \gp{}s that allows us to automatically construct models is that we can compute the \emph{marginal likelihood} of a dataset given a particular model, also known as the \emph{evidence} \citep{mackay1992bayesian}.
-The marginal likelihood allows one to compare models, automatically balancing between the capacity of a model and its fit to the data~\citep{rasmussen2001occam,mackay2003information}.
+The marginal likelihood allows one to compare models, balancing between the capacity of a model and its fit to the data~\citep{rasmussen2001occam,mackay2003information}.
 %discover the appropriate amount of detail to use, due to Bayesian Occam's razor 
 %
 %Choosing a kernel, or kernel parameters, by maximizing the marginal likelihood will typically result in selecting the \emph{least} flexible model which still captures all the structure in the data.
