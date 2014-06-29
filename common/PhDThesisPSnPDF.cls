@@ -222,13 +222,13 @@ supported!}
       breaklinks=true,
       linktocpage, 
       colorlinks=true, 
-      linkcolor=black, 
-      urlcolor=black,
-      citecolor=black, 
+%      linkcolor=black, 
+%      urlcolor=black,
+%      citecolor=black, 
       anchorcolor=black,
-%      linkcolor=mydarkblue, 
-%      urlcolor=mydarkblue,
-%      citecolor=mydarkblue, 
+      linkcolor=mydarkblue, 
+      urlcolor=mydarkblue,
+      citecolor=mydarkblue, 
 %      anchorcolor=green
     }
     
