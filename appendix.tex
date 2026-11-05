@@ -20,12 +20,12 @@ If
 then
 %
 \begin{align}
-\vy_A | \vy_B \sim \mathcal{N} \big(\vmu_A + \vSigma_{AB} \vSigma_{BB}\inv \left( \vx_B - \vmu_B \right),
+\vy_A | \vy_B \sim \mathcal{N} \big(\vmu_A + \vSigma_{AB} \vSigma_{BB}\inv \left( \vy_B - \vmu_B \right),
 \vSigma_{AA} - \vSigma_{AB} \vSigma_{BB}\inv \vSigma_{BA} \big).
 \label{eq:gauss_conditional}
 \end{align}
 
-This result can be used in the context of Gaussian process regression, where $\vy_B = [f(\vx_1), f(\vx_2), \dots, f(\vx_N)]$ represents a set of function values observed at some subset of locations $[\vx_1, \vx_2, \dots, \vx_N]$, while $\vy_A = [f(\vx_1\star), f(\vx_2\star), \ldots, f(\vx_N\star)]$ represents test points whose predictive distribution we'd like to know.
+This result can be used in the context of Gaussian process regression, where $\vy_B = [f(\vx_1), f(\vx_2), \dots, f(\vx_N)]$ represents a set of function values observed at some subset of locations $[\vx_1, \vx_2, \dots, \vx_N]$, while $\vy_A = [f(\vx_1^\star), f(\vx_2^\star), \ldots, f(\vx_M^\star)]$ represents test points whose predictive distribution we'd like to know.
 In this case, the necessary covariance matrices are given by:
 %
 \begin{align}
@@ -65,7 +65,7 @@ Each of these formulas is multiplied by a scale factor $\sigma_f^2$, which we om
 \boldsymbol{\bar\sigma}(\inputVar, \inputVar') & = \scalefactor (1-\sigma(x))(1-\sigma(x'))
 \end{align}
 %
-where $\delta_{\inputVar, \inputVar'}$ is the Kronecker delta function, $\{c,\ell,p,\alpha\}$ represent kernel parameters, and ${\sigma(x) = \nicefrac{1}{1 + \exp(-x)}}$.
+where $\delta(\inputVar - \inputVar')$ is the Kronecker delta function, $\{c,\ell,p,\alpha\}$ represent kernel parameters, and ${\sigma(x) = \nicefrac{1}{1 + \exp(-x)}}$.
 
 \Cref{eq:appendix-se,eq:appendix-periodic,eq:appendix-lin} are plotted in \cref{fig:basic_kernels}, and \cref{eq:appendix-wn,eq:appendix-rq,eq:appendix-cos} are plotted in \cref{fig:basic_kernels_two}.
 Draws from \gp{} priors with changepoint kernels are shown in \cref{fig:changepoint_examples}.
@@ -88,10 +88,10 @@ where $I_0$ is the modified Bessel function of the first kind of order zero.
 He further showed that its limit as the lengthscale grows is the cosine kernel:
 %
 \begin{equation}
-\lim_{\ell \to \infty} \kPerGen(x, x') = \cos\left(\frac{2 \pi (x - x')}{p}\right).
+\lim_{\ell \to \infty} \kPerGen(x, x') = \sigma_f^2 \cos\left(\frac{2 \pi (x - x')}{p}\right).
 \end{equation}
 
-Separating out the constant component allows us to express negative prior covariance, as well as increasing the interpretability of the resulting models.
+Separating out the constant component allows us to express negative prior covariance, as well as to increase the interpretability of the resulting models.
 This covariance function is included in the \GPML{} software package~\citep{GPML}, and its source can be viewed at \url{gaussianprocess.org/gpml/code/matlab/cov/covPeriodicNoDC.m}.
 
 
@@ -132,7 +132,7 @@ Afterwards, we added several more search operators in order to speed up the sear
 This expanded set of operators was used in the experiments in \cref{sec:time_series,sec:Predictive accuracy on time series,ch:description}.
 These new operators do not change the set of possible models.
 
-To accommodate changepoints and changewindows, we introduced the following additional operators to our search:
+To accommodate changepoints and change-windows, we introduced the following additional operators to our search:
 %
 \begin{eqnarray}
 \mathcal{S} &\to& \kCP(\mathcal{S},\mathcal{S}) \\
@@ -160,7 +160,7 @@ We also introduced the operator
 \mathcal{S} &\to& \mathcal{S} \times (\mathcal{B} + \kC)
 \end{eqnarray}
 %
-Which allows a new base kernel to be added along with the constant kernel, for cases when multiplying by a base kernel by itself would be overly restrictive.
+which allows a new base kernel to be added along with the constant kernel, for cases when multiplying by a base kernel by itself would be overly restrictive.
 
 
 
@@ -169,7 +169,7 @@ Which allows a new base kernel to be added along with the constant kernel, for c
 \chapter{Example Automatically Generated Report}
 \label{ch:example-solar}
 
-The following pages of this appendix contain an automatically-generated report, run on a dataset measuring annual solar irradiation data from 1610 to 2011.
+The following pages of this appendix contain an automatically-generated report, run on a dataset measuring annual solar irradiance from 1610 to 2011.
 This dataset was previously analyzed by \citet{lean1995reconstruction}.
 
 The structure search was run using the \procedurename-interpretable variant, with base kernels $\kSE$, $\kLin$, $\kC$, $\kPer$, $\vsigma$, and $\kWN$.
@@ -237,8 +237,8 @@ The \iwmm{} assumes that the latent density is an infinite mixture of Gaussians:
 p(\vx ) = \sum_{c=1}^{\infty} \lambda_c \, {\cal N}(\vx|\bm{\mu}_{c},\vR_{c}\inv)
 \end{align}
 %
-where $\lambda_{c}$, $\bm{\mu}_{c}$ and $\vR_{c}$ is the mixture weight, mean, and precision matrix of the $c$\textsuperscript{th} mixture component.
-We place a conjugate Gaussian-Wishart priors on the Gaussian parameters $\{\bm{\mu}_{c},\vR_{c}\}$:
+where $\lambda_{c}$, $\bm{\mu}_{c}$ and $\vR_{c}$ are the mixture weight, mean, and precision matrix of the $c$\textsuperscript{th} mixture component.
+We place conjugate Gaussian-Wishart priors on the Gaussian parameters $\{\bm{\mu}_{c},\vR_{c}\}$:
 %
 \begin{align}
 p(\bm{\mu}_{c},\vR_{c})
@@ -258,10 +258,10 @@ where $G$ is the normalizing constant.
 
 Because we use conjugate Gaussian-Wishart priors for the parameters of the Gaussian mixture components, we can analytically integrate out those parameters given the assignments of points to components.
 Let $z_n$ be the assignment of the $n$\textsuperscript{th} point.
-The prior probability of latent coordinates $\vX$ given latent cluster assignments $\CLAS=(\CLASi_1, \CLASi_2, \ldots, \CLASi_N)$ factorizes over clusters, and can be obtained in closed-form by integrating out the Gaussian parameters $\{\vmu_c, \vR_c\}$ to give:
+The prior probability of latent coordinates $\vX$ given latent cluster assignments $\CLAS=(\CLASi_1, \CLASi_2, \ldots, \CLASi_N)$ factorizes over clusters, and can be obtained in closed form by integrating out the Gaussian parameters $\{\vmu_c, \vR_c\}$ to give:
 %
 \begin{align}
-p(\vX | \CLAS, \vS, \nu, r) = \prod_{c=1}^{\infty}
+p(\vX | \CLAS, \vS, \nu, \vu, r) = \prod_{c=1}^{\infty}
 \pi^{-\frac{N_c Q}{2}}\frac{r^{Q/2} \left|\vS \right|^{\nu/2}}{r_c^{Q/2} \left| \vS_c \right|^{\nu_c/2}}
 \times \prod_{q=1}^Q \frac{\Gamma \left( \frac{\nu_c + 1 - q}{2} \right)}{\Gamma \left( \frac{\nu+1-q}{2} \right)},
 \label{eq:px_z}
@@ -310,7 +310,7 @@ p(\vY,\vX,\CLAS|\bm{\theta},\bm{S},\nu,\vu,r,\eta)
 \label{eq:joint}
 \end{align}
 %
-where the factors in the right hand side can be calculated by equations \eqref{eq:py_x}, \eqref{eq:px_z} and \eqref{eq:pz}, respectively.
+where the factors on the right-hand side can be calculated by equations \eqref{eq:py_x}, \eqref{eq:px_z} and \eqref{eq:pz}, respectively.
 
 \iffalse
 \subsubsection{Generative description of model}
@@ -351,7 +351,7 @@ $m(\vx)$ is the mean function of the Gaussian process, $\vx,\vx'\in{\mathbb R}^{
 %By placing conjugate Gaussian-Wishart priors on the parameters of the Gaussian mixture components, we analytically integrate out those parameters given the assignments of points to clusters.
 After analytically integrating out the parameters of the Gaussian mixture components, the only remaining variables to infer are the latent points $\vX$, the cluster assignments $\CLAS$, and the kernel parameters $\vtheta$.
 We'll estimate the posterior over these parameters using Markov chain Monte Carlo.
-In particular, we'll alternate between collapsed Gibbs sampling of each row of $\CLAS$, and Hamiltonian Monte Carlo sampling of $\vX$ and $\vtheta$.
+In particular, we'll alternate between collapsed Gibbs sampling of each element of $\CLAS$, and Hamiltonian Monte Carlo sampling of $\vX$ and $\vtheta$.
 
 First, we explain collapsed Gibbs sampling for the cluster assignments $\CLAS$.
 Given a sample of $\vX$, $p(\CLAS | \vX, \vS, \nu, \vu, r, \eta)$ does not depend on $\vY$.
@@ -379,12 +379,12 @@ as follows:
 %
 \begin{align}
 p(\vx_{n}|\vX_{c\setminus n},\bm{S},\nu,\vu,r)
-=\pi^{-\frac{N_{c\setminus n}Q}{2}}
+=\pi^{-\frac{Q}{2}}
 \frac{r_{c\setminus n} ^{Q/2} \left| \vS_{c\setminus n}  \right|^{\nu_{c\setminus n}/2}}
      {r_{c\setminus n}'^{Q/2} \left| \vS_{c\setminus n}' \right|^{\nu_{c\setminus n}'/2}}
-\times \prod_{d=1}^{Q}
-\frac{\Gamma \left( \frac{\nu_{c\setminus n}' + 1 - d}{2} \right)}
-     {\Gamma \left( \frac{\nu_{c\setminus n}  + 1 - d}{2} \right)},
+\times \prod_{q=1}^{Q}
+\frac{\Gamma \left( \frac{\nu_{c\setminus n}' + 1 - q}{2} \right)}
+     {\Gamma \left( \frac{\nu_{c\setminus n}  + 1 - q}{2} \right)},
 \label{eq:iwmm-cluster-gibbs}
 \end{align}
 %
@@ -397,7 +397,7 @@ A special case of \cref{eq:iwmm-cluster-gibbs} gives the likelihood for a new co
 
 \subsubsection{Gradients for Hamiltonian Monte Carlo}
 
-Hamiltonian Monte Carlo (\HMC{}) sampling of $\vX$ from posterior ${p(\vX|\CLAS,\vY,\bm{\theta},\bm{S},\nu,\vu,r)}$, requires computing the gradient of the log-unnormalized-posterior with respect to $\vX$:
+Hamiltonian Monte Carlo (\HMC{}) sampling of $\vX$ from posterior ${p(\vX|\CLAS,\vY,\bm{\theta},\bm{S},\nu,\vu,r)}$ requires computing the gradient of the log-unnormalized-posterior with respect to $\vX$:
 %
 \begin{align}
 \pderiv{}{\vX} \big[ \log p(\vY|\vX,\bm{\theta}) + \log p(\vX|\CLAS,\bm{S},\nu,\vu,r) \big]
@@ -407,7 +407,7 @@ Hamiltonian Monte Carlo (\HMC{}) sampling of $\vX$ from posterior ${p(\vX|\CLAS,
 The first term of gradient \eqref{eq:warped-hmc1} can be calculated by
 %
 \begin{align}
-\pderiv{\log p(\vY | \vX,\bm{\theta})}{\vX} =  \pderiv{\log p(\vY | \vX,\bm{\theta})}{\vK} \pderiv{\vK}{\vX} = \left[ -\frac{1}{2}D\vK\inv+\frac{1}{2}\vK\inv \vY \vY^{T} \vK\inv \right]\left[\pderiv{\vK}{\vX}\right],
+\pderiv{\log p(\vY | \vX,\bm{\theta})}{\vX} =  \pderiv{\log p(\vY | \vX,\bm{\theta})}{\vK} \pderiv{\vK}{\vX} = \left[ -\frac{1}{2}D\vK\inv+\frac{1}{2}\vK\inv \vY \vY\tra \vK\inv \right]\left[\pderiv{\vK}{\vX}\right],
 \label{eq:warped-hmc2}
 \end{align}
 %
@@ -434,7 +434,7 @@ We also infer kernel parameters $\vtheta$ via \HMC{}, using the gradient of the 
 \subsubsection{Posterior predictive density}
 \label{sec:iwmm-predictive-density}
 
-In the \gplvm{}, the predictive density of at test point $\vy_\star$ is usually computed by finding the point $\vx_\star$ which has the highest probability of being mapped to $\vy_\star$, then using the density of $p(\vx_\star)$ and the Jacobian of the warping at that point to approximate the density at $\vy_\star$.
+In the \gplvm{}, the predictive density at a test point $\vy_\star$ is usually computed by finding the point $\vx_\star$ which has the highest probability of being mapped to $\vy_\star$, then using the density of $p(\vx_\star)$ and the Jacobian of the warping at that point to approximate the density at $\vy_\star$.
 When inference is done this way, approximating the predictive density only requires solving a single optimization for each $\vy_\star$.  
 
 For our model, we use approximate integration to estimate $p(\vy_\star)$.
@@ -462,7 +462,7 @@ We then approximate $p(\vx_\star | \vX, \vY)$ by sampling points from the poster
 \item Draw a latent cluster mean $\vmu_\star \sim {\cal N}(\vu_{z_\star},(r_{z_\star}\vR_\star)\inv)$
 \item Draw latent coordinates $\vx_\star \sim {\cal N}(\vmu_\star,\vR_\star\inv)$
 \item For each observed dimension $d = 1, 2, \ldots, D$, \\ draw observed coordinates 
-$y^\star_d \sim {\cal N}(\vk_\star\tra \vK\inv \vY_{:,d}, k(\vx_\star,\vx_\star) - \vk_\star\tra \vK\inv \vk_\star)$
+$y_{\star d} \sim {\cal N}(\vk_\star\tra \vK\inv \vY_{:,d}, k(\vx_\star,\vx_\star) - \vk_\star\tra \vK\inv \vk_\star)$
 \end{enumerate}
 %
 If $z_\star$ is assigned to a new component in step 1, the prior Gaussian-Wishart distribution \eqref{eq:normal-wishar-prior} is used for sampling in steps 2 and 3.
@@ -470,7 +470,7 @@ The density drawn from in step 5 is the predictive distribution of a \gp{}, wher
 %
 $\vk_\star=[ k(\vx_\star, \vx_1), k(\vx_\star, \vx_2), \cdots, k(\vx_\star, \vx_N)]\tra$ and $\vY_{:,d}$ represents the $d$th column of $\vY$.
 
-Each step of this sampling procedure draws from the exact conditional distribution, so the Monte Carlo estimate of the conditional predictive density $p(\vy_\star | \vX, \vY)$ will converge to the true marginal distribution as the number of samples increases.
+Each step of this sampling procedure draws from the exact conditional distribution, so the Monte Carlo estimate of the predictive density $p(\vy_\star | \vY)$ will converge to the true marginal distribution as the number of samples increases.
 Since the observations $\vy_\star$ are conditionally normally distributed, each one adds a smooth contribution to the empirical Monte Carlo estimate of the posterior density, as opposed to a collection of point masses.
 
 \subsubsection{Source code}

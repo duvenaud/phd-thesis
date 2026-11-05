@@ -16,7 +16,7 @@ First, \cref{ch:kernels} presented a systematic overview of kernel construction 
 Next, \cref{ch:grammar} showed the viability of a search over an open-ended space of kernels, and showed that the corresponding \gp{} models could be automatically decomposed into diverse parts allowing visualization of the structure found in the data.
 \Cref{ch:description} showed that sometimes parts of kernels can be described modularly, allowing automatically written text to be included in detailed reports describing \gp{} models.
 An example report is included in appendix~\ref{ch:example-solar}.
-Together, these chapters demonstrate a proof-of-concept of what could be called an ``automatic statistician'' capable of the performing some of the model construction and analysis currently performed by experts.
+Together, these chapters demonstrate a proof-of-concept of what could be called an ``automatic statistician'' capable of performing some of the model construction and analysis currently performed by experts.
 
 The second half of this thesis examined several extensions of Gaussian processes, all of which enabled the automatic determination of model choices that were previously set by trial and error or cross-validation.
 \Cref{ch:deep-limits} characterized and visualized deep Gaussian processes, related them to existing deep neural networks, and derived novel deep kernels.
@@ -77,7 +77,7 @@ Perhaps more sophisticated procedures could also allow intelligible text-based d
 \end{itemize}
 
 The warped mixture model of \cref{ch:warped} represents a compromise between these two approaches, combining a discrete clustering model with an unstructured warping function.
-However, the explicit clustering model may by unnecessary: the results of \citet{damianou2012deep} suggest that clustering can be automatically (but implicitly) accomplished by a sufficiently deep, unstructured \gp{}.
+However, the explicit clustering model may be unnecessary: the results of \citet{damianou2012deep} suggest that clustering can be automatically (but implicitly) accomplished by a sufficiently deep, unstructured \gp{}.
 
 
 
@@ -89,7 +89,7 @@ However, the explicit clustering model may by unnecessary: the results of \citet
 This thesis is a small part of a larger push to automate the practice of model building and inference.
 Broadly speaking, this problem is being attacked from two directions.
 
-From the top-down, the probabilistic programming community is developing automatic inference engines for extremely broad classes of models~\citep{goodman2008church,mansinghka2014venture,Wood-AISTATS-2014,koller1997effective,milch20071,stan-software:2014} such as the class of all computable distributions~\citep{solomonoff1964formal, li2009introduction}.
+From the top down, the probabilistic programming community is developing automatic inference engines for extremely broad classes of models~\citep{goodman2008church,mansinghka2014venture,Wood-AISTATS-2014,koller1997effective,milch20071,stan-software:2014} such as the class of all computable distributions~\citep{solomonoff1964formal, li2009introduction}.
 As discussed in \cref{sec:ingredients}, model construction procedures can usually be seen as a search through an open-ended model class.
 %For example, \citet{liang2010learning}
 %Exact inference in sufficiently powerful model classes is \#P-hard (cite), so approximate inference algorithms are necessary.
@@ -102,7 +102,7 @@ Similarly, \citet{christian-thesis} showed how to compose inference algorithms f
 These approaches have the advantage that inference is usually feasible for any model in the language.
 However, extending these languages may require developing new inference algorithms.
 
-If sufficiently powerful building-blocks are composed, the line between the top-down and bottom-up approaches becomes blurred.
+If sufficiently powerful building blocks are composed, the line between the top-down and bottom-up approaches becomes blurred.
 For example, deep generative models~\citep{adams2010learning,damianou2012deep,rippel2013high,bengio2013generalized,salakhutdinov2009deep} could be considered an example of the bottom-up approach, since they compose individual model ``layers'' to produce more powerful models.
 However, large neural nets can capture enough different types of structure that they could also be seen as an example of the universalist, top-down approach.
 %As well, inference in these models has so far been done in a one-size-fits all approach, ignoring the particular structure of a given problem.

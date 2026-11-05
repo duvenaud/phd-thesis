@@ -20,7 +20,7 @@ Prediction, extrapolation, and induction are all examples of learning a function
 There are many ways to learn functions, but one particularly elegant way is by probabilistic inference.
 Probabilistic inference takes a group of hypotheses (a \emph{model}), and weights those hypotheses based on how well their predictions match the data.
 This approach is appealing for two reasons.
-First, keeping all hypotheses that match the data helps to guard against over-fitting.
+First, keeping all hypotheses that match the data helps to guard against overfitting.
 Second, comparing how well a dataset is fit by different models gives a way of finding which sorts of structure are present in that data. % models having different types of structure is a way to find which sorts of structure are present in a dataset.
 
 This thesis focuses on constructing models of functions.
@@ -71,7 +71,7 @@ All plots have the same axes.
 \end{figure}
 %
 %Figure \ref{fig:gp-post} shows a Gaussian process distribution, as it is conditioned on more and more observations.
-To be precise, a \gp{} is any distribution over functions such that any finite set of function values $f(\vx_1), f(\vx_2), \ldots f(\vx_N)$ have a joint Gaussian distribution \citep[chapter 2]{rasmussen38gaussian}.
+To be precise, a \gp{} is any distribution over functions such that any finite set of function values $f(\vx_1), f(\vx_2), \ldots, f(\vx_N)$ has a joint Gaussian distribution \citep[chapter 2]{rasmussen38gaussian}.
 A \gp{} model, before conditioning on data, is completely specified by its mean function,
 %
 \begin{align}
@@ -105,16 +105,16 @@ The marginal likelihood allows one to compare models, balancing between the capa
 %Choosing a kernel, or kernel parameters, by maximizing the marginal likelihood will typically result in selecting the \emph{least} flexible model which still captures all the structure in the data.
 %For example, if a kernel has a parameter which controls the smoothness of the functions it models, the maximum-likelihood estimate of that parameter will usually correspond to the smoothest family of functions consistent with the observed function values.
 %
-The marginal likelihood under a \gp{} prior of a set of function values $\left[ f(\vx_1), f(\vx_2), \ldots f(\vx_N)  \right] \defeq \vf(\vX)$ at locations $\vX$ is given by:
+The marginal likelihood under a \gp{} prior of a set of function values $\left[ f(\vx_1), f(\vx_2), \ldots, f(\vx_N)  \right] \defeq \vf(\vX)$ at locations $\vX$ is given by:
 % given by the rows of $\vX$:
 %
 \begin{align}
 p(\funcval | \vX, \mu(\cdot), k(\cdot, \cdot)) & = \N{\funcval}{\mu(\vX)}{k(\vX, \vX)} \label{eq:gp_marg_lik} \\
 & = (2\pi)^{-\frac{N}{2}} \times \underwrite{ |k(\vX, \vX)|^{-\frac{1}{2}}\,}{\parbox{2.5cm}{\parbox{4cm}{\footnotesize controls model capacity}}} \nonumber \\
- & \qquad \times \underwrite{\exp \left\{ -\frac{1}{2} \left( \funcval - \boldsymbol\mu(\vX) \right)\tra k(\vX, \vX)\inv \left(\funcval - \boldsymbol\mu(\vX) \right) \right\}}{\footnotesize encourages fit with data} \nonumber
+ & \qquad \times \underwrite{\exp \left\{ -\frac{1}{2} \left( \funcval - \mu(\vX) \right)\tra k(\vX, \vX)\inv \left(\funcval - \mu(\vX) \right) \right\}}{\footnotesize encourages fit with data} \nonumber
 \end{align}
 %
-This multivariate Gaussian density is referred to as the \emph{marginal} likelihood because it implicitly integrates (marginalizes) over all possible functions values $\vf( \bar \vX)$, where $\bar \vX$ is the set of all locations where we have not observed the function.
+This multivariate Gaussian density is referred to as the \emph{marginal} likelihood because it implicitly integrates (marginalizes) over all possible function values $\vf( \bar \vX)$, where $\bar \vX$ is the set of all locations where we have not observed the function.
 % Talk about the meaning of the different terms in the equation?
 
 \subsection{Prediction}
@@ -156,7 +156,7 @@ Some examples will be shown in \cref{ch:kernels}.
 
 \item {\bf Integration over hypotheses.}
 The fact that a \gp{} posterior, given a fixed kernel, lets us integrate exactly over a wide range of hypotheses means that overfitting is less of an issue than in comparable model classes.
-For example, compared to neural networks, relatively few parameters need to be estimated, which lessens the need for the complex optimization or regularization schemes.
+For example, compared to neural networks, relatively few parameters need to be estimated, which lessens the need for complex optimization or regularization schemes.
 %
 %In contrast, much of the neural network literature is devoted to techniques for regularization and optimization.
 %TODO: add some citations.
@@ -199,7 +199,7 @@ However, this problem can be addressed by approximate inference schemes~\citep{s
 
 \item {\bf Light tails of the predictive distribution.}
 The predictive distribution of a standard \gp{} model is Gaussian.
-We may sometimes with to use non-Gaussian predictive likelihoods, for example in order to be robust to outliers, or to perform classification.
+We may sometimes wish to use non-Gaussian predictive likelihoods, for example in order to be robust to outliers, or to perform classification.
 Using non-Gaussian likelihoods requires approximate inference.
 Fortunately, mature software packages exist~\citep{GPy, GPML, VanRiiHarJylVeh14} which can automatically perform approximate inference for a wide variety of non-Gaussian likelihoods, and also implement sparse approximations.
 %\item {\bf Symmetric}
@@ -231,7 +231,7 @@ We will also show how \gp{}s can produce nonparametric models of manifolds with 
 
 Chapter~\ref{ch:grammar} shows how to search over an open-ended language of models, built by adding and multiplying different kernels.
 Since we can evaluate each model by the marginal likelihood, we can automatically construct custom models for each dataset by a straightforward search procedure.
-We will show how the nature of \gp{}s allow the resulting models to be visualized by decomposing them into diverse, interpretable components, each capturing a different type of structure.
+We will show how the nature of \gp{}s allows the resulting models to be visualized by decomposing them into diverse, interpretable components, each capturing a different type of structure.
 Our experiments show that capturing such high-level structure sometimes allows one to extrapolate beyond the range of the data.
 
 One benefit of using a compositional model class is that the resulting models are relatively interpretable.
@@ -241,13 +241,13 @@ Combined with the automatic model search developed in chapter~\ref{ch:grammar}, 
 
 Chapter~\ref{ch:deep-limits} analyzes deep neural network models by characterizing the prior over functions obtained by composing \gp{} priors to form \emph{deep Gaussian processes}.
 %, and relates them to existing neep neural network architecures.
-We show that, as the number of layers increase, the amount of information retained about the original input diminishes to a single degree of freedom.
+We show that, as the number of layers increases, the amount of information retained about the original input diminishes to a single degree of freedom.
 A simple change to the network architecture fixes this pathology.
 We relate these models to neural networks, and as a side effect derive several forms of \emph{infinitely deep kernels}.
 
 Chapter~\ref{ch:additive} examines a more limited, but much faster way of discovering structure using \gp{}s.
 Specifying a kernel having many different types of structure, we use kernel parameters to discard whichever types of structure are \emph{not} found in the current dataset.
-The particular model class we examine is called \emph{additive Gaussian processes}, a model summing over exponentially-many \gp{}s, each depending on a different subset of the input variables.
+The particular model class we examine is called \emph{additive Gaussian processes}, a model summing over exponentially many \gp{}s, each depending on a different subset of the input variables.
 We give a polynomial-time inference algorithm for this model, and relate it to other model classes.
 For example, additive \gp{}s are shown to have the same covariance as a \gp{} that uses \emph{dropout}, a recently developed regularization technique for neural networks.
 

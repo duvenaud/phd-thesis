@@ -9,12 +9,12 @@ Individual chapters:
 
 1. [Introduction](intro.pdf)
 2. [Expressing Structure with Kernels](kernels.pdf)
-3. [Automatic Model Building](grammar.pdf)
+3. [Automatic Model Construction](grammar.pdf)
 4. [Automatic Model Description](description.pdf)
 5. [Deep Gaussian Processes](deeplimits.pdf)
 6. [Additive Gaussian Processes](additive.pdf)
 7. [Warped Mixture Models](warped.pdf)
-7. [Discussion](discussion.pdf)
+8. [Discussion](discussion.pdf)
 
 Or get the whole thing in [one big PDF](thesis.pdf)
 
@@ -47,7 +47,7 @@ Source Code for Experiments
 The experiments for each chapter all live in different github repos:
 
 * Expressing Structure with Kernels: [github.com/duvenaud/phd-thesis/code/](http://github.com/duvenaud/phd-thesis/tree/master/code/)
-* Automatic Model Building: [github.com/jamesrobertlloyd/gp-structure-search/](http://www.github.com/jamesrobertlloyd/gp-structure-search/)
+* Automatic Model Construction: [github.com/jamesrobertlloyd/gp-structure-search/](http://www.github.com/jamesrobertlloyd/gp-structure-search/)
 * Automatic Model Description: [github.com/jamesrobertlloyd/gpss-research/](http://www.github.com/jamesrobertlloyd/gpss-research/)
 * Deep Gaussian Processes: [github.com/duvenaud/deep-limits/](http://www.github.com/duvenaud/deep-limits/)
 * Additive Gaussian Processes: [github.com/duvenaud/additive-gps/](http://www.github.com/duvenaud/additive-gps/)

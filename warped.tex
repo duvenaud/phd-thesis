@@ -11,7 +11,7 @@
 \end{quotation}
 
 Previous chapters showed how the probabilistic nature of \gp{}s sometimes allows the automatic determination of the appropriate structure when building models of functions.
-One can also take advantage of this property when composing \gp{}s with other models, automatically trading-off complexity between the \gp{} and the other parts of the model.
+One can also take advantage of this property when composing \gp{}s with other models, automatically trading off complexity between the \gp{} and the other parts of the model.
 
 This chapter considers a simple example: a Gaussian mixture model warped by a draw from a \gp{}.
 This novel model produces clusters (density manifolds) having arbitrary nonparametric shapes.
@@ -47,7 +47,7 @@ Tomoharu ran most of the experiments, and Zoubin Ghahramani provided guidance an
 \end{tabular}
 \caption[One-dimensional Gaussian process latent variable model]{
 A draw from a one-dimensional Gaussian process latent variable model. 
-\emph{Bottom:} the density of a set of samples from a 1D Gaussian specifying the distribution $p(x)$ in the latent space.
+\emph{Bottom:} The density of a set of samples from a 1D Gaussian specifying the distribution $p(x)$ in the latent space.
 \emph{Top left:} A function $y = f(x)$ drawn from a \gp{} prior.
 Grey lines show points being mapped through $f$.
 \emph{Right:} A nonparametric density $p(y)$ defined by warping the latent density through the sampled function.} 
@@ -79,10 +79,10 @@ A generative definition of the \gplvm{} is:
 \begin{align}
 \textnormal{latent coordinates } \vX = (\vx_1, \vx_2, \ldots, \vx_{N})\tra & \simiid \N{\vx}{0}{\vI_Q} \\
 \textnormal{warping functions } \vf = (f_1, f_2, \ldots, f_D)\tra & \simiid \GPt{0}{\seard \kernplus \kWN} \\
-\textnormal{observed datapoints } \vY = (\vy_1, \vy_2, \ldots, \vy_N)\tra & = \vf(\vX)
+\textnormal{observed data points } \vY = (\vy_1, \vy_2, \ldots, \vy_N)\tra & = \vf(\vX)
 \end{align}
 
-Under the \gplvm{}, the probability of observations $\vY$ given the latent coordinates $\vX$, integrating over the mapping functions $\vf$ is simply a product of \gp{} likelihoods:
+Under the \gplvm{}, the probability of observations $\vY$ given the latent coordinates $\vX$, integrating over the mapping functions $\vf$, is simply a product of \gp{} likelihoods:
 \begin{align}
 p(\vY | \vX, \vtheta) 
 & = \prod_{d=1}^D p(\vY_{:,d} | \vX, \vtheta) 
@@ -197,7 +197,7 @@ One disadvantage of the \gplvm{} is that its predictive density has no closed fo
 To approximate the predictive density, we first sample latent points, then sample warpings of those points into the observed space. % and warpings from the posterior and map the sampled points through the sampled warpings.
 The Gaussian noise added to each observation by the $\kWN$ kernel component means that each sample adds a Gaussian to the Monte Carlo estimate of the predictive density.
 Details can be found in appendix \ref{sec:iwmm-predictive-density}.
-This procedure was used to generate the plots of posterior density in \cref{fig:generative,fig:warping,fig:posterior}.
+This procedure was used to generate the plots of prior and posterior densities in \cref{fig:generative,fig:warping,fig:posterior}.
 
 
 
@@ -232,7 +232,7 @@ This method had poor predictive performance compared to simple baselines.
 
 
 \subsubsection{Related linear models}
-The \iwmm{} can also be viewed as a generalization of the mixture of probabilistic principle component analyzers~\citep{tipping1999mixtures}, or the mixture of factor analyzers~\citep{ghahramani2000variational}, where the linear mapping is replaced by a draw from a \gp{}, and the number of components is infinite.
+The \iwmm{} can also be viewed as a generalization of the mixture of probabilistic principal component analyzers~\citep{tipping1999mixtures}, or the mixture of factor analyzers~\citep{ghahramani2000variational}, where the linear mapping is replaced by a draw from a \gp{}, and the number of components is infinite.
 
 
 \subsubsection{Non-probabilistic methods}
@@ -297,12 +297,12 @@ $\uparrow$ & $\uparrow$ & $\uparrow$ & $\uparrow$ \\
 \caption[Recovering clusters on synthetic data]{
 \emph{Top row:} Observed unlabeled data points (black), and cluster densities inferred by the \iwmm{} (colors).
 \emph{Bottom row:} Latent coordinates and Gaussian components from a single sample from the posterior.
-Each circle plotted in the latent space corresponds to a datapoint in the observed space.}
+Each circle plotted in the latent space corresponds to a data point in the observed space.}
 \label{fig:warping}
 \end{figure}
 %
 None of these datasets can be appropriately clustered by a Gaussian mixture model (\GMM{}).
-For example, consider the 2-curve data shown in \cref{fig:warping}(a), where 100 data points lie in each of two curved lines in a two-dimensional observed space.
+For example, consider the 2-curve data shown in \cref{fig:warping}(a), where 50 data points lie in each of two curved lines in a two-dimensional observed space.
 %as shown at the top row of .
 A \GMM{} having only two components cannot separate the two curved lines, while a \GMM{} with many components could separate the two lines only by breaking each line into many clusters. 
 In contrast, the \iwmm{} separates the two non-Gaussian clusters in the observed space, representing them using two Gaussian-shaped clusters in the latent space.
@@ -325,8 +325,8 @@ Unsurprisingly, the \iwmm{} is able to recover an analogous latent structure, an
 \subsection{Clustering face images}
 
 We also examined the \iwmm{}'s ability to model images without extensive pre-processing.
-We constructed a dataset consisting of 50 greyscale 32x32 pixel images of two individuals from the \UMIST{} faces dataset~\citep{umistfaces}.
-Each of the two series of images show a different person turning his head to the right.
+We constructed a dataset consisting of 50 greyscale $32 \times 32$ pixel images of two individuals from the \UMIST{} faces dataset~\citep{umistfaces}.
+Each of the two series of images shows a different person turning his head to the right.
 
 \begin{figure}[h!]
 \centering
@@ -349,7 +349,7 @@ Third, that the two manifolds share roughly the same structure: the front-facing
 
 
 
-\subsection{Density estimation}
+\subsection{Posterior density on 2-curve data}
 
 \begin{figure}[ht!]
 \centering
@@ -373,7 +373,7 @@ The \iwmm{} correctly recovered the separation of the density into two unconnect
 %The density computed using multiple samples from MCMC is clearer than the density computed from a single sample shown at the bottom of Figure~\ref{fig:warping} (a).
 
 This result can be compared to the density manifold recovered by the fully-Bayesian \gplvm{}, equivalent to a special case of the \iwmm{} having only a single cluster.
-\Cref{fig:posterior}(b) shows that the \gplvm{} places significant density connecting the two end of the clusters, since it must reproduce the observed density manifold by warping a single Gaussian.
+\Cref{fig:posterior}(b) shows that the \gplvm{} places significant density connecting the two ends of the clusters, since it must reproduce the observed density manifold by warping a single Gaussian.
 
 
 
@@ -461,13 +461,13 @@ The statistics of these datasets are summarized in \cref{tab:statistics}.
 \hline
 dataset size: $N$ & 100 & 300 & 100 & 250 & 150 & 214 & 178 & 528 \\
 dimension: $D$ & 2 & 2 & 2 & 2 & 4 & 9 & 13 & 10 \\
-num. clusters: $C$ & 2 & 3 & 2 & 5 & 3 & 7 & 3 & 11 \\
+num. clusters: $C$ & 2 & 3 & 2 & 5 & 3 & 6 & 3 & 11 \\
 \hline
 \end{tabular}
 \end{table}
 %
 For each experiment, we show the results of ten-fold cross-validation.
-Results in bold are not significantly different from the best performing method in each column according to a paired t-test.
+Results in bold are not significantly different from the best-performing method in each column according to a paired t-test.
 %In each experiment, 10\% of the data was used for testing.
 %
 %
@@ -514,7 +514,7 @@ For \KDE{}, the kernel width was estimated by maximizing the leave-one-out densi
 %We include the $Q=2$ case in order to attempt to quantify the 
 %The proposed models achieved higher test log likelihoods than the KDE, MPW
 %
-\Cref{tab:likelihood} lists average test log likelihoods.
+\Cref{tab:likelihood} lists average test log-likelihoods.
 %
 \begin{table}[ht!]
 \centering
@@ -543,7 +543,7 @@ The \iwmm{} usually achieved higher test likelihoods than the \KDE{} and the \iG
 %
 The \gplvm{} performed competitively with the \iwmm{}, although it never significantly outperformed the corresponding \iwmm{} having the same latent dimension.
 
-The sometimes large differences between performance in the $D = 2$ case and the $D = Q$ case of these two methods may be attributed to the fact that when the observed dimension is high, many samples are required from the latent distribution in order to produce accurate estimates of the posterior predictive density at the test locations.
+The sometimes large differences between performance in the $Q = 2$ case and the $Q = D$ case of these two methods may be attributed to the fact that when the observed dimension is high, many samples are required from the latent distribution in order to produce accurate estimates of the posterior predictive density at the test locations.
 This difficulty might be resolved by using a warping with back-constraints~\citep{Lawrence06localdistance}, which would allow a more direct evaluation of the density at a given point in the observed space.
 
 
@@ -600,7 +600,7 @@ Another natural extension would be to allow a separate warping for each cluster,
 
 \subsubsection{Learning the topology of data manifolds}
 
-Some datasets naturally live on manifolds which are not simply-connected.
+Some datasets naturally live on manifolds which are not simply connected.
 For example, motion capture data or video of a person walking in a circle can be said to live on a torus, with one coordinate specifying the phase of the person's walking cycle, and another specifying how far around the circle they are.
 
 %What if we were to use the structured kernels of \cref{ch:kernels,ch:grammar} to specify the prior on warpings?
